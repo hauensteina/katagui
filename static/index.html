@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 
 <script type='text/javascript'>
- /* Filename: leela-one-playout/index.html
+ /* Filename: katago-gui/index.html
   * Author: AHN
-  * Creation Date: Apr, 2019
-  * Web interface to play against a remote bot.
+  * Creation Date: Jan, 2020
+  * Web interface to play against KataGo.
   */
 </script>
 
@@ -18,11 +18,11 @@
 <html lang='en'>
   <head>
     <meta charset='utf-8'>
-    <meta name='description' content='Play Go Against Leela'>
+    <meta name='description' content='Play Go Against KataGo'>
     <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence,Artificial Stupidity'>
     <meta name='author' content='Andreas Hauenstein'>
 
-    <title>Play Go Against Leela</title>
+    <title>Play Go Against KataGo</title>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-1"></script>
@@ -148,14 +148,14 @@
                   <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a> </div>
                 </div>
                 <div class='row'>
-                  <div class='col-12 text-center'> Play Go Against Leela (32e8df1) </div>
+                  <div class='col-12 text-center'> Play Go Against KataGo </div>
                 </div>
                 <div class='row'>
                   <div class='col-12 text-center'>
                     <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
                     <!-- <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>RECENT CHANGES</a> -->
                     <!-- <div style='color:red'>
-                         LEELA IS DOWN.<br>
+                         KATAGO IS DOWN.<br>
                          NO ELECTRICITY IN SAN MATEO, CA, USA
                          </div> -->
                   </div>
@@ -191,16 +191,15 @@
               </div>
             </div>
             <div class='row'>
-              <div class='col-4'>
-                <img id='img_bot' src='static/leela.png' style='height:120px'>
+              <div class='col-5'>
+                <img id='img_bot' src='static/kata.png' style='height:120px'>
               </div>
-              <div class='col-7' style='font-size:11pt'>
+              <div class='col-6' style='font-size:11pt'>
                 <div id='descr_bot'>
-                  Leela <br>
-                  Strength: 9P
+                  KataGo
                 </div>
-                <br>
-                <label id='btn_change' class='btn btn-outline-dark' style='font-size:8pt;'>Change</label>
+                <!-- <br>
+                     <label id='btn_change' class='btn btn-outline-dark' style='font-size:8pt;'>Change</label> -->
                 <br>
                 <a id='settings' href='static/settings.html' style='font-size:12pt;text-align:right;color:green'>Settings</a>
               </div>
@@ -265,7 +264,10 @@
             <div class='row'>
               <div class='col-12'>
                 <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>Save sgf</label>
-                <label id='btn_new' class='btn btn-outline-dark' style='font-size:11pt;'>New Game</label>
+                <!-- <label id='btn_new' class='btn btn-outline-dark' style='font-size:11pt;'>New Game</label> -->
+                <label id='btn_new' type='button' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'>
+                  New Game
+                </button>
               </div>
             </div>
             <div class='row'>
@@ -291,6 +293,72 @@
           </div>                  <!--right container-->
         </td>                     <!--right-->
       </tr></table>
+
+      <!-- Modal dialog to pick komi and handicap -->
+      <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title' id='komi_handi_heading'>New Game</h5>
+              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>
+              <table>
+                <tr><td>Handicap</td><td>&nbsp;&nbsp;</td><td>Komi</td></tr>
+                <tr>
+                  <td>
+                    <div class='dropdown'>
+                      <button class='btn btn-secondary dropdown-toggle' type='button' id='handi_menu'
+                              data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Handicap
+                      </button>
+                      <div class='dropdown-menu' aria-labelledby='handi_menu'>
+                        <a id='handi_0' class='dropdown-item'>0</a>
+                        <a id='handi_1' class='dropdown-item'>1</a>
+                        <a id='handi_2' class='dropdown-item'>2</a>
+                        <a id='handi_3' class='dropdown-item'>3</a>
+                        <a id='handi_4' class='dropdown-item'>4</a>
+                        <a id='handi_5' class='dropdown-item'>5</a>
+                        <a id='handi_6' class='dropdown-item'>6</a>
+                        <a id='handi_7' class='dropdown-item'>7</a>
+                        <a id='handi_8' class='dropdown-item'>8</a>
+                        <a id='handi_9' class='dropdown-item'>9</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td>&nbsp;&nbsp;</td>
+                  <td>
+                    <div class='dropdown'>
+                      <button class='btn btn-secondary dropdown-toggle' type='button' id='komi_menu'
+                              data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Komi
+                      </button>
+                      <div class='dropdown-menu' aria-labelledby='komi_menu'>
+                        <a id='komi_m75' class='dropdown-item'>-7.5</a>
+                        <a id='komi_m55' class='dropdown-item' href='#'>-5.5</a>
+                        <a id='komi_m35' class='dropdown-item' href='#'>-3.5</a>
+                        <a id='komi_m15' class='dropdown-item' href='#'>-1.5</a>
+                        <a id='komi_m05' class='dropdown-item' href='#'>-0.5</a>
+                        <a id='komi_05' class='dropdown-item' href='#'>&nbsp;0.5</a>
+                        <a id='komi_15' class='dropdown-item' href='#'>&nbsp;1.5</a>
+                        <a id='komi_35' class='dropdown-item' href='#'>&nbsp;3.5</a>
+                        <a id='komi_55' class='dropdown-item' href='#'>&nbsp;5.5</a>
+                        <a id='komi_75' class='dropdown-item' href='#'>&nbsp;7.5</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class='modal-footer'>
+              <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
+              <button type='button' class='btn btn-primary' data-dismiss='modal'>Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     <!-- ---------- -->
       <!-- Javascript -->

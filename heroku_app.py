@@ -38,7 +38,7 @@ app.config.update(
 app.config['DEBUG'] = os.getenv("DEBUG", False)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
-KATAGO_SERVER = 'https://ahaux.com/katago_server_test/'
+KATAGO_SERVER = 'https://ahaux.com/katago_server/'
 
 #--------------
 # Endpoints

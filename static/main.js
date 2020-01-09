@@ -7,9 +7,9 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = '2019-12-12'
+const VERSION = '2020-01-09'
 const KATAGO_SERVER = ''
-const BOTS = ['fry', 'bender', 'farnsworth', 'katago']
+//const BOTS = ['fry', 'bender', 'farnsworth', 'katago']
 
 //=======================================
 function main( JGO, axutil, p_options) {
@@ -29,11 +29,41 @@ function main( JGO, axutil, p_options) {
   var g_play_btn_buffer = false // buffer one play btn click
   var g_click_coord_buffer = null // buffer one board click
 
+  var g_komi = -7.5
+  var g_handi = 0
+
   //$('#opt_auto').prop('checked', true)
 
   //================
   // UI Callbacks
   //================
+
+  //-----------------------------------
+  function set_dropdown_handlers() {
+    $('#komi_menu').html(g_komi)
+    $('#komi_m75').click( function() { g_komi = -7.5; $('#komi_menu').html('-7.5') })
+    $('#komi_m55').click( function() { g_komi = -5.5; $('#komi_menu').html('-5.5') })
+    $('#komi_m35').click( function() { g_komi = -3.5; $('#komi_menu').html('-3.5') })
+    $('#komi_m15').click( function() { g_komi = -1.5; $('#komi_menu').html('-1.5') })
+    $('#komi_m05').click( function() { g_komi = -0.5; $('#komi_menu').html('-0.5') })
+    $('#komi_05').click( function()  { g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#komi_15').click( function()  { g_komi = 1.5;  $('#komi_menu').html('1.5') })
+    $('#komi_35').click( function()  { g_komi = 3.5;  $('#komi_menu').html('3.5') })
+    $('#komi_55').click( function()  { g_komi = 5.5;  $('#komi_menu').html('5.5') })
+    $('#komi_75').click( function()  { g_komi = 7.5;  $('#komi_menu').html('7.5') })
+
+    $('#handi_menu').html(g_handi)
+    $('#handi_0').click( function() { g_handi = 0; $('#handi_menu').html('0'); g_komi = 7.5;  $('#komi_menu').html('7.5') })
+    $('#handi_1').click( function() { g_handi = 1; $('#handi_menu').html('1'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_2').click( function() { g_handi = 2; $('#handi_menu').html('2'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_3').click( function() { g_handi = 3; $('#handi_menu').html('3'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_4').click( function() { g_handi = 4; $('#handi_menu').html('4'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_5').click( function() { g_handi = 5; $('#handi_menu').html('5'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_6').click( function() { g_handi = 6; $('#handi_menu').html('6'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_7').click( function() { g_handi = 7; $('#handi_menu').html('7'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_8').click( function() { g_handi = 8; $('#handi_menu').html('8'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+    $('#handi_9').click( function() { g_handi = 9; $('#handi_menu').html('9'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+  } // set_dropdown_handlers()
 
   //----------------------------------------
   function board_click_callback( coord) {
@@ -112,7 +142,7 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
-    $('#btn_change').click( () => { change_bot() })
+    //$('#btn_change').click( () => { change_bot() })
 
     $('#btn_clear_var').click( () => {
       if ($('#btn_clear_var').hasClass('disabled')) { return }
@@ -330,35 +360,36 @@ function main( JGO, axutil, p_options) {
 
   // Switch to the given bot. If called without bot, go to the next bot.
   //----------------------------------------------------------------------
-  function change_bot( bot) {
-    const bots = BOTS
+  /* function change_bot( bot) {
+   *   const bots = BOTS
 
-    const images = ['static/fry.png', 'static/bender.png', 'static/farnsworth.png', 'static/katago.png']
-    const names = ['Fry', 'Bender', 'Prof. Farnsworth', 'Katago']
-    const strengths = ['Oh well', 'Not bad', '6D', '9P']
+   *   const images = ['static/fry.png', 'static/bender.png', 'static/farnsworth.png', 'static/katago.png']
+   *   const names = ['Fry', 'Bender', 'Prof. Farnsworth', 'Katago']
+   *   const strengths = ['Oh well', 'Not bad', '6D', '9P']
 
-    var idx = 0
-    if (typeof bot == 'undefined') {
-      idx = bots.indexOf( change_bot.botname)
-      idx++; idx %= bots.length
-    }
-    else {
-      idx = bots.indexOf( bot)
-    }
-    change_bot.botname = bots[idx]
-    $('#descr_bot').html( names[idx] + '<br> Strength: ' + strengths[idx] + '<br>')
-    $('#img_bot').attr( 'src', images[idx])
-    activate_bot('off')
-  } // change_bot()
-  change_bot.botname = 'fry'
+   *   var idx = 0
+   *   if (typeof bot == 'undefined') {
+   *     idx = bots.indexOf( change_bot.botname)
+   *     idx++; idx %= bots.length
+   *   }
+   *   else {
+   *     idx = bots.indexOf( bot)
+   *   }
+   *   change_bot.botname = bots[idx]
+   *   $('#descr_bot').html( names[idx] + '<br> Strength: ' + strengths[idx] + '<br>')
+   *   $('#img_bot').attr( 'src', images[idx])
+   *   activate_bot('off')
+   * } // change_bot()
+   * change_bot.botname = 'fry'
 
-  const OPENING_RANDOMNESS = 0.33
-  const ENDGAME_RANDOMNESS = 0
-  const FARNSWORTH_RANDOMNESS = 0 // 6D
-  const FARNSWORTH_PLAYOUTS = 32
-  const BENDER_RANDOMNESS = 0 // 0.15
-  const BENDER_PLAYOUTS = 1
-  const FRY_RANDOMNESS = 0.15 // 0.12 // 0.13 // kyu
+   * const OPENING_RANDOMNESS = 0.33
+   * const ENDGAME_RANDOMNESS = 0
+   * const FARNSWORTH_RANDOMNESS = 0 // 6D
+   * const FARNSWORTH_PLAYOUTS = 32
+   * const BENDER_RANDOMNESS = 0 // 0.15
+   * const BENDER_PLAYOUTS = 1
+   * const FRY_RANDOMNESS = 0.15 // 0.12 // 0.13 // kyu
+   */
 
   //---------------------------
   function log_event( bot) {
@@ -417,23 +448,8 @@ function main( JGO, axutil, p_options) {
   function botmove_if_active() {
     if (axutil.hit_endpoint('waiting')) { g_play_btn_buffer = true; return true }
     if (activate_bot.state == 'off') { return true }
-    if (change_bot.botname == 'katago') {
-      get_katago_move()
-      return true
-    }
-    else if (change_bot.botname == 'farnsworth') {
-      get_farnsworth_move()
-      return true
-    }
-    else if (change_bot.botname == 'bender') {
-      get_bender_move()
-      return true
-    }
-    else if (change_bot.botname == 'fry') {
-      get_fry_move()
-      return true
-    }
-    return false
+    get_katago_move()
+    return true
   } // botmove_if_active()
 
   // Get next move from the bot and show on board
@@ -684,15 +700,15 @@ function main( JGO, axutil, p_options) {
     if (var_button_state() == 'off') { // don't save if in variation
       localStorage.setItem('record', JSON.stringify( g_record))
       localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
-      localStorage.setItem('bot', change_bot.botname)
+      //localStorage.setItem('bot', change_bot.botname)
     }
   } // save_state()
 
   //--------------------------
   function load_state() {
-    var bot = localStorage.getItem('bot')
-    if (BOTS.indexOf( bot) < 0) { bot = BOTS[0] }
-    change_bot(bot)
+    /* var bot = localStorage.getItem('bot')
+     * if (BOTS.indexOf( bot) < 0) { bot = BOTS[0] }
+     * change_bot(bot) */
     if (localStorage.getItem('record') === null) { return }
     if (localStorage.getItem('complete_record') === null) { return }
     if (localStorage.getItem('record') === 'null') { return }
@@ -964,6 +980,7 @@ function main( JGO, axutil, p_options) {
 
   settings()
   set_btn_handlers()
+  set_dropdown_handlers()
   reset_game()
   setup_jgo()
   load_state()
