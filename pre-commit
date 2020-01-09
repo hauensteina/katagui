@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sed -i '' 's/leela_server_test/leela_server/' heroku_app.py
+git add heroku_app.py

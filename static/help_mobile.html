@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+
+<script type='text/javascript'>
+ /* Filename: leela-one-playout/help.html
+  * Author: AHN
+  * Creation Date: June, 2019
+  */
+</script>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+
+    <title>Help</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+
+    <!--  CSS  -->
+    <style>
+     body {
+       font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+     }
+     .center {
+       margin-left:auto;
+       margin-right:auto;
+     }
+     .text-center {
+       text-align:center;
+     }
+
+     .red-border { border-style:solid; border-color:red; }
+     .green-border { border-style:solid; border-color:green; }
+     .blue-border { border-style:solid; border-color:blue; }
+     .yellow-border { border-style:solid; border-color:yellow; }
+     .magenta-border { border-style:solid; border-color:magenta; }
+     .cyan-border { border-style:solid; border-color:cyan; }
+
+
+    </style>
+  </head>
+  <body style='background-color:#CCCCCC;'>
+    <br>
+    <table style='max-width:90vw'>
+      <tr><td class='text-center'> <h1> Help </h1> </td></tr>
+      <tr><td>
+        <br>
+        <ol style='max-width:700px'>
+          <li>Choose a bot with the Change button at the top</li>
+          <li>Click on the board to place a stone</li>
+          <li>Click Play</li>
+          <li> Goto 2</li>
+        </ol>
+
+        <ul style='max-width:700px'>
+          <li><strong>Changes</strong> &mdash; Fry is now stronger, and so is Bender. See <i>The Bots</i> below. </li>
+            <li><strong>The Bots</strong> &mdash; Choose between Fry, Bender, Prof. Farnsworth, and Leela.
+              Leela is unbeatable, and Farnsworth is very strong. You might want to try Fry or Bender.
+              Details:
+              Leela does 256 playouts, Farnsworth does 32 playouts.
+              Bender does only one playout and thus simply plays whatever the network suggests.
+              Fry also does only one, with randomness added to weaken him further.
+            </li>
+            <li><strong>What Would Leela Do</strong> &mdash; The Best button shows you the best move according to the AI.
+            Due to the randomness in Leela, the best move could be different from Leela's choice before move 25.
+          </li>
+          <li><strong>Handicap</strong> &mdash; Click on the empty board to place a black stone, click Pass, repeat.
+            Click Play once you have the desired number of handicap stones. The network goes crazy
+            at four or more handicap stones. You want to stick to three or less.
+          </li>
+          <li><strong>Review</strong> &mdash; Load any sgf file, click First, then keep hitting Next. Look at the Emoji.
+          </li>
+          <li><strong>Analysis and Variations</strong> &mdash; Select Leela as the active bot. Click on the Back button to navigate to
+            the position you want to analyze. Click Play repeatedly to see what Leela would do. The app will automatically start a variation.
+            Click V- to forget the variation.
+            Click V+ to forget the game and keep the variation.
+          </li>
+          <li><strong>Opening</strong> &mdash; You do not have to start with the empty board. Put any opening you like on the board
+            before clicking Play.
+            You can also preload a game with the Load Sgf button and continue from any point.
+          </li>
+          <li><strong>Komi</strong> &mdash; White always gets 7.5 komi, even in handicap games.
+          </li>
+        </ul>
+      </td></tr>
+    </table>
+
+    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'></script>
+    <script type='text/javascript'>
+     $( function() {
+       var g_width = $(window).width()
+       var g_height = $(window).height()
+       $('#container').css('width',g_width)
+       $('#leela').css('height',g_height * 0.1)
+       $('#kroker').css('height',g_height * 0.1)
+       $('#spacer').css('width',g_width * 0.3)
+     })
+    </script>
+  </body>
+</html>

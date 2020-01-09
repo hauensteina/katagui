@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+
+<script type='text/javascript'>
+ /* Filename: leela-one-playout/index_mobile.html
+  * Author: AHN
+  * Creation Date: Apr, 2019
+  * Web interface to play against a remote bot.
+  */
+</script>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='description' content='Play Go Against Leela'>
+    <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence,Artificial Stupidity'>
+    <meta name='author' content='Andreas Hauenstein'>
+    <title>Play Go Against Leela</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-1"></script>
+    <script>
+     window.dataLayer = window.dataLayer || [];
+     function gtag(){dataLayer.push(arguments);}
+     gtag('js', new Date());
+
+     gtag('config', 'UA-139708851-1');
+    </script>
+
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+
+    <!--  CSS  -->
+    <style>
+     body {
+       font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+       text-align: center;
+     }
+     .center {
+       margin-left:auto;
+       margin-right:auto;
+     }
+     .uncenter {
+       margin-left:0px;
+       margin-right:0px;
+     }
+
+     .red-border { border-style:solid; border-color:red; }
+     .green-border { border-style:solid; border-color:green; }
+     .blue-border { border-style:solid; border-color:blue; }
+     .yellow-border { border-style:solid; border-color:yellow; }
+     .magenta-border { border-style:solid; border-color:magenta; }
+     .cyan-border { border-style:solid; border-color:cyan; }
+
+     /* Disable hover color change on buttons */
+     .btn:hover { background-color:#CCCCCC;  color:#343A40; }
+
+     /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
+     /*----------------------------------------------------------------------*/
+
+     /* The switch - the box around the slider */
+     .switch {
+       position: relative;
+       display: inline-block;
+       width: 90px;
+       height: 48px;
+     }
+
+     /* Hide default HTML checkbox */
+     .switch input {
+       opacity: 0;
+       width: 0;
+       height: 0;
+     }
+
+     /* The slider */
+     .slider {
+       position: absolute;
+       cursor: pointer;
+       top: 0;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       background-color: #aaaaaa;
+       -webkit-transition: .1s;
+       transition: .1s;
+     }
+
+     .slider:before {
+       position: absolute;
+       content: "";
+       height: 40px;
+       width: 40px;
+       left: 2px;
+       bottom: 3px;
+       background-color: white;
+       -webkit-transition: .1s;
+       transition: .1s;
+     }
+
+     input:checked + .slider {
+       background-color: #2196F3;
+     }
+
+     input:focus + .slider {
+       box-shadow: 0 0 1px #2196F3;
+     }
+
+     input:checked + .slider:before {
+       -webkit-transform: translateX(44px);
+       -ms-transform: translateX(44px);
+       transform: translateX(44px);
+     }
+
+     /* Rounded sliders */
+     .slider.round {
+       border-radius: 20px;
+     }
+
+     .slider.round:before {
+       border-radius: 50%;
+     }
+
+    </style>
+  </head>
+  <body style='background-color:#CCCCCC'>
+    <br>
+    <div>
+      <table class='center'>
+        <tr class='' style='background-color:#EEEEEE'><td>
+          <span class='' style='float:left;width:100%;text-align:center;font-size:30pt'>
+            See your winning probabilty and count with
+            <a href='https://apps.apple.com/us/app/kifu-cam/id1343303689' style='font-size:30pt;text-align:right;color:green'> Kifu Cam </a>
+          </span>
+        </td></tr>
+        <tr><td> &nbsp; </td></tr>
+        <tr class=''> <td>
+          <span class='' style='float:left;width:50%;text-align:left;'>
+            &nbsp;&nbsp;
+            <!-- <a href='static/settings_mobile.html' style='font-size:30pt;text-align:right;color:green'> Settings</a> -->
+          </span>
+          <span class='' style='float:left;width:50%;text-align:right;'>
+            <a href='static/about_mobile.html' style='font-size:30pt;text-align:right;color:green'> About</a>  &nbsp;&nbsp;
+          </span>
+        </td></tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>
+          <div class='container-fluid'>
+            <div class='row'>
+              <div class='col-4'>
+                <img id='img_bot' src='static/leela.png' style='height:200px'>
+                <div id='descr_bot' style='font-size:20pt'>
+                  Leela <br>
+                  Strength: 9P
+                </div>
+                <br>
+                <div>
+                  <label id='btn_change' class='btn btn-outline-dark' style='font-size:20pt'>Change</label>
+                </div>
+                <div>
+                  <a href='static/settings_mobile.html' style='font-size:30pt;text-align:right;color:green'>Settings</a>
+                </div>
+              </div>
+              <div class='col-4' style='font-size:30pt;margin:auto'>
+                Play Go Against Leela (32e8df1)<br>
+                <a id='help' href='static/help_mobile.html' style='font-size:24pt;text-align:right;color:red'>READ THE MANUAL</a>
+                <!-- <a id='help' href='static/help_mobile.html' style='font-size:24pt;text-align:right;color:red'>RECENT CHANGES</a> -->
+                <!-- <div style='color:red'>
+                     LEELA IS DOWN.<br>
+                     NO ELECTRICITY IN SAN MATEO, CA, USA
+                     </div> -->
+              </div>
+              <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
+            </div>
+          </div>
+        </td></tr>
+        <tr><td id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+        <tr><td id='fname' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+        <tr><td id='board'> </td></tr>
+        <!-- Status and Emoji -->
+        <!-- <tr><td> &nbsp; </td></tr> -->
+        <tr style='transform:translate(0,-18px)'><td>
+          <div class='container-fluid'>
+            <div class='row center'>
+              <div id='movenum' class='col-3' style='font-size:26pt;margin:auto'> &nbsp; </div>
+              <div id='status' class='col-6' style='font-size:26pt;margin:auto'> &nbsp; </div>
+              <div id='emo' class='col-3' style='font-size:60pt;margin:auto'> &nbsp; </div>
+            </div>
+          </div>
+        </td></tr>
+        <!-- Play buttons -->
+        <!-- <tr><td> &nbsp; </td></tr> -->
+        <tr style='transform:translate(0,-20px)'><td>
+          <div>
+            <table class='center'><tr>
+              <td>
+                <label class='switch'>
+                  <input id='opt_auto' type='checkbox'>
+                  <span class='slider round'></span>
+                </label>
+                &nbsp;
+              </td><td>
+                <label id='btn_play' class='btn btn-outline-dark' style='font-size:40pt'>Play</label>
+                &nbsp;&nbsp;
+              </td><td>
+                <label id='btn_undo' class='btn btn-outline-dark' style='font-size:40pt'>Undo</label>
+                &nbsp;&nbsp;
+              </td><td>
+                <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>Best</label>
+              </td>
+            </tr></table>
+          </div>
+        </td></tr>
+        <!-- Nav Buttons -->
+        <tr><td> &nbsp; </td></tr>
+        <tr style='transform:translate(0,-20px)'><td>
+          <div>
+            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:40pt'>Pass</label>
+            &nbsp;&nbsp;
+            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
+            &nbsp;&nbsp;
+            <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+            <label id='btn_clear_var' class='btn btn-success' style='font-size:40pt'>V-&nbsp;</label>
+            &nbsp;&nbsp;
+            <label id='btn_accept_var' class='btn btn-danger' style='font-size:40pt'>V+</label>
+          </div>
+        </td></tr>
+        <!-- More Nav Buttons -->
+        <tr><td> &nbsp; </td></tr>
+        <tr><td>
+          <div>
+            <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>First</label>
+            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>Back 10</label>
+            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>Fwd 10</label>
+            <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>Last</label>
+          </div>
+        </td></tr>
+        <!-- Score and Save -->
+        <tr><td> &nbsp; </td></tr>
+        <tr><td>
+          <div>
+            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>Score</label>
+            <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>Save sgf</label>
+            <label id='btn_new' class='btn btn-outline-dark' style='font-size:22pt'>New Game</label>
+          </div>
+        </td></tr>
+        <!-- Input form for load sgf -->
+        <tr><td> &nbsp; </td></tr>
+        <tr><td>
+          <div>
+            <form method='post' enctype='multipart/form-data'>
+              <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
+                Load sgf  <input type='file' id='sgf-file' style='display:none'>
+              </label>
+            </form>
+          </div>
+        </td></tr>
+        <!-- Score Histogram -->
+        <tr><td> &nbsp; </td></tr>
+        <tr><td>
+          <div id='histo' class='center' style='width:750px;height:450px'>
+          </div>
+        </td></tr>
+      </table>
+    </div>
+
+    <!-- ---------- -->
+    <!-- Javascript -->
+    <!-- ---------- -->
+
+    <!-- Standard frameworks -->
+    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+
+    <!-- Our own stuff -->
+    <script type='text/javascript' src='static/ahaux_utils.js'></script>
+    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
+    <script type='text/javascript' src='static/large/board.js'></script>
+
+    <!-- Entry Point -->
+    <script type='text/javascript' src='static/main.js?v=1.89'></script>
+    <script type='text/javascript'>
+     $(function () {
+       main( JGO, new AhauxUtils( d3, $), {mobile:true} )
+     })
+    </script>
+
+  </body>
+</html>

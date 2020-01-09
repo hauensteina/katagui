@@ -1,0 +1,318 @@
+<!DOCTYPE HTML>
+
+<script type='text/javascript'>
+ /* Filename: leela-one-playout/index.html
+  * Author: AHN
+  * Creation Date: Apr, 2019
+  * Web interface to play against a remote bot.
+  */
+</script>
+
+<script type="text/javascript" src="static/redirection-mobile.js"></script>
+<script type="text/javascript">
+ SA.redirection_mobile ({
+   mobile_url : '/index_mobile'
+ })
+</script>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='description' content='Play Go Against Leela'>
+    <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence,Artificial Stupidity'>
+    <meta name='author' content='Andreas Hauenstein'>
+
+    <title>Play Go Against Leela</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-1"></script>
+    <script>
+     window.dataLayer = window.dataLayer || [];
+     function gtag(){dataLayer.push(arguments);}
+     gtag('js', new Date());
+
+     gtag('config', 'UA-139708851-1');
+    </script>
+
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+
+    <!--  CSS  -->
+    <style>
+     body {
+       font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+       text-align: center;
+     }
+     .center {
+       margin-left:auto;
+       margin-right:auto;
+     }
+     .text-center {
+       text-align:center;
+     }
+
+     .red-border { border-style:solid; border-color:red; }
+     .green-border { border-style:solid; border-color:green; }
+     .blue-border { border-style:solid; border-color:blue; }
+     .yellow-border { border-style:solid; border-color:yellow; }
+     .magenta-border { border-style:solid; border-color:magenta; }
+     .cyan-border { border-style:solid; border-color:cyan; }
+
+     /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
+     /*----------------------------------------------------------------------*/
+
+     /* The switch - the box around the slider */
+     .switch {
+       position: relative;
+       display: inline-block;
+       width: 30px;
+       height: 16px;
+     }
+
+     /* Hide default HTML checkbox */
+     .switch input {
+       opacity: 0;
+       width: 0;
+       height: 0;
+     }
+
+     /* The slider */
+     .slider {
+       position: absolute;
+       cursor: pointer;
+       top: 0;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       background-color: #aaaaaa;
+       -webkit-transition: .1s;
+       transition: .1s;
+     }
+
+     .slider:before {
+       position: absolute;
+       content: "";
+       height: 13px;
+       width: 13px;
+       left: 2px;
+       bottom: 2px;
+       background-color: white;
+       -webkit-transition: .1s;
+       transition: .1s;
+     }
+
+     input:checked + .slider {
+       background-color: #2196F3;
+     }
+
+     input:focus + .slider {
+       box-shadow: 0 0 1px #2196F3;
+     }
+
+     input:checked + .slider:before {
+       -webkit-transform: translateX(13px);
+       -ms-transform: translateX(13px);
+       transform: translateX(13px);
+     }
+
+     /* Rounded sliders */
+     .slider.round {
+       border-radius: 9px;
+     }
+
+     .slider.round:before {
+       border-radius: 50%;
+     }
+
+    </style>
+  </head>
+  <body style='background-color:#CCCCCC'>
+    <br>
+    <table class='center'>
+      <tr>
+        <td>                      <!--left-->
+          <div class='container'>
+            <div class='row'>
+              <div class='col-12' >
+                <div class='row' style='background-color:#EEEEEE'>
+                  <div class='col-12 text-center'> See your winning probabilty and count with
+                    <a href='https://apps.apple.com/us/app/kifu-cam/id1343303689' style='font-size:12pt;text-align:right;color:green'> Kifu Cam </a>
+                  </div>
+                </div>
+                <div class='row'>
+                  <div class='col-12 text-center'> &nbsp;  </div>
+                </div>
+                <div class='row'>
+                  <div class='col-6 text-left'>
+                    <!-- <a id='settings' href='static/settings.html' style='font-size:9pt;text-align:right;color:green'> Settings</a> --> </div>
+                  <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a> </div>
+                </div>
+                <div class='row'>
+                  <div class='col-12 text-center'> Play Go Against Leela (32e8df1) </div>
+                </div>
+                <div class='row'>
+                  <div class='col-12 text-center'>
+                    <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
+                    <!-- <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>RECENT CHANGES</a> -->
+                    <!-- <div style='color:red'>
+                         LEELA IS DOWN.<br>
+                         NO ELECTRICITY IN SAN MATEO, CA, USA
+                         </div> -->
+                  </div>
+                </div>
+                <div class='row'>
+                  <div id='game_info' class='col-12 text-center' style='font-size:10pt'> </div>
+                </div>
+                <div class='row'>
+                  <div id='fname' class='col-12 text-center' style='font-size:10pt'> </div>
+                </div>
+                <div class='row'>
+                  <div class='col-12'>
+                    &nbsp;
+                  </div>
+                </div>
+                <div class='row'>
+                  <div id='board' class='col-12 text-center'> </div>
+                </div>
+                <div class='row center'>
+                  <div id='movenum' class='col-3' style='font-size:13pt;margin:auto'> &nbsp; </div>
+                  <div id='status' class='col-6' style='font-size:13pt;margin:auto'> &nbsp; </div>
+                  <div id='emo' class='col-3' style='font-size:30pt;margin:auto'> &nbsp; </div>
+                </div>
+              </div>                <!--col-12-->
+            </div>                  <!--row-->
+          </div>                    <!--container-->
+        </td>
+        <td style='vertical-align:top'>                      <!--right-->
+          <div class='container' >
+            <div class='row' style='font-size:40pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-4'>
+                <img id='img_bot' src='static/leela.png' style='height:120px'>
+              </div>
+              <div class='col-7' style='font-size:11pt'>
+                <div id='descr_bot'>
+                  Leela <br>
+                  Strength: 9P
+                </div>
+                <br>
+                <label id='btn_change' class='btn btn-outline-dark' style='font-size:8pt;'>Change</label>
+                <br>
+                <a id='settings' href='static/settings.html' style='font-size:12pt;text-align:right;color:green'>Settings</a>
+              </div>
+            </div>
+            <div class='row' style='font-size:20pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <table class='center' style='padding:0px'>
+                  <tr><td>
+                    <label class='switch'>
+                      <input id='opt_auto' type='checkbox'>
+                      <span class='slider round'></span>
+                    </label>
+                  </td><td>&nbsp;</td>
+                  </tr>
+                  <tr style='transform:translate(0,-8px)'>
+                    <td>
+                      <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>Play</label>
+                    </td>
+                    <td>
+                      <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>Best</label>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>Undo</label>
+                <label id='btn_pass' class='btn btn-outline-dark' style='font-size:11pt;'>Pass</label>
+                <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>Score</label>
+              </div>
+            </div>
+            <div class='row' style='font-size:5pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;'>Back 10</label>
+                <label id='btn_prev' class='btn btn-outline-dark' style='font-size:8pt;'>Prev</label>
+                <label id='btn_next' class='btn btn-outline-dark' style='font-size:8pt;'>Next</label>
+                <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;'>Fwd 10</label>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>First</label>
+                <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>Last</label>
+              </div>
+            </div>
+            <div class='row' style='font-size:5pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>Save sgf</label>
+                <label id='btn_new' class='btn btn-outline-dark' style='font-size:11pt;'>New Game</label>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <form method='post' enctype='multipart/form-data'>
+                  <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
+                    Load sgf  <input type='file' id='sgf-file' style='display:none'>
+                  </label>
+                </form>
+              </div>
+            </div>
+            <div class='row' style='font-size:5pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                <label id='btn_clear_var' class='btn btn-success' data-toggle='tooltip' data-placement='bottom' title='Forget variation' style='font-size:11pt'>V-&nbsp;</label>
+                <label id='btn_accept_var' class='btn btn-danger' data-toggle='tooltip' data-placement='bottom' title='Accept variation' style='font-size:11pt'>V+</label>
+              </div>
+            </div>
+          </div>                  <!--right container-->
+        </td>                     <!--right-->
+      </tr></table>
+
+    <!-- ---------- -->
+      <!-- Javascript -->
+      <!-- ---------- -->
+
+      <!-- Standard frameworks -->
+      <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+      <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+      <script src='https://d3js.org/d3.v5.min.js'></script>
+
+      <!-- Our own stuff -->
+      <script type='text/javascript' src='static/ahaux_utils.js'></script>
+      <script type='text/javascript' src='static/jgoboard-latest.js'></script>
+      <script type='text/javascript' src='static/small/board.js'></script>
+
+      <!-- Entry Point -->
+      <script type='text/javascript' src='static/main.js?v=1.89'></script>
+      <script type='text/javascript'>
+       $(function () {
+         $('[data-toggle="tooltip"]').tooltip()
+         main( JGO, new AhauxUtils( d3, $), {mobile:false} )
+       })
+      </script>
+  </body>
+</html>

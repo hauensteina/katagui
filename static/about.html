@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+
+<script type='text/javascript'>
+ /* Filename: leela-one-playout/about.html
+  * Author: AHN
+  * Creation Date: Apr, 2019
+  */
+</script>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+
+    <title>About</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+
+    <!--  CSS  -->
+    <style>
+     body {
+       font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+       text-align: center;
+     }
+     .center {
+       margin-left:auto;
+       margin-right:auto;
+     }
+
+    </style>
+  </head>
+  <body style='background-color:#CCCCCC;'>
+    <div id='container'>
+      <!-- <div style="border-style:solid;border-color:red;">
+           xx
+           </div> -->
+      <br>
+      <!-- <table class='center'>
+           <tr>
+           <td> <img src='leela.png' id='leela'> </td>
+           <td id='spacer'> &nbsp; </td>
+           <td> <img src='kroker.png' id='kroker'> </td>
+           </tr>
+           <tr>
+           <td style='font-size:2em'> &nbsp;&nbsp;&nbsp;&nbsp; Turanga Leela </td>
+           <td></td>
+           <td style='font-size:2em'> Kif Kroker </td>
+           </tr>
+           </table>
+      -->
+
+      <pre style='font-size:1.4vw'>
+      This is Leela Zero on 256 playouts, with some randomness
+      in the first 25 moves. She is definitely pro strength, but
+      also amusing, because she plays 3-4 or 3-3 on occasion.
+
+      If you get tired of losing, play one of the other bots.
+      Let Leela help you in a pinch.
+
+      Credits:
+      ---------
+
+      Leela Zero, by Gian-Carlo Pascutto and contributors is here:
+      https://github.com/leela-zero/leela-zero
+
+      The network is here:
+      http://zero.sjeng.org/best-network
+
+      Go data structures were pilfered from the book
+      'Deep Learning and the Game of Go' by Max Pumperla and Kevin Ferguson.
+
+      The Go board is jGoBoard by Joonas Pihlajamaa.
+
+      Last but not least,
+      Leela, Farnsworth, Bender, and Fry
+      are characters from the 1999 TV show Futurama.
+      Watch Futurama!
+
+      Scoring, plumbing, and glue is by me:
+
+      Andreas Hauenstein
+      hauensteina@gmail.com
+
+      Notes:
+      ---------
+
+      Leela reads
+      and always plays the strongest move
+      after move 25.
+
+      The other bots do not read
+      and sometimes play moves that are debatable.
+      </pre>
+
+    </div>
+
+    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'></script>
+    <script type='text/javascript'>
+     $( function() {
+       var g_width = $(window).width()
+       var g_height = $(window).height()
+       $('#container').css('width',g_width)
+       $('#leela').css('height',g_height * 0.1)
+       $('#kroker').css('height',g_height * 0.1)
+       $('#spacer').css('width',g_width * 0.3)
+     })
+    </script>
+  </body>
+</html>
