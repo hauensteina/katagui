@@ -8,14 +8,14 @@
 
 const DEBUG = false
 const VERSION = '2019-12-12'
-const LEELA_SERVER = ''
-const BOTS = ['fry', 'bender', 'farnsworth', 'leela']
+const KATAGO_SERVER = ''
+const BOTS = ['fry', 'bender', 'farnsworth', 'katago']
 
 //=======================================
 function main( JGO, axutil, p_options) {
   $ = axutil.$
 
-  const BOT = 'leela_gtp_bot'
+  const BOT = 'katago_gtp_bot'
   const BOARD_SIZE = 19
   const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 
@@ -333,8 +333,8 @@ function main( JGO, axutil, p_options) {
   function change_bot( bot) {
     const bots = BOTS
 
-    const images = ['static/fry.png', 'static/bender.png', 'static/farnsworth.png', 'static/leela.png']
-    const names = ['Fry', 'Bender', 'Prof. Farnsworth', 'Leela']
+    const images = ['static/fry.png', 'static/bender.png', 'static/farnsworth.png', 'static/katago.png']
+    const names = ['Fry', 'Bender', 'Prof. Farnsworth', 'Katago']
     const strengths = ['Oh well', 'Not bad', '6D', '9P']
 
     var idx = 0
@@ -371,13 +371,13 @@ function main( JGO, axutil, p_options) {
   } // log_event()
 
   //-----------------------------
-  function get_leela_move() {
-    log_event( 'leela')
-    $('#status').html( 'Leela is thinking...')
+  function get_katago_move() {
+    log_event( 'katago')
+    $('#status').html( 'Katago is thinking...')
     var randomness = 0.0
     if (g_record.length < g_complete_record.length || handle_variation.var_backup) { randomness = -1.0 } // No randomness if analyzing
     get_bot_move( randomness, 0)
-  } // get_leela_move()
+  } // get_katago_move()
 
   //-----------------------------
   function get_farnsworth_move() {
@@ -417,8 +417,8 @@ function main( JGO, axutil, p_options) {
   function botmove_if_active() {
     if (axutil.hit_endpoint('waiting')) { g_play_btn_buffer = true; return true }
     if (activate_bot.state == 'off') { return true }
-    if (change_bot.botname == 'leela') {
-      get_leela_move()
+    if (change_bot.botname == 'katago') {
+      get_katago_move()
       return true
     }
     else if (change_bot.botname == 'farnsworth') {
@@ -442,7 +442,7 @@ function main( JGO, axutil, p_options) {
     var handi = 1 + g_record.slice(0,17).filter( function(x) { return x.mv == 'pass'}).length
     randomness = randomness || 0.0
     playouts = playouts || 0.0
-    axutil.hit_endpoint( LEELA_SERVER + '/select-move/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
+    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
 			'config':{'randomness': randomness, 'playouts':playouts } },
 			(data) => {
 			  hover() // The board thinks the hover stone is actually there. Clear it.
@@ -709,7 +709,7 @@ function main( JGO, axutil, p_options) {
   // Get current winning probability.
   //-----------------------------------------------------
   function get_prob( completion, update_emo, playing) {
-    axutil.hit_endpoint( LEELA_SERVER + '/select-move/' + BOT,
+    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'randomness': -1.0 } },
 			(data) => {
 			  if (g_record.length) {
@@ -801,7 +801,7 @@ function main( JGO, axutil, p_options) {
   //----------------------------------------------------------------
   function score_position( endpoint)
   {
-    axutil.hit_endpoint( LEELA_SERVER + endpoint, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
+    axutil.hit_endpoint( KATAGO_SERVER + endpoint, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
 			  plot_histo(data, (surepoints) => {
           score_position.white_probs = data.white_probs

@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
 # /********************************************************************
-# Filename: 05_leela_heroku/leela-one-playout/heroku_app.py
+# Filename: 05_katago_heroku/katago-one-playout/heroku_app.py
 # Author: AHN
-# Creation Date: Apr, 2019
+# Creation Date: Jan, 2020
 # **********************************************************************/
 #
-# A web interface for Go experiments. Adapted from dlgo.
-# Only a frontend, the bots run elsewhere and are accessed via an API.
+# A web front end for REST Api katago-server
 #
 
 from pdb import set_trace as BP
@@ -39,7 +38,7 @@ app.config.update(
 app.config['DEBUG'] = os.getenv("DEBUG", False)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
-LEELA_SERVER = 'https://ahaux.com/leela_server/'
+KATAGO_SERVER = 'https://ahaux.com/katago_server_test/'
 
 #--------------
 # Endpoints
@@ -56,34 +55,34 @@ def entry_point_mobile():
     return app.send_static_file( 'index_mobile.html')
 
 @app.route('/select-move/<bot_name>', methods=['POST'])
-# Forward select-move to the leela server
+# Forward select-move to the katago server
 #------------------------------------------
 def select_move( bot_name):
     endpoint = 'select-move/' + bot_name
     args = request.json
-    res = fwd_to_leela( endpoint, args)
+    res = fwd_to_katago( endpoint, args)
     return jsonify( res)
 
-@app.route('/nnscore', methods=['POST'])
-# Forward nnscore the leela server
-#------------------------------------------
-def nnscore():
-    endpoint = 'nnscore'
-    args = request.json
-    res = fwd_to_leela( endpoint, args)
-    return jsonify( res)
+# @app.route('/nnscore', methods=['POST'])
+# # Forward nnscore the katago server
+# #------------------------------------------
+# def nnscore():
+#     endpoint = 'nnscore'
+#     args = request.json
+#     res = fwd_to_katago( endpoint, args)
+#     return jsonify( res)
 
-@app.route('/histo', methods=['POST'])
-# Take a bunch of numbers, number of bins, min, max and return a histo.
-#------------------------------------------------------------------------
-def histo():
-    data,nbins,mmin,mmax = request.json
-    counts,borders = np.histogram( data, nbins, [mmin, mmax])
-    counts = counts.tolist()
-    borders = borders.tolist()
-    centers = [ (borders[i] + borders[i+1]) / 2.0 for i in range(len(borders)-1) ]
-    res = list(zip( centers, counts))
-    return jsonify( res)
+# @app.route('/histo', methods=['POST'])
+# # Take a bunch of numbers, number of bins, min, max and return a histo.
+# #------------------------------------------------------------------------
+# def histo():
+#     data,nbins,mmin,mmax = request.json
+#     counts,borders = np.histogram( data, nbins, [mmin, mmax])
+#     counts = counts.tolist()
+#     borders = borders.tolist()
+#     centers = [ (borders[i] + borders[i+1]) / 2.0 for i in range(len(borders)-1) ]
+#     res = list(zip( centers, counts))
+#     return jsonify( res)
 
 @app.route('/sgf2list', methods=['POST'])
 # Convert sgf main var to coordinate list of moves
@@ -172,15 +171,14 @@ def save_sgf():
     resp = send_file( fh, as_attachment=True, attachment_filename=fname)
     return resp
 
-
 #----------
 # Helpers
 #-----------
 
-# Forward request to leela server
+# Forward request to katago server
 #----------------------------------------
-def fwd_to_leela( endpoint, args):
-    url = LEELA_SERVER + endpoint
+def fwd_to_katago( endpoint, args):
+    url = KATAGO_SERVER + endpoint
     resp = requests.post( url, json=args)
     res = resp.json()
     return res
@@ -189,7 +187,7 @@ def fwd_to_leela( endpoint, args):
 #---------------------------------------------------
 def moves2sgf( moves, probs):
     sgf = '(;FF[4]SZ[19]\n'
-    sgf += 'SO[leela-one-playout.herokuapp.com]\n'
+    sgf += 'SO[katago-one-playout.herokuapp.com]\n'
     dtstr = datetime.now().strftime('%Y-%m-%d')
     sgf += 'DT[%s]\n' % dtstr
 
@@ -218,8 +216,6 @@ def moves2sgf( moves, probs):
     sgf += movestr
     sgf += ')'
     return sgf
-
-
 
 
 #----------------------------
