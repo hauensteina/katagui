@@ -1,15 +1,25 @@
 
 /*
- * Main entry point for web_gui Go board
- * AHN Apr 2019
+ * Main entry point for katago-gui
+ * AHN Jan 2020
  */
 
 'use strict'
 
 const DEBUG = false
-const VERSION = '2020-01-09'
+const VERSION = '2020-01-10'
 const KATAGO_SERVER = ''
-//const BOTS = ['fry', 'bender', 'farnsworth', 'katago']
+
+const HANDISTONES = ['',''
+  ,['D4','Q16']
+  ,['D4','Q16','Q4']
+  ,['D4','Q16','Q4','D16']
+  ,['D4','Q16','Q4','D16','K10']
+  ,['D4','Q16','Q4','D16','D10','Q10']
+  ,['D4','Q16','Q4','D16','D10','Q10','K10']
+  ,['D4','Q16','Q4','D16','D10','Q10','K4','K16']
+  ,['D4','Q16','Q4','D16','D10','Q10','K4','K16','K10']
+]
 
 //=======================================
 function main( JGO, axutil, p_options) {
@@ -29,7 +39,7 @@ function main( JGO, axutil, p_options) {
   var g_play_btn_buffer = false // buffer one play btn click
   var g_click_coord_buffer = null // buffer one board click
 
-  var g_komi = -7.5
+  var g_komi = 7.5
   var g_handi = 0
 
   //$('#opt_auto').prop('checked', true)
@@ -63,6 +73,13 @@ function main( JGO, axutil, p_options) {
     $('#handi_7').click( function() { g_handi = 7; $('#handi_menu').html('7'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
     $('#handi_8').click( function() { g_handi = 8; $('#handi_menu').html('8'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
     $('#handi_9').click( function() { g_handi = 9; $('#handi_menu').html('9'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
+
+    $('#game_start_save').click( function() {
+      reset_game();
+      set_emoji();
+      activate_bot('off');
+      $('#status').html( '&nbsp;')
+    })
   } // set_dropdown_handlers()
 
   //----------------------------------------
@@ -159,7 +176,6 @@ function main( JGO, axutil, p_options) {
       if (g_record.length == 0) {
         reset_game()
       }
-      $('#histo').hide()
       activate_bot( 'on')
       botmove_if_active()
       return false
@@ -173,7 +189,6 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_best').click( () => {
-      $('#histo').hide()
       $('#status').html( 'thinking...')
       get_prob( (data) => {
         var botCoord = string2jcoord( data.bot_move)
@@ -203,7 +218,6 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_nnscore').click( () => {
       score_position( 'nnscore')
-      //$('#histo').show()
       return false
     })
 
@@ -215,7 +229,6 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_undo').click( () => {
-      $('#histo').hide()
       axutil.hit_endpoint('cancel')
       var len = g_record.length
       if (len > 2 && g_record[len-1].agent == 'bot' && g_record[len-2].agent == 'human') {
@@ -231,11 +244,11 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_prev').click( btn_prev)
     $('#btn_next').click( btn_next)
-    $('#btn_back10').click( () => { $('#histo').hide(); goto_move( g_record.length - 10); update_emoji(); activate_bot('off') })
-    $('#btn_fwd10').click( () => { $('#histo').hide(); goto_move( g_record.length + 10); update_emoji(); activate_bot('off') })
-    $('#btn_first').click( () => { $('#histo').hide(); goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
-    $('#btn_last').click( () => { $('#histo').hide(); goto_move( g_complete_record.length); update_emoji(); activate_bot('off') })
-    $('#btn_new').click( () => { $('#histo').hide(); reset_game(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
+    $('#btn_back10').click( () => { goto_move( g_record.length - 10); update_emoji(); activate_bot('off') })
+    $('#btn_fwd10').click( () => { goto_move( g_record.length + 10); update_emoji(); activate_bot('off') })
+    $('#btn_first').click( () => { goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
+    $('#btn_last').click( () => { goto_move( g_complete_record.length); update_emoji(); activate_bot('off') })
+    //$('#btn_new').click( () => { reset_game(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
 
     // Prevent zoom on double tap
     $('#btn_change').on('touchstart', prevent_zoom)
@@ -288,12 +301,11 @@ function main( JGO, axutil, p_options) {
 
   //-------------------------
   function btn_prev() {
-    $('#histo').hide(); goto_move( g_record.length - 1); update_emoji(); activate_bot('off')
+    goto_move( g_record.length - 1); update_emoji(); activate_bot('off')
   }
   //-------------------------
   function btn_next() {
     if (btn_next.waiting) { btn_next.buffered = true; return }
-    $('#histo').hide()
     goto_move( g_record.length + 1)
     if (g_record[ g_record.length - 1].p == 0) {
       btn_next.waiting = true
@@ -406,60 +418,24 @@ function main( JGO, axutil, p_options) {
     log_event( 'katago')
     $('#status').html( 'Katago is thinking...')
     var randomness = 0.0
-    if (g_record.length < g_complete_record.length || handle_variation.var_backup) { randomness = -1.0 } // No randomness if analyzing
-    get_bot_move( randomness, 0)
+    get_bot_move( g_handi, g_komi, 0)
   } // get_katago_move()
-
-  //-----------------------------
-  function get_farnsworth_move() {
-    log_event( 'farnsworth')
-    $('#status').html( 'Farnsworth is guessing... ')
-    get_bot_move( FARNSWORTH_RANDOMNESS, FARNSWORTH_PLAYOUTS)
-  } // get_farnsworth_move()
-
-  //-----------------------------
-  function get_bender_move() {
-    log_event( 'bender')
-    $('#status').html( 'Bender is trying...')
-    if (g_record.length < 15) {
-      get_bot_move( OPENING_RANDOMNESS)
-    }
-    else {
-      get_bot_move( BENDER_RANDOMNESS, BENDER_PLAYOUTS)
-    }
-  } // get_bender_move()
-
-  //-----------------------------
-  function get_fry_move() {
-    log_event( 'fry')
-    $('#status').html( 'Fry is struggling...')
-    if (g_record.length < 15) {
-      get_bot_move( OPENING_RANDOMNESS)
-    }
-    else if (g_record.length < 140) {
-      get_bot_move( FRY_RANDOMNESS)
-    }
-    else {
-      get_bot_move( ENDGAME_RANDOMNESS, 1)
-    }
-  } // get_fry_move()
 
   //--------------------------------
   function botmove_if_active() {
-    if (axutil.hit_endpoint('waiting')) { g_play_btn_buffer = true; return true }
+    if (axutil.hit_endpoint('waiting')) {
+      g_play_btn_buffer = true; return true
+    }
     if (activate_bot.state == 'off') { return true }
     get_katago_move()
     return true
   } // botmove_if_active()
 
   // Get next move from the bot and show on board
-  //-------------------------------------------------
-  function get_bot_move( randomness, playouts) {
-    var handi = 1 + g_record.slice(0,17).filter( function(x) { return x.mv == 'pass'}).length
-    randomness = randomness || 0.0
-    playouts = playouts || 0.0
+  //----------------------------------------------------
+  function get_bot_move( handicap, komi, playouts) {
     axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
-			'config':{'randomness': randomness, 'playouts':playouts } },
+			'config':{'komi':komi, 'playouts':playouts } },
 			(data) => {
 			  hover() // The board thinks the hover stone is actually there. Clear it.
 
@@ -575,6 +551,15 @@ function main( JGO, axutil, p_options) {
     g_complete_record = []
     g_record = []
     goto_first_move()
+    if (g_handi < 2) { return }
+    var hstones =  HANDISTONES[g_handi]
+    for (const [idx,s] of hstones.entries()) {
+      if (idx > 0) {
+        g_complete_record.push( {'mv':'pass', 'p':0.0, 'agent':''} )
+      }
+      g_complete_record.push( {'mv':s, 'p':0.0, 'agent':''} )
+    } // reset_game()
+    goto_move(1000)
   } // reset_game()
 
   // Replay game from empty board.
@@ -725,8 +710,14 @@ function main( JGO, axutil, p_options) {
   // Get current winning probability.
   //-----------------------------------------------------
   function get_prob( completion, update_emo, playing) {
+    if (activate_bot.state == 'on') {
+      $('#status').html( 'Katago is thinking...')
+    }
+    else {
+      $('#status').html( '...')
+    }
     axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
-			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'randomness': -1.0 } },
+			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
 			  if (g_record.length) {
 			    var p = parseFloat(data.diagnostics.winprob)
@@ -743,6 +734,7 @@ function main( JGO, axutil, p_options) {
         }
         g_play_btn_buffer = false
         g_click_coord_buffer = null
+        //$('#status').html( '')
 			})
   } // get_prob()
 
@@ -854,18 +846,6 @@ function main( JGO, axutil, p_options) {
   } // score_position()
   score_position.active = false
   score_position.white_probs = []
-
-  // Plot histogram of territory probabilities
-  //---------------------------------------------
-  function plot_histo( data, completion) {
-    var wp = data.white_probs
-    axutil.hit_endpoint( '/histo', [wp,20,0,1], (res) => {
-      //var surepoints = res[0][1] + res[res.length-1][1]
-      var surepoints = BOARD_SIZE * BOARD_SIZE - data.dame
-      axutil.barchart( '#histo', res, 240)
-      completion( surepoints)
-    })
-  } // plot_histo()
 
   //===============
   // Converters
@@ -999,7 +979,5 @@ function main( JGO, axutil, p_options) {
     setTimeout(statesaver, 60000)
   }
   statesaver()
-
-  $('#histo').hide()
 
 } // function main()
