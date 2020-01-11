@@ -854,7 +854,7 @@
     i2 = Math.min(i2+1, this.opt.view.xOffset + this.opt.view.width - 1);
     j2 = Math.min(j2+1, this.opt.view.yOffset + this.opt.view.height - 1);
 
-    var isLabel = /^[a-zA-Z1-9]/;
+    var isLabel = /^[a-zA-Z1-9]$/;
 
     // Stone radius derived marker size parameters
     var stoneR = this.opt.stone.radius,
@@ -997,7 +997,7 @@
     /** Black territory */
     BLACK_TERRITORY: '-',
     /** White territory */
-    WHITE_TERRITORY: '+'
+    WHITE_TERRITORY: '+',
   };
 
   /**
@@ -2104,6 +2104,12 @@
   };
 
   Stones.prototype.drawMark = function(ctx, mark, ox, oy) {
+    var prob = 0.0
+    if (mark.startsWith( 'WP:') || mark.startsWith( 'BP:')) {
+      prob = parseFloat( mark.split(':')[1]) / 100.0
+      mark = mark.split(':')[0]
+    }
+
     switch(mark) {
       case C.MARK.SQUARE:
         ctx.beginPath();
@@ -2155,12 +2161,26 @@
           this.gridX, this.gridY);
         break;
 
+      case 'WP': // White score estimate
+        ctx.globalAlpha = prob;
+        ctx.fillStyle = '#FFFFFF';
+        var s = 0.5*this.gridX
+        ctx.fillRect(ox - s / 2, oy - s / 2, s, s);
+        break;
+
+      case 'BP': // Black score estimate
+        ctx.globalAlpha = prob;
+        ctx.fillStyle = '#000000';
+        var s = 0.5*this.gridX
+        ctx.fillRect(ox - s / 2, oy - s / 2, s, s);
+        break;
+
       default: // Label
         // For clear intersections, grid is cleared before shadow cast
         ctx.fillText(mark, ox, oy);
         break;
     }
-  };
+  }; // drawMark()
 
   module.exports = Stones;
 

@@ -813,31 +813,28 @@ function main( JGO, axutil, p_options) {
 
   // Score the current position with katago.
   //-------------------------------------------
-  function score_position()
-  {
+  function score_position() {
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
         score_position.probs = data.probs
 			  score_position.active = true
-			  var node = g_jrecord.createNode( true)
+			  //var node = g_jrecord.createNode( true)
         var bsum = 0
         var wsum = 0
         for (const [idx, prob] of data.probs.entries()) {
-          var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
-          var col = (idx % BOARD_SIZE) + 1
-			    var coord = rc2jcoord( row, col)
+          //var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
+          //var col = (idx % BOARD_SIZE) + 1
+			    //var coord = rc2jcoord( row, col)
           if (prob < -0.7) {
-				    node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
+				    //node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
             wsum += 1
 			    }
           else if (prob > 0.7) {
-				    node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
+				    //node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
             bsum += 1
 			    }
-        }
-			  /* for (var dpoint of data.territory.dame_points) {
-			     node.setMark( rc2jcoord( dpoint[0], dpoint[1]), JGO.MARK.TRIANGLE)
-			     } */
+        } // for
+        draw_estimate( data.probs)
 			  var diff = Math.abs( bsum - wsum)
 			  var rstr = `W+${diff} <br>(before komi and handicap)`
 			  if (bsum >= wsum) { rstr = `B+${diff}  <br>(before komi and handicap)` }
@@ -847,6 +844,23 @@ function main( JGO, axutil, p_options) {
   } // score_position()
   score_position.active = false
   score_position.probs = []
+
+  // Draw black and white squares with alpha representing certainty
+  //------------------------------------------------------------------
+  function draw_estimate( probs) {
+    var node = g_jrecord.createNode( true)
+    for (const [idx, prob] of probs.entries()) {
+      var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
+      var col = (idx % BOARD_SIZE) + 1
+			var coord = rc2jcoord( row, col)
+      if (prob < 0) { // white
+        node.setMark( coord, 'WP:' + Math.trunc(Math.abs(prob)*100))
+      } // for
+      else { // black
+        node.setMark( coord, 'BP:' + Math.trunc(Math.abs(prob)*100))
+      } // for
+    } // for
+  } // draw_estimate()
 
   //===============
   // Converters
