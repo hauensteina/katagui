@@ -137,7 +137,7 @@ function main( JGO, axutil, p_options) {
 
             if (DEBUG && score_position.active) {
               var idx = jcoord2idx( coord)
-              $('#status').html( score_position.white_probs[idx])
+              $('#status').html( score_position.probs[idx])
             }
             else {
 					    hover( coord, g_player)
@@ -219,7 +219,7 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_nnscore').click( () => {
-      score_position( 'nnscore')
+      score_position()
       return false
     })
 
@@ -811,47 +811,42 @@ function main( JGO, axutil, p_options) {
   // Scoring
   //==========
 
-  // Score the current position. Endpoint is 'score' or 'nnscore'.
-  //----------------------------------------------------------------
-  function score_position( endpoint)
+  // Score the current position with katago.
+  //-------------------------------------------
+  function score_position()
   {
-    axutil.hit_endpoint( KATAGO_SERVER + endpoint, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
+    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
-			  plot_histo(data, (surepoints) => {
-          score_position.white_probs = data.white_probs
-			    if (surepoints < 250) {
-			      alert( 'Too early to score. Sorry.')
-			      return
+        score_position.probs = data.probs
+			  score_position.active = true
+			  var node = g_jrecord.createNode( true)
+        var bsum = 0
+        var wsum = 0
+        for (const [idx, prob] of data.probs.entries()) {
+          var row = Math.trunc( idx / BOARD_SIZE) + 1
+          var col = (idx % BOARD_SIZE) + 1
+			    var coord = rc2jcoord( row, col)
+          if (prob < -0.95) {
+				    node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
+            bsum += 1
 			    }
-			    score_position.active = true
-			    var node = g_jrecord.createNode( true)
-			    for (var bpoint of data.territory.black_points) {
-			      var coord = rc2jcoord( bpoint[0], bpoint[1])
-			      if (node.jboard.stones [coord.i] [coord.j] != 1) {
-				      node.setMark( rc2jcoord( bpoint[0], bpoint[1]), JGO.MARK.BLACK_TERRITORY)
-			      }
+          else if (prob > 0.95) {
+				    node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
+            wsum += 1
 			    }
-			    for (var wpoint of data.territory.white_points) {
-			      var coord = rc2jcoord( wpoint[0], wpoint[1])
-			      if (node.jboard.stones [coord.i] [coord.j] != 2) {
-				      node.setMark( rc2jcoord( wpoint[0], wpoint[1]), JGO.MARK.WHITE_TERRITORY)
-			      }
-			    }
-			    for (var dpoint of data.territory.dame_points) {
-			      node.setMark( rc2jcoord( dpoint[0], dpoint[1]), JGO.MARK.TRIANGLE)
-			    }
-			    var black_points = data.result[0]
-			    var white_points = data.result[1]
-			    var diff = Math.abs( black_points - white_points)
-			    var rstr = `W+${diff} <br>(before komi and handicap)`
-			    if (black_points >= white_points) { rstr = `B+${diff}  <br>(before komi and handicap)` }
-			    $('#status').html( `B:${black_points} &nbsp; W:${white_points} &nbsp; ${rstr}`)
-			  }) // plot_histo()
+        }
+			  /* for (var dpoint of data.territory.dame_points) {
+			     node.setMark( rc2jcoord( dpoint[0], dpoint[1]), JGO.MARK.TRIANGLE)
+			     } */
+			  var diff = Math.abs( bsum - wsum)
+			  var rstr = `W+${diff} <br>(before komi and handicap)`
+			  if (bsum >= wsum) { rstr = `B+${diff}  <br>(before komi and handicap)` }
+			  $('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
 			} // (data) =>
 		) // hit_endpoint()
   } // score_position()
   score_position.active = false
-  score_position.white_probs = []
+  score_position.probs = []
 
   //===============
   // Converters
