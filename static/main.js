@@ -161,8 +161,6 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
-    //$('#btn_change').click( () => { change_bot() })
-
     $('#btn_clear_var').click( () => {
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation( 'clear')
@@ -294,9 +292,10 @@ function main( JGO, axutil, p_options) {
 	      }
         g_complete_record = g_record.slice()
         show_movenum()
-        var komi = res.komi
+        g_komi = res.komi
+        save_state()
         // Game Info
-        $('#game_info').html( `B:${res.pb} &nbsp;&nbsp; W:${res.pw} &nbsp;&nbsp; Result:${res.RE} &nbsp;&nbsp; Komi:${komi}`)
+        $('#game_info').html( `B:${res.pb} &nbsp;&nbsp; W:${res.pw} &nbsp;&nbsp; Result:${res.RE} &nbsp;&nbsp; Komi:${g_komi}`)
         $('#fname').html( res.fname)
       })
     }) // $('sgf-file')
@@ -359,12 +358,6 @@ function main( JGO, axutil, p_options) {
   // Use like btn.addEventListener('touchstart', prevent_zoom)
   //------------------------------------------------------------
   function prevent_zoom(e) {
-    //var t2 = e.timeStamp
-    //var t1 = e.currentTarget.dataset.lastTouch || t2
-    //var dt = t2 - t1
-    //var fingers = e.touches.length
-    //e.currentTarget.dataset.lastTouch = t2
-    //if (!dt || dt > 500 || fingers > 1) return
     e.preventDefault()
     e.target.click()
   } // prevent_zoom()
@@ -372,39 +365,6 @@ function main( JGO, axutil, p_options) {
   //===================
   // Bot Interaction
   //===================
-
-  // Switch to the given bot. If called without bot, go to the next bot.
-  //----------------------------------------------------------------------
-  /* function change_bot( bot) {
-   *   const bots = BOTS
-
-   *   const images = ['static/fry.png', 'static/bender.png', 'static/farnsworth.png', 'static/katago.png']
-   *   const names = ['Fry', 'Bender', 'Prof. Farnsworth', 'Katago']
-   *   const strengths = ['Oh well', 'Not bad', '6D', '9P']
-
-   *   var idx = 0
-   *   if (typeof bot == 'undefined') {
-   *     idx = bots.indexOf( change_bot.botname)
-   *     idx++; idx %= bots.length
-   *   }
-   *   else {
-   *     idx = bots.indexOf( bot)
-   *   }
-   *   change_bot.botname = bots[idx]
-   *   $('#descr_bot').html( names[idx] + '<br> Strength: ' + strengths[idx] + '<br>')
-   *   $('#img_bot').attr( 'src', images[idx])
-   *   activate_bot('off')
-   * } // change_bot()
-   * change_bot.botname = 'fry'
-
-   * const OPENING_RANDOMNESS = 0.33
-   * const ENDGAME_RANDOMNESS = 0
-   * const FARNSWORTH_RANDOMNESS = 0 // 6D
-   * const FARNSWORTH_PLAYOUTS = 32
-   * const BENDER_RANDOMNESS = 0 // 0.15
-   * const BENDER_PLAYOUTS = 1
-   * const FRY_RANDOMNESS = 0.15 // 0.12 // 0.13 // kyu
-   */
 
   //---------------------------
   function log_event( bot) {
@@ -814,36 +774,72 @@ function main( JGO, axutil, p_options) {
   // Score the current position with katago.
   //-------------------------------------------
   function score_position() {
+    const POINT_THRESH = 0.7
+    const SCORE_THRESH = 300
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
         score_position.probs = data.probs
 			  score_position.active = true
-			  //var node = g_jrecord.createNode( true)
         var bsum = 0
         var wsum = 0
+        var wpoints = 0
+        var bpoints = 0
         for (const [idx, prob] of data.probs.entries()) {
-          //var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
-          //var col = (idx % BOARD_SIZE) + 1
-			    //var coord = rc2jcoord( row, col)
-          if (prob < -0.7) {
-				    //node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
-            wsum += 1
+          if (prob < -POINT_THRESH) {
+            wpoints += 1
 			    }
-          else if (prob > 0.7) {
-				    //node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
-            bsum += 1
+          else if (prob > POINT_THRESH) {
+            bpoints += 1
 			    }
+          if (prob < 0) {
+            wsum += Math.abs(prob)
+          }
+          else {
+            bsum += Math.abs(prob)
+          }
         } // for
-        draw_estimate( data.probs)
-			  var diff = Math.abs( bsum - wsum)
-			  var rstr = `W+${diff} <br>(before komi and handicap)`
-			  if (bsum >= wsum) { rstr = `B+${diff}  <br>(before komi and handicap)` }
-			  $('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
+        wsum = Math.trunc( wsum + 0.5)
+        bsum = Math.trunc( bsum + 0.5)
+        if (wsum + bsum > SCORE_THRESH) {
+          draw_score( data.probs, POINT_THRESH)
+          wpoints += g_handi
+          wpoints += g_komi
+			    var diff = Math.abs( bpoints - wpoints)
+			    var rstr = `W+${diff} <br>(after komi and handicap)`
+			    if (bpoints >= wpoints) { rstr = `B+${diff}  <br>(after komi and handicap)` }
+			    $('#status').html( `B:${bpoints} &nbsp; W:${wpoints} &nbsp; ${rstr}`)
+        }
+        else {
+          draw_estimate( data.probs)
+          wsum += g_handi
+          wsum += g_komi
+			    var diff = Math.abs( bsum - wsum)
+			    var rstr = `W+${diff} <br>(after komi and handicap)`
+			    if (bsum >= wsum) { rstr = `B+${diff}  <br>(after komi and handicap)` }
+			    $('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
+        }
 			} // (data) =>
 		) // hit_endpoint()
   } // score_position()
   score_position.active = false
   score_position.probs = []
+
+  // Draw black and white squares with alpha representing certainty
+  //------------------------------------------------------------------
+  function draw_score( probs, thresh) {
+    var node = g_jrecord.createNode( true)
+    for (const [idx, prob] of probs.entries()) {
+      var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
+      var col = (idx % BOARD_SIZE) + 1
+			var coord = rc2jcoord( row, col)
+      if (prob < -thresh) { // white
+				node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
+      } // for
+      else if (prob > thresh) { // black
+				node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
+      } // for
+    } // for
+  } // draw_score()
 
   // Draw black and white squares with alpha representing certainty
   //------------------------------------------------------------------

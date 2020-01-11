@@ -185,6 +185,7 @@ class AhauxUtils
     else if (url == 'cancel') { this.hit_endpoint.waiting = false; return }
     else if (this.hit_endpoint.waiting) { return false; }
 
+    this.hit_endpoint.request_id = ''
     url += '?tt=' + Math.random() // prevent caching
     if ('config' in args) {
       this.hit_endpoint.request_id = Math.random() + ''
@@ -202,16 +203,17 @@ class AhauxUtils
     ).then( (resp) => {
       resp.json().then( (resp) => {
         if (!this.hit_endpoint.waiting) {
-	  console.log( 'not waiting')
+	        console.log( 'not waiting')
           return
         }
         if ('request_id' in resp) {
-	  //console.log( 'req id: ' + resp.request_id + ' ' + this.hit_endpoint.request_id)
+	        //console.log( 'req id: ' + resp.request_id + ' ' + this.hit_endpoint.request_id)
           if (resp.request_id != this.hit_endpoint.request_id) {
-	    return
-	  }
-	}
-	this.hit_endpoint.waiting = false
+            debugger
+	          return
+	        }
+	      }
+	      this.hit_endpoint.waiting = false
         completion( resp)
       }) }
     ).catch(
