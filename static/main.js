@@ -78,7 +78,8 @@ function main( JGO, axutil, p_options) {
       $('#lb_komi').html( 'Komi: ' + g_komi)
       reset_game();
       set_emoji();
-      activate_bot('off');
+      activate_bot( 'on')
+      botmove_if_active()
       $('#status').html( '&nbsp;')
     })
   } // set_dropdown_handlers()
@@ -213,7 +214,7 @@ function main( JGO, axutil, p_options) {
       var moves = rec.join('')
       probs = probs.join(',')
       if (moves.length == 0) { return }
-      var url = '/save-sgf?q=' + Math.random() + '&moves=' + moves + '&probs=' + probs
+      var url = '/save-sgf?q=' + Math.random() + '&komi=' + g_komi + '&moves=' + moves + '&probs=' + probs
       window.location.href = url
     })
 
@@ -282,6 +283,7 @@ function main( JGO, axutil, p_options) {
       axutil.upload_file( '/sgf2list', myfile, (response) => {
         var res = response.result
         var moves = res.moves
+        $('#lb_komi').html( 'Komi: ' + res.komi)
         set_emoji()
         replay_move_list( moves)
 	      if ('probs' in res) {
@@ -686,6 +688,7 @@ function main( JGO, axutil, p_options) {
     if (var_button_state() == 'off') { // don't save if in variation
       localStorage.setItem('record', JSON.stringify( g_record))
       localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
+      localStorage.setItem('komi', JSON.stringify( g_komi))
       //localStorage.setItem('bot', change_bot.botname)
     }
   } // save_state()
@@ -701,6 +704,8 @@ function main( JGO, axutil, p_options) {
     if (localStorage.getItem('complete_record') === 'null') { return }
     g_record = JSON.parse( localStorage.getItem('record'))
     g_complete_record = JSON.parse( localStorage.getItem('complete_record'))
+    g_komi = JSON.parse( localStorage.getItem('komi'))
+    $('#lb_komi').html( 'Komi: ' + g_komi)
     goto_move( g_record.length)
   }
 

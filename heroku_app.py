@@ -155,6 +155,7 @@ def sgf2list():
 def save_sgf():
     probs = request.args.get( 'probs', [])
     probs = probs.split(',')
+    komi = request.args.get( 'komi')
     moves = request.args.get( 'moves')
     movearr = []
     m = ''
@@ -165,7 +166,7 @@ def save_sgf():
         else:
             m += c
     if m: movearr.append(m)
-    result = moves2sgf( movearr, probs)
+    result = moves2sgf( movearr, probs, komi)
     fname = uuid.uuid4().hex[:7] + '.sgf'
     fh = BytesIO( result.encode('utf8'))
     resp = send_file( fh, as_attachment=True, attachment_filename=fname)
@@ -185,11 +186,12 @@ def fwd_to_katago( endpoint, args):
 
 # Convert a list of moves like ['Q16',...] to sgf
 #---------------------------------------------------
-def moves2sgf( moves, probs):
+def moves2sgf( moves, probs, komi):
     sgf = '(;FF[4]SZ[19]\n'
     sgf += 'SO[katago-one-playout.herokuapp.com]\n'
     dtstr = datetime.now().strftime('%Y-%m-%d')
     sgf += 'DT[%s]\n' % dtstr
+    sgf += 'KM[%s]\n' % komi
 
     movestr = ''
     result = ''
