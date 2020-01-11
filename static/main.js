@@ -823,16 +823,16 @@ function main( JGO, axutil, p_options) {
         var bsum = 0
         var wsum = 0
         for (const [idx, prob] of data.probs.entries()) {
-          var row = Math.trunc( idx / BOARD_SIZE) + 1
+          var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
           var col = (idx % BOARD_SIZE) + 1
 			    var coord = rc2jcoord( row, col)
-          if (prob < -0.95) {
-				    node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
-            bsum += 1
-			    }
-          else if (prob > 0.95) {
+          if (prob < -0.7) {
 				    node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
             wsum += 1
+			    }
+          else if (prob > 0.7) {
+				    node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
+            bsum += 1
 			    }
         }
 			  /* for (var dpoint of data.territory.dame_points) {
