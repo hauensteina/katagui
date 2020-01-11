@@ -75,6 +75,7 @@ function main( JGO, axutil, p_options) {
     $('#handi_9').click( function() { g_handi = 9; $('#handi_menu').html('9'); g_komi = 0.5;  $('#komi_menu').html('0.5') })
 
     $('#game_start_save').click( function() {
+      $('#lb_komi').html( 'Komi: ' + g_komi)
       reset_game();
       set_emoji();
       activate_bot('off');
@@ -451,8 +452,8 @@ function main( JGO, axutil, p_options) {
           return
 			  }
 			  else if ( (!handle_variation.var_backup) && (g_record.length > 100) && ( // do not resign in variation or too early
-          (handi < 3 && botprob < 0.01) ||
-          (handi < 2 && botprob < 0.02) ||
+          (g_handi < 3 && botprob < 0.01) ||
+          (g_handi < 2 && botprob < 0.02) ||
           (botprob < 0.001))
         )
         {
