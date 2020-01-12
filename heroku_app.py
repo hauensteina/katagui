@@ -61,7 +61,10 @@ def select_move( bot_name):
     endpoint = 'select-move/' + bot_name
     args = request.json
     res = fwd_to_katago( endpoint, args)
-    return jsonify( res)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move error: %s' % res)
 
 @app.route('/score/<bot_name>', methods=['POST'])
 # Forward score to the katago server
