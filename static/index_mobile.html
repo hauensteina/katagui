@@ -266,55 +266,56 @@
 
     <!-- Modal dialog to pick komi and handicap -->
     <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+      <!-- <div class='modal-dialog mw-100 w-75' role='document'> -->
       <div class='modal-dialog' role='document'>
         <div class='modal-content'>
           <div class='modal-header'>
-            <h5 class='modal-title' id='komi_handi_heading'>New Game</h5>
+            <h5 class='modal-title' id='komi_handi_heading' style='font-size:30pt'>New Game</h5>
             <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
               <span aria-hidden='true'>&times;</span>
             </button>
           </div>
           <div class='modal-body'>
             <table>
-              <tr><td>Handicap</td><td>&nbsp;&nbsp;</td><td>Komi</td></tr>
+              <tr><td style='font-size:30pt'>Handicap</td><td>&nbsp;&nbsp;</td><td style='font-size:30pt'>Komi</td></tr>
               <tr>
                 <td>
                   <div class='dropdown'>
-                    <button class='btn btn-secondary dropdown-toggle' type='button' id='handi_menu'
-                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                    <button style='font-size:30pt' class='btn btn-secondary btn-lg dropdown-toggle' type='button' id='handi_menu'
+                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >
                       Handicap
                     </button>
                     <div class='dropdown-menu' aria-labelledby='handi_menu'>
-                      <a id='handi_0' class='dropdown-item'>0</a>
-                      <a id='handi_2' class='dropdown-item'>2</a>
-                      <a id='handi_3' class='dropdown-item'>3</a>
-                      <a id='handi_4' class='dropdown-item'>4</a>
-                      <a id='handi_5' class='dropdown-item'>5</a>
-                      <a id='handi_6' class='dropdown-item'>6</a>
-                      <a id='handi_7' class='dropdown-item'>7</a>
-                      <a id='handi_8' class='dropdown-item'>8</a>
-                      <a id='handi_9' class='dropdown-item'>9</a>
+                      <a id='handi_0' class='dropdown-item' style='font-size:30pt'>0</a>
+                      <a id='handi_2' class='dropdown-item' style='font-size:30pt'>2</a>
+                      <a id='handi_3' class='dropdown-item' style='font-size:30pt'>3</a>
+                      <a id='handi_4' class='dropdown-item' style='font-size:30pt'>4</a>
+                      <a id='handi_5' class='dropdown-item' style='font-size:30pt'>5</a>
+                      <a id='handi_6' class='dropdown-item' style='font-size:30pt'>6</a>
+                      <a id='handi_7' class='dropdown-item' style='font-size:30pt'>7</a>
+                      <a id='handi_8' class='dropdown-item' style='font-size:30pt'>8</a>
+                      <a id='handi_9' class='dropdown-item' style='font-size:30pt'>9</a>
                     </div>
                   </div>
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td>
                   <div class='dropdown'>
-                    <button class='btn btn-secondary dropdown-toggle' type='button' id='komi_menu'
-                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                    <button  style='font-size:30pt'class='btn btn-secondary btn-lg dropdown-toggle' type='button' id='komi_menu'
+                             data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                       Komi
                     </button>
                     <div class='dropdown-menu' aria-labelledby='komi_menu'>
-                      <a id='komi_m75' class='dropdown-item'>-7.5</a>
-                      <a id='komi_m55' class='dropdown-item' href='#'>-5.5</a>
-                      <a id='komi_m35' class='dropdown-item' href='#'>-3.5</a>
-                      <a id='komi_m15' class='dropdown-item' href='#'>-1.5</a>
-                      <a id='komi_m05' class='dropdown-item' href='#'>-0.5</a>
-                      <a id='komi_05' class='dropdown-item' href='#'>&nbsp;0.5</a>
-                      <a id='komi_15' class='dropdown-item' href='#'>&nbsp;1.5</a>
-                      <a id='komi_35' class='dropdown-item' href='#'>&nbsp;3.5</a>
-                      <a id='komi_55' class='dropdown-item' href='#'>&nbsp;5.5</a>
-                      <a id='komi_75' class='dropdown-item' href='#'>&nbsp;7.5</a>
+                      <a id='komi_m75' class='dropdown-item' style='font-size:30pt'>-7.5</a>
+                      <a id='komi_m55' class='dropdown-item' style='font-size:30pt' href='#'>-5.5</a>
+                      <a id='komi_m35' class='dropdown-item' style='font-size:30pt' href='#'>-3.5</a>
+                      <a id='komi_m15' class='dropdown-item' style='font-size:30pt' href='#'>-1.5</a>
+                      <a id='komi_m05' class='dropdown-item' style='font-size:30pt' href='#'>-0.5</a>
+                      <a id='komi_05' class='dropdown-item' style='font-size:30pt' href='#'>&nbsp;0.5</a>
+                      <a id='komi_15' class='dropdown-item' style='font-size:30pt' href='#'>&nbsp;1.5</a>
+                      <a id='komi_35' class='dropdown-item' style='font-size:30pt' href='#'>&nbsp;3.5</a>
+                      <a id='komi_55' class='dropdown-item' style='font-size:30pt' href='#'>&nbsp;5.5</a>
+                      <a id='komi_75' class='dropdown-item' style='font-size:30pt' href='#'>&nbsp;7.5</a>
                     </div>
                   </div>
                 </td>
@@ -323,7 +324,7 @@
           </div>
           <div class='modal-footer'>
             <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
-            <button id='game_start_save' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
+            <button  style='font-size:30pt' id='game_start_save' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
           </div>
         </div>
       </div>
