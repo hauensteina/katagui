@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 
 <script type='text/javascript'>
- /* Filename: leela-one-playout/help.html
+ /* Filename: katago-gui/help_mobile.html
   * Author: AHN
-  * Creation Date: June, 2019
+  * Creation Date: Jan, 2020
   */
 </script>
 
@@ -47,40 +47,32 @@
       <tr><td>
         <br>
         <ol style='max-width:700px'>
-          <li>Choose a bot with the Change button at the top</li>
-          <li>Click on the board to place a stone</li>
-          <li>Click Play</li>
-          <li> Goto 2</li>
+          <li>Click New Game</li>
+          <li>Choose Komi and Handicap</li>
+          <li>Go!</li>
         </ol>
 
         <ul style='max-width:700px'>
-          <li><strong>Changes</strong> &mdash; Fry is now stronger, and so is Bender. See <i>The Bots</i> below. </li>
-            <li><strong>The Bots</strong> &mdash; Choose between Fry, Bender, Prof. Farnsworth, and Leela.
-              Leela is unbeatable, and Farnsworth is very strong. You might want to try Fry or Bender.
-              Details:
-              Leela does 256 playouts, Farnsworth does 32 playouts.
-              Bender does only one playout and thus simply plays whatever the network suggests.
-              Fry also does only one, with randomness added to weaken him further.
-            </li>
-            <li><strong>What Would Leela Do</strong> &mdash; The Best button shows you the best move according to the AI.
-            Due to the randomness in Leela, the best move could be different from Leela's choice before move 25.
+          <li><strong>The Bot</strong> &mdash;
+            This is KataGo running net g104-b20c256 on 256 playouts.
+            As opposed to Leela, KataGo copes well with large handicaps and
+            can play against variable komi. Try a five stone game!
           </li>
-          <li><strong>Handicap</strong> &mdash; Click on the empty board to place a black stone, click Pass, repeat.
-            Click Play once you have the desired number of handicap stones. The network goes crazy
-            at four or more handicap stones. You want to stick to three or less.
+          <li><strong>Scoring</strong> &mdash; KataGo has a concept of territory. The score button will give you the current
+            KataGo estimate. Late in the game, the estimate is converted to a discrete point count.
+          </li>
+          <li><strong>What Would KatGo Do</strong> &mdash; The Best button shows you the best move according to the AI.
           </li>
           <li><strong>Review</strong> &mdash; Load any sgf file, click First, then keep hitting Next. Look at the Emoji.
           </li>
-          <li><strong>Analysis and Variations</strong> &mdash; Select Leela as the active bot. Click on the Back button to navigate to
-            the position you want to analyze. Click Play repeatedly to see what Leela would do. The app will automatically start a variation.
+          <li><strong>Analysis and Variations</strong> &mdash; Click on the Back button to navigate to
+            the position you want to analyze. Click Play repeatedly to see what KataGo would do. The app will automatically start a variation.
             Click V- to forget the variation.
             Click V+ to forget the game and keep the variation.
           </li>
           <li><strong>Opening</strong> &mdash; You do not have to start with the empty board. Put any opening you like on the board
             before clicking Play.
             You can also preload a game with the Load Sgf button and continue from any point.
-          </li>
-          <li><strong>Komi</strong> &mdash; White always gets 7.5 komi, even in handicap games.
           </li>
         </ul>
       </td></tr>
