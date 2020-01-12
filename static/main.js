@@ -776,7 +776,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------
   function score_position() {
     const POINT_THRESH = 0.7
-    const SCORE_THRESH = 300
+    const SCORE_THRESH = 1000 // disabled 300
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
         score_position.probs = data.probs
