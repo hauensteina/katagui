@@ -649,7 +649,7 @@ function main( JGO, axutil, p_options) {
       localStorage.setItem('record', JSON.stringify( g_record))
       localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
       localStorage.setItem('komi', JSON.stringify( g_komi))
-      //localStorage.setItem('bot', change_bot.botname)
+      localStorage.setItem('bot_active', activate_bot.state)
     }
   } // save_state()
 
@@ -665,6 +665,7 @@ function main( JGO, axutil, p_options) {
     g_record = JSON.parse( localStorage.getItem('record'))
     g_complete_record = JSON.parse( localStorage.getItem('complete_record'))
     g_komi = JSON.parse( localStorage.getItem('komi'))
+    activate_bot.state = localStorage.getItem('bot_active')
     $('#lb_komi').html( 'Komi: ' + g_komi)
     goto_move( g_record.length)
   }
