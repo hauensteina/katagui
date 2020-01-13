@@ -75,26 +75,13 @@ def score( bot_name):
     res = fwd_to_katago( endpoint, args)
     return jsonify( res)
 
-# @app.route('/nnscore', methods=['POST'])
-# # Forward nnscore the katago server
-# #------------------------------------------
-# def nnscore():
-#     endpoint = 'nnscore'
-#     args = request.json
-#     res = fwd_to_katago( endpoint, args)
-#     return jsonify( res)
-
-# @app.route('/histo', methods=['POST'])
-# # Take a bunch of numbers, number of bins, min, max and return a histo.
-# #------------------------------------------------------------------------
-# def histo():
-#     data,nbins,mmin,mmax = request.json
-#     counts,borders = np.histogram( data, nbins, [mmin, mmax])
-#     counts = counts.tolist()
-#     borders = borders.tolist()
-#     centers = [ (borders[i] + borders[i+1]) / 2.0 for i in range(len(borders)-1) ]
-#     res = list(zip( centers, counts))
-#     return jsonify( res)
+@app.route('/slog', methods=['POST'])
+# Log a message
+#----------------------------------------------------
+def slog():
+    msg = request.json.get( 'msg', 'empty_msg')
+    print( 'slog: %s' % msg)
+    return jsonify( {'result': 'ok' })
 
 @app.route('/sgf2list', methods=['POST'])
 # Convert sgf main var to coordinate list of moves

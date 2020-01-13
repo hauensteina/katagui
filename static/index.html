@@ -8,6 +8,24 @@
   */
 </script>
 
+<script type="text/javascript">
+ // Write to the server log
+ //--------------------------
+ function SLOG( msg) {
+   var url = '/slog'
+   args = { 'msg': msg }
+   fetch( url,
+     {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify( args)
+     }
+   )
+ } // SLOG()
+</script>
+
 <script type="text/javascript" src="static/redirection-mobile.js"></script>
 <script type="text/javascript">
  SA.redirection_mobile ({
