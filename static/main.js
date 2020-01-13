@@ -413,7 +413,7 @@ function main( JGO, axutil, p_options) {
 			    $('#status').html( botcol + ' resigned')
           return
 			  }
-			  else if ( (!handle_variation.var_backup) && (g_record.length > 100) && ( // do not resign in variation or too early
+			  else if ( (!handle_variation.var_backup) && (g_record.length > 150) && ( // do not resign in variation or too early
           (g_handi < 3 && botprob < 0.01) ||
           (g_handi < 2 && botprob < 0.02) ||
           (botprob < 0.001))
