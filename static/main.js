@@ -678,7 +678,7 @@ function main( JGO, axutil, p_options) {
   //-----------------------------------------------------
   function get_prob( completion, update_emo, playing) {
     if (activate_bot.state == 'on') {
-      $('#status').html( 'Katago is thinking...')
+      $('#status').html( 'KataGo is thinking...')
     }
     else {
       $('#status').html( '...')
