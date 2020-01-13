@@ -179,7 +179,10 @@
                 </div>
               </div>
               <div class='col-4' style='font-size:30pt;margin:auto'>
-                Play Go Against KataGo <br>
+                <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                       style='font-size:40pt'>
+                  New Game
+                </label><br>
                 <a id='help' href='static/help_mobile.html' style='font-size:24pt;text-align:right;color:red'>READ THE MANUAL</a>
                 <!-- <a id='help' href='static/help_mobile.html' style='font-size:24pt;text-align:right;color:red'>RECENT CHANGES</a> -->
                 <!-- <div style='color:red'>
@@ -259,7 +262,6 @@
           <div>
             <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>Score</label>
             <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>Save sgf</label>
-            <label id='btn_new' class='btn btn-outline-dark' style='font-size:22pt' data-toggle='modal' data-target='#handiModal'>New Game</label>
           </div>
         </td></tr>
         <!-- Input form for load sgf -->
@@ -363,7 +365,7 @@
     <script type='text/javascript' src='static/large/board.js'></script>
 
     <!-- Entry Point -->
-    <script type='text/javascript' src='static/main.js?v=1.01'></script>
+    <script type='text/javascript' src='static/main.js?v=1.03'></script>
     <script type='text/javascript'>
      $(function () {
        main( JGO, new AhauxUtils( d3, $), {mobile:true} )

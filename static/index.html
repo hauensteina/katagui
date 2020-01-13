@@ -169,7 +169,13 @@
                   <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a> </div>
                 </div>
                 <div class='row'>
-                  <div class='col-12 text-center'> Play Go Against KataGo </div>
+                  <div class='col-12 text-center'>
+                    <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                           style='font-size:11pt'>
+                      New Game
+                    </label>
+
+                  </div>
                 </div>
                 <div class='row'>
                   <div class='col-12 text-center'>
@@ -284,10 +290,6 @@
             </div>
             <div class='row'>
               <div class='col-12'>
-                <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-                       style='font-size:11pt'>
-                  New Game
-                </label>
                 <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>Save sgf</label>
               </div>
             </div>
@@ -315,7 +317,7 @@
         </td>                     <!--right-->
       </tr></table>
 
-      <!-- Modal dialog to pick komi and handicap -->
+    <!-- Modal dialog to pick komi and handicap -->
       <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
         <div class='modal-dialog' role='document'>
           <div class='modal-content'>
