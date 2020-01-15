@@ -533,7 +533,7 @@ function main( JGO, axutil, p_options) {
     goto_first_move()
     for (var move_prob of mlist) {
       if (typeof move_prob == 'string') { // pass or resign
-        move_prob = { 'mv':move_prob, 'p':0.0, 'agent':'' }
+        move_prob = { 'mv':move_prob, 'p':0.001, 'agent':'' }
       }
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
