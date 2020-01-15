@@ -136,10 +136,6 @@ SA.redirection_mobile = function(configuration) {
 		isUAMobile = true
   }
 
-  if (window.innerHeight > window.innerWidth) {
-		isUAMobile = true
-  }
-
 	// Check that User Agent is mobile, cookie is not set or value in the sessionStorage not present
 	if ((isUATablet || isUAMobile) && !(isCookieSet || isSessionStorage)) {
 
