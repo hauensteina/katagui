@@ -103,10 +103,6 @@ SA.redirection_mobile = function(configuration) {
 		isUAMobile = true;
 	}
 
-  if (typeof window.orientation !== "undefined") {
-		isUAMobile = true
-  }
-
 	// Check if the referrer was a mobile page (probably the user clicked "Go to full site") or in the
 	// querystring there is a parameter to avoid the redirection such as "?noredireciton=true"
 	// (in that case we need to set a variable in the sessionStorage or in the cookie)
@@ -135,6 +131,10 @@ SA.redirection_mobile = function(configuration) {
 		isUATablet = true;
 		isUAMobile = false;
 	}
+
+  if (typeof window.orientation !== "undefined") {
+		isUAMobile = true
+  }
 
 	// Check that User Agent is mobile, cookie is not set or value in the sessionStorage not present
 	if ((isUATablet || isUAMobile) && !(isCookieSet || isSessionStorage)) {
