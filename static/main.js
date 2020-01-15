@@ -87,7 +87,7 @@ function main( JGO, axutil, p_options) {
 
   //----------------------------------------
   function board_click_callback( coord) {
-    SLOG(navigator.userAgent.toLowerCase())
+    //SLOG(navigator.userAgent.toLowerCase())
 		if (score_position.active) {
 			goto_move( g_record.length)
 			score_position.active = false
