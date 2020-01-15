@@ -1,4 +1,5 @@
 
+
 /*
  * Main entry point for katago-gui
  * AHN Jan 2020
@@ -518,9 +519,9 @@ function main( JGO, axutil, p_options) {
     var hstones =  HANDISTONES[g_handi]
     for (const [idx,s] of hstones.entries()) {
       if (idx > 0) {
-        g_complete_record.push( {'mv':'pass', 'p':0.0, 'agent':''} )
+        g_complete_record.push( {'mv':'pass', 'p':0.001, 'agent':''} )
       }
-      g_complete_record.push( {'mv':s, 'p':0.0, 'agent':''} )
+      g_complete_record.push( {'mv':s, 'p':0.001, 'agent':''} )
     } // reset_game()
     goto_move(1000)
   } // reset_game()
