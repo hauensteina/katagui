@@ -121,6 +121,28 @@ function main( JGO, axutil, p_options) {
 		get_prob( function() { botmove_if_active() }, settings('show_emoji'), playing )
   } // board_click_callback()
 
+  // Black moves at the beginning are handicap
+  //--------------------------------------------
+  function get_handicap() {
+    g_handi = 0
+    var handi = 0
+    for (var i=0; i < g_complete_record.length; i++) {
+      if (i > 20) { break }
+      if (i%2) { // white
+        if (g_complete_record[i].mv != 'pass') {
+          break
+        }
+      }
+      else { // black
+        handi += 1
+      }
+    }
+    if (handi > 1) {
+      g_handi = handi
+    }
+    return g_handi
+  } // get_handicap()
+
   //-------------------------
   function setup_jgo() {
     g_jsetup.setOptions({stars: {points:9}})
@@ -300,6 +322,7 @@ function main( JGO, axutil, p_options) {
         g_komi = res.komi
         save_state()
         // Game Info
+        get_handicap()
         $('#game_info').html( `B:${res.pb} &nbsp;&nbsp; W:${res.pw} &nbsp;&nbsp; Result:${res.RE} &nbsp;&nbsp; Komi:${g_komi}`)
         $('#fname').html( res.fname)
       })
@@ -782,6 +805,7 @@ function main( JGO, axutil, p_options) {
   function score_position() {
     const POINT_THRESH = 0.7
     const SCORE_THRESH = 1000 // disabled 300
+    get_handicap()
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
         score_position.probs = data.probs
