@@ -228,7 +228,7 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_pass').click( () => {
       g_complete_record = g_record.slice()
-      g_complete_record.push( {'mv':'pass', 'p':0.0, 'agent':'human'} )
+      g_complete_record.push( {'mv':'pass', 'p':0.001, 'agent':'human'} )
       goto_move( g_complete_record.length)
       botmove_if_active()
     })
