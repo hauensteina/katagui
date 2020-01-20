@@ -1,7 +1,6 @@
-A front end to play a bot via an API.
-Typically, leela zero on one playout.
+A front end to play aginst KataGo via a REST API.
 
-The back end is https://ahaux.com/leela_server/ .
+The back end is https://ahaux.com/katago_server/ .
 
 
 
