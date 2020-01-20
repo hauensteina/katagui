@@ -804,7 +804,6 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------
   function score_position() {
     const POINT_THRESH = 0.7
-    const SCORE_THRESH = 1000 // disabled 300
     get_handicap()
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
@@ -812,15 +811,7 @@ function main( JGO, axutil, p_options) {
 			  score_position.active = true
         var bsum = 0
         var wsum = 0
-        var wpoints = 0
-        var bpoints = 0
         for (const [idx, prob] of data.probs.entries()) {
-          if (prob < -POINT_THRESH) {
-            wpoints += 1
-			    }
-          else if (prob > POINT_THRESH) {
-            bpoints += 1
-			    }
           if (prob < 0) {
             wsum += Math.abs(prob)
           }
@@ -830,24 +821,13 @@ function main( JGO, axutil, p_options) {
         } // for
         wsum = Math.trunc( wsum + 0.5)
         bsum = Math.trunc( bsum + 0.5)
-        if (wsum + bsum > SCORE_THRESH) {
-          draw_score( data.probs, POINT_THRESH)
-          wpoints += g_handi
-          wpoints += g_komi
-			    var diff = Math.abs( bpoints - wpoints)
-			    var rstr = `W+${diff} <br>(after komi and handicap)`
-			    if (bpoints >= wpoints) { rstr = `B+${diff}  <br>(after komi and handicap)` }
-			    $('#status').html( `B:${bpoints} &nbsp; W:${wpoints} &nbsp; ${rstr}`)
-        }
-        else {
-          draw_estimate( data.probs)
-          wsum += g_handi
-          wsum += g_komi
-			    var diff = Math.abs( bsum - wsum)
-			    var rstr = `W+${diff} <br>(after komi and handicap)`
-			    if (bsum >= wsum) { rstr = `B+${diff}  <br>(after komi and handicap)` }
-			    $('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
-        }
+        draw_estimate( data.probs)
+        wsum += g_handi
+        wsum += g_komi
+			  var diff = Math.abs( bsum - wsum)
+			  var rstr = `W+${diff} <br>(after komi and handicap)`
+			  if (bsum >= wsum) { rstr = `B+${diff}  <br>(after komi and handicap)` }
+			  $('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
 			} // (data) =>
 		) // hit_endpoint()
   } // score_position()
