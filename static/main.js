@@ -767,10 +767,11 @@ function main( JGO, axutil, p_options) {
       if (n % 2) { // we are white
         p = 1.0 - p; pp = 1.0 - pp
       }
-      if (p < 0.05) { set_emoji() } // empty
+      var delta = pp - p
+      if (p < 0.05 && delta < 0.06) { set_emoji() } // empty
       else if (p > 0.95) { set_emoji(0.0) } // happy
       else if (pp == 0) { set_emoji() } // empty
-      else { set_emoji( pp - p) }
+      else { set_emoji( delta) }
     }
     else {
       set_emoji()
