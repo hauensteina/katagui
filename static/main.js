@@ -258,9 +258,9 @@ function main( JGO, axutil, p_options) {
       } else {
 	      goto_move( g_record.length - 1)
       }
-      if (activate_bot.state == 'on') {
+      //if (activate_bot.state == 'on') {
         g_complete_record = g_record
-      }
+      //}
       show_movenum()
     })
 
