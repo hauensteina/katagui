@@ -257,7 +257,7 @@ function main( JGO, axutil, p_options) {
 	      goto_move( g_record.length - 1)
       }
       //if (activate_bot.state == 'on') {
-        g_complete_record = g_record
+      g_complete_record = g_record
       //}
       show_movenum()
     })
@@ -652,6 +652,7 @@ function main( JGO, axutil, p_options) {
        * $('#btn_accept_var').addClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black');
       /* $('#btn_accept_var').css('color', 'black'); */
+      $('#btn_clear_var').css('visibility', 'visible');
     }
     else {
       $('#btn_clear_var').addClass('disabled')
@@ -660,6 +661,7 @@ function main( JGO, axutil, p_options) {
        * $('#btn_accept_var').removeClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black');
       /* $('#btn_accept_var').css('color', 'black'); */
+      $('#btn_clear_var').css('visibility', 'hidden');
     }
   } // var_button_state()
 
