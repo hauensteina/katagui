@@ -43,8 +43,6 @@ function main( JGO, axutil, p_options) {
   var g_komi = 7.5
   var g_handi = 0
 
-  //$('#opt_auto').prop('checked', true)
-
   //================
   // UI Callbacks
   //================
@@ -83,7 +81,7 @@ function main( JGO, axutil, p_options) {
       reset_game();
       set_emoji();
       activate_bot( 'on')
-      botmove_if_active()
+      if (g_handi > 1) { botmove_if_active() }
       $('#status').html( '&nbsp;')
     })
   } // set_dropdown_handlers()
@@ -536,7 +534,6 @@ function main( JGO, axutil, p_options) {
   //-----------------------
   function reset_game() {
     handle_variation( 'clear')
-    //set_emoji()
     g_complete_record = []
     g_record = []
     goto_first_move()
@@ -547,7 +544,7 @@ function main( JGO, axutil, p_options) {
         g_complete_record.push( {'mv':'pass', 'p':0.001, 'agent':''} )
       }
       g_complete_record.push( {'mv':s, 'p':0.001, 'agent':''} )
-    } // reset_game()
+    }
     goto_move(1000)
   } // reset_game()
 
