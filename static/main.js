@@ -652,7 +652,7 @@ function main( JGO, axutil, p_options) {
        * $('#btn_accept_var').addClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black');
       /* $('#btn_accept_var').css('color', 'black'); */
-      $('#btn_clear_var').css('visibility', 'visible');
+      //$('#btn_clear_var').css('visibility', 'visible');
     }
     else {
       $('#btn_clear_var').addClass('disabled')
@@ -661,7 +661,7 @@ function main( JGO, axutil, p_options) {
        * $('#btn_accept_var').removeClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black');
       /* $('#btn_accept_var').css('color', 'black'); */
-      $('#btn_clear_var').css('visibility', 'hidden');
+      //$('#btn_clear_var').css('visibility', 'hidden');
     }
   } // var_button_state()
 

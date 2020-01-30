@@ -223,31 +223,29 @@
                 <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>Best</label>
                 &nbsp;&nbsp;
               </td><td>
-                <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:40pt'>Score</label>
+                <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
+                &nbsp;&nbsp;
+              </td><td>
+                <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
               </td>
             </tr></table>
           </div>
         </td></tr>
         <!-- Nav Buttons -->
-        <tr><td> &nbsp; </td></tr>
-        <tr style='transform:translate(0,-20px)'><td>
-          <div>
-            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:40pt'>Pass</label>
-            &nbsp;&nbsp;
-            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
-            &nbsp;&nbsp;
-            <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
-            <!-- &nbsp;&nbsp; &nbsp;&nbsp;
-                 <label id='btn_clear_var' class='btn btn-success' style='font-size:40pt'>V-&nbsp;</label>
-                 &nbsp;&nbsp;
-                 <label id='btn_accept_var' class='btn btn-danger' style='font-size:40pt'>V+</label> -->
-          </div>
-        </td></tr>
+        <!-- <tr><td> &nbsp; </td></tr>
+             <tr style='transform:translate(0,-20px)'><td>
+             <div>
+             &nbsp;&nbsp;
+             <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
+             &nbsp;&nbsp;
+             <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
+             </div>
+             </td></tr> -->
         <!-- Back to main line button -->
-        <tr><td> &nbsp; </td></tr>
         <tr><td>
           <div>
             <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>Back to Main Line</label>
+            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>Score</label>
           </div>
         </td></tr>
         <!-- More Nav Buttons -->
@@ -264,6 +262,7 @@
         <tr><td> &nbsp; </td></tr>
         <tr><td>
           <div>
+            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>Pass</label>
             <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>Save sgf</label>
           </div>
         </td></tr>
@@ -367,7 +366,7 @@
     <script type='text/javascript' src='static/large/board.js'></script>
 
     <!-- Entry Point -->
-    <script type='text/javascript' src='static/main.js?v=1.19'></script>
+    <script type='text/javascript' src='static/main.js?v=1.20'></script>
     <script type='text/javascript'>
      $(function () {
        main( JGO, new AhauxUtils( d3, $), {mobile:true} )
