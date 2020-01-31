@@ -32,7 +32,7 @@ function main( JGO, axutil, p_options) {
 
   var g_jrecord = new JGO.Record(BOARD_SIZE)
   var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
-  var g_player = null
+  //var g_player = null
   var g_ko = null // ko coordinate
   var g_last_move = null // last move coordinate
   var g_record = []
@@ -85,6 +85,15 @@ function main( JGO, axutil, p_options) {
       $('#status').html( '&nbsp;')
     })
   } // set_dropdown_handlers()
+
+  // BLACK or WHITE depending on length of g_record
+  //-------------------------------------------------
+  function turn() {
+    if (g_record.length % 2) {
+      return JGO.WHITE
+    }
+    return JGO.BLACK
+  } // turn()
 
   //----------------------------------------
   function board_click_callback( coord) {
@@ -165,7 +174,7 @@ function main( JGO, axutil, p_options) {
               $('#status').html( score_position.probs[idx])
             }
             else {
-					    hover( coord, g_player)
+					    hover( coord, turn())
             }
 					}
 				) // mousemove
@@ -214,7 +223,7 @@ function main( JGO, axutil, p_options) {
         var botCoord = string2jcoord( data.bot_move)
         var jboard = g_jrecord.jboard
         if (botCoord != 'pass' && botCoord != 'resign') {
-          hover( botCoord, g_player, {force:true})
+          hover( botCoord, turn(), {force:true})
           setTimeout( () => { hover() }, 1000)
         }
       })
@@ -427,7 +436,7 @@ function main( JGO, axutil, p_options) {
 			  hover() // The board thinks the hover stone is actually there. Clear it.
 
 			  var botprob = data.diagnostics.winprob; var botcol = 'Black'
-			  if (g_player == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
+			  if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
 			  if (data.bot_move == 'pass') {
 			    alert( 'The bot passes. Click on the Score button.')
@@ -451,11 +460,11 @@ function main( JGO, axutil, p_options) {
 			    maybe_start_var()
 			    var botCoord = string2jcoord( data.bot_move)
 			  }
-			  show_move( g_player, botCoord, 0.0, 'bot')
+			  show_move( turn(), botCoord, 0.0, 'bot')
 			  g_complete_record = g_record.slice()
 			  replay_move_list( g_record)
 			  show_movenum()
-			  g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
+			  //g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
 			  const show_emoji = false
 			  const playing = true
 			  get_prob( function() {}, show_emoji, playing )
@@ -522,7 +531,7 @@ function main( JGO, axutil, p_options) {
 
   //------------------------
   function goto_first_move() {
-    g_player = JGO.BLACK
+    //g_player = JGO.BLACK
     g_ko = false
     g_last_move = false
     g_record = []
@@ -559,8 +568,8 @@ function main( JGO, axutil, p_options) {
       }
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
-      show_move( g_player, coord, move_prob.p, move_prob.agent)
-      g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
+      show_move( turn(), coord, move_prob.p, move_prob.agent)
+      //g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
     }
     hover( hover.coord) // restore hover
     show_movenum()
@@ -934,7 +943,7 @@ function main( JGO, axutil, p_options) {
     if (!opts.force) {
       if (p_options.mobile && col) { return }
     }
-    var hcol = col ? col: g_player
+    var hcol = col ? col: turn()
     var jboard = g_jrecord.jboard
     if (jboard.getType( coord) == JGO.WHITE || jboard.getType( coord) == JGO.BLACK) { return }
     if (coord) {
