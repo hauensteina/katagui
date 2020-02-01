@@ -209,7 +209,6 @@ class AhauxUtils
         if ('request_id' in resp) {
 	        //console.log( 'req id: ' + resp.request_id + ' ' + this.hit_endpoint.request_id)
           if (resp.request_id != this.hit_endpoint.request_id) {
-            debugger
 	          return
 	        }
 	      }

@@ -130,26 +130,33 @@ def sgf2list():
         if color is not None:
             if move_tuple is not None:
                 p = '0.00'
+                score = '0.0'
                 props = item.get_raw_property_map()
                 props = { key.decode(): props[key] for key in props.keys() }
                 if 'C' in props:
                     com = props['C'][0].decode()
                     if com.startswith('P:'):
-                        p = com.split(':')[1]
+                        parts = com.split(' ')
+                        left = parts[0]
+                        p = left.split(':')[1]
+                        if len(parts) > 1 and 'S:' in com:
+                            right = parts[1]
+                            score = right.split(':')[1]
                 turn = 'w' if len(moves) % 2 else 'b'
-                if color != turn: moves.append( {'mv':'pass', 'p':'0.00'})
-                moves.append( {'mv':move2coords( move_tuple), 'p':p })
+                if color != turn: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0'})
+                moves.append( {'mv':move2coords( move_tuple), 'p':p, 'score':score })
             else:
-                moves.append( {'mv':'pass', 'p':'0.00'})
+                moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0'})
         # Deal with handicap stones as individual nodes
         elif item.get_setup_stones()[0] and not handicap_setup_done:
             move = list( item.get_setup_stones()[0])[0]
-            if moves: moves.append( {'mv':'pass', 'p':'0.00'})
-            moves.append( {'mv':move2coords( move), 'p':'0.00' })
+            if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0'})
+            moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.0' })
 
     probs = [mp['p'] for mp in moves]
+    scores = [mp['score'] for mp in moves]
     moves = [mp['mv'] for mp in moves]
-    return jsonify( {'result': {'moves':moves, 'probs':probs, 'pb':player_black, 'pw':player_white,
+    return jsonify( {'result': {'moves':moves, 'probs':probs, 'scores':scores, 'pb':player_black, 'pw':player_white,
                                 'winner':winner, 'komi':komi, 'fname':fname, 'RE':RE} } )
 
 @app.route('/save-sgf', methods=['GET'])
@@ -159,6 +166,8 @@ def sgf2list():
 def save_sgf():
     probs = request.args.get( 'probs', [])
     probs = probs.split(',')
+    scores = request.args.get( 'scores', [])
+    scores = scores.split(',')
     komi = request.args.get( 'komi')
     moves = request.args.get( 'moves')
     movearr = []
@@ -170,7 +179,7 @@ def save_sgf():
         else:
             m += c
     if m: movearr.append(m)
-    result = moves2sgf( movearr, probs, komi)
+    result = moves2sgf( movearr, probs, scores, komi)
     fname = uuid.uuid4().hex[:7] + '.sgf'
     fh = BytesIO( result.encode('utf8'))
     resp = send_file( fh, as_attachment=True, attachment_filename=fname)
@@ -190,7 +199,7 @@ def fwd_to_katago( endpoint, args):
 
 # Convert a list of moves like ['Q16',...] to sgf
 #---------------------------------------------------
-def moves2sgf( moves, probs, komi):
+def moves2sgf( moves, probs, scores, komi):
     sgf = '(;FF[4]SZ[19]\n'
     sgf += 'SO[katago-one-playout.herokuapp.com]\n'
     dtstr = datetime.now().strftime('%Y-%m-%d')
@@ -215,7 +224,7 @@ def moves2sgf( moves, probs, komi):
             row_s = 'abcdefghijklmnopqrstuvwxy'[19 - p.row]
             movestr += ';%s[%s%s]' % (color,col_s,row_s)
             if idx < len(probs):
-                movestr += 'C[P:%s]' % probs[idx]
+                movestr += 'C[P:%s S:%s]' % (probs[idx], scores[idx])
         color = othercol
 
     sgf += result

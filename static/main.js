@@ -233,7 +233,9 @@ function main( JGO, axutil, p_options) {
     $('#btn_save').click( () => {
       var rec = moves_only(g_complete_record)
       var probs = probs_only(g_complete_record)
+      var scores = scores_only(g_complete_record)
       for (var i=0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
+      for (var i=0; i < scores.length; i++) { scores[i] = scores[i]?scores[i].toFixed(1):'0.0' }
       // Kludge to manage passes
       for (var i=0; i < rec.length; i++) {
         if (rec[i] == 'pass') { rec[i] = 'A0' }
@@ -241,12 +243,13 @@ function main( JGO, axutil, p_options) {
       var moves = rec.join('')
       probs = probs.join(',')
       if (moves.length == 0) { return }
-      var url = '/save-sgf?q=' + Math.random() + '&komi=' + g_komi + '&moves=' + moves + '&probs=' + probs
+      var url = '/save-sgf?q=' + Math.random() + '&komi=' + g_komi + '&moves=' + moves + '&probs=' + probs + '&scores=' + scores
       window.location.href = url
     })
 
     $('#btn_nnscore').click( () => {
       score_position()
+      show_prob()
       return false
     })
 
@@ -317,6 +320,12 @@ function main( JGO, axutil, p_options) {
 	        var probs = res.probs
 	        for (var i=0; i < moves.length; i++) {
 	          g_record[i].p = parseFloat( probs[i])
+	        }
+	      }
+	      if ('scores' in res) {
+	        var scores = res.scores
+	        for (var i=0; i < moves.length; i++) {
+	          g_record[i].score = parseFloat( scores[i])
 	        }
 	      }
         g_complete_record = g_record.slice()
@@ -494,15 +503,15 @@ function main( JGO, axutil, p_options) {
 
   // Show a move on the board and append it to g_record
   //------------------------------------------------------
-  function show_move(player, coord, prob, agent) {
+  function show_move(player, coord, prob, score, agent) {
     if (coord == 'pass' || coord == 'resign') {
       g_ko = false
-      g_record.push( { 'mv':coord, 'p':prob, 'agent':agent } )
+      g_record.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } )
       return
     }
     var play = g_jrecord.jboard.playMove( coord, player, g_ko)
     if (play.success) {
-      g_record.push( { 'mv':jcoord2string( coord), 'p':prob, 'agent':agent } )
+      g_record.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } )
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
       node.setType( coord, player) // play stone
@@ -568,7 +577,7 @@ function main( JGO, axutil, p_options) {
       }
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
-      show_move( turn(), coord, move_prob.p, move_prob.agent)
+      show_move( turn(), coord, move_prob.p, move_prob.score, move_prob.agent)
       //g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
     }
     hover( hover.coord) // restore hover
@@ -725,6 +734,9 @@ function main( JGO, axutil, p_options) {
 			    var p = parseFloat(data.diagnostics.winprob)
 			    g_record[ g_record.length - 1].p = p // Remember win prob of position
 			    g_complete_record[ g_record.length - 1].p = p
+			    var score = parseFloat(data.diagnostics.score)
+			    g_record[ g_record.length - 1].score = score // Remember score prob of position
+			    g_complete_record[ g_record.length - 1].score = score
 			  }
 			  show_prob( update_emo, playing)
 			  if (completion) { completion(data) }
@@ -745,6 +757,9 @@ function main( JGO, axutil, p_options) {
     var n = g_record.length - 1
     if (n >= 0) {
       var p = g_record[n].p
+      var score = g_record[n].score
+      // 0.8 -> 1.0; 1.3 -> 1.5 etc
+      score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
       if (p == 0) {
         set_emoji(); $('#status').html('')
         return
@@ -752,7 +767,16 @@ function main( JGO, axutil, p_options) {
       if (playing && !settings('show_prob')) {
         $('#status').html('')
       } else {
-        $('#status').html( 'P(B wins): ' + p.toFixed(2))
+        var scorestr = '&nbsp;&nbsp;B+'
+        if (score < 0) {
+          scorestr = '&nbsp;&nbsp;W+'
+        }
+        scorestr += Math.abs(score)
+        var tstr = 'P(B wins): ' + p.toFixed(2)
+        if (g_record[n].score) {
+          tstr += scorestr
+        }
+        $('#status').html(tstr)
       }
       // Show emoji
       if (update_emo) { update_emoji() }
@@ -811,7 +835,7 @@ function main( JGO, axutil, p_options) {
   // Score the current position with katago.
   //-------------------------------------------
   function score_position() {
-    const POINT_THRESH = 0.7
+    //const POINT_THRESH = 0.7
     get_handicap()
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
@@ -835,7 +859,7 @@ function main( JGO, axutil, p_options) {
 			  var diff = Math.abs( bsum - wsum)
 			  var rstr = `W+${diff} <br>(after komi and handicap)`
 			  if (bsum >= wsum) { rstr = `B+${diff}  <br>(after komi and handicap)` }
-			  $('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
+			  //$('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
 			} // (data) =>
 		) // hit_endpoint()
   } // score_position()
@@ -879,6 +903,16 @@ function main( JGO, axutil, p_options) {
   //===============
   // Converters
   //===============
+
+  // Record has tuples (mv,p,score,agent). Turn into a list of score.
+  //------------------------------------------------------------------
+  function scores_only( record) {
+    var res = []
+    for (var move_prob of record) {
+      res.push( move_prob.score)
+    }
+    return res
+  } // scores_only()
 
   // Record has tuples (mv,p,agent). Turn into a list of mv.
   //----------------------------------------------------------
@@ -1002,10 +1036,10 @@ function main( JGO, axutil, p_options) {
     window.onbeforeunload = save_state
   }
 
-  // Save game record once a minute
+  // Save game record once a second
   function statesaver() {
     save_state();
-    setTimeout(statesaver, 60000)
+    setTimeout(statesaver, 1000)
   }
   statesaver()
 
