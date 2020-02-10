@@ -336,6 +336,7 @@ function main( JGO, axutil, p_options) {
         get_handicap()
         $('#game_info').html( `B:${res.pb} &nbsp;&nbsp; W:${res.pw} &nbsp;&nbsp; Result:${res.RE} &nbsp;&nbsp; Komi:${g_komi}`)
         $('#fname').html( res.fname)
+        $('#status').html('')
       })
     }) // $('sgf-file')
   } // set_load_sgf_handler()
