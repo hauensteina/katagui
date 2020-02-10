@@ -309,6 +309,7 @@ function main( JGO, axutil, p_options) {
       var myfile = input.get(0).files[0]
       var numFiles = input.get(0).files ? input.get(0).files.length : 1
       var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
+      handle_variation( 'clear')
       // Call API to get the moves, then replay on the board
       axutil.upload_file( '/sgf2list', myfile, (response) => {
         var res = response.result
@@ -337,7 +338,6 @@ function main( JGO, axutil, p_options) {
         $('#game_info').html( `B:${res.pb} &nbsp;&nbsp; W:${res.pw} &nbsp;&nbsp; Result:${res.RE} &nbsp;&nbsp; Komi:${g_komi}`)
         $('#fname').html( res.fname)
         $('#status').html('')
-        handle_variation( 'clear')
       })
     }) // $('sgf-file')
   } // set_load_sgf_handler()
