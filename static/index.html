@@ -26,11 +26,10 @@
  } // SLOG()
 </script>
 
-<script type="text/javascript" src="static/redirection-mobile.js"></script>
 <script type="text/javascript">
- SA.redirection_mobile ({
-   mobile_url : '/index_mobile'
- })
+ if (window.innerWidth < window.innerHeight) {
+   document.location.href = '/index_mobile'
+ }
 </script>
 
 <html lang='en'>
@@ -397,7 +396,7 @@
       <script type='text/javascript' src='static/small/board.js'></script>
 
       <!-- Entry Point -->
-      <script type='text/javascript' src='static/main.js?v=1.25'></script>
+      <script type='text/javascript' src='static/main.js?v=1.26'></script>
       <script type='text/javascript'>
        $(function () {
          $('[data-toggle="tooltip"]').tooltip()
