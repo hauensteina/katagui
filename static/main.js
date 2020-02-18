@@ -450,10 +450,10 @@ function main( JGO, axutil, p_options) {
 			  if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
 			  if (data.bot_move == 'pass') {
-			    alert( 'The bot passes. Click on the Score button.')
+			    alert( 'Katago passes. Click on the Score button.')
 			  }
 			  else if (data.bot_move == 'resign') {
-			    alert( 'The bot resigns.')
+			    alert( 'Katago resigns.')
 			    $('#status').html( botcol + ' resigned')
           return
 			  }
@@ -463,7 +463,7 @@ function main( JGO, axutil, p_options) {
           (botprob < 0.001))
         )
         {
-			    alert( 'The bot resigns. You beat the bot!')
+			    alert( 'Katago resigns. You beat Katago!')
 			    $('#status').html( botcol + ' resigned')
           return
 			  }
@@ -475,7 +475,6 @@ function main( JGO, axutil, p_options) {
 			  g_complete_record = g_record.slice()
 			  replay_move_list( g_record)
 			  show_movenum()
-			  //g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
 			  const show_emoji = false
 			  const playing = true
 			  get_prob( function() {}, show_emoji, playing )
@@ -580,7 +579,6 @@ function main( JGO, axutil, p_options) {
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
       show_move( turn(), coord, move_prob.p, move_prob.score, move_prob.agent)
-      //g_player =  (g_player == JGO.BLACK) ? JGO.WHITE : JGO.BLACK
     }
     hover( hover.coord) // restore hover
     show_movenum()
@@ -972,6 +970,12 @@ function main( JGO, axutil, p_options) {
   // Misc
   //=======
 
+  // Uppercase first letter
+  //----------------------------
+  function upperFirst( str) {
+    return str[0].toUpperCase() + str.slice(1)
+  }
+
   // Show a translucent hover stone
   //---------------------------------
   function hover( coord, col, opts) {
@@ -1003,7 +1007,7 @@ function main( JGO, axutil, p_options) {
   // Get a value from the settings screen via localStorage
   //--------------------------------------------------------
   function settings( key, value) {
-    const settings_defaults = { show_emoji:false, show_prob:false }
+    const settings_defaults = { show_emoji:true, show_prob:true }
     var settings = JSON.parse( localStorage.getItem( 'settings'))
     if (!settings) {
       localStorage.setItem( 'settings', JSON.stringify( settings_defaults))
