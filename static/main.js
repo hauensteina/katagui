@@ -423,7 +423,7 @@ function main( JGO, axutil, p_options) {
   //-----------------------------
   function get_katago_move() {
     log_event( 'katago')
-    $('#status').html( 'Katago is thinking...')
+    $('#status').html( 'KataGo is thinking...')
     var randomness = 0.0
     get_bot_move( g_handi, g_komi, 0)
   } // get_katago_move()
