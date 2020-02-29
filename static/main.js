@@ -219,8 +219,8 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_best').click( () => {
       $('#status').html( 'thinking...')
-      get_prob( (data) => {
-        var botCoord = string2jcoord( data.diagnostics.bot_move)
+      get_best_move( (data) => {
+        var botCoord = string2jcoord( data.bot_move)
         var jboard = g_jrecord.jboard
         if (botCoord != 'pass' && botCoord != 'resign') {
           hover( botCoord, turn(), {force:true})
@@ -729,8 +729,6 @@ function main( JGO, axutil, p_options) {
     }
     //get_handicap()
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
-      /* axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
-			   {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } }, */
 			(data) => {
 			  if (g_record.length) {
 			    var p = parseFloat(data.diagnostics.winprob)
@@ -753,6 +751,18 @@ function main( JGO, axutil, p_options) {
         //$('#status').html( '')
 			})
   } // get_prob()
+
+  // Get the best move
+  //----------------------------------------------------------
+  function get_best_move( completion, update_emo, playing) {
+    $('#status').html( 'KataGo is thinking...')
+    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
+			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
+			(data) => {
+			  if (completion) { completion(data) }
+        $('#status').html( '')
+			})
+  } // get_best_move()
 
   //------------------------------------------
   function show_prob( update_emo, playing) {
