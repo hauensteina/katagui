@@ -10,6 +10,7 @@
 const DEBUG = false
 const VERSION = '2020-01-10'
 const KATAGO_SERVER = ''
+const NIL_P = 0.0001
 
 const HANDISTONES = ['',''
   ,['D4','Q16']
@@ -255,7 +256,7 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_pass').click( () => {
       g_complete_record = g_record.slice()
-      g_complete_record.push( {'mv':'pass', 'p':0.001, 'agent':'human'} )
+      g_complete_record.push( {'mv':'pass', 'p':NIL_P, 'agent':'human'} )
       goto_move( g_complete_record.length)
       botmove_if_active()
     })
@@ -560,9 +561,9 @@ function main( JGO, axutil, p_options) {
     var hstones =  HANDISTONES[g_handi]
     for (const [idx,s] of hstones.entries()) {
       if (idx > 0) {
-        g_complete_record.push( {'mv':'pass', 'p':0.001, 'agent':''} )
+        g_complete_record.push( {'mv':'pass', 'p':NIL_P, 'agent':''} )
       }
-      g_complete_record.push( {'mv':s, 'p':0.001, 'agent':''} )
+      g_complete_record.push( {'mv':s, 'p':NIL_P, 'agent':''} )
     }
     goto_move(1000)
   } // reset_game()
@@ -574,7 +575,7 @@ function main( JGO, axutil, p_options) {
     goto_first_move()
     for (var move_prob of mlist) {
       if (typeof move_prob == 'string') { // pass or resign
-        move_prob = { 'mv':move_prob, 'p':0.001, 'agent':'' }
+        move_prob = { 'mv':move_prob, 'p':NIL_P, 'agent':'' }
       }
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
@@ -806,6 +807,7 @@ function main( JGO, axutil, p_options) {
     if (n > 0) {
       if (g_record[n].mv == 'pass') {  set_emoji(); return }
       if (g_record[n-1].mv == 'pass') {  set_emoji(); return }
+      if (g_record[n-1].p == NIL_P) {  set_emoji(); return }
       var pp = g_record[n-1].p
       if (n % 2) { // we are white
         p = 1.0 - p; pp = 1.0 - pp
