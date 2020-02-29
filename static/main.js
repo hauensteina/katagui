@@ -220,7 +220,7 @@ function main( JGO, axutil, p_options) {
     $('#btn_best').click( () => {
       $('#status').html( 'thinking...')
       get_prob( (data) => {
-        var botCoord = string2jcoord( data.bot_move)
+        var botCoord = string2jcoord( data.diagnostics.bot_move)
         var jboard = g_jrecord.jboard
         if (botCoord != 'pass' && botCoord != 'resign') {
           hover( botCoord, turn(), {force:true})
@@ -861,25 +861,6 @@ function main( JGO, axutil, p_options) {
   } // score_position()
   score_position.active = false
   score_position.probs = []
-
-  /*
-  // Draw black and white squares with alpha representing certainty
-  //------------------------------------------------------------------
-  function draw_score( probs, thresh) {
-    var node = g_jrecord.createNode( true)
-    for (const [idx, prob] of probs.entries()) {
-      var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
-      var col = (idx % BOARD_SIZE) + 1
-			var coord = rc2jcoord( row, col)
-      if (prob < -thresh) { // white
-				node.setMark( coord, JGO.MARK.WHITE_TERRITORY)
-      } // for
-      else if (prob > thresh) { // black
-				node.setMark( coord, JGO.MARK.BLACK_TERRITORY)
-      } // for
-    } // for
-  } // draw_score()
-  */
 
   // Draw black and white squares with alpha representing certainty
   //------------------------------------------------------------------
