@@ -727,15 +727,17 @@ function main( JGO, axutil, p_options) {
     else {
       $('#status').html( '...')
     }
-    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
-			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
+    //get_handicap()
+    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
+      /* axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
+			   {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } }, */
 			(data) => {
 			  if (g_record.length) {
 			    var p = parseFloat(data.diagnostics.winprob)
 			    g_record[ g_record.length - 1].p = p // Remember win prob of position
 			    g_complete_record[ g_record.length - 1].p = p
 			    var score = parseFloat(data.diagnostics.score)
-			    g_record[ g_record.length - 1].score = score // Remember score prob of position
+			    g_record[ g_record.length - 1].score = score // Remember score of position
 			    g_complete_record[ g_record.length - 1].score = score
 			  }
 			  show_prob( update_emo, playing)
@@ -836,36 +838,31 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------
   function score_position() {
     //const POINT_THRESH = 0.7
-    get_handicap()
+    //get_handicap()
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
+        var winprob = parseFloat(data.diagnostics.winprob)
+        var score = parseFloat(data.diagnostics.score)
+        score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
         score_position.probs = data.probs
 			  score_position.active = true
-        var bsum = 0
-        var wsum = 0
-        for (const [idx, prob] of data.probs.entries()) {
-          if (prob < 0) {
-            wsum += Math.abs(prob)
-          }
-          else {
-            bsum += Math.abs(prob)
-          }
-        } // for
-        wsum = Math.trunc( wsum + 0.5)
-        bsum = Math.trunc( bsum + 0.5)
         draw_estimate( data.probs)
-        wsum += g_handi
-        wsum += g_komi
-			  var diff = Math.abs( bsum - wsum)
-			  var rstr = `W+${diff} <br>(after komi and handicap)`
-			  if (bsum >= wsum) { rstr = `B+${diff}  <br>(after komi and handicap)` }
-			  //$('#status').html( `B:${bsum} &nbsp; W:${wsum} &nbsp; ${rstr}`)
-			} // (data) =>
+        var scorestr = 'P(B wins): ' + winprob.toFixed(2)
+        if (score < 0) {
+          scorestr += '&nbsp;&nbsp;W+'
+        } else {
+          scorestr += '&nbsp;&nbsp;B+'
+        }
+        scorestr += Math.abs(score)
+        //scorestr += '<br>(after komi and handicap)'
+        $('#status').html( scorestr)
+      } // (data) =>
 		) // hit_endpoint()
   } // score_position()
   score_position.active = false
   score_position.probs = []
 
+  /*
   // Draw black and white squares with alpha representing certainty
   //------------------------------------------------------------------
   function draw_score( probs, thresh) {
@@ -882,6 +879,7 @@ function main( JGO, axutil, p_options) {
       } // for
     } // for
   } // draw_score()
+  */
 
   // Draw black and white squares with alpha representing certainty
   //------------------------------------------------------------------
