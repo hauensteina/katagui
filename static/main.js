@@ -351,6 +351,9 @@ function main( JGO, axutil, p_options) {
   function btn_next() {
     if (btn_next.waiting) { btn_next.buffered = true; return }
     goto_move( g_record.length + 1)
+    if (g_record.length < 20  && g_record[ g_record.length - 1].mv == 'pass') {
+      goto_move( g_record.length + 1)
+    }
     if (g_record[ g_record.length - 1].p == 0) {
       btn_next.waiting = true
       get_prob( (data) => {
