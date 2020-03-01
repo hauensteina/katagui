@@ -806,42 +806,55 @@ function main( JGO, axutil, p_options) {
     var n = g_record.length - 1
     if (n < 0) { return }
     var p = g_record[n].p
+    var score = g_record[n].score
     if (p == 0) { set_emoji(); return }
     if (n > 0) {
       if (g_record[n].mv == 'pass') {  set_emoji(); return }
       if (g_record[n-1].mv == 'pass') {  set_emoji(); return }
       if (g_record[n-1].p == NIL_P) {  set_emoji(); return }
       var pp = g_record[n-1].p
+      var pscore = g_record[n-1].score
       if (n % 2) { // we are white
         p = 1.0 - p; pp = 1.0 - pp
+        score *= -1; pscore *= -1
       }
-      var delta = pp - p
-      if (p < 0.05 && delta < 0.06) { set_emoji() } // empty
-      else if (p > 0.95) { set_emoji(0.0) } // happy
+      var delta_p = pp - p
+      var delta_score = pscore - score
+      if (p < 0.05 && delta_p < 0.06) { set_emoji() } // empty
+      else if (p > 0.95 && delta_score < 3) { set_emoji(0.0, 0) } // happy
       else if (pp == 0) { set_emoji() } // empty
-      else { set_emoji( delta) }
+      else { set_emoji( delta_p, delta_score) }
     }
     else {
       set_emoji()
     }
   } // update_emoji()
 
-  //----------------------------------
-  function set_emoji( delta_prob) {
+  //-----------------------------------------------
+  function set_emoji( delta_prob, delta_score) {
     var emo_id = '#emo'
     if (typeof delta_prob == 'undefined') {
       $(emo_id).html( '&nbsp;')
       return
     }
     const MOVE_EMOJI = ['😍','😐','😓','😡']
-    const PROB_BINS = [0.03, 0.06, 0.1]
     var emo = MOVE_EMOJI[3]
-    for (var i=0; i < PROB_BINS.length; i++) {
-      if (delta_prob < PROB_BINS[i]) {
-        emo = MOVE_EMOJI[i]; break;
-      }
+
+    // Get angry if we lose winning probability
+    const PROB_BINS = [0.03, 0.06, 0.1]
+    var prob_idx
+    for (prob_idx=0; prob_idx < PROB_BINS.length; prob_idx++) {
+      if (delta_prob < PROB_BINS[prob_idx]) break;
     }
-    //$(emo_id).html( '&nbsp;' + emo)
+    // Get angry if we lose points
+    const SCORE_BINS = [3, 5, 10]
+    var score_idx
+    for (score_idx=0; score_idx < SCORE_BINS.length; score_idx++) {
+      if (delta_score < SCORE_BINS[score_idx]) break;
+    }
+
+    // Choose whichever is angrier
+    emo = MOVE_EMOJI[ Math.max( prob_idx, score_idx)]
     $(emo_id).html( emo)
   } // set_emoji()
 
