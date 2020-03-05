@@ -367,7 +367,8 @@ function main( JGO, axutil, p_options) {
   //-----------------------------------------
   function show_game_info( loaded_game) {
     if (loaded_game) {
-      $('#game_info').html( `B:${loaded_game.pb} &nbsp;&nbsp; W:${loaded_game.pw} &nbsp;&nbsp; Result:${loaded_game.RE} &nbsp;&nbsp; Komi:${g_komi}`)
+      $('#game_info').html(
+        `B:${loaded_game.pb} &nbsp;&nbsp; W:${loaded_game.pw} &nbsp;&nbsp; Result:${loaded_game.RE} &nbsp;&nbsp; Date:${loaded_game.DT}`)
       $('#fname').html( loaded_game.fname)
     } else {
       $('#game_info').html('')
