@@ -231,7 +231,7 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_best').click( () => {
-      $('#status').html( 'thinking...')
+      $('#status').html( 'Thinking...')
       get_best_move( (data) => {
         var botCoord = string2jcoord( data.bot_move)
         var jboard = g_jrecord.jboard
@@ -905,8 +905,7 @@ function main( JGO, axutil, p_options) {
   // Score the current position with katago.
   //-------------------------------------------
   function score_position() {
-    //const POINT_THRESH = 0.7
-    //get_handicap()
+    $('#status').html( 'Scoring...')
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
 			(data) => {
         var winprob = parseFloat(data.diagnostics.winprob)
