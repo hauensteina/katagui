@@ -272,7 +272,7 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_nnscore').click( () => {
       score_position()
-      show_prob()
+      //show_prob()
       return false
     })
 
