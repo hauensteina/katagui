@@ -286,14 +286,15 @@ function main( JGO, axutil, p_options) {
     $('#btn_undo').click( () => {
       axutil.hit_endpoint('cancel')
       var len = g_record.length
+      var at_end = (len == g_complete_record.length)
       if (len > 2 && g_record[len-1].agent == 'bot' && g_record[len-2].agent == 'human') {
 	      goto_move( g_record.length - 2)
       } else {
 	      goto_move( g_record.length - 1)
       }
-      //if (activate_bot.state == 'on') {
-      g_complete_record = g_record
-      //}
+      if (at_end) {
+        g_complete_record = g_record
+      }
       show_movenum()
     })
 
