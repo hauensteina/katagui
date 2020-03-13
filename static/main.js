@@ -772,7 +772,8 @@ function main( JGO, axutil, p_options) {
       $('#status').html( '...')
     }
     //get_handicap()
-    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
+    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT,
+      {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'ownership': false }, 'tt':Math.random() },
 			(data) => {
 			  if (g_record.length) {
 			    var p = parseFloat(data.diagnostics.winprob)
