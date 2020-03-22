@@ -763,7 +763,7 @@ function main( JGO, axutil, p_options) {
   //======================
 
   // Get current winning probability.
-  //-----------------------------------------------------
+  //-----------------------------------------------------------
   function get_prob( completion, update_emo, playing) {
     if (activate_bot.state == 'on') {
       $('#status').html( 'KataGo is counting...')
@@ -773,7 +773,7 @@ function main( JGO, axutil, p_options) {
     }
     //get_handicap()
     axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT,
-      {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'ownership': false }, 'tt':Math.random() },
+      {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'ownership': false, 'komi':g_komi }, 'tt':Math.random() },
 			(data) => {
 			  if (g_record.length) {
 			    var p = parseFloat(data.diagnostics.winprob)
@@ -907,7 +907,8 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------
   function score_position() {
     $('#status').html( 'Scoring...')
-    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'tt':Math.random() },
+    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT,
+      {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi }, 'tt':Math.random() },
 			(data) => {
         var winprob = parseFloat(data.diagnostics.winprob)
         var score = parseFloat(data.diagnostics.score)
