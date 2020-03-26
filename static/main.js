@@ -384,7 +384,7 @@ function main( JGO, axutil, p_options) {
 
   //-------------------------
   function btn_next() {
-    if (btn_next.waiting) { btn_next.buffered = true; return }
+    if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( g_record.length + 1)
     if (g_record.length < 20  && g_record[ g_record.length - 1].mv == 'pass') {
       goto_move( g_record.length + 1)
