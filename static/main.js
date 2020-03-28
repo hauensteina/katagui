@@ -238,6 +238,9 @@ function main( JGO, axutil, p_options) {
         if (botCoord != 'pass' && botCoord != 'resign') {
           blink( botCoord, turn(), 750, 3)
         }
+        const show_emoji = false
+			  const playing = true
+			  get_prob( function() {}, show_emoji, playing )
       })
       return false
     })
