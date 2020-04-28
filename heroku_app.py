@@ -126,8 +126,8 @@ def sgf2list():
         for setup in sgf.get_root().get_setup_stones():
             for idx, move in enumerate( setup):
                 handicap_setup_done = True
-                if idx > 0: moves.append( {'mv':'pass', 'p':'0.00' } )
-                moves.append( {'mv':move2coords( move), 'p':'0.00' })
+                if idx > 0: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0' } )
+                moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.0' })
 
     # Nodes in the main sequence
     for item in sgf.main_sequence_iter():
