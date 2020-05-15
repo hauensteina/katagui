@@ -91,7 +91,8 @@ def slog():
 #--------------------------------
 def get_sgf_tag( sgfstr, tag):
     rexp = r'.*' + tag + r'\[([^\[]*)\].*'
-    res = re.sub(rexp, r'\1', sgfstr.decode('utf8'),flags=re.DOTALL)
+    tstr = sgfstr.decode('utf8')
+    res = re.sub(rexp, r'\1', tstr ,flags=re.DOTALL)
     if res == tstr: return '' # tag not found
     return res
 
