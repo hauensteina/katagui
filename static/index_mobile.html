@@ -61,6 +61,10 @@
        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
        text-align: center;
      }
+     /* The magic trick to get the page zoomed into the screen */
+     /* html {
+        zoom: 0.999;
+        } */
      .center {
        margin-left:auto;
        margin-right:auto;
@@ -194,7 +198,7 @@
                   New Game
                 </label><br>
 
-                <a id='help' href='static/help_mobile.html' style='font-size:24pt;text-align:right;color:red'>READ THE MANUAL</a>
+                <a id='help' href='static/help_mobile.html' style='font-size:22pt;text-align:right;color:red'>READ THE MANUAL</a>
                 <!-- <a id='help' href='static/help_mobile.html' style='font-size:24pt;text-align:right;color:red'>2020-02-03 NEW NET d435450331</a> -->
               </div>
               <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
@@ -376,11 +380,12 @@
 
     <!-- Our own stuff -->
     <script type='text/javascript' src='static/ahaux_utils.js'></script>
-    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
-    <script type='text/javascript' src='static/large/board.js'></script>
+    <script type='text/javascript' src='static/jgoboard-latest.js?v=1.c'></script>
+    <script type='text/javascript' src='static/large/board.js?v=1.j'></script>
 
     <!-- Entry Point -->
-    <<script type='text/javascript' src='static/main.js?v=1.48'></script>
+    <!-- <script type='text/javascript' src='static/main.js?v=1.49'></script> -->
+    <script type='text/javascript' src='static/main.js?v=1.4f'></script>
     <script type='text/javascript'>
      $(function () {
        main( JGO, new AhauxUtils( d3, $), {mobile:true} )

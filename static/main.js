@@ -307,25 +307,26 @@ function main( JGO, axutil, p_options) {
     $('#btn_fwd10').click( () => { goto_move( g_record.length + 10); update_emoji(); activate_bot('off') })
     $('#btn_first').click( () => { goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
     $('#btn_last').click( () => { goto_move( g_complete_record.length); update_emoji(); activate_bot('off') })
-    //$('#btn_new').click( () => { reset_game(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
 
     // Prevent zoom on double tap
-    $('#btn_change').on('touchstart', prevent_zoom)
-    $('#btn_play').on('touchstart', prevent_zoom)
-    $('#btn_undo').on('touchstart', prevent_zoom)
-    $('#btn_best').on('touchstart', prevent_zoom)
-    $('#btn_pass').on('touchstart', prevent_zoom)
-    $('#btn_prev').on('touchstart', prevent_zoom)
-    $('#btn_next').on('touchstart', prevent_zoom)
-    $('#btn_clear_var').on('touchstart', prevent_zoom)
-    //$('#btn_accept_var').on('touchstart', prevent_zoom)
-    $('#btn_first').on('touchstart', prevent_zoom)
-    $('#btn_back10').on('touchstart', prevent_zoom)
-    $('#btn_fwd10').on('touchstart', prevent_zoom)
-    $('#btn_last').on('touchstart', prevent_zoom)
-    $('#btn_nnscore').on('touchstart', prevent_zoom)
-    $('#btn_save').on('touchstart', prevent_zoom)
-    $('#btn_new').on('touchstart', prevent_zoom)
+    $('*').on('touchend',(e)=>{
+      //console.log('div')
+      // Exceptions
+      if (e.target.localName == 'canvas') { return }
+      if (e.target.className.includes('btn-file')) { return }
+      if (e.target.className.includes('btn-primary')) { return }
+      if (e.target.className.includes('close')) { return }
+      if (e.target.className.includes('dropdown')) { return }
+      if (e.target.className.includes('slider round')) { return }
+      // Nothing else reacts
+      e.preventDefault()})
+    // Links should still work
+    $('a').on('touchend',(e)=>{
+      console.log('a')
+      e.preventDefault()
+      e.target.click()})
+    // Buttons should still work
+    $('[id^=btn_]').on('touchstart',(e)=>{e.preventDefault();e.target.click()})
   } // set_btn_handlers()
 
   // Load Sgf button
@@ -439,14 +440,6 @@ function main( JGO, axutil, p_options) {
     check_key.ctrl_pressed = false
   } // check_key()
   check_key.ctrl_pressed = false
-
-  // Prevent double taps from zooming in on mobile devices.
-  // Use like btn.addEventListener('touchstart', prevent_zoom)
-  //------------------------------------------------------------
-  function prevent_zoom(e) {
-    e.preventDefault()
-    e.target.click()
-  } // prevent_zoom()
 
   //===================
   // Bot Interaction

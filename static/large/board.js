@@ -5,8 +5,8 @@ JGO.BOARD = JGO.BOARD || {};
 
 JGO.BOARD.large = {
   textures: {
-    black: 'static/large/black.png',
-    white: 'static/large/white.png',
+    black: 'static/large/black43.png',
+    white: 'static/large/white43.png',
     shadow:'static/large/shadow.png',
     board: 'static/large/shinkaya.jpg'
   },
@@ -24,7 +24,7 @@ JGO.BOARD.large = {
   padding: {normal: 20, clipped: 10},
 
   // Grid color and size, line widths
-  grid: {color: '#202020', x: 50, y: 50, smooth: 0.0,
+  grid: {color: '#202020', x: 45, y: 45, smooth: 0.0,
     borderWidth: 1.5, lineWidth: 1.2},
 
   // Star point radius
@@ -34,7 +34,7 @@ JGO.BOARD.large = {
   coordinates: {color: '#808080', font: 'normal 18px sanf-serif'},
 
   // Stone radius  and alpha for semi-transparent stones
-  stone: {radius: 24, dimAlpha:0.6},
+  stone: {radius: 22, dimAlpha:0.6},
 
   // Shadow offset from center
   shadow: {xOff: -2, yOff: 2},
@@ -45,7 +45,7 @@ JGO.BOARD.large = {
 };
 
 JGO.BOARD.largeWalnut = JGO.util.extend(JGO.util.extend({}, JGO.BOARD.large), {
-  textures: {board: 'static/large/mono.jpg', shadow: 'static/large/shadow_dark.png'},
+  textures: {board: 'static/large/mono.jpg', shadow: 'static/large/shadow_dark43.png'},
   boardShadow: {color: '#e2baa0'},
   grid: {color: '#101010', borderWidth: 1.8, lineWidth: 1.5}
 });
