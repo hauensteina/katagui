@@ -617,7 +617,7 @@ function main( JGO, axutil, p_options) {
       var coord = string2jcoord( move_string)
       show_move( turn(), coord, move_prob.p, move_prob.score, move_prob.agent)
     }
-    hover( hover.coord) // restore hover
+    //hover( hover.coord) // restore hover
     show_movenum()
   } // replay_move_list()
 
@@ -1038,10 +1038,11 @@ function main( JGO, axutil, p_options) {
       hover.coord = coord
       if (col) {
         replay_move_list( g_record) // remove artifacts
+        jboard.setType( coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
       }
     }
     else if (hover.coord) {
-      jboard.setType( hover.coord, col == JGO.CLEAR)
+      jboard.setType( hover.coord, JGO.CLEAR)
       hover.coord = null
       replay_move_list( g_record) // remove artifacts
     }
