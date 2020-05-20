@@ -101,7 +101,6 @@ function main( JGO, axutil, p_options) {
     //SLOG(navigator.userAgent.toLowerCase())
 		if (score_position.active) {
 			goto_move( g_record.length)
-			score_position.active = false
 			return
 		}
 		var jboard = g_jrecord.jboard
@@ -176,6 +175,9 @@ function main( JGO, axutil, p_options) {
             }
             else {
 					    hover( coord, turn())
+              if (score_position.active) {
+                draw_estimate( score_position.probs)
+              }
             }
 					}
 				) // mousemove
@@ -184,6 +186,9 @@ function main( JGO, axutil, p_options) {
 		    canvas.addListener('mouseout',
 					function(ev) {
 					  hover()
+            if (score_position.active) {
+              draw_estimate( score_position.probs)
+            }
 					}
 				) // mouseout
 		  } // function(canvas)
@@ -274,8 +279,11 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_nnscore').click( () => {
+      if (score_position.active) {
+			  goto_move( g_record.length)
+			  return
+		  }
       score_position()
-      //show_prob()
       return false
     })
 
@@ -624,6 +632,7 @@ function main( JGO, axutil, p_options) {
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move( n) {
+    score_position.active = false
     var totmoves = g_complete_record.length
     if (n > totmoves) { n = totmoves }
     if (n < 1) { goto_first_move(); set_emoji(); return }
@@ -909,8 +918,8 @@ function main( JGO, axutil, p_options) {
         var winprob = parseFloat(data.diagnostics.winprob)
         var score = parseFloat(data.diagnostics.score)
         score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-        score_position.probs = data.probs
 			  score_position.active = true
+        score_position.probs = data.probs
         draw_estimate( data.probs)
         var scorestr = 'P(B wins): ' + winprob.toFixed(2)
         if (score < 0) {
