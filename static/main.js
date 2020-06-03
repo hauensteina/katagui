@@ -529,7 +529,7 @@ function main( JGO, axutil, p_options) {
     activate_bot.state = on_or_off
     if (on_or_off == 'on') {
       $('#opt_auto').prop('checked', true)
-      $('#btn_play').css('border-width', '3px')
+      $('#btn_play').css('border-width', '1px')
       $('#btn_play').css('border-color', '#FF0000')
     }
     else {
