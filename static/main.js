@@ -125,7 +125,7 @@ function main( JGO, axutil, p_options) {
 		goto_move( g_complete_record.length)
 		set_emoji()
 		const playing = true
-		get_prob( function() { botmove_if_active() }, settings('show_emoji'), playing )
+		get_prob_genmove( function() { botmove_if_active() }, settings('show_emoji'), playing )
   } // board_click_callback()
 
   // Black moves at the beginning are handicap
@@ -245,7 +245,7 @@ function main( JGO, axutil, p_options) {
         }
         const show_emoji = false
 			  const playing = true
-			  get_prob( function() {}, show_emoji, playing )
+			  get_prob_genmove( function() {}, show_emoji, playing )
       })
       return false
     })
@@ -403,7 +403,7 @@ function main( JGO, axutil, p_options) {
     }
     if (g_record[ g_record.length - 1].p == 0) {
       btn_next.waiting = true
-      get_prob( (data) => {
+      get_prob_genmove( (data) => {
         update_emoji()
         activate_bot('off')
         btn_next.waiting = false
@@ -488,7 +488,6 @@ function main( JGO, axutil, p_options) {
 			'config':{'komi':komi, 'playouts':playouts } },
 			(data) => {
 			  hover() // The board thinks the hover stone is actually there. Clear it.
-
 			  var botprob = data.diagnostics.winprob; var botcol = 'Black'
 			  if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
@@ -520,7 +519,7 @@ function main( JGO, axutil, p_options) {
 			  show_movenum()
 			  const show_emoji = false
 			  const playing = true
-			  get_prob( function() {}, show_emoji, playing )
+        get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
 			})
   } // get_bot_move()
 
@@ -625,7 +624,6 @@ function main( JGO, axutil, p_options) {
       var coord = string2jcoord( move_string)
       show_move( turn(), coord, move_prob.p, move_prob.score, move_prob.agent)
     }
-    //hover( hover.coord) // restore hover
     show_movenum()
   } // replay_move_list()
 
@@ -714,7 +712,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_clear_var').addClass('btn-success')
       /* $('#btn_accept_var').removeClass('disabled')
        * $('#btn_accept_var').addClass('btn-danger') */
-      $('#btn_clear_var').css('color', 'black');
+      $('#btn_clear_var').css('color', 'black')
       /* $('#btn_accept_var').css('color', 'black'); */
       //$('#btn_clear_var').css('visibility', 'visible');
     }
@@ -723,7 +721,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_clear_var').removeClass('btn-success')
       /* $('#btn_accept_var').addClass('disabled')
        * $('#btn_accept_var').removeClass('btn-danger') */
-      $('#btn_clear_var').css('color', 'black');
+      $('#btn_clear_var').css('color', 'black')
       /* $('#btn_accept_var').css('color', 'black'); */
       //$('#btn_clear_var').css('visibility', 'hidden');
     }
@@ -767,40 +765,44 @@ function main( JGO, axutil, p_options) {
   // Winning probability
   //======================
 
-  // Get current winning probability.
-  //-----------------------------------------------------------
-  function get_prob( completion, update_emo, playing) {
+  // Get current winning probability from genmove
+  //-------------------------------------------------------------
+  function get_prob_genmove( completion, update_emo, playing) {
     if (activate_bot.state == 'on') {
       $('#status').html( 'KataGo is counting...')
     }
     else {
       $('#status').html( '...')
     }
-    //get_handicap()
-    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT,
-      {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'ownership': false, 'komi':g_komi }, 'tt':Math.random() },
+    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
+			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
-			  if (g_record.length) {
-			    var p = parseFloat(data.diagnostics.winprob)
-			    g_record[ g_record.length - 1].p = p // Remember win prob of position
-			    g_complete_record[ g_record.length - 1].p = p
-			    var score = parseFloat(data.diagnostics.score)
-			    g_record[ g_record.length - 1].score = score // Remember score of position
-			    g_complete_record[ g_record.length - 1].score = score
-			  }
-			  show_prob( update_emo, playing)
+        get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
 			  if (completion) { completion(data) }
-        if (g_play_btn_buffer) { // Buffered play button click
-          botmove_if_active()
-        }
-        if (g_click_coord_buffer) { // user clicked while waiting, do it now
-          board_click_callback( g_click_coord_buffer)
-        }
-        g_play_btn_buffer = false
-        g_click_coord_buffer = null
-        //$('#status').html( '')
 			})
-  } // get_prob()
+  } // get_prob_genmove()
+
+  // Continue after prob and score came back from the server
+  //-------------------------------------------------------------------
+  function get_prob_callback( winprob, score, update_emo, playing) {
+		if (g_record.length) {
+			var p = parseFloat(winprob)
+			g_record[ g_record.length - 1].p = p // Remember win prob of position
+			g_complete_record[ g_record.length - 1].p = p
+			var score = parseFloat(score)
+			g_record[ g_record.length - 1].score = score // Remember score of position
+			g_complete_record[ g_record.length - 1].score = score
+		}
+		show_prob( update_emo, playing)
+    if (g_play_btn_buffer) { // Buffered play button click
+      botmove_if_active()
+    }
+    if (g_click_coord_buffer) { // user clicked while waiting, do it now
+      board_click_callback( g_click_coord_buffer)
+    }
+    g_play_btn_buffer = false
+    g_click_coord_buffer = null
+  } // get_prob_callback()
 
   // Get the best move
   //----------------------------------------------------------
@@ -921,15 +923,7 @@ function main( JGO, axutil, p_options) {
 			  score_position.active = true
         score_position.probs = data.probs
         draw_estimate( data.probs)
-        var scorestr = 'P(B wins): ' + winprob.toFixed(2)
-        if (score < 0) {
-          scorestr += '&nbsp;&nbsp;W+'
-        } else {
-          scorestr += '&nbsp;&nbsp;B+'
-        }
-        scorestr += Math.abs(score)
-        //scorestr += '<br>(after komi and handicap)'
-        $('#status').html( scorestr)
+        get_prob_genmove( function() {}, false, false )
       } // (data) =>
 		) // hit_endpoint()
   } // score_position()
@@ -1098,7 +1092,7 @@ function main( JGO, axutil, p_options) {
 
   // Save game record once a second
   function statesaver() {
-    save_state();
+    save_state()
     setTimeout(statesaver, 1000)
   }
   statesaver()
