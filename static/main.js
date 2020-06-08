@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.54'
+const VERSION = 'v1.55'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -264,7 +264,10 @@ function main( JGO, axutil, p_options) {
       probs = probs.join(',')
       if (moves.length == 0) { return }
       var meta = set_load_sgf_handler.loaded_game
-      if (!meta) { meta = {} }
+      if (!meta) {
+        meta = {}
+        meta.komi = g_komi
+      }
       var url = '/save-sgf?q=' + Math.random() +
         '&moves=' + encodeURIComponent(moves) +
         '&probs=' + encodeURIComponent(probs) +
