@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.53'
+const VERSION = 'v1.54'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
