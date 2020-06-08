@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.56'
+const VERSION = 'v1.57'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -403,6 +403,7 @@ function main( JGO, axutil, p_options) {
     goto_move( g_record.length + 1)
     if (g_record.length < 20  && g_record[ g_record.length - 1].mv == 'pass') {
       goto_move( g_record.length + 1)
+      return
     }
     if (g_record[ g_record.length - 1].p == 0) {
       btn_next.waiting = true
@@ -863,6 +864,7 @@ function main( JGO, axutil, p_options) {
       if (g_record[n].mv == 'pass') {  set_emoji(); return }
       if (g_record[n-1].mv == 'pass') {  set_emoji(); return }
       if (g_record[n-1].p == NIL_P) {  set_emoji(); return }
+      if (g_record[n-1].p == 0) {  set_emoji(); return }
       var pp = g_record[n-1].p
       var pscore = g_record[n-1].score
       if (n % 2) { // we are white
