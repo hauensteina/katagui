@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.55'
+const VERSION = 'v1.56'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -243,9 +243,9 @@ function main( JGO, axutil, p_options) {
         if (botCoord != 'pass' && botCoord != 'resign') {
           blink( botCoord, turn(), 750, 3)
         }
-        const show_emoji = false
-			  const playing = false // true
-			  get_prob_genmove( function() {}, show_emoji, playing )
+        //const show_emoji = false
+			  //const playing = false // true
+			  //get_prob_genmove( function() {}, show_emoji, playing )
       })
       return false
     })
