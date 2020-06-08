@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = '2020-01-10'
+const VERSION = 'v1.53'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -244,7 +244,7 @@ function main( JGO, axutil, p_options) {
           blink( botCoord, turn(), 750, 3)
         }
         const show_emoji = false
-			  const playing = true
+			  const playing = false // true
 			  get_prob_genmove( function() {}, show_emoji, playing )
       })
       return false
@@ -1075,6 +1075,7 @@ function main( JGO, axutil, p_options) {
     }
   } // settings()
 
+  $('#version').html(VERSION + (p_options.mobile?'&nbsp;&nbsp;':''))
   settings()
   set_btn_handlers()
   set_dropdown_handlers()
