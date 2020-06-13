@@ -102,6 +102,7 @@ def get_sgf_tag( sgfstr, tag):
 def sgf2list():
     f = request.files['file']
     sgfstr = f.read()
+    #sgfstr = sgfstr.decode('ascii', errors='ignore')
     RE = get_sgf_tag( sgfstr, 'RE')
     if len(RE) > 10: RE = ''
     DT = get_sgf_tag( sgfstr, 'DT')

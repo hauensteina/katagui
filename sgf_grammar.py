@@ -26,6 +26,7 @@ import string
 
 import six
 
+from pdb import set_trace as BP
 
 _propident_re = re.compile(r"\A[A-Z]{1,8}\Z".encode('ascii'))
 _propvalue_re = re.compile(r"\A [^\\\]]* (?: \\. [^\\\]]* )* \Z".encode('ascii'),
@@ -36,7 +37,7 @@ _tokenise_re = re.compile(r"""
 (?:
     \[ (?P<V> [^\\\]]* (?: \\. [^\\\]]* )* ) \]   # PropValue
     |
-    (?P<I> [A-Z]{1,8} )                           # PropIdent
+    (?P<I> [A-Z]{1,16} )                           # PropIdent
     |
     (?P<D> [;()] )                                # delimiter
 )
@@ -189,6 +190,7 @@ def _parse_sgf_game(s, start_position):
                     index += 1
                     prop_values.append(token)
                 if not prop_values:
+                    #BP()
                     raise ValueError("property with no values")
                 try:
                     if prop_ident in properties:
