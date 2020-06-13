@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.58'
+const VERSION = 'v1.59'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -848,7 +848,7 @@ function main( JGO, axutil, p_options) {
         }
         scorestr += Math.abs(score)
         var tstr = 'P(B wins): ' + p.toFixed(2)
-        if (g_record[n].score) {
+        if (typeof(g_record[n].score) !== 'undefined') {
           tstr += scorestr
         }
         $('#status').html(tstr)
