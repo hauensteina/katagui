@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.60'
+const VERSION = 'v1.61'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -342,6 +342,7 @@ function main( JGO, axutil, p_options) {
       //console.log('div')
       // Exceptions
       if (e.target.localName == 'canvas') { return }
+      if (e.target.localName == 'radio') { return }
       if (e.target.className.includes('btn-file')) { return }
       if (e.target.className.includes('btn-primary')) { return }
       if (e.target.className.includes('close')) { return }
