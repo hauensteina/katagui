@@ -38,7 +38,10 @@ app.config.update(
 app.config['DEBUG'] = os.getenv("DEBUG", False)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
+# 20b 512 playouts
 KATAGO_SERVER = 'http://www.ahaux.com/katago_server/'
+# 40b 1024 playouts
+KATAGO_SERVER_X = 'http://www.ahaux.com/katago_server_x/'
 
 #--------------
 # Endpoints
@@ -70,6 +73,18 @@ def select_move( bot_name):
         return jsonify( res)
     except:
         print( 'select move error: %s' % res)
+
+@app.route('/select-move-x/<bot_name>', methods=['POST'])
+# Forward select-move to the katago server
+#------------------------------------------
+def select_move_x( bot_name):
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+    res = fwd_to_katago_x( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move x error: %s' % res)
 
 @app.route('/score/<bot_name>', methods=['POST'])
 # Forward score to the katago server
@@ -208,6 +223,14 @@ def save_sgf():
 #----------------------------------------
 def fwd_to_katago( endpoint, args):
     url = KATAGO_SERVER + endpoint
+    resp = requests.post( url, json=args)
+    res = resp.json()
+    return res
+
+# Forward request to katago server
+#----------------------------------------
+def fwd_to_katago_x( endpoint, args):
+    url = KATAGO_SERVER_X + endpoint
     resp = requests.post( url, json=args)
     res = resp.json()
     return res
