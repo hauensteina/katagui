@@ -43,15 +43,15 @@
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
+	  <!-- Global site tag (gtag.js) - Google Analytics -->
+	  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
+	  <script>
+	   window.dataLayer = window.dataLayer || [];
+	   function gtag(){dataLayer.push(arguments);}
+	   gtag('js', new Date());
 
-	  gtag('config', 'UA-139708851-3');
-	</script>
+	   gtag('config', 'UA-139708851-3');
+	  </script>
 
     <!-- Bootstrap CSS -->
     <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
@@ -169,8 +169,8 @@
                     <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
                   </div>
                   <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a>
-                  <br><span id='version' style='font-size:9pt'>1.0</span>
-                </div>
+                    <br><span id='version' style='font-size:9pt'>1.0</span>
+                  </div>
                 </div>
                 <div class='row'>
                   <div class='col-12 text-center'>
@@ -373,6 +373,20 @@
                   </td>
                 </tr>
               </table>
+              <br>
+              <div align='left' class="radio radio-danger active">
+                <label>
+                  <input type="radio" name="fast_or_strong" id="Radios1" value="fast">
+                  Super Fast
+                </label>
+              </div>
+              <div align='left' class="radio radio-danger">
+                <label>
+                  <input type="radio" name="fast_or_strong" id="Radios1" value="strong">
+                  Super Strong
+                </label>
+              </div>
+
             </div>
             <div class='modal-footer'>
               <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
@@ -397,7 +411,7 @@
       <script type='text/javascript' src='static/small/board.js'></script>
 
       <!-- Entry Point -->
-      <script type='text/javascript' src='static/main.js?v=1.59'></script>
+      <script type='text/javascript' src='static/main.js?v=1.60'></script>
       <script type='text/javascript'>
        $(function () {
          $('[data-toggle="tooltip"]').tooltip()

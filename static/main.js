@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.59'
+const VERSION = 'v1.60'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -44,6 +44,8 @@ function main( JGO, axutil, p_options) {
   var g_komi = 7.5
   var g_handi = 0
 
+  var g_select_endpoint = '/select-move/'
+
   //================
   // UI Callbacks
   //================
@@ -75,6 +77,15 @@ function main( JGO, axutil, p_options) {
     $('#handi_9').click( function() { $('#handi_menu').html('9'); $('#komi_menu').html('0.5') })
 
     $('#game_start_save').click( function() {
+      if ($('input[name=fast_or_strong]:checked').val() == 'strong') {
+        $('#descr_bot').html( 'KataGo 40b 1000<br>2020-05-30')
+        g_select_endpoint = '/select-move-x/'
+      }
+      else {
+        $('#descr_bot').html( 'KataGo 20b 500<br>2020-05-30')
+        g_select_endpoint = '/select-move/'
+      }
+
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
 
@@ -495,7 +506,7 @@ function main( JGO, axutil, p_options) {
   // Get next move from the bot and show on board
   //----------------------------------------------------
   function get_bot_move( handicap, komi, playouts) {
-    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
+    axutil.hit_endpoint( KATAGO_SERVER + g_select_endpoint + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
 			'config':{'komi':komi, 'playouts':playouts } },
 			(data) => {
 			  hover() // The board thinks the hover stone is actually there. Clear it.
@@ -785,7 +796,7 @@ function main( JGO, axutil, p_options) {
     else {
       $('#status').html( '...')
     }
-    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
+    axutil.hit_endpoint( KATAGO_SERVER + g_select_endpoint + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
         get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
@@ -819,7 +830,7 @@ function main( JGO, axutil, p_options) {
   //----------------------------------------------------------
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( 'KataGo is thinking...')
-    axutil.hit_endpoint( KATAGO_SERVER + '/select-move/' + BOT,
+    axutil.hit_endpoint( KATAGO_SERVER + g_select_endpoint + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
 			  if (completion) { completion(data) }
@@ -1109,5 +1120,8 @@ function main( JGO, axutil, p_options) {
     setTimeout(statesaver, 1000)
   }
   statesaver()
+
+  // Default to fast (20b less playouts)
+  $('input[name=fast_or_strong]').filter('[value=fast]').prop('checked',true)
 
 } // function main()
