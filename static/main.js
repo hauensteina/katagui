@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.64'
+const VERSION = 'v1.65'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -214,15 +214,11 @@ function main( JGO, axutil, p_options) {
     var_button_state( 'off')
 
     $('#btn_fast').click( () => {
-      $('#btn_fast').addClass('active')
-      $('#btn_strong').removeClass('active')
-      fast_or_strong()
+      fast_or_strong('fast')
     })
 
     $('#btn_strong').click( () => {
-      $('#btn_fast').removeClass('active')
-      $('#btn_strong').addClass('active')
-      fast_or_strong()
+      fast_or_strong('strong')
     })
 
     $('#btn_clear_var').click( () => {
