@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.65'
+const VERSION = 'v1.66'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -125,7 +125,8 @@ function main( JGO, axutil, p_options) {
 		goto_move( g_complete_record.length)
 		set_emoji()
 		const playing = true
-		get_prob_genmove( function() { botmove_if_active() }, settings('show_emoji'), playing )
+		get_prob_genmove( function( data) { if (activate_bot.state == 'on') { bot_move_callback( data) } },
+      settings('show_emoji'), playing )
   } // board_click_callback()
 
   // Black moves at the beginning are handicap
@@ -505,43 +506,46 @@ function main( JGO, axutil, p_options) {
   //----------------------------------------------------
   function get_bot_move( handicap, komi, playouts) {
     axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
-			'config':{'komi':komi, 'playouts':playouts } },
-			(data) => {
-			  hover() // The board thinks the hover stone is actually there. Clear it.
-			  var botprob = data.diagnostics.winprob; var botcol = 'Black'
-			  if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
-
-			  if (data.bot_move == 'pass') {
-			    alert( 'Katago passes. Click on the Score button.')
-			  }
-			  else if (data.bot_move == 'resign') {
-			    alert( 'Katago resigns.')
-			    $('#status').html( botcol + ' resigned')
-          return
-			  }
-			  else if ( (!handle_variation.var_backup) && (g_record.length > 150) && ( // do not resign in variation or too early
-          (g_handi < 3 && botprob < 0.01) ||
-          (g_handi < 2 && botprob < 0.02) ||
-          (botprob < 0.001))
-        )
-        {
-			    alert( 'Katago resigns. You beat Katago!')
-			    $('#status').html( botcol + ' resigned')
-          return
-			  }
-			  else {
-			    maybe_start_var()
-			    var botCoord = string2jcoord( data.bot_move)
-			  }
-			  show_move( turn(), botCoord, 0.0, 'bot')
-			  g_complete_record = g_record.slice()
-			  replay_move_list( g_record)
-			  show_movenum()
-			  const show_emoji = false
-			  const playing = true
-        get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
-			})
+			'config':{'komi':komi } }, bot_move_callback)
   } // get_bot_move()
+
+  // Do things after the bot came back with move and estimate
+  //------------------------------------------------------------
+  function bot_move_callback( data) {
+		hover() // The board thinks the hover stone is actually there. Clear it.
+		var botprob = data.diagnostics.winprob; var botcol = 'Black'
+		if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
+
+		if (data.bot_move == 'pass') {
+			alert( 'Katago passes. Click on the Score button.')
+		}
+		else if (data.bot_move == 'resign') {
+			alert( 'Katago resigns.')
+			$('#status').html( botcol + ' resigned')
+      return
+		}
+		else if ( (!handle_variation.var_backup) && (g_record.length > 150) && ( // do not resign in variation or too early
+      (g_handi < 3 && botprob < 0.01) ||
+      (g_handi < 2 && botprob < 0.02) ||
+      (botprob < 0.001))
+    )
+    {
+			alert( 'Katago resigns. You beat Katago!')
+			$('#status').html( botcol + ' resigned')
+      return
+		}
+		else {
+			maybe_start_var()
+			var botCoord = string2jcoord( data.bot_move)
+		}
+		show_move( turn(), botCoord, 0.0, 'bot')
+		g_complete_record = g_record.slice()
+		replay_move_list( g_record)
+		show_movenum()
+		const show_emoji = false
+		const playing = true
+    get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+  } // bot_move_callback()
 
   //-----------------------------------
   function activate_bot( on_or_off) {
