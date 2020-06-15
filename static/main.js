@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.61'
+const VERSION = 'v1.64'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -44,8 +44,6 @@ function main( JGO, axutil, p_options) {
   var g_komi = 7.5
   var g_handi = 0
 
-  var g_select_endpoint = '/select-move/'
-
   //================
   // UI Callbacks
   //================
@@ -76,16 +74,7 @@ function main( JGO, axutil, p_options) {
     $('#handi_8').click( function() { $('#handi_menu').html('8'); $('#komi_menu').html('0.5') })
     $('#handi_9').click( function() { $('#handi_menu').html('9'); $('#komi_menu').html('0.5') })
 
-    $('#game_start_save').click( function() {
-      if ($('input[name=fast_or_strong]:checked').val() == 'strong') {
-        $('#descr_bot').html( 'KataGo 40b 1000<br>2020-05-30')
-        g_select_endpoint = '/select-move-x/'
-      }
-      else {
-        $('#descr_bot').html( 'KataGo 20b 500<br>2020-05-30')
-        g_select_endpoint = '/select-move/'
-      }
-
+    $('#game_start_save').click( function() { // New Game -> Go
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
 
@@ -224,6 +213,18 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
+    $('#btn_fast').click( () => {
+      $('#btn_fast').addClass('active')
+      $('#btn_strong').removeClass('active')
+      fast_or_strong()
+    })
+
+    $('#btn_strong').click( () => {
+      $('#btn_fast').removeClass('active')
+      $('#btn_strong').addClass('active')
+      fast_or_strong()
+    })
+
     $('#btn_clear_var').click( () => {
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation( 'clear')
@@ -339,17 +340,17 @@ function main( JGO, axutil, p_options) {
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
-      //console.log('div')
       // Exceptions
       if (e.target.localName == 'canvas') { return }
-      if (e.target.localName == 'radio') { return }
+      //if (e.target.className.includes('modal')) { window.alert(e.target.id); return }
       if (e.target.className.includes('btn-file')) { return }
       if (e.target.className.includes('btn-primary')) { return }
       if (e.target.className.includes('close')) { return }
       if (e.target.className.includes('dropdown')) { return }
       if (e.target.className.includes('slider round')) { return }
       // Nothing else reacts
-      e.preventDefault()})
+      e.preventDefault()
+    })
     // Links should still work
     $('a').on('touchend',(e)=>{
       console.log('a')
@@ -507,7 +508,7 @@ function main( JGO, axutil, p_options) {
   // Get next move from the bot and show on board
   //----------------------------------------------------
   function get_bot_move( handicap, komi, playouts) {
-    axutil.hit_endpoint( KATAGO_SERVER + g_select_endpoint + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
+    axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
 			'config':{'komi':komi, 'playouts':playouts } },
 			(data) => {
 			  hover() // The board thinks the hover stone is actually there. Clear it.
@@ -756,6 +757,7 @@ function main( JGO, axutil, p_options) {
 
   //--------------------------
   function save_state() {
+    localStorage.setItem('fast_or_strong', fast_or_strong().val)
     if (var_button_state() == 'off') { // don't save if in variation
       localStorage.setItem('record', JSON.stringify( g_record))
       localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
@@ -770,6 +772,10 @@ function main( JGO, axutil, p_options) {
     /* var bot = localStorage.getItem('bot')
      * if (BOTS.indexOf( bot) < 0) { bot = BOTS[0] }
      * change_bot(bot) */
+    fast_or_strong('fast')
+    if (localStorage.getItem('fast_or_strong') == 'strong') {
+      fast_or_strong('strong')
+    }
     if (localStorage.getItem('record') === null) { return }
     if (localStorage.getItem('complete_record') === null) { return }
     if (localStorage.getItem('record') === 'null') { return }
@@ -797,7 +803,7 @@ function main( JGO, axutil, p_options) {
     else {
       $('#status').html( '...')
     }
-    axutil.hit_endpoint( KATAGO_SERVER + g_select_endpoint + BOT,
+    axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
         get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
@@ -831,7 +837,7 @@ function main( JGO, axutil, p_options) {
   //----------------------------------------------------------
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( 'KataGo is thinking...')
-    axutil.hit_endpoint( KATAGO_SERVER + g_select_endpoint + BOT,
+    axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
 			  if (completion) { completion(data) }
@@ -1076,6 +1082,30 @@ function main( JGO, axutil, p_options) {
   } // hover()
   hover.coord = null
 
+  // Get or set fast or strong mode
+  //---------------------------------
+  function fast_or_strong( val) {
+    if (typeof val == 'undefined') { // getter
+      if ($('#btn_strong').hasClass('active')) {
+        fast_or_strong('strong')
+        return {'val':'strong', 'ep':'/select-move-x/' } }
+      else {
+        fast_or_strong('fast')
+        return {'val':'fast', 'ep':'/select-move/' } }
+    }
+    // setter
+    if (val == 'strong') {
+      $('#descr_bot').html( 'KataGo 40b 1000<br>2020-05-30')
+      $('#btn_strong').addClass('active')
+      $('#btn_fast').removeClass('active')
+    }
+    else { // fast
+      $('#descr_bot').html( 'KataGo 20b &nbsp; 500<br>2020-05-30')
+      $('#btn_fast').addClass('active')
+      $('#btn_strong').removeClass('active')
+    }
+  } // fast_or_strong()
+
   // Get a value from the settings screen via localStorage
   //--------------------------------------------------------
   function settings( key, value) {
@@ -1123,6 +1153,6 @@ function main( JGO, axutil, p_options) {
   statesaver()
 
   // Default to fast (20b less playouts)
-  $('input[name=fast_or_strong]').filter('[value=fast]').prop('checked',true)
+  //$('input[name=fast_strong]').filter('[value=fast]').prop('checked',true)
 
 } // function main()
