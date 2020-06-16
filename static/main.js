@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.66'
+const VERSION = 'v1.67'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -98,6 +98,8 @@ function main( JGO, axutil, p_options) {
 
   //----------------------------------------
   function board_click_callback( coord) {
+    if (coord.i < 0 || coord.i > 18) { return }
+    if (coord.j < 0 || coord.j > 18) { return }
     //SLOG(navigator.userAgent.toLowerCase())
 		if (score_position.active) {
 			goto_move( g_record.length)
