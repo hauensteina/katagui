@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.67'
+const VERSION = 'v1.68'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -600,10 +600,10 @@ function main( JGO, axutil, p_options) {
       g_ko = play.ko
     }
     else {
-      var tstr = player + coord
-      var node = g_jrecord.getCurrentNode()
-      node.setMark( coord, JGO.MARK.SQUARE)
-      alert( 'Illegal move: ' + play.errorMsg + ' ' + tstr)
+      /* var tstr = player + coord
+       * var node = g_jrecord.getCurrentNode()
+       * node.setMark( coord, JGO.MARK.SQUARE)
+       * alert( 'Illegal move: ' + play.errorMsg + ' ' + tstr) */
     }
   } // show_move()
 
