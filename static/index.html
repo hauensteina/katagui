@@ -149,7 +149,7 @@
     <br>
     <table class='center'>
       <tr>
-        <td>                      <!--left-->
+        <td width='500px'>                      <!--left-->
           <div class='container'>
             <div class='row'>
               <div class='col-12' >
@@ -161,56 +161,83 @@
                     <a href='https://leela-one-playout.herokuapp.com' style='font-size:12pt;text-align:right;color:green'> Leela! </a>
                   </div>
                 </div>
-                <div class='row'>
-                  <div class='col-12 text-center'> &nbsp;  </div>
-                </div>
-                <div class='row'>
-                  <div class='col-6 text-left'>
-                    <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
-                  </div>
-                  <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a>
-                    <br><span id='version' style='font-size:9pt'>1.0</span>
-                  </div>
-                </div>
-                <div class='row'>
-                  <div class='col-12 text-center'>
-                    <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-                           style='font-size:11pt'>
-                      New Game
-                    </label>
-                  </div>
-                </div>
+              </div>
+            </div>
+
+            <div class='row'>
+              <div class='col-12 text-center'> &nbsp;  </div>
+            </div>
+            <div class='row'>
+              <div class='col-6 text-left'>
+                <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
+              </div>
+              <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a>
+                <br><span id='version' style='font-size:9pt'>1.0</span>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12 text-center'>
+                <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                       style='font-size:11pt'>
+                  New Game
+                </label>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-12 text-center'>
                 <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>Score</label>
-                <div class='row'>
-                  <div class='col-12 text-center'>
-                    <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
-                    <!-- <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>2020-05-10 NEW NET ..3220</a> -->
-                  </div>
-                </div>
-                <div class='row'>
-                  <div id='game_info' class='col-12 text-center' style='font-size:10pt'> </div>
-                </div>
-                <div class='row'>
-                  <div id='fname' class='col-12 text-center' style='font-size:10pt'> </div>
-                </div>
-                <div class='row'>
-                  <div class='col-12'>
-                    &nbsp;
-                  </div>
-                </div>
-                <div class='row'>
-                  <div id='board' class='col-12 text-center'> </div>
-                </div>
-                <div class='row center'>
-                  <div id='movenum' class='col-3' style='font-size:13pt;margin:auto'> &nbsp; </div>
-                  <div id='status' class='col-6' style='font-size:13pt;margin:auto'> &nbsp; </div>
-                  <div id='emo' class='col-3' style='font-size:30pt;margin:auto'> &nbsp; </div>
-                </div>
-              </div>                <!--col-12-->
-            </div>                  <!--row-->
+              </div>
+            </div>
+            <!-- <div class='row'>
+                 <div class='col-12 text-center'>
+                 To keep KataGo up and running, we need a dedicated server.
+                 A total of 2000 dollars will do it.
+                 Please consider donating if you enjoy this service and would like it to continue.
+                 </div>
+                 </div>
+            -->
+            <table class='center'>
+              <tr><td>
+                <br>
+                To keep KataGo up and running, we need a dedicated server.
+                A total of 2000 dollars will do it.
+                Please consider donating if you enjoy this service and would like it to continue.
+              </td></tr>
+              <tr><td>
+                <br>
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                  <input type="hidden" name="cmd" value="_s-xclick" />
+                  <input type="hidden" name="hosted_button_id" value="T322ZZH9TKMMN" />
+                  <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
+                         title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                  <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+                </form>
+              </td></tr>
+            </table>
+            <div class='row'>
+              <div id='game_info' class='col-12 text-center' style='font-size:10pt'> </div>
+            </div>
+            <div class='row'>
+              <div id='fname' class='col-12 text-center' style='font-size:10pt'> </div>
+            </div>
+            <div class='row'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row'>
+              <div id='board' class='col-12 text-center'> </div>
+            </div>
+            <div class='row center'>
+              <div id='movenum' class='col-3' style='font-size:13pt;margin:auto'> &nbsp; </div>
+              <div id='status' class='col-6' style='font-size:13pt;margin:auto'> &nbsp; </div>
+              <div id='emo' class='col-3' style='font-size:30pt;margin:auto'> &nbsp; </div>
+            </div>
+          </div>                <!--col-12-->
+          </div>                  <!--row-->
           </div>                    <!--container-->
         </td>
-        <td style='vertical-align:top'>                      <!--right-->
+        <td style='vertical-align:top' width='300px'>                      <!--right-->
           <div class='container' >
             <div class='row' style='font-size:40pt'>
               <div class='col-12'>
@@ -229,6 +256,32 @@
                      <label id='btn_change' class='btn btn-outline-dark' style='font-size:8pt;'>Change</label> -->
                 <br>
                 <a id='settings' href='static/settings.html' style='font-size:12pt;text-align:right;color:green'>Settings</a>
+              </div>
+            </div>
+            <!-- Space on top of buttons -->
+            <div class='row' style='font-size:20pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row' style='font-size:20pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row' style='font-size:20pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row' style='font-size:20pt'>
+              <div class='col-12'>
+                &nbsp;
+              </div>
+            </div>
+            <div class='row' style='font-size:20pt'>
+              <div class='col-12'>
+                &nbsp;
               </div>
             </div>
             <div class='row' style='font-size:20pt'>
@@ -309,8 +362,6 @@
             <div class='row'>
               <div class='col-12'>
                 <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>Back to Main Line</label>
-                <!-- <label id='btn_clear_var' class='btn btn-success' data-toggle='tooltip' data-placement='bottom' title='Forget variation' style='font-size:11pt'>V-&nbsp;</label>
-                     <label id='btn_accept_var' class='btn btn-danger' data-toggle='tooltip' data-placement='bottom' title='Accept variation' style='font-size:11pt'>V+</label> -->
               </div>
             </div>
           </div>                  <!--right container-->
