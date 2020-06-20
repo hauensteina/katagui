@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.68'
+const VERSION = 'v1.69'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -340,6 +340,7 @@ function main( JGO, axutil, p_options) {
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
       // Exceptions
+      if (e.target.name == 'submit') { return }
       if (e.target.localName == 'canvas') { return }
       //if (e.target.className.includes('modal')) { window.alert(e.target.id); return }
       if (e.target.className.includes('btn-file')) { return }
