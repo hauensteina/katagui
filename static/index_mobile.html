@@ -207,23 +207,20 @@
         </td></tr>
         <tr><td>
           <table class='center' style='font-size:24pt;' width='800px'>
-                 <tr><td>
-                 To keep KataGo up and running, we need a dedicated server.
-                 A total of 2000 dollars will do it.
-                 Please consider donating if you enjoy this service and would like it to continue.
-                 </td></tr>
-                 <tr><td>
-                 <br>
-                 <form action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_top' style='font-size:24pt;' >
-                 <input type='hidden' name='cmd' value='_s-xclick' />
-                 <input type='hidden' name='hosted_button_id' value='T322ZZH9TKMMN' />
-                 <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit'
-                 title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' width='300px'/>
-                 <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
-                 </form>
-                 <br>
-                 </td></tr>
-                 </table>
+            <tr><td id='donating'>
+            </td></tr>
+            <tr><td>
+              <br>
+              <form action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_top' style='font-size:24pt;' >
+                <input type='hidden' name='cmd' value='_s-xclick' />
+                <input type='hidden' name='hosted_button_id' value='T322ZZH9TKMMN' />
+                <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit'
+                       title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' width='300px'/>
+                <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
+              </form>
+              <br>
+            </td></tr>
+          </table>
         </td></tr>
         <tr><td id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
         <tr><td id='fname' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
@@ -330,7 +327,7 @@
         <div class='modal-content'>
           <div class='modal-header'>
             <h5 class='modal-title' id='komi_handi_heading' style='font-size:30pt'>New Game</h5>
-            <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <button type='button' class='close touch-allow' data-dismiss='modal' aria-label='Close'>
               <span aria-hidden='true'>&times;</span>
             </button>
           </div>
@@ -386,7 +383,7 @@
               &nbsp;&nbsp;
               <label id='btn_strong' class='btn btn-outline-dark' style='font-size:24pt;'>Super Strong</label>
             </div>
-
+            <div id='donate_modal' style='font-size:24pt'> </div>
           </div>
           <div class='modal-footer'>
             <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
@@ -412,7 +409,7 @@
 
     <!-- Entry Point -->
     <!-- <script type='text/javascript' src='static/main.js?v=1.49'></script> -->
-    <script type='text/javascript' src='static/main.js?v=1.69'></script>
+    <script type='text/javascript' src='static/main.js?v=1.70'></script>
     <script type='text/javascript'>
      $(function () {
        main( JGO, new AhauxUtils( d3, $), {mobile:true} )

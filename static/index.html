@@ -188,12 +188,9 @@
                 <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>Score</label>
               </div>
             </div>
+            <br>
             <table class='center'>
-              <tr><td>
-                <br>
-                To keep KataGo up and running, we need a dedicated server.
-                A total of 2000 dollars will do it.
-                Please consider donating if you enjoy this service and would like it to continue.
+              <tr><td id='donating'>
               </td></tr>
               <tr><td>
                 <br>
@@ -366,7 +363,7 @@
           <div class='modal-content'>
             <div class='modal-header'>
               <h5 class='modal-title' id='komi_handi_heading'>New Game</h5>
-              <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+              <button id='cancel_new_game' type='button' class='close' data-dismiss='modal' aria-label='Close'>
                 <span aria-hidden='true'>&times;</span>
               </button>
             </div>
@@ -422,6 +419,7 @@
                 &nbsp;&nbsp;
                 <label id='btn_strong' class='btn btn-outline-dark' style='font-size:8pt;'>Super Strong</label>
               </div>
+              <div id='donate_modal'> </div>
             </div>
             <div class='modal-footer'>
               <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
@@ -437,6 +435,8 @@
 
       <!-- Standard frameworks -->
       <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+      <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      -->
       <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
       <script src='https://d3js.org/d3.v5.min.js'></script>
 
@@ -446,7 +446,7 @@
       <script type='text/javascript' src='static/small/board.js'></script>
 
       <!-- Entry Point -->
-      <script type='text/javascript' src='static/main.js?v=1.69'></script>
+      <script type='text/javascript' src='static/main.js?v=1.70'></script>
       <script type='text/javascript'>
        $(function () {
          $('[data-toggle="tooltip"]').tooltip()

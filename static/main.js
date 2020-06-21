@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.69'
+const VERSION = 'v1.70'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -22,6 +22,7 @@ const HANDISTONES = ['',''
   ,['D4','Q16','Q4','D16','D10','Q10','K4','K16']
   ,['D4','Q16','Q4','D16','D10','Q10','K4','K16','K10']
 ]
+
 
 //=======================================
 function main( JGO, axutil, p_options) {
@@ -75,6 +76,7 @@ function main( JGO, axutil, p_options) {
     $('#handi_9').click( function() { $('#handi_menu').html('9'); $('#komi_menu').html('0.5') })
 
     $('#game_start_save').click( function() { // New Game -> Go
+      $('#donate_modal').html('')
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
 
@@ -84,6 +86,9 @@ function main( JGO, axutil, p_options) {
       activate_bot( 'on')
       if (g_handi > 1) { botmove_if_active() }
       $('#status').html( '&nbsp;')
+    })
+    $('#cancel_new_game').click( function() { // New Game -> x
+      $('#donate_modal').html('')
     })
   } // set_dropdown_handlers()
 
@@ -344,6 +349,7 @@ function main( JGO, axutil, p_options) {
       if (e.target.localName == 'canvas') { return }
       //if (e.target.className.includes('modal')) { window.alert(e.target.id); return }
       if (e.target.className.includes('btn-file')) { return }
+      if (e.target.className.includes('touch-allow')) { return }
       if (e.target.className.includes('btn-primary')) { return }
       if (e.target.className.includes('close')) { return }
       if (e.target.className.includes('dropdown')) { return }
@@ -1098,9 +1104,17 @@ function main( JGO, axutil, p_options) {
     }
     // setter
     if (val == 'strong') {
-      $('#descr_bot').html( 'KataGo 40b 1000<br>2020-05-30')
-      $('#btn_strong').addClass('active')
-      $('#btn_fast').removeClass('active')
+      fast_or_strong( 'fast') // Strong is disabled
+      /*
+         $('#descr_bot').html( 'KataGo 40b 1000<br>2020-05-30')
+         $('#btn_strong').addClass('active')
+         $('#btn_fast').removeClass('active')
+       */
+      var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
+         class='touch-allow'>donate</a>`
+      var tstr = `Super Strong is disabled until donations reach 2000 dollars for a dedicated server. Please ${link}.`
+
+      $('#donate_modal').html(tstr)
     }
     else { // fast
       $('#descr_bot').html( 'KataGo 20b &nbsp; 500<br>2020-05-30')
@@ -1131,6 +1145,41 @@ function main( JGO, axutil, p_options) {
       localStorage.setItem( 'settings', JSON.stringify( settings))
     }
   } // settings()
+  // Build HTML for donation status
+  //-------------------------------------------
+  function donate_string( given, tot) {
+    var frac = given / tot
+    var pct = Math.round(100 * frac) + '%'
+    var tstr = given + ' / ' + tot + ' dollars '
+    var fontsize = '10pt'; var height = '20px'
+    if (p_options.mobile) {
+      fontsize = '20pt'
+      height = '40px'
+    }
+    var res = `
+            <table>
+            <tr><td colspan=3>
+                To keep KataGo up and running, we need a dedicated server.
+                A total of 2000 dollars will do it.
+                Please consider donating if you enjoy this service and would like it to continue.
+            <tr><td colspan=3>
+                <br>
+                Status (updated daily): ${tstr}
+            </td></tr>
+    `
+    res += `
+    <tr>
+    <td width=20%></td>
+    <td>
+    <div class='progress' style='font-size:${fontsize};height:${height}'>
+    <div class='progress-bar' role='progressbar' style='width:${pct}' aria-valuenow=${given} aria-valuemin='0' aria-valuemax=$tot></div>
+    ${pct} </div>
+    </td>
+    <td width=20%></td>
+    </tr>
+    </table>`
+    return res
+  } // donate_string()
 
   $('#version').html(VERSION + (p_options.mobile?'&nbsp;&nbsp;':''))
   settings()
@@ -1155,7 +1204,9 @@ function main( JGO, axutil, p_options) {
   }
   statesaver()
 
-  // Default to fast (20b less playouts)
+  $('#donating').html( donate_string(55,2000))
+
+    // Default to fast (20b less playouts)
   //$('input[name=fast_strong]').filter('[value=fast]').prop('checked',true)
 
 } // function main()
