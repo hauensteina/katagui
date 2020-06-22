@@ -8,7 +8,7 @@
 'use strict'
 
 const DEBUG = false
-const VERSION = 'v1.70'
+const VERSION = 'v1.71'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -221,8 +221,8 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
-    $('#btn_fast').click( () => {
-      fast_or_strong('fast')
+    $('#btn_free').click( () => {
+      fast_or_strong('free')
     })
 
     $('#btn_strong').click( () => {
@@ -781,7 +781,7 @@ function main( JGO, axutil, p_options) {
     /* var bot = localStorage.getItem('bot')
      * if (BOTS.indexOf( bot) < 0) { bot = BOTS[0] }
      * change_bot(bot) */
-    fast_or_strong('fast')
+    fast_or_strong('free')
     if (localStorage.getItem('fast_or_strong') == 'strong') {
       fast_or_strong('strong')
     }
@@ -1099,26 +1099,28 @@ function main( JGO, axutil, p_options) {
         fast_or_strong('strong')
         return {'val':'strong', 'ep':'/select-move-x/' } }
       else {
-        fast_or_strong('fast')
-        return {'val':'fast', 'ep':'/select-move/' } }
+        fast_or_strong('free')
+        return {'val':'free', 'ep':'/select-move/' } }
     }
     // setter
     if (val == 'strong') {
-      fast_or_strong( 'fast') // Strong is disabled
-      /*
-         $('#descr_bot').html( 'KataGo 40b 1000<br>2020-05-30')
+      const STRONG = 0
+      if (STRONG) {
+         $('#descr_bot').html( 'KataGo 40b 1000<br>2020-06-22')
          $('#btn_strong').addClass('active')
-         $('#btn_fast').removeClass('active')
-       */
+         $('#btn_free').removeClass('active')
+         return
+      }
+      fast_or_strong( 'free') // Strong is disabled
       var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
          class='touch-allow'>donate</a>`
-      var tstr = `Super Strong is disabled until donations reach 2000 dollars for a dedicated server. Please ${link}.`
+      var tstr = `Strong is disabled until donations reach 2000 dollars for a dedicated server. Please ${link}.`
 
       $('#donate_modal').html(tstr)
     }
-    else { // fast
-      $('#descr_bot').html( 'KataGo 20b &nbsp; 500<br>2020-06-22')
-      $('#btn_fast').addClass('active')
+    else { // free
+      $('#descr_bot').html( 'KataGo 10b &nbsp; 256<br>2020-06-22')
+      $('#btn_free').addClass('active')
       $('#btn_strong').removeClass('active')
     }
   } // fast_or_strong()
@@ -1145,6 +1147,7 @@ function main( JGO, axutil, p_options) {
       localStorage.setItem( 'settings', JSON.stringify( settings))
     }
   } // settings()
+
   // Build HTML for donation status
   //-------------------------------------------
   function donate_string( given, tot) {
