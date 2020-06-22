@@ -1104,7 +1104,7 @@ function main( JGO, axutil, p_options) {
     }
     // setter
     if (val == 'strong') {
-      const STRONG = 1
+      const STRONG = 0
       if (STRONG) {
          $('#descr_bot').html( 'KataGo 40b 1000<br>2020-06-22')
          $('#btn_strong').addClass('active')
