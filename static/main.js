@@ -1117,7 +1117,7 @@ function main( JGO, axutil, p_options) {
       $('#donate_modal').html(tstr)
     }
     else { // fast
-      $('#descr_bot').html( 'KataGo 20b &nbsp; 500<br>2020-05-30')
+      $('#descr_bot').html( 'KataGo 20b &nbsp; 500<br>2020-06-22')
       $('#btn_fast').addClass('active')
       $('#btn_strong').removeClass('active')
     }
@@ -1204,7 +1204,7 @@ function main( JGO, axutil, p_options) {
   }
   statesaver()
 
-  $('#donating').html( donate_string(55,2000))
+  $('#donating').html( donate_string(55+26,2000))
 
     // Default to fast (20b less playouts)
   //$('input[name=fast_strong]').filter('[value=fast]').prop('checked',true)
