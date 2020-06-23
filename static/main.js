@@ -1113,7 +1113,7 @@ function main( JGO, axutil, p_options) {
         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
         $('#btn_strong').addClass('active')
         $('#btn_free').removeClass('active')
-        $('#img_bot'). attr('src', 'static/kata-red.png');
+        $('#img_bot').attr('src', 'static/kata-red.png');
         return
       }
       else {
@@ -1129,7 +1129,7 @@ function main( JGO, axutil, p_options) {
       $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
       $('#btn_free').addClass('active')
       $('#btn_strong').removeClass('active')
-      $('#img_bot'). attr('src', 'static/kata.png');
+      $('#img_bot').attr('src', 'static/kata.png');
     }
   } // fast_or_strong()
 
