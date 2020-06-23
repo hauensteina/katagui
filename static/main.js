@@ -7,6 +7,7 @@
 
 'use strict'
 
+const DDATE = '2020-07-23'
 const DEBUG = false
 const VERSION = 'v1.71'
 const KATAGO_SERVER = ''
@@ -1106,20 +1107,30 @@ function main( JGO, axutil, p_options) {
     if (val == 'strong') {
       const STRONG = 0
       if (STRONG) {
-         $('#descr_bot').html( 'KataGo 40b 1000<br>2020-06-22')
+         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
          $('#btn_strong').addClass('active')
          $('#btn_free').removeClass('active')
          return
       }
-      fast_or_strong( 'free') // Strong is disabled
-      var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
+      var d = new Date()
+      var h = d.getUTCHours()
+      if (h >= 20 || h <= 1) {
+        $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
+        $('#btn_strong').addClass('active')
+        $('#btn_free').removeClass('active')
+        return
+      }
+      else {
+        fast_or_strong( 'free') // Strong is disabled
+        var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
          class='touch-allow'>donate</a>`
-      var tstr = `Strong is disabled until donations reach 2000 dollars for a dedicated server. Please ${link}.`
+        var tstr = `Strong is currently disabled due to high server load. Please ${link} for a new server.`
 
-      $('#donate_modal').html(tstr)
+        $('#donate_modal').html(tstr)
+      }
     }
     else { // free
-      $('#descr_bot').html( 'KataGo 10b &nbsp; 256<br>2020-06-22')
+      $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
       $('#btn_free').addClass('active')
       $('#btn_strong').removeClass('active')
     }
@@ -1207,7 +1218,7 @@ function main( JGO, axutil, p_options) {
   }
   statesaver()
 
-  $('#donating').html( donate_string(55+26,2000))
+  $('#donating').html( donate_string(55+26+15,2000))
 
     // Default to fast (20b less playouts)
   //$('input[name=fast_strong]').filter('[value=fast]').prop('checked',true)
