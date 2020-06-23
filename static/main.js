@@ -9,7 +9,7 @@
 
 const DDATE = '2020-07-23'
 const DEBUG = false
-const VERSION = 'v1.72'
+const VERSION = 'v1.73'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -1107,18 +1107,13 @@ function main( JGO, axutil, p_options) {
     // setter
     if (val == 'strong') {
       const STRONG = 0
-      if (STRONG) {
-         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
-         $('#btn_strong').addClass('active')
-         $('#btn_free').removeClass('active')
-         return
-      }
       var d = new Date()
       var h = d.getUTCHours()
-      if (h >= 15 || h <= 1) {
+      if (h >= 15 || h <= 1 || STRONG) {
         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
         $('#btn_strong').addClass('active')
         $('#btn_free').removeClass('active')
+        $('#img_bot'). attr('src', 'static/kata-red.png');
         return
       }
       else {
@@ -1134,6 +1129,7 @@ function main( JGO, axutil, p_options) {
       $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
       $('#btn_free').addClass('active')
       $('#btn_strong').removeClass('active')
+      $('#img_bot'). attr('src', 'static/kata.png');
     }
   } // fast_or_strong()
 
