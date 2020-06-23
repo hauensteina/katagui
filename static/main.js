@@ -9,7 +9,7 @@
 
 const DDATE = '2020-07-23'
 const DEBUG = false
-const VERSION = 'v1.71'
+const VERSION = 'v1.72'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 
@@ -383,18 +383,19 @@ function main( JGO, axutil, p_options) {
         $('#lb_komi').html( 'Komi: ' + res.komi)
         set_emoji()
         replay_move_list( moves)
-	      if ('probs' in res) {
-	        var probs = res.probs
-	        for (var i=0; i < moves.length; i++) {
-	          g_record[i].p = parseFloat( probs[i])
-	        }
-	      }
-	      if ('scores' in res) {
-	        var scores = res.scores
-	        for (var i=0; i < moves.length; i++) {
-	          g_record[i].score = parseFloat( scores[i])
-	        }
-	      }
+        // Restoring probs prevents analysis, don't do it.
+	      /* if ('probs' in res) {
+	         var probs = res.probs
+	         for (var i=0; i < moves.length; i++) {
+	         g_record[i].p = parseFloat( probs[i])
+	         }
+	         }
+	         if ('scores' in res) {
+	         var scores = res.scores
+	         for (var i=0; i < moves.length; i++) {
+	         g_record[i].score = parseFloat( scores[i])
+	         }
+	         } */
         g_complete_record = g_record.slice()
         show_movenum()
         g_komi = res.komi
@@ -432,7 +433,7 @@ function main( JGO, axutil, p_options) {
       goto_move( g_record.length + 1)
       return
     }
-    if (g_record[ g_record.length - 1].p == 0) {
+    if (g_record[ g_record.length - 1].p <= NIL_P) {
       btn_next.waiting = true
       get_prob_genmove( (data) => {
         update_emoji()
