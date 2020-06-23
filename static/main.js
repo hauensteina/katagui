@@ -1114,7 +1114,7 @@ function main( JGO, axutil, p_options) {
       }
       var d = new Date()
       var h = d.getUTCHours()
-      if (h >= 20 || h <= 1) {
+      if (h >= 15 || h <= 1) {
         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
         $('#btn_strong').addClass('active')
         $('#btn_free').removeClass('active')
