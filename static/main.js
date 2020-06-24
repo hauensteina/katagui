@@ -7,11 +7,14 @@
 
 'use strict'
 
-const DDATE = '2020-07-23'
+const DDATE = '2020-07-24'
 const DEBUG = false
-const VERSION = 'v1.73'
+const VERSION = 'v1.74'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
+const HOUR_STRONG_ON = 15
+const HOUR_STRONG_OFF = 1
+
 
 const HANDISTONES = ['',''
   ,['D4','Q16']
@@ -776,6 +779,12 @@ function main( JGO, axutil, p_options) {
       localStorage.setItem('bot_active', activate_bot.state)
       localStorage.setItem('loaded_game', JSON.stringify( set_load_sgf_handler.loaded_game))
     }
+    if (hhmmss_strong_on()) {
+      $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
+    }
+    else {
+      $('#strong_time').html( 'Strong turning off in ' + hhmmss_strong_off())
+    }
   } // save_state()
 
   //--------------------------
@@ -1133,6 +1142,49 @@ function main( JGO, axutil, p_options) {
     }
   } // fast_or_strong()
 
+  // How long until strong comes back. Currently 3pm to 1am.
+  //----------------------------------------------------------
+  function hhmmss_strong_on() {
+    var now = new Date()
+    now = new Date( now.getTime() + now.getTimezoneOffset() * 60000) // utc
+    var h = now.getHours()
+    if (h >= HOUR_STRONG_ON || h <= HOUR_STRONG_OFF) { // already on
+      return 0
+    }
+    var tback = new Date(now)
+    //tback.setDate( tover.getDate() + 1)
+    tback.setHours( HOUR_STRONG_ON,0,0,0)
+    var delta = tback - now
+    var hours = Math.floor( delta / (1000*60*60))
+    var mins  = Math.floor( delta / (1000*60)) - hours * 60
+    var secs  = Math.floor( delta / (1000)) - mins * 60 - hours * 3600
+    var res = ('0' + hours).slice(-2) + ':' + ('0' + mins).slice(-2) + ':' + ('0' + secs).slice(-2)
+    return res
+  } // hhmmss_strong_on()
+
+  // How long until strong is disabled. Currently 3pm to 1am.
+  //----------------------------------------------------------
+  function hhmmss_strong_off() {
+    var now = new Date()
+    now = new Date( now.getTime() + now.getTimezoneOffset() * 60000) // utc
+    var h = now.getHours()
+    if (h < HOUR_STRONG_ON && h > HOUR_STRONG_OFF) { // already off
+      return 0
+    }
+    var toff = new Date(now)
+    if (h >= HOUR_STRONG_ON) {
+      toff.setDate( toff.getDate() + 1)
+    }
+
+    toff.setHours( HOUR_STRONG_OFF,0,0,0)
+    var delta = toff - now
+    var hours = Math.floor( delta / (1000*60*60))
+    var mins  = Math.floor( delta / (1000*60)) - hours * 60
+    var secs  = Math.floor( delta / (1000)) - mins * 60 - hours * 3600
+    var res = ('0' + hours).slice(-2) + ':' + ('0' + mins).slice(-2) + ':' + ('0' + secs).slice(-2)
+    return res
+  } // hhmmss_strong_off()
+
   // Get a value from the settings screen via localStorage
   //--------------------------------------------------------
   function settings( key, value) {
@@ -1217,7 +1269,9 @@ function main( JGO, axutil, p_options) {
 
   $('#donating').html( donate_string(55+26+15,2000))
 
-    // Default to fast (20b less playouts)
+  hhmmss_strong_off()
+
+  // Default to fast (20b less playouts)
   //$('input[name=fast_strong]').filter('[value=fast]').prop('checked',true)
 
 } // function main()
