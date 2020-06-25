@@ -9,7 +9,7 @@
 
 const DDATE = '2020-07-24'
 const DEBUG = false
-const VERSION = 'v1.74'
+const VERSION = 'v1.75'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -779,12 +779,6 @@ function main( JGO, axutil, p_options) {
       localStorage.setItem('bot_active', activate_bot.state)
       localStorage.setItem('loaded_game', JSON.stringify( set_load_sgf_handler.loaded_game))
     }
-    if (hhmmss_strong_on()) {
-      $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
-    }
-    else {
-      $('#strong_time').html( 'Strong turning off in ' + hhmmss_strong_off())
-    }
   } // save_state()
 
   //--------------------------
@@ -1118,7 +1112,7 @@ function main( JGO, axutil, p_options) {
       const STRONG = 0
       var d = new Date()
       var h = d.getUTCHours()
-      if (h >= 15 || h <= 1 || STRONG) {
+      if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF || STRONG) {
         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
         $('#btn_strong').addClass('active')
         $('#btn_free').removeClass('active')
@@ -1148,7 +1142,7 @@ function main( JGO, axutil, p_options) {
     var now = new Date()
     now = new Date( now.getTime() + now.getTimezoneOffset() * 60000) // utc
     var h = now.getHours()
-    if (h >= HOUR_STRONG_ON || h <= HOUR_STRONG_OFF) { // already on
+    if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF) { // already on
       return 0
     }
     var tback = new Date(now)
@@ -1168,7 +1162,7 @@ function main( JGO, axutil, p_options) {
     var now = new Date()
     now = new Date( now.getTime() + now.getTimezoneOffset() * 60000) // utc
     var h = now.getHours()
-    if (h < HOUR_STRONG_ON && h > HOUR_STRONG_OFF) { // already off
+    if (h < HOUR_STRONG_ON && h >= HOUR_STRONG_OFF) { // already off
       return 0
     }
     var toff = new Date(now)
@@ -1261,11 +1255,17 @@ function main( JGO, axutil, p_options) {
   }
 
   // Save game record once a second
-  function statesaver() {
+  function once_per_sec() {
     save_state()
-    setTimeout(statesaver, 1000)
+    if (hhmmss_strong_on()) {
+      $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
+    }
+    else {
+      $('#strong_time').html( 'Strong turning off in ' + hhmmss_strong_off())
+    }
+    setTimeout(once_per_sec, 1000)
   }
-  statesaver()
+  once_per_sec()
 
   $('#donating').html( donate_string(55+26+15,2000))
 
