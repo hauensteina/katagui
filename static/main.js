@@ -13,7 +13,7 @@ const VERSION = 'v1.75'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
-const HOUR_STRONG_OFF = 1
+const HOUR_STRONG_OFF = 3 // 1
 
 
 const HANDISTONES = ['',''
