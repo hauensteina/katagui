@@ -7,9 +7,9 @@
 
 'use strict'
 
-const DDATE = '2020-07-24'
+const DDATE = '2020-07-27'
 const DEBUG = false
-const VERSION = 'v1.75'
+const VERSION = 'v1.76'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -224,6 +224,20 @@ function main( JGO, axutil, p_options) {
   function set_btn_handlers() {
     set_load_sgf_handler()
     var_button_state( 'off')
+
+    $('#img_bot, #descr_bot').click( () => {
+      if (hhmmss_strong_on()) {
+        $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
+        var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
+         class='touch-allow'>donate</a>`
+        var tstr = `Strong is currently disabled due to high server load. Please ${link} for a new server.<br>`
+        $('#please_donate_modal_text').html( tstr)
+        $('#please_donate_modal').modal('show')
+      }
+      else {
+        fast_or_strong('toggle')
+      }
+    })
 
     $('#btn_free').click( () => {
       fast_or_strong('free')
@@ -1108,7 +1122,11 @@ function main( JGO, axutil, p_options) {
         return {'val':'free', 'ep':'/select-move/' } }
     }
     // setter
-    if (val == 'strong') {
+    if (val == 'toggle') {
+      if ($('#btn_strong').hasClass('active')) { return fast_or_strong('free') }
+      else {  return fast_or_strong('strong') }
+    }
+    else if (val == 'strong') {
       const STRONG = 0
       var d = new Date()
       var h = d.getUTCHours()
@@ -1258,7 +1276,9 @@ function main( JGO, axutil, p_options) {
   function once_per_sec() {
     save_state()
     if (hhmmss_strong_on()) {
-      $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
+      var tstr = 'Strong coming back in ' + hhmmss_strong_on()
+      $('#strong_time').html( tstr)
+      $('#please_donate_modal_timer').html( tstr)
     }
     else {
       $('#strong_time').html( 'Strong turning off in ' + hhmmss_strong_off())

@@ -408,8 +408,25 @@
               <div id='strong_time'> </div>
             </div>
             <div class='modal-footer'>
-              <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
               <button id='game_start_save' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal dialog asking for donation -->
+      <div class='modal fade' id='please_donate_modal' tabindex='-1' role='dialog' aria-hidden='true'>
+        <div class='modal-dialog' role='document'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h5 class='modal-title'>Please Donate</h5>
+            </div>
+            <div class='modal-body'>
+              <span id='please_donate_modal_text'> </span>
+              <span id='please_donate_modal_timer'> </span>
+            </div>
+            <div class='modal-footer'>
+              <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
             </div>
           </div>
         </div>
@@ -421,7 +438,6 @@
 
       <!-- Standard frameworks -->
       <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
-      <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
       -->
       <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
       <script src='https://d3js.org/d3.v5.min.js'></script>
@@ -432,7 +448,7 @@
       <script type='text/javascript' src='static/small/board.js'></script>
 
       <!-- Entry Point -->
-      <script type='text/javascript' src='static/main.js?v=1.75e'></script>
+      <script type='text/javascript' src='static/main.js?v=1.76'></script>
       <script type='text/javascript'>
        $(function () {
          $('[data-toggle="tooltip"]').tooltip()

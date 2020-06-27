@@ -184,8 +184,8 @@
           <div class='container-fluid'>
             <div class='row'>
               <div class='col-4'>
-                <img id='img_bot' src='static/kata.png' style='height:200px'>
-                <div id='descr_bot' style='font-size:20pt'>
+                <img id='img_bot' src='static/kata.png' style='height:200px' class='touch-allow'>
+                <div id='descr_bot' style='font-size:20pt' class='touch-allow'>
                   KataGo 20 blocks<br>2020-05-30
                 </div>
                 <div>
@@ -386,10 +386,28 @@
           </div>
           <div class='modal-footer'>
             <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
-            <button  style='font-size:30pt' id='game_start_save' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
+            <button style='font-size:30pt' id='game_start_save' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Modal dialog asking for donation -->
+    <div class='modal fade' id='please_donate_modal' tabindex='-1' role='dialog' aria-hidden='true'>
+      <div class='modal-dialog' role='document'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' style='font-size:24pt'>Please Donate</h5>
+        </div>
+        <div class='modal-body'  style='font-size:24pt'>
+          <span id='please_donate_modal_text'> </span>
+          <span id='please_donate_modal_timer'> </span>
+        </div>
+        <div class='modal-footer'>
+          <button style='font-size:24pt' type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
+        </div>
+      </div>
+    </div>
     </div>
 
     <!-- ---------- -->
@@ -407,8 +425,7 @@
     <script type='text/javascript' src='static/large/board.js?v=1.j'></script>
 
     <!-- Entry Point -->
-    <!-- <script type='text/javascript' src='static/main.js?v=1.49'></script> -->
-    <script type='text/javascript' src='static/main.js?v=1.75e'></script>
+    <script type='text/javascript' src='static/main.js?v=1.76'></script>
     <script type='text/javascript'>
      $(function () {
        main( JGO, new AhauxUtils( d3, $), {mobile:true} )
