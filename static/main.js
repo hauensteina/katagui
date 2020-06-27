@@ -44,6 +44,7 @@ function main( JGO, axutil, p_options) {
   var g_record = []
   var g_complete_record = []
   var g_play_btn_buffer = false // buffer one play btn click
+  var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
 
   var g_komi = 7.5
@@ -139,6 +140,28 @@ function main( JGO, axutil, p_options) {
 		get_prob_genmove( function( data) { if (activate_bot.state == 'on') { bot_move_callback( data) } },
       settings('show_emoji'), playing )
   } // board_click_callback()
+
+  //---------------------------------
+  function best_btn_callback() {
+    $('#status').html( 'Thinking...')
+    get_best_move( (data) => {
+      var botCoord = string2jcoord( data.bot_move)
+      var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
+      var node = g_jrecord.createNode( true)
+      replay_move_list( g_record) // remove artifacts, preserve mark on last play
+      var mmax = 0
+      // Mark candidates with letters if psv is close enough to max
+      for (const [idx,m] of best.entries()) {
+        if (mmax == 0) { mmax = m.psv }
+        if (m.psv < mmax / 4.0) continue
+        var botCoord = string2jcoord( m.move)
+        if (botCoord != 'pass' && botCoord != 'resign') {
+          var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
+          node.setMark( botCoord, letter)
+        }
+      } // for
+    })
+  } // best_btn_callback()
 
   // Black moves at the beginning are handicap
   //--------------------------------------------
@@ -259,7 +282,6 @@ function main( JGO, axutil, p_options) {
       }
       activate_bot( 'on')
       botmove_if_active()
-      return false
     })
 
     // Autoplay slider
@@ -270,26 +292,12 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_best').click( () => {
-      $('#status').html( 'Thinking...')
-      get_best_move( (data) => {
-        var botCoord = string2jcoord( data.bot_move)
-        var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
-        var node = g_jrecord.createNode( true)
-        replay_move_list( g_record) // remove artifacts, preserve mark on last play
-        var mmax = 0
-        // Mark candidates with letters if psv is close enough to max
-        for (const [idx,m] of best.entries()) {
-          if (mmax == 0) { mmax = m.psv }
-          if (m.psv < mmax / 4.0) continue
-          var botCoord = string2jcoord( m.move)
-          if (botCoord != 'pass' && botCoord != 'resign') {
-            var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
-            node.setMark( botCoord, letter)
-          }
-        } // for
-      })
-      return false
-    }) // click
+      if (axutil.hit_endpoint('waiting')) {
+        g_best_btn_buffer = true; return
+      }
+      best_btn_callback()
+    })
+
 
     $('#btn_save').click( () => {
       var rec = moves_only(g_complete_record)
@@ -851,14 +859,18 @@ function main( JGO, axutil, p_options) {
 			g_complete_record[ g_record.length - 1].score = score
 		}
 		show_prob( update_emo, playing)
-    if (g_play_btn_buffer) { // Buffered play button click
-      botmove_if_active()
-    }
     if (g_click_coord_buffer) { // user clicked while waiting, do it now
       board_click_callback( g_click_coord_buffer)
+      g_click_coord_buffer = null
     }
-    g_play_btn_buffer = false
-    g_click_coord_buffer = null
+    else if (g_play_btn_buffer) { // Buffered play button click
+      botmove_if_active()
+      g_play_btn_buffer = false
+    }
+    else if (g_best_btn_buffer) { // Buffered play button click
+      best_btn_callback()
+      g_best_btn_buffer = false
+    }
   } // get_prob_callback()
 
   // Get the best move
