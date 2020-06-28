@@ -9,7 +9,7 @@
 
 const DDATE = '2020-07-27'
 const DEBUG = false
-const VERSION = 'v1.76'
+const VERSION = 'v1.77'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -454,7 +454,8 @@ function main( JGO, axutil, p_options) {
   function btn_next() {
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( g_record.length + 1)
-    if (g_record.length < 20  && g_record[ g_record.length - 1].mv == 'pass') {
+    // Do not analyze handicap stones
+    if (g_record.length < 20  && g_complete_record[ g_record.length].mv == 'pass') {
       goto_move( g_record.length + 1)
       return
     }
