@@ -1160,7 +1160,7 @@ function main( JGO, axutil, p_options) {
       }
     }
     else { // free
-      $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
+      $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
       $('#btn_free').addClass('active')
       $('#btn_strong').removeClass('active')
       $('#img_bot').attr('src', 'static/kata.png');
