@@ -1300,7 +1300,7 @@ function main( JGO, axutil, p_options) {
   }
   once_per_sec()
 
-  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21,2000))
+  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21+5,2000))
 
   hhmmss_strong_off()
 
