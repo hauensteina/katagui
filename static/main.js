@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-07-28'
+const DDATE = '2020-08-01'
 const DEBUG = false
 const VERSION = 'v1.77'
 const KATAGO_SERVER = ''
@@ -1300,7 +1300,7 @@ function main( JGO, axutil, p_options) {
   }
   once_per_sec()
 
-  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21+5,2000))
+  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21+5+10,2000))
 
   hhmmss_strong_off()
 
