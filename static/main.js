@@ -1249,7 +1249,7 @@ function main( JGO, axutil, p_options) {
             <tr><td colspan=3>
                 To keep KataGo up and running, we need a dedicated server.
                 A total of 2000 dollars will do it.
-                You know you want this.
+                Only 88% to go! You know you want this.
                 If you donate over 20 dollars, I'll buy you a beer when you visit me in California.
             <tr><td colspan=3>
                 <br>
