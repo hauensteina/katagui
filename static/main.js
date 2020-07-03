@@ -1249,7 +1249,7 @@ function main( JGO, axutil, p_options) {
             <tr><td colspan=3>
                 To keep KataGo up and running, we need a dedicated server.
                 A total of 2000 dollars will do it.
-                Only 88% to go! You know you want this.
+                Only 87% to go! You know you want this.
                 If you donate over 20 dollars, I'll buy you a beer when you visit me in California.
             <tr><td colspan=3>
                 <br>
@@ -1301,7 +1301,7 @@ function main( JGO, axutil, p_options) {
   }
   once_per_sec()
 
-  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21+5+10,2000))
+  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21+5+10+21,2000))
 
   hhmmss_strong_off()
 
