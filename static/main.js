@@ -7,13 +7,15 @@
 
 'use strict'
 
-const DDATE = '2020-08-01'
+const DDATE = '2020-08-06'
 const DEBUG = false
-const VERSION = 'v1.77'
+const VERSION = 'v1.78'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
 const HOUR_STRONG_OFF = 3 // 1
+const DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5
+const DONATE_LIMIT = 2000
 
 
 const HANDISTONES = ['',''
@@ -1238,6 +1240,7 @@ function main( JGO, axutil, p_options) {
   function donate_string( given, tot) {
     var frac = given / tot
     var pct = Math.round(100 * frac) + '%'
+    var rest = 100 - Math.round(100 * frac) + '%'
     var tstr = given + ' / ' + tot + ' dollars '
     var fontsize = '10pt'; var height = '20px'
     if (p_options.mobile) {
@@ -1248,8 +1251,8 @@ function main( JGO, axutil, p_options) {
             <table>
             <tr><td colspan=3>
                 To keep KataGo up and running, we need a dedicated server.
-                A total of 2000 dollars will do it.
-                Only 85% to go! You know you want this.
+                A total of ${DONATE_LIMIT} dollars will do it.
+                Only ${rest} to go! You know you want this.
                 If you donate over 20 dollars, I'll buy you a beer when you visit me in California.
             <tr><td colspan=3>
                 <br>
@@ -1301,7 +1304,7 @@ function main( JGO, axutil, p_options) {
   }
   once_per_sec()
 
-  $('#donating').html( donate_string(55+26+15+5+21+10+50+10+20+21+5+10+21+30,2000))
+  $('#donating').html( donate_string(DONATED,DONATE_LIMIT))
 
   hhmmss_strong_off()
 
