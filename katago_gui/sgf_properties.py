@@ -15,7 +15,7 @@ from math import isinf, isnan
 
 import six
 
-import sgf_grammar
+import katago_gui.sgf_grammar as sgf_grammar
 from six.moves import range
 
 # In python 2, indexing a str gives one-character strings.

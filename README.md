@@ -1,7 +1,4 @@
-A front end to play aginst KataGo via a REST API.
+A front end to play against KataGo via a REST API,
+ready to deploy to Heroku.
 
-The back end is https://ahaux.com/katago_server/ .
-
-
-
-
+The REST API implementation is at https://github.com/hauensteina/katago-server .

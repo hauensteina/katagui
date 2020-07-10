@@ -11,7 +11,7 @@
 
 from pdb import set_trace as BP
 import numpy as np
-import gotypes
+import katago_gui.gotypes as gotypes
 
 COLS = 'ABCDEFGHJKLMNOPQRST'
 STONE_TO_CHAR = {

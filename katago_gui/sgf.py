@@ -10,8 +10,8 @@ import datetime
 
 import six
 
-import sgf_grammar
-import sgf_properties
+import katago_gui.sgf_grammar as sgf_grammar
+import katago_gui.sgf_properties as sgf_properties
 
 __all__ = [
     'Node',
