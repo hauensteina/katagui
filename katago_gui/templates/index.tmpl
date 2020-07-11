@@ -1,0 +1,301 @@
+
+<script type='text/javascript'>
+ /* Filename: katago-gui/index.tmpl
+  * Author: AHN
+  * Creation Date: Jan, 2020
+  * Desktop web interface to play against KataGo.
+  */
+</script>
+
+<script type="text/javascript">
+ if (window.innerWidth < window.innerHeight) {
+   document.location.href = '/index_mobile'
+ }
+</script>
+
+
+{% extends 'layout.tmpl' %}
+{% block content %}
+  <br>
+  <table class='center'>
+    <tr>
+      <td width='500px'>                      <!--left-->
+        <div class='container'>
+          <div class='row'>
+            <div class='col-12' >
+              <div class='row' style='background-color:#EEEEEE'>
+                <div class='col-12 text-center'> Take a picture and win with
+                  <a href='https://apps.apple.com/us/app/kifu-cam/id1343303689' style='font-size:12pt;text-align:right;color:green'> Kifu Cam </a>
+                </div>
+                <div class='col-12 text-center'> Play against
+                  <a href='https://leela-one-playout.herokuapp.com' style='font-size:12pt;text-align:right;color:green'> Leela! </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class='row'>
+            <div class='col-12 text-center'> &nbsp;  </div>
+          </div>
+          <div class='row'>
+            <div class='col-6 text-left'>
+              <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
+            </div>
+            <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a>
+              <br><span id='version' style='font-size:9pt'>1.0</span>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-12 text-center'>
+              <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                     style='font-size:11pt'>
+                New Game
+              </label>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-12 text-center'>
+              <div class='row'>
+                <div class='col-12 text-center'>
+                  <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <table class='center'>
+            <tr><td id='donating'>
+            </td></tr>
+            <tr><td align='center'>
+              <br>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick" />
+                <input type="hidden" name="hosted_button_id" value="T322ZZH9TKMMN" />
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
+                       title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+              </form>
+            </td></tr>
+          </table>
+          <table class='center'>
+            <tr><td colspan='2' style='font-weight:bold'> Top Three Donors: </td></tr>
+            <tr><td align='left'>Tobias Berben</td> <td align='right'> &nbsp; 50 </td>  </tr>
+            <tr><td align='left'>Terry Assael</td> <td align='right'> &nbsp; 30 </td>  </tr>
+            <tr><td align='left'>Hwang SeJong</td> <td align='right'> &nbsp; 25 </td>  </tr>
+          </table>
+          <br>
+          <div class='row'>
+            <div id='game_info' class='col-12 text-center' style='font-size:10pt'> </div>
+          </div>
+          <div class='row'>
+            <div id='fname' class='col-12 text-center' style='font-size:10pt'> </div>
+          </div>
+          <div class='row'>
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row'>
+            <div id='board' class='col-12 text-center'> </div>
+          </div>
+          <div class='row justify-content-center'>
+            <table class='center' width='100%'>
+              <tr>
+                <td id='movenum' align='center' style='font-size:13pt' width='30%'> &nbsp;</td>
+                <td id='status' align='center' style='font-size:13pt' width='40%'> &nbsp;</td>
+                <td id='emo' align='center' style='font-size:30pt' width='30%' height='60px'> &nbsp;</td>
+              </tr>
+            </table>
+          </div>
+        </div>                <!--col-12-->
+        </div>                  <!--row-->
+        </div>                    <!--container-->
+      </td>
+      <td style='vertical-align:top' width='300px'>                      <!--right-->
+        <div class='container' >
+          <div class='row' style='font-size:40pt'>
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-5'>
+              <img id='img_bot' src='static/kata.png' style='height:120px'>
+            </div>
+            <div class='col-6' style='font-size:11pt'>
+              <div id='descr_bot'>
+                KataGo 20 blocks<br>2020-05-30
+              </div>
+              <br>
+              <a id='settings' href='static/settings.html' style='font-size:12pt;text-align:right;color:green'>Settings</a>
+            </div>
+          </div>
+          <!-- Space on top of buttons -->
+          <div class='row' style='font-size:20pt;height:400px'>
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row justify-content-center'>
+            <!-- <div class='col-12'> -->
+            <table style='padding:0px'>
+              <tr><td style='margin:0'>
+                <label class='switch'>
+                  <input id='opt_auto' type='checkbox'>
+                  <span class='slider round'></span>
+                </label>
+              </td><td style='margin:0'>&nbsp;</td>
+              </tr>
+              <tr style='transform:translate(0,-8px)'>
+                <td style='padding:0;margin:0'>
+                  <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>Play</label>&nbsp;
+                </td>
+                <td style='padding:0;margin:0'>
+                  <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>Best</label>
+                </td>
+              </tr>
+            </table>
+            <!-- </div> -->
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>Undo</label>&nbsp;
+            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:11pt;'>Pass</label>&nbsp;
+            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>Score</label>
+          </div>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;'>Back 10</label>&nbsp;
+            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:8pt;'>Prev</label>&nbsp;
+            <label id='btn_next' class='btn btn-outline-dark' style='font-size:8pt;'>Next</label>&nbsp;
+            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;'>Fwd 10</label>
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>First</label>&nbsp;
+            <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>Last</label>
+          </div>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>Save sgf</label>
+          </div>
+          <div class='row justify-content-center'>
+            <form method='post' enctype='multipart/form-data'>
+              <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
+                Load sgf  <input type='file' id='sgf-file' style='display:none'>
+              </label>
+            </form>
+          </div>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>Back to Main Line</label>
+          </div>
+        </div>                  <!--right container-->
+      </td>                     <!--right-->
+    </tr></table>
+
+  <!-- Modal dialog to pick komi and handicap -->
+    <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+      <div class='modal-dialog' role='document'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h5 class='modal-title' id='komi_handi_heading'>New Game</h5>
+            <button id='cancel_new_game' type='button' class='close' data-dismiss='modal' aria-label='Close'>
+              <span aria-hidden='true'>&times;</span>
+            </button>
+          </div>
+          <div class='modal-body'>
+            <table>
+              <tr><td>Handicap</td><td>&nbsp;&nbsp;</td><td>Komi</td></tr>
+              <tr>
+                <td>
+                  <div class='dropdown'>
+                    <button class='btn btn-secondary dropdown-toggle' type='button' id='handi_menu'
+                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                      Handicap
+                    </button>
+                    <div class='dropdown-menu' aria-labelledby='handi_menu'>
+                      <a id='handi_0' class='dropdown-item'>0</a>
+                      <a id='handi_2' class='dropdown-item'>2</a>
+                      <a id='handi_3' class='dropdown-item'>3</a>
+                      <a id='handi_4' class='dropdown-item'>4</a>
+                      <a id='handi_5' class='dropdown-item'>5</a>
+                      <a id='handi_6' class='dropdown-item'>6</a>
+                      <a id='handi_7' class='dropdown-item'>7</a>
+                      <a id='handi_8' class='dropdown-item'>8</a>
+                      <a id='handi_9' class='dropdown-item'>9</a>
+                    </div>
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;</td>
+                <td>
+                  <div class='dropdown'>
+                    <button class='btn btn-secondary dropdown-toggle' type='button' id='komi_menu'
+                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                      Komi
+                    </button>
+                    <div class='dropdown-menu' aria-labelledby='komi_menu'>
+                      <a id='komi_m75' class='dropdown-item'>-7.5</a>
+                      <a id='komi_m55' class='dropdown-item' href='#'>-5.5</a>
+                      <a id='komi_m35' class='dropdown-item' href='#'>-3.5</a>
+                      <a id='komi_m15' class='dropdown-item' href='#'>-1.5</a>
+                      <a id='komi_m05' class='dropdown-item' href='#'>-0.5</a>
+                      <a id='komi_05' class='dropdown-item' href='#'>&nbsp;0.5</a>
+                      <a id='komi_15' class='dropdown-item' href='#'>&nbsp;1.5</a>
+                      <a id='komi_35' class='dropdown-item' href='#'>&nbsp;3.5</a>
+                      <a id='komi_55' class='dropdown-item' href='#'>&nbsp;5.5</a>
+                      <a id='komi_75' class='dropdown-item' href='#'>&nbsp;7.5</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <br>
+            <div align='left'>
+              &nbsp;&nbsp;
+              <label id='btn_free' class='btn btn-outline-dark' style='font-size:8pt;'>Fast</label>
+              &nbsp;&nbsp;
+              <label id='btn_strong' class='btn btn-outline-dark' style='font-size:8pt;'>Strong</label>
+            </div>
+            <div id='donate_modal'> </div>
+            <div id='strong_time'> </div>
+          </div>
+          <div class='modal-footer'>
+            <button id='game_start_save' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal dialog asking for donation -->
+    <div class='modal fade' id='please_donate_modal' tabindex='-1' role='dialog' aria-hidden='true'>
+      <div class='modal-dialog' role='document'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h5 class='modal-title'>Please Donate</h5>
+          </div>
+          <div class='modal-body'>
+            <span id='please_donate_modal_text'> </span>
+            <span id='please_donate_modal_timer'> </span>
+          </div>
+          <div class='modal-footer'>
+            <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+  <!-- Entry Point -->
+  <script type='text/javascript'>
+   $(function () {
+     $('[data-toggle="tooltip"]').tooltip()
+     main( JGO, new AhauxUtils( d3, $), {mobile:false} )
+   })
+  </script>
+{% endblock js %}

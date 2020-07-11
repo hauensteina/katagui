@@ -13,7 +13,7 @@ from datetime import datetime
 import uuid
 from io import BytesIO
 
-from flask import jsonify, request, send_file
+from flask import jsonify, request, send_file, render_template
 
 from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
@@ -23,13 +23,14 @@ from katago_gui import app
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
 @app.route('/')
+@app.route('/index')
 #-------------------------------
-def entry_point():
-    return app.send_static_file( 'index.html')
+def index():
+    return render_template( 'index.tmpl')
 
 @app.route('/index_mobile')
 #-------------------------------
-def entry_point_mobile():
+def index_mobile():
     return app.send_static_file( 'index_mobile.html')
 
 @app.route('/favicon.ico')

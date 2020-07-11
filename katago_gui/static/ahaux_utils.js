@@ -276,4 +276,19 @@ class AhauxUtils
     xmlhttp.send( json_args)
   } // download_file()
 
+  // Write to the server log
+  //--------------------------
+  slog( msg) {
+    var url = '/slog'
+    args = { 'msg': msg }
+    fetch( url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify( args)
+      }
+    )
+  } // slog()
 } // class AhauxUtils

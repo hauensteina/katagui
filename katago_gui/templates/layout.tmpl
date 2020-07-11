@@ -1,0 +1,63 @@
+<!doctype html>
+
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+
+    <meta name='description' content='Play Go Against KataGo'>
+    <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence'>
+    <meta name='author' content='Andreas Hauenstein'>
+
+    <title>Play Go Against KataGo</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+	  <!-- Global site tag (gtag.js) - Google Analytics -->
+	  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
+	  <script>
+	   window.dataLayer = window.dataLayer || [];
+	   function gtag(){dataLayer.push(arguments);}
+	   gtag('js', new Date());
+
+	   gtag('config', 'UA-139708851-3');
+	  </script>
+
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet'
+          href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
+          integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T'
+          crossorigin='anonymous'>
+    <!-- Our CSS -->
+    <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="main.css") }}'>
+  </head>
+
+  <body style='background-color:#CCCCCC'>
+
+    {% block content %}
+    {% endblock content %}
+
+    <!-- ------------------ -->
+    <!-- Javascript modules -->
+    <!-- ------------------ -->
+
+    <!-- Standard frameworks -->
+    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+
+    <!-- Our own stuff -->
+    <script type='text/javascript' src='static/ahaux_utils.js?v=0.1'></script>
+    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
+    <script type='text/javascript' src='static/small/board.js'></script>
+
+    <!-- Main module -->
+    <script type='text/javascript' src='static/main.js?v=1.78a'></script>
+
+    <!-- Any other js we want to add -->
+    {% block js %}
+    {% endblock js %}
+
+  </body>
+</html>

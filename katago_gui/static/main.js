@@ -1249,12 +1249,12 @@ function main( JGO, axutil, p_options) {
     }
     var res = `
             <table>
-            <tr><td colspan=3>
+            <tr><td colspan=3 align='center'>
                 To keep KataGo up and running, we need a dedicated server.
                 A total of ${DONATE_LIMIT} dollars will do it.
                 Only ${rest} to go! You know you want this.
                 If you donate over 20 dollars, I'll buy you a beer when you visit me in California.
-            <tr><td colspan=3>
+            <tr><td colspan=3 align='center'>
                 <br>
                 Status (updated daily): ${tstr}
             </td></tr>
