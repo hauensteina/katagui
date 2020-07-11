@@ -1,5 +1,5 @@
 #!/bin/sh
 
 sed -i '' 's/katago_server_test/katago_server/' heroku_app.py
-sed -i '' 's/const STRONG = 1/const STRONG = 0/' static/main.js
+sed -i '' 's/const STRONG = 1/const STRONG = 0/' katago_gui/static/main.js
 git add heroku_app.py
