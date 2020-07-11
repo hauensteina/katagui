@@ -9,7 +9,7 @@
 
 const DDATE = '2020-07-11'
 const DEBUG = false
-const VERSION = 'v1.78'
+const VERSION = 'v1.79'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
