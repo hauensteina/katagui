@@ -31,7 +31,7 @@ def index():
 @app.route('/index_mobile')
 #-------------------------------
 def index_mobile():
-    return app.send_static_file( 'index_mobile.html')
+    return render_template( 'index_mobile.tmpl')
 
 @app.route('/favicon.ico')
 #-------------------------------

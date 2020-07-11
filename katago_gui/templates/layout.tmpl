@@ -1,11 +1,12 @@
-<!doctype html>
+<!DOCTYPE HTML>
 
-<html>
+{% block pre %}
+{% endblock pre %}
+
+<html lang='en'>
   <head>
     <!-- Required meta tags -->
     <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
-
     <meta name='description' content='Play Go Against KataGo'>
     <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence'>
     <meta name='author' content='Andreas Hauenstein'>
@@ -31,6 +32,9 @@
           crossorigin='anonymous'>
     <!-- Our CSS -->
     <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="main.css") }}'>
+    {% block css %}
+    {% endblock css %}
+
   </head>
 
   <body style='background-color:#CCCCCC'>
@@ -50,7 +54,6 @@
     <!-- Our own stuff -->
     <script type='text/javascript' src='static/ahaux_utils.js?v=0.1'></script>
     <script type='text/javascript' src='static/jgoboard-latest.js'></script>
-    <script type='text/javascript' src='static/small/board.js'></script>
 
     <!-- Main module -->
     <script type='text/javascript' src='static/main.js?v=1.78a'></script>
