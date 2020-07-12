@@ -18,9 +18,11 @@
 
 {% block css %}
   <style>
+   /* Disable hover color change on buttons */
+   .btn:hover { background-color:#CCCCCC;  color:#343A40; }
+
    /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
    /*----------------------------------------------------------------------*/
-
    /* The switch - the box around the slider */
    .switch {
      position: relative;
@@ -350,8 +352,8 @@
   <!-- Entry Point -->
   <script type='text/javascript' src='static/large/board.js'></script>
   <script type='text/javascript'>
-    $(function () {
-    main( JGO, new AhauxUtils( d3, $), {mobile:true} )
-    })
+   $(function () {
+     main( JGO, new AhauxUtils( d3, $), {mobile:true} )
+   })
   </script>
 {% endblock js %}

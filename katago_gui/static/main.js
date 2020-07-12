@@ -391,7 +391,7 @@ function main( JGO, axutil, p_options) {
       e.preventDefault()
       e.target.click()})
     // Buttons should still work
-    $('[id^=btn_]').on('touchstart',(e)=>{e.preventDefault();e.target.click()})
+    $('[id^=btn_]').on('touchstart',(e)=>{ e.preventDefault();e.target.click(); })
   } // set_btn_handlers()
 
   // Load Sgf button
