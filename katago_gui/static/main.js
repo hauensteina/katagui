@@ -7,9 +7,9 @@
 
 'use strict'
 
-const DDATE = '2020-07-11'
+const DDATE = '2020-07-12'
 const DEBUG = false
-const VERSION = 'v1.79'
+const VERSION = 'v1.80'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -391,7 +391,14 @@ function main( JGO, axutil, p_options) {
       e.preventDefault()
       e.target.click()})
     // Buttons should still work
-    $('[id^=btn_]').on('touchstart',(e)=>{ e.preventDefault();e.target.click(); })
+    $('[id^=btn_]').on('touchstart',(e)=>{
+      e.preventDefault()
+      e.target.click()
+      $(e.target).css( 'background-color', '#040404')
+      setTimeout( ()=>{
+        $(e.target).css( 'background-color', '#CCCCCC')
+      } , 100)
+    })
   } // set_btn_handlers()
 
   // Load Sgf button
