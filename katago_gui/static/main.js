@@ -9,7 +9,7 @@
 
 const DDATE = '2020-07-12'
 const DEBUG = false
-const VERSION = 'v1.80'
+const VERSION = 'v1.81'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -264,11 +264,11 @@ function main( JGO, axutil, p_options) {
       }
     })
 
-    $('#btn_free').click( () => {
+    $('#btn_tgl_free').click( () => {
       fast_or_strong('free')
     })
 
-    $('#btn_strong').click( () => {
+    $('#btn_tgl_strong').click( () => {
       fast_or_strong('strong')
     })
 
@@ -394,10 +394,12 @@ function main( JGO, axutil, p_options) {
     $('[id^=btn_]').on('touchstart',(e)=>{
       e.preventDefault()
       e.target.click()
-      $(e.target).css( 'background-color', '#040404')
-      setTimeout( ()=>{
-        $(e.target).css( 'background-color', '#CCCCCC')
-      } , 100)
+      if (e.target.id.indexOf('_tgl_') <= 0) {
+        $(e.target).css( 'background-color', '#040404')
+        setTimeout( ()=>{
+          $(e.target).css( 'background-color', '#CCCCCC')
+        } , 100)
+      }
     })
   } // set_btn_handlers()
 
@@ -783,6 +785,7 @@ function main( JGO, axutil, p_options) {
       /* $('#btn_accept_var').removeClass('disabled')
        * $('#btn_accept_var').addClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black')
+      $('#btn_clear_var').css('background-color', '')
       /* $('#btn_accept_var').css('color', 'black'); */
       //$('#btn_clear_var').css('visibility', 'visible');
     }
@@ -1136,7 +1139,7 @@ function main( JGO, axutil, p_options) {
   //---------------------------------
   function fast_or_strong( val) {
     if (typeof val == 'undefined') { // getter
-      if ($('#btn_strong').hasClass('active')) {
+      if ($('#btn_tgl_strong').hasClass('active')) {
         fast_or_strong('strong')
         return {'val':'strong', 'ep':'/select-move-x/' } }
       else {
@@ -1145,7 +1148,7 @@ function main( JGO, axutil, p_options) {
     }
     // setter
     if (val == 'toggle') {
-      if ($('#btn_strong').hasClass('active')) { return fast_or_strong('free') }
+      if ($('#btn_tgl_strong').hasClass('active')) { return fast_or_strong('free') }
       else {  return fast_or_strong('strong') }
     }
     else if (val == 'strong') {
@@ -1154,8 +1157,8 @@ function main( JGO, axutil, p_options) {
       var h = d.getUTCHours()
       if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF || STRONG) {
         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
-        $('#btn_strong').addClass('active')
-        $('#btn_free').removeClass('active')
+        $('#btn_tgl_strong').addClass('active')
+        $('#btn_tgl_free').removeClass('active')
         $('#img_bot').attr('src', 'static/kata-red.png');
         return
       }
@@ -1170,8 +1173,8 @@ function main( JGO, axutil, p_options) {
     }
     else { // free
       $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
-      $('#btn_free').addClass('active')
-      $('#btn_strong').removeClass('active')
+      $('#btn_tgl_free').addClass('active')
+      $('#btn_tgl_strong').removeClass('active')
       $('#img_bot').attr('src', 'static/kata.png');
     }
   } // fast_or_strong()
