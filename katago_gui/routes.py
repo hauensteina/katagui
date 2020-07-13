@@ -38,8 +38,8 @@ def index_mobile():
 #-------------------------------
 def help():
     return render_template( 'help.tmpl', mobile=False)
-
 @app.route('/help_mobile')
+
 #-------------------------------
 def help_mobile():
     return render_template( 'help.tmpl', mobile=True)
@@ -49,15 +49,30 @@ def help_mobile():
 def login():
     return render_template( 'help.tmpl', mobile=False)
 
+@app.route('/login_mobile')
+#-------------------------------
+def login_mobile():
+    return render_template( 'help.tmpl', mobile=True)
+
 @app.route('/register')
 #-------------------------------
 def register():
     return render_template( 'help.tmpl', mobile=False)
 
+@app.route('/register_mobile')
+#-------------------------------
+def register_mobile():
+    return render_template( 'help.tmpl', mobile=True)
+
 @app.route('/about')
 #-------------------------------
 def about():
     return render_template( 'help.tmpl', mobile=False)
+
+@app.route('/about_mobile')
+#-------------------------------
+def about_mobile():
+    return render_template( 'help.tmpl', mobile=True)
 
 @app.route('/favicon.ico')
 #-------------------------------
