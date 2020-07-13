@@ -1,6 +1,12 @@
 <!DOCTYPE HTML>
 
 {% block pre %}
+  <script type='text/javascript'>
+   /* Filename: katago-gui/layout.tmpl
+    * Author: AHN
+    * Creation Date: Jul, 2020
+    */
+  </script>
 {% endblock pre %}
 
 <html lang='en'>
@@ -41,8 +47,21 @@
   <body>
     <header class='site-header'>
       <nav class='navbar navbar-dark bg-nav fixed-top'>
-        {% block navbar %}
-        {% endblock navbar %}
+        {% if mobile %}
+          <div class='container-fluid' style='font-size:24pt; width:100vw; left:0; margin:0; padding:0;'>
+            <a class='navbar-brand ml-0' style='font-size:30pt' href='{{ url_for("index") }}'>&nbsp;KataGui</a>
+            <a class='nav-item nav-link ml-auto' href='{{ url_for("login") }}'>Login</a>
+            <a class='nav-item nav-link' href='{{ url_for("register") }}'>Register</a>
+            <a class='nav-item nav-link' href='{{ url_for("about") }}'>About</a>
+          </div>
+        {% else %}
+          <div class='container' style='font-size:12pt'>
+            <a class='navbar-brand ml-0' style='font-size:20pt' href='{{ url_for("index") }}'>KataGui</a>
+            <a class='nav-item nav-link ml-auto' href='{{ url_for("login") }}'>Login</a>
+            <a class='nav-item nav-link' href='{{ url_for("register") }}'>Register</a>
+            <a class='nav-item nav-link' href='{{ url_for("about") }}'>About</a>
+          </div>
+        {% endif %}
       </nav>
     </header>
 

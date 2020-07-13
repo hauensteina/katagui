@@ -10,7 +10,7 @@
   </script>
 
   <script type="text/javascript">
-   if (window.innerWidth > window.innerHeight) {
+   if (typeof window.orientation == "undefined") {
      document.location.href = '/'
    }
   </script>
@@ -88,18 +88,9 @@
   </style>
 {% endblock css %}
 
-{% block navbar %}
-  <div class='container-fluid' style='font-size:24pt; width:100vw; left:0; margin:0; padding:0;'>
-    <a class='navbar-brand ml-0' style='font-size:30pt' href='/home'>&nbsp;KataGui</a>
-    <a class='nav-item nav-link ml-auto' href='/login'>Login</a>
-    <a class='nav-item nav-link' href='/register'>Register</a>
-    <a class='nav-item nav-link' href='/about'>About</a>
-  </div>
-{% endblock navbar %}
-
 {% block content %}
   <br>
-  <div>
+  <div class='container-fluid' style='width:100vw; left:0; margin:0; padding:0;'>
     <!-- <table class='center' style='width:100%;'> -->
     <table class='center'>
       <tr class='' style='background-color:#EEEEEE'><td>
@@ -145,7 +136,7 @@
                 New Game
               </label><br>
 
-              <a id='help' href='static/help_mobile.html' style='font-size:22pt;text-align:right;color:red'>READ THE MANUAL</a>
+              <a id='help' href='{{ url_for("help_mobile") }}' style='font-size:22pt;text-align:right;color:red'>READ THE MANUAL</a>
             </div>
             <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
           </div>

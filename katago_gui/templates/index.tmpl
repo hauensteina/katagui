@@ -10,7 +10,7 @@
   </script>
 
   <script type="text/javascript">
-   if (window.innerWidth < window.innerHeight) {
+   if (typeof window.orientation !== "undefined") {
      document.location.href = '/index_mobile'
    }
   </script>
@@ -86,15 +86,6 @@
   </style>
 {% endblock css %}
 
-{% block navbar %}
-    <div class='container' style='font-size:12pt'>
-      <a class='navbar-brand ml-0' style='font-size:20pt' href='/home'>KataGui</a>
-      <a class='nav-item nav-link ml-auto' href='/login'>Login</a>
-      <a class='nav-item nav-link' href='/register'>Register</a>
-      <a class='nav-item nav-link' href='/about'>About</a>
-    </div>
-{% endblock navbar %}
-
 {% block content %}
   <br>
   <table class='center'>
@@ -137,7 +128,7 @@
             <div class='col-12 text-center'>
               <div class='row'>
                 <div class='col-12 text-center'>
-                  <a id='help' href='static/help.html' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
+                  <a id='help' href='{{ url_for("help") }}' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
                 </div>
               </div>
             </div>

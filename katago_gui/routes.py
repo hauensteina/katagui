@@ -24,14 +24,40 @@ from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, move
 
 @app.route('/')
 @app.route('/index')
+@app.route('/home')
 #-------------------------------
 def index():
-    return render_template( 'index.tmpl')
+    return render_template( 'index.tmpl', mobile=False)
 
 @app.route('/index_mobile')
 #-------------------------------
 def index_mobile():
-    return render_template( 'index_mobile.tmpl')
+    return render_template( 'index_mobile.tmpl', mobile=True)
+
+@app.route('/help')
+#-------------------------------
+def help():
+    return render_template( 'help.tmpl', mobile=False)
+
+@app.route('/help_mobile')
+#-------------------------------
+def help_mobile():
+    return render_template( 'help.tmpl', mobile=True)
+
+@app.route('/login')
+#-------------------------------
+def login():
+    return render_template( 'help.tmpl', mobile=False)
+
+@app.route('/register')
+#-------------------------------
+def register():
+    return render_template( 'help.tmpl', mobile=False)
+
+@app.route('/about')
+#-------------------------------
+def about():
+    return render_template( 'help.tmpl', mobile=False)
 
 @app.route('/favicon.ico')
 #-------------------------------
