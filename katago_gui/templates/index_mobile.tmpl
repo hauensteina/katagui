@@ -88,6 +88,15 @@
   </style>
 {% endblock css %}
 
+{% block navbar %}
+  <div class='container-fluid' style='font-size:24pt; width:100vw; left:0; margin:0; padding:0;'>
+    <a class='navbar-brand ml-0' style='font-size:30pt' href='/home'>&nbsp;KataGui</a>
+    <a class='nav-item nav-link ml-auto' href='/login'>Login</a>
+    <a class='nav-item nav-link' href='/register'>Register</a>
+    <a class='nav-item nav-link' href='/about'>About</a>
+  </div>
+{% endblock navbar %}
+
 {% block content %}
   <br>
   <div>

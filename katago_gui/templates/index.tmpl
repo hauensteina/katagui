@@ -86,6 +86,15 @@
   </style>
 {% endblock css %}
 
+{% block navbar %}
+    <div class='container' style='font-size:12pt'>
+      <a class='navbar-brand ml-0' style='font-size:20pt' href='/home'>KataGui</a>
+      <a class='nav-item nav-link ml-auto' href='/login'>Login</a>
+      <a class='nav-item nav-link' href='/register'>Register</a>
+      <a class='nav-item nav-link' href='/about'>About</a>
+    </div>
+{% endblock navbar %}
+
 {% block content %}
   <br>
   <table class='center'>

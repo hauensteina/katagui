@@ -7,6 +7,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset='utf-8'>
+    <!-- <meta name='viewport' content='width=device-width, initial-scale=1'> -->
     <meta name='description' content='Play Go Against KataGo'>
     <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence'>
     <meta name='author' content='Andreas Hauenstein'>
@@ -37,10 +38,20 @@
 
   </head>
 
-  <body style='background-color:#CCCCCC'>
+  <body>
+    <header class='site-header'>
+      <nav class='navbar navbar-dark bg-nav fixed-top'>
+        {% block navbar %}
+        {% endblock navbar %}
+      </nav>
+    </header>
 
-    {% block content %}
-    {% endblock content %}
+    <main role='main' class='container-fluid'>
+      <div class='row'>
+        {% block content %}
+        {% endblock content %}
+      </div>
+    </main>
 
     <!-- ------------------ -->
     <!-- Javascript modules -->
