@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
 
+{% set VERSION = '1.xx' %}
+
 {% block pre %}
   <script type='text/javascript'>
    /* Filename: katago-gui/layout.tmpl
@@ -49,14 +51,16 @@
       <nav class='navbar navbar-dark bg-nav fixed-top'>
         {% if mobile %}
           <div class='container-fluid' style='font-size:24pt; width:100vw; left:0; margin:0; padding:0;'>
-            <a class='navbar-brand ml-0' style='font-size:30pt' href='{{ url_for("index_mobile") }}'>&nbsp;KataGui</a>
+            <a class='navbar-brand ml-0' style='font-size:30pt' href='{{ url_for("index_mobile") }}'>
+              &nbsp;KataGui <span style='font-size:20pt'>{{ VERSION }}</span></a>
             <a class='nav-item nav-link ml-auto' href='{{ url_for("login_mobile") }}'>Login</a>
             <a class='nav-item nav-link' href='{{ url_for("register_mobile") }}'>Register</a>
             <a class='nav-item nav-link' href='{{ url_for("about_mobile") }}'>About</a>
           </div>
         {% else %}
-          <div class='container' style='font-size:12pt'>
-            <a class='navbar-brand ml-0' style='font-size:20pt' href='{{ url_for("index") }}'>KataGui</a>
+          <div class='container' style='font-size:12pt;'>
+            <a class='navbar-brand ml-0' style='font-size:20pt' href='{{ url_for("index") }}'>
+              KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
             <a class='nav-item nav-link ml-auto' href='{{ url_for("login") }}'>Login</a>
             <a class='nav-item nav-link' href='{{ url_for("register") }}'>Register</a>
             <a class='nav-item nav-link' href='{{ url_for("about") }}'>About</a>
@@ -86,7 +90,7 @@
     <script type='text/javascript' src='static/jgoboard-latest.js'></script>
 
     <!-- Main module -->
-    <script type='text/javascript' src='static/main.js?v=1.81'></script>
+    <script type='text/javascript' src='static/main.js?v={{ VERSION }}'></script>
 
     <!-- Any other js we want to add -->
     {% block js %}

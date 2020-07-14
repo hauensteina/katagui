@@ -9,7 +9,6 @@
 
 const DDATE = '2020-07-12'
 const DEBUG = false
-const VERSION = 'v1.81'
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -497,9 +496,6 @@ function main( JGO, axutil, p_options) {
     if (e.keyCode == '17') { // ctrl
       check_key.ctrl_pressed = true
       return
-    }
-    else if (check_key.ctrl_pressed && e.keyCode == '82') {  // ctrl-r
-      $('#status').html( VERSION)
     }
     else if (check_key.ctrl_pressed && e.keyCode == '65') {  // ctrl-a accept var
       handle_variation( 'accept')
@@ -1283,7 +1279,6 @@ function main( JGO, axutil, p_options) {
     return res
   } // donate_string()
 
-  $('#version').html(VERSION + (p_options.mobile?'&nbsp;&nbsp;':''))
   settings()
   set_btn_handlers()
   set_dropdown_handlers()

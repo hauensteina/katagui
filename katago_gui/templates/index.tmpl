@@ -92,47 +92,6 @@
     <tr>
       <td width='500px'>                      <!--left-->
         <div class='container'>
-          <div class='row'>
-            <div class='col-12' >
-              <div class='row' style='background-color:#EEEEEE'>
-                <div class='col-12 text-center'> Take a picture and win with
-                  <a href='https://apps.apple.com/us/app/kifu-cam/id1343303689' style='font-size:12pt;text-align:right;color:green'> Kifu Cam </a>
-                </div>
-                <div class='col-12 text-center'> Play against
-                  <a href='https://leela-one-playout.herokuapp.com' style='font-size:12pt;text-align:right;color:green'> Leela! </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class='row'>
-            <div class='col-12 text-center'> &nbsp;  </div>
-          </div>
-          <div class='row'>
-            <div class='col-6 text-left'>
-              <span style='font-size:9pt'>&nbsp;</span>
-            </div>
-            <div class='col-6 text-right'> <a href='static/about.html' style='font-size:9pt;text-align:right;color:green'> About</a>
-              <br><span id='version' style='font-size:9pt'>1.0</span>
-            </div>
-          </div>
-          <div class='row'>
-            <div class='col-12 text-center'>
-              <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-                     style='font-size:11pt'>
-                New Game
-              </label>
-            </div>
-          </div>
-          <div class='row'>
-            <div class='col-12 text-center'>
-              <div class='row'>
-                <div class='col-12 text-center'>
-                  <a id='help' href='{{ url_for("help") }}' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
-                </div>
-              </div>
-            </div>
-          </div>
           <br>
           <table class='center'>
             <tr><td id='donating'>
@@ -155,6 +114,23 @@
             <tr><td align='left'>Hwang SeJong</td> <td align='right'> &nbsp; 25 </td>  </tr>
           </table>
           <br>
+          <div class='row'>
+            <div class='col-12 text-center'>
+              <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                     style='font-size:11pt'>
+                New Game
+              </label>
+            </div>
+          </div>
+          <!-- <div class='row'>
+               <div class='col-12 text-center'>
+               <div class='row'>
+               <div class='col-12 text-center'>
+               <a id='help' href='{{ url_for("help") }}' style='font-size:12pt;text-align:right;color:red'>READ THE MANUAL</a>
+               </div>
+               </div>
+               </div>
+               </div> -->
           <div class='row'>
             <div id='game_info' class='col-12 text-center' style='font-size:10pt'> </div>
           </div>
@@ -202,7 +178,7 @@
             </div>
           </div>
           <!-- Space on top of buttons -->
-          <div class='row' style='font-size:20pt;height:500px'>
+          <div class='row' style='font-size:20pt;height:350px'>
             <div class='col-12'>
               &nbsp;
             </div>
