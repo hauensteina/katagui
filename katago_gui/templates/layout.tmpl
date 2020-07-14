@@ -46,20 +46,26 @@
 
   </head>
 
-  <body>
-    <header class='site-header'>
-      <nav class='navbar navbar-dark bg-nav fixed-top'>
-        {% if mobile %}
-          <div class='container-fluid' style='font-size:24pt; left:0; margin:0; padding:0;'>
-            <a class='navbar-brand ml-0' style='font-size:30pt' href='{{ url_for("index_mobile") }}'>
+  <body style='left:0; margin:0; padding:0;'>
+    {% if mobile %}
+      <table style="width:100%;background-color:green">
+        <tr>
+          <td width='5%'>&nbsp;</td>
+          <td  width='400px' align='left'>
+            <a class='hlink' style='font-size:35pt;' href='{{ url_for("index_mobile") }}'>
               &nbsp;KataGui <span style='font-size:20pt'>{{ VERSION }}</span></a>
-            <!-- <a class='nav-item nav-link ml-auto>' href='{{ url_for("login_mobile") }}'>Login</a> -->
-            <a class='nav-item nav-link green-border ml-auto' href='{{ url_for("login_mobile") }}'>Login</a>
-            <a class='nav-item nav-link green-border' href='{{ url_for("register_mobile") }}'>Register</a>
-            <a class='nav-item nav-link green-border' href='{{ url_for("about_mobile") }}'>About</a>
-            </span>
-          </div>
-        {% else %}
+          </td>
+          <td align='right'>
+            <a class='hlink' style='font-size:25pt;'  href='{{ url_for("login_mobile") }}'>Login</a>&nbsp;&nbsp;
+            <a class='hlink' style='font-size:25pt;' href='{{ url_for("register_mobile") }}'>Register</a>&nbsp;&nbsp;
+            <a class='hlink' style='font-size:25pt;' href='{{ url_for("about_mobile") }}'>About</a>
+          </td>
+          <td width='5%'>&nbsp;</td>
+        </tr>
+      </table>
+    {% else %}
+      <header class='site-header'>
+        <nav class='navbar navbar-dark bg-nav fixed-top'>
           <div class='container' style='font-size:12pt;'>
             <a class='navbar-brand ml-0' style='font-size:20pt' href='{{ url_for("index") }}'>
               KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
@@ -67,9 +73,10 @@
             <a class='nav-item nav-link' href='{{ url_for("register") }}'>Register</a>
             <a class='nav-item nav-link' href='{{ url_for("about") }}'>About</a>
           </div>
-        {% endif %}
-      </nav>
-    </header>
+        </nav>
+      </header>
+      <br><br><br>
+    {% endif %}
 
     <main role='main' class='container-fluid'>
       <div class='row'>

@@ -1,7 +1,7 @@
 body {
     background:#cccccc;
     color:#000000
-    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+	      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     text-align: center;
     margin-top: 5rem;
 }
@@ -14,20 +14,61 @@ body {
 }
 
 .bg-nav {
-  background-color: green
+    background-color: green
 }
 
 .nav-link {
-  color: #cbd5db;
+    color: #cbd5db;
 }
 
 .nav-link:hover {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .nav-link.active {
-  font-weight: 500;
+    font-weight: 500;
 }
+
+.hlink {
+    text-decoration: none;
+    color: white;
+}
+
+.hlink:visited {
+    text-decoration: none;
+    color: white;
+}
+
+.hlink:hover {
+    text-decoration: none;
+    color: #cbd5db;
+}
+
+.hlink:active {
+    text-decoration: none;
+    color: #cbd5db;
+}
+
+.glink {
+    text-decoration: none;
+    color: green;
+}
+
+.glink:visited {
+    text-decoration: none;
+    color: green;
+}
+
+.glink:hover {
+    text-decoration: none;
+    color: #444444;
+}
+
+.glink:active {
+    text-decoration: none;
+    color: #444444;
+}
+
 
 .red-border { border-style:solid; border-color:red; }
 .green-border { border-style:solid; border-color:green; }
