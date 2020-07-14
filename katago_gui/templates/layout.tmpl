@@ -50,12 +50,14 @@
     <header class='site-header'>
       <nav class='navbar navbar-dark bg-nav fixed-top'>
         {% if mobile %}
-          <div class='container-fluid' style='font-size:24pt; width:100vw; left:0; margin:0; padding:0;'>
+          <div class='container-fluid' style='font-size:24pt; left:0; margin:0; padding:0;'>
             <a class='navbar-brand ml-0' style='font-size:30pt' href='{{ url_for("index_mobile") }}'>
               &nbsp;KataGui <span style='font-size:20pt'>{{ VERSION }}</span></a>
-            <a class='nav-item nav-link ml-auto' href='{{ url_for("login_mobile") }}'>Login</a>
-            <a class='nav-item nav-link' href='{{ url_for("register_mobile") }}'>Register</a>
-            <a class='nav-item nav-link' href='{{ url_for("about_mobile") }}'>About</a>
+            <!-- <a class='nav-item nav-link ml-auto>' href='{{ url_for("login_mobile") }}'>Login</a> -->
+            <a class='nav-item nav-link green-border ml-auto' href='{{ url_for("login_mobile") }}'>Login</a>
+            <a class='nav-item nav-link green-border' href='{{ url_for("register_mobile") }}'>Register</a>
+            <a class='nav-item nav-link green-border' href='{{ url_for("about_mobile") }}'>About</a>
+            </span>
           </div>
         {% else %}
           <div class='container' style='font-size:12pt;'>
