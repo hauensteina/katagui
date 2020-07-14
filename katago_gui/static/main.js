@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-07-12'
+const DDATE = '2020-07-14'
 const DEBUG = false
 const VERSION = 'v1.81'
 const KATAGO_SERVER = ''
