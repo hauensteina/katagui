@@ -7,13 +7,13 @@
 
 'use strict'
 
-const DDATE = '2020-07-12'
+const DDATE = '2020-07-14'
 const DEBUG = false
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
 const HOUR_STRONG_OFF = 3 // 1
-const DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10
+const DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10+100
 const DONATE_LIMIT = 2000
 
 
