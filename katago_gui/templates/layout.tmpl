@@ -64,18 +64,21 @@
         </tr>
       </table>
     {% else %}
-      <header class='site-header'>
-        <nav class='navbar navbar-dark bg-nav fixed-top'>
-          <div class='container' style='font-size:12pt;'>
-            <a class='navbar-brand ml-0' style='font-size:20pt' href='{{ url_for("index") }}'>
-              KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
-            <a class='nav-item nav-link ml-auto' href='{{ url_for("login") }}'>Login</a>
-            <a class='nav-item nav-link' href='{{ url_for("register") }}'>Register</a>
-            <a class='nav-item nav-link' href='{{ url_for("about") }}'>About</a>
-          </div>
-        </nav>
-      </header>
-      <br><br><br>
+      <table style="width:100%;background-color:green">
+        <tr>
+          <td width='5%'>&nbsp;</td>
+          <td  width='400px' align='left'>
+            <a class='hlink' style='font-size:20pt;' href='{{ url_for("index") }}'>
+              &nbsp;KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
+          </td>
+          <td align='right'>
+            <a class='hlink' style='font-size:12pt;'  href='{{ url_for("login") }}'>Login</a>&nbsp;&nbsp;
+            <a class='hlink' style='font-size:12pt;' href='{{ url_for("register") }}'>Register</a>&nbsp;&nbsp;
+            <a class='hlink' style='font-size:12pt;' href='{{ url_for("about") }}'>About</a>
+          </td>
+          <td width='5%'>&nbsp;</td>
+        </tr>
+      </table>
     {% endif %}
 
     <main role='main' class='container-fluid'>
