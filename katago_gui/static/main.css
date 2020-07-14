@@ -13,22 +13,6 @@ body {
     text-align:center;
 }
 
-.bg-nav {
-    background-color: green
-}
-
-.nav-link {
-    color: #cbd5db;
-}
-
-.nav-link:hover {
-    color: #ffffff;
-}
-
-.nav-link.active {
-    font-weight: 500;
-}
-
 .hlink {
     text-decoration: none;
     color: white;
