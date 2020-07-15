@@ -13,13 +13,14 @@ from datetime import datetime
 import uuid
 from io import BytesIO
 
-from flask import jsonify, request, send_file, render_template
+from flask import jsonify, request, send_file, render_template, flash
 
 from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
 from katago_gui import app
+from katago_gui.forms import LoginForm, RegistrationForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
 @app.route('/')
@@ -44,25 +45,41 @@ def help():
 def help_mobile():
     return render_template( 'help.tmpl', mobile=True)
 
-@app.route('/login')
-#-------------------------------
-def login():
-    return render_template( 'help.tmpl', mobile=False)
+#--------------------------
+def login_base( mobile):
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+            return redirect( url_for( 'home'))
+        else:
+            flash( 'Login Unsuccessful. Please check username and password.', 'danger')
+    res = render_template( 'login.tmpl', form=form, mobile=mobile)
+    return res
 
-@app.route('/login_mobile')
-#-------------------------------
+
+@app.route('/login', methods=['GET','POST'])
+#--------------------------------------------
+def login():
+    return login_base( mobile=False)
+
+@app.route('/login_mobile', methods=['GET','POST'])
+#-----------------------------------------------------
 def login_mobile():
-    return render_template( 'help.tmpl', mobile=True)
+    return login_base( mobile=True)
 
 @app.route('/register')
 #-------------------------------
 def register():
-    return render_template( 'help.tmpl', mobile=False)
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash( f'Account created for {form.username.data}!', 'success')
+        return redirect( url_for( 'home'))
+    return render_template( 'register.tmpl', title='Register', form=form)
 
 @app.route('/register_mobile')
 #-------------------------------
 def register_mobile():
-    return render_template( 'help.tmpl', mobile=True)
+    return render_template( 'register.tmpl', mobile=True)
 
 @app.route('/about')
 #-------------------------------
