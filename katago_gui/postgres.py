@@ -8,7 +8,9 @@
 ' against a postgres DB
 """
 
-import os
+import os, sys
+import inspect
+from datetime import datetime
 from io import StringIO
 import psycopg2
 import psycopg2.extras
@@ -111,13 +113,13 @@ class Postgres:
                 unique_vals = []
                 for ucol in unique_cols:
                     unique_vals = list( row[k] for k in unique_cols)
-                    curs.execute( query, tuple(row.values()) + tuple(unique_vals))
-                    num_inserted += 1
-                    if num_inserted % 100 == 0 :
-                        self.conn.commit()
+                curs.execute( query, tuple(row.values()) + tuple(unique_vals))
+                num_inserted += 1
+                if num_inserted % 100 == 0 :
+                    self.conn.commit()
             except Exception as e:
                 self.conn.commit()
-                pexc("%s row: %s",str(e) + str(row))
+                self.pexc("%s row: %s",str(e) + str(row))
                 curs.close()
         return num_inserted
 
@@ -133,12 +135,12 @@ class Postgres:
         '''
         self.get_conn()
         if not data:
-            perr ('no rows to insert')
+            self.perr ('no rows to insert')
             return 0
 
         try:
             # Put the data into a string file-like object, in csv format
-            csv = StringIO.StringIO()
+            csv = StringIO()
             for row in data:
                 # Strip all strings in values() and put them into a semicol del string
                 tstr = ";".join ([str(x).strip() for x in row.values()]) + "\n"
@@ -146,15 +148,16 @@ class Postgres:
             # Make a temp table to hold the imported data
             cols = data[0].keys();
             temptable = table + '_bulk'
+            self.dropTable( temptable)
             sql = 'create temporary table ' + temptable
             sql += ' as select ' + ",".join(cols) + ' from ' + table + ' where 1=0'
             self.runWriteQuery( sql)
 
             # Bulk load the stringio into the temp table
-            curs = self.__conn.cursor()
+            curs = self.conn.cursor()
             csv.seek(0)
             curs.copy_expert("COPY " + temptable + " FROM STDIN WITH NULL AS 'None' DELIMITER ';'", csv)
-            self.__conn.commit()
+            self.conn.commit()
             curs.close()
 
             # Delete duplicates from target table if unique_cols specified
@@ -162,65 +165,61 @@ class Postgres:
             if unique_cols:
                 colstr = ','.join (unique_cols)
                 distinct = ' distinct on ( ' + colstr + ' ) '
-                plog( 'deleting duplicate ' + colstr + ' from ' + table)
+                self.plog( 'deleting duplicate ' + colstr + ' from ' + table)
                 where = ' where (' + colstr + ') in (select ' + colstr + ' from ' + temptable + ')'
                 sql = 'delete from ' + table + where
-                plog( 'delete query: ' + sql)
+                self.plog( 'delete query: ' + sql)
                 n_deleted = self.runWriteQuery( sql)
                 if n_deleted > 0:
-                    perr( 'Deleted %d duplicates in %s' % (n_deleted,table))
+                    self.perr( 'Deleted %d duplicates in %s' % (n_deleted,table))
 
             # Insert new rows into target
             sql = 'insert into %s(%s) select %s  * from %s' % (table, ','.join(cols), distinct, temptable)
-            plog ('insert query: ' + sql)
+            self.plog ('insert query: ' + sql)
             return self.runWriteQuery (sql)
         except Exception as e:
-            pexc(e)
+            self.pexc(e)
             return 0
 
-    def slurp( self, table, cols):
+    def slurp( self, table, cols=[]):
         ''' Slurp some table columns into list of dicts '''
         self.get_conn()
-        if len(cols) == 0:
-            return None
         rows = None
         columns = ''
         for col in cols:
             columns += col + ','
             columns = chop (columns)
+        if columns == '': columns = '*'
 
         query = 'SELECT ' + columns + ' FROM ' + table + ';'
-
         curs = self.conn.cursor()
         try:
             curs.execute(query)
             rows = curs.fetchall()
         except Exception as e:
-            pexc(e,str(row))
+            self.pexc(e,str(row))
             rows = None
         finally:
             curs.close()
         return rows
 
-    def slurp_distinct( self, table, cols):
+    def slurp_distinct( self, table, cols=[]):
         ''' Slurp some table columns into list of dicts, without dups '''
         self.get_conn()
-        if len(cols) == 0:
-            return None
         rows = None
         columns = ''
         for col in cols:
             columns += col + ','
             columns = chop (columns)
+        if columns == '': columns = '*'
 
         query = 'SELECT distinct ' + columns + ' FROM ' + table + ';'
-
         curs = self.conn.cursor()
         try:
             curs.execute(query)
             rows = curs.fetchall()
         except Exception as e:
-            pexc(e)
+            self.pexc(e)
             rows = None
         finally:
             curs.close()
@@ -246,23 +245,10 @@ class Postgres:
         Useful for large data sets if you don't want to cram them into memory at once.
         '''
         self.get_conn()
-        curs = self.conn.cursor('mycurs')
+        curs = self.conn.cursor()
         try:
             curs.execute (query, args)
             return curs
-        except Exception as e:
-            raise
-
-    def runReadQueryIterDict( self, query, args=()):
-        '''
-        Executes an SQL query and returns an iterator giving the rows as dicts.
-        Useful for large data sets if you don't want to cram them into memory at once.
-        '''
-        self.get_conn()
-        curs = self.conn.cursor( cursor_factory=psycopg2.extras.RealDictCursor)
-        try:
-            curs.execute(query, args)
-            return curs;
         except Exception as e:
             raise
 
@@ -281,6 +267,19 @@ class Postgres:
         finally:
             curs.close()
         return rows
+
+    def runReadQueryIterDict( self, query, args=()):
+        '''
+        Executes an SQL query and returns an iterator giving the rows as dicts.
+        Useful for large data sets if you don't want to cram them into memory at once.
+        '''
+        self.get_conn()
+        curs = self.conn.cursor( cursor_factory=psycopg2.extras.RealDictCursor)
+        try:
+            curs.execute(query, args)
+            return curs;
+        except Exception as e:
+            raise
 
     def runWriteQuery( self, query, args=()):
         '''
@@ -325,11 +324,10 @@ class Postgres:
 
     def getParm(self, param_name):
         ''' Retrieves the value of a parameter stored in the "t_parameters" table '''
-        rows = self.lookup( "t_parameters", ["name", "value"])
-        value = [row[1] for row in rows if row[0] == param_name]
+        rows = self.runReadQuery( "select value from t_parameters where name = %s", (param_name,))
 
-        if len(value) > 0:
-            return value[0]
+        if len(rows) > 0:
+            return rows[0][0]
         else:
             return None
 
@@ -366,41 +364,41 @@ class Postgres:
             msg = '%s %s():%d %s %s TXT:%s' % (fname, func, line, str(exname), str(exmsg), p_txt)
         else:
             msg = '%s %s():%d %s %s' % (fname, func, line, str(exname), str(exmsg))
-            trace( 'EXCEPTION', msg)
+            self.trace( 'EXCEPTION', msg)
 
     def perr( self, p_msg):
         ''' Trace Error to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = "%s %s(): %s" % (fname, func, p_msg)
-        trace( "ERROR",msg)
+        self.trace( "ERROR",msg)
 
     def plog( self, p_msg):
         ''' Trace Log msg to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = '%s %s(): %s' % (fname, func, p_msg)
-        trace( 'LOG',msg)
+        self.trace( 'LOG',msg)
 
-    def pstart( self,):
+    def pstart( self):
         ''' Write function start log to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = '%s %s()' % (fname, func)
-        trace( 'START',msg)
+        self.trace( 'START',msg)
 
-    def pend( self,):
+    def pend( self):
         ''' Write function end log to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = '%s %s()' % (fname, func)
-        trace ('END',msg)
+        self.trace ('END',msg)
 
     def trace( self, p_level, p_msg):
         ''' Basic trace function. plog,perr,pexc call this. '''
         now = str(datetime.now())
         # To screen / logfile
-        print( '%s %s %s') % (now, p_level, p_msg);
+        print( '%s %s %s' % (now, p_level, p_msg))
         # To t_log table
         self.insert ('t_log',
                    [{'level':p_level,'msg':p_msg,'dtime':now}])
@@ -411,10 +409,132 @@ class Postgres:
         os.system( 'psql -c "create database test"')
         db_url = 'postgresql://localhost/test'
         db = Postgres( db_url)
-        BP()
         db.create_tables()
-        tt=42
+        # Create a table
+        db.runWriteQuery( 'create table t_test ( val int, txt text );')
+        print('')
 
+        # insert
+        testnum = 1
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}], unique_cols=['val'])
+        res = db.slurp( 't_test')
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( db.slurp( 't_test')) == 2 else  print( '############ Test %d failed' % testnum)
+        testnum = 2
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = db.slurp( 't_test')
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( db.slurp( 't_test')) == 3 else  print( '############ Test %d failed' % testnum)
+
+        # insert_bulk
+        testnum = 3
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert_bulk( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}], unique_cols=['val'])
+        res = db.slurp( 't_test')
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( db.slurp( 't_test')) == 2 else  print( '############ Test %d failed' % testnum)
+        testnum = 4
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert_bulk( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = db.slurp( 't_test')
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( db.slurp( 't_test')) == 3 else  print( '############ Test %d failed' % testnum)
+
+        # slurp
+        testnum = 5
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'one'},{'val':2,'txt':'two'}])
+        res = db.slurp( 't_test')
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( res) == 3 else  print( '############ Test %d failed' % testnum)
+
+        # slurp_distinct
+        testnum = 6
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'one'},{'val':2,'txt':'two'}])
+        res = db.slurp_distinct( 't_test')
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( res) == 2 else  print( '############ Test %d failed' % testnum)
+
+        # runReadQuery
+        testnum = 7
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = db.runReadQuery( 'select * from t_test where val = %s and txt = %s', [1, 'one'])
+        print(res)
+        print( 'Test %d passed\n' % testnum) if len( res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # runReadQueryIter
+        testnum = 8
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = list( db.runReadQueryIter( 'select * from t_test where val = %s and txt = %s', [1, 'one']))
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # runReadQueryDict
+        testnum = 9
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = db.runReadQueryDict( 'select * from t_test where val = %s and txt = %s', [1, 'one'])
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # runReadQueryIterDict
+        testnum = 10
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = list(db.runReadQueryDict( 'select * from t_test where val = %s and txt = %s', [1, 'one']))
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # setParm, getParm
+        testnum = 11
+        db.setParm( 'counter', 42) # int accepted, but strings are better
+        res = db.getParm( 'counter') # always returns a string
+        print( res)
+        print( 'Test %d passed\n' % testnum) if res == '42' else  print( '############ Test %d failed' % testnum)
+
+        # rmParm
+        testnum = 12
+        db.setParm( 'blub', '13')
+        db.rmParm( 'blub')
+        res = db.getParm( 'blub')
+        print( 'Test %d passed\n' % testnum) if not res else  print( '############ Test %d failed' % testnum)
+
+        # perr
+        testnum = 13
+        db.runWriteQuery( 'delete from t_log')
+        db.perr( 'some error')
+        res = db.runReadQuery( 'select * from t_log')
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # plog
+        testnum = 14
+        db.runWriteQuery( 'delete from t_log')
+        db.plog( 'some log')
+        res = db.runReadQuery( 'select * from t_log')
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # pstart
+        testnum = 15
+        db.runWriteQuery( 'delete from t_log')
+        db.pstart()
+        res = db.runReadQuery( 'select * from t_log')
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # pend
+        testnum = 15
+        db.runWriteQuery( 'delete from t_log')
+        db.pend()
+        res = db.runReadQuery( 'select * from t_log')
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
 ''' Utility funcs '''
 '''---------------'''
