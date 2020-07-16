@@ -16,6 +16,19 @@ insert into test(text) values('one');
 insert into test(text) values('two');
 insert into test(text) values('three');
 
+-- User table
+drop table if exists t_user cascade;
+create table t_user (
+  id bigserial not null primary key
+  ,email text
+  ,password text
+  ,fname text
+  ,lname text
+  ,json text
+);
+insert into t_user( email, password, fname, lname, json)
+values( 'test@test.com', 'welcome', 'First', 'Last', '{"notes":"test"}');
+
 drop table if exists t_log cascade;
 create table t_log (
   id     bigserial not null primary key
@@ -49,12 +62,3 @@ create table t_endpoint_hits (
   ,duration double precision
 );
 create index idx_ep on t_endpoint_hits(tstart);
-
--- Store results of periodic backend monitoring process.
-drop table if exists t_backend_monitor cascade;
-create table t_backend_monitor (
-  id      bigserial not null primary key
-  ,t_run  varchar(1000)
-  ,msg    varchar(1000)
-  ,json text
-);
