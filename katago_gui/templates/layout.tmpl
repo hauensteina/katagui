@@ -59,9 +59,11 @@
             {% if current_user.is_authenticated %}
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('account') }}">Account</a>&nbsp;
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('logout') }}">Logout</a>&nbsp;
+              <script> settings( 'logged_in',true) </script>
             {% else %}
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('login') }}">Login</a>&nbsp;
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('register_mobile') }}">Register</a>&nbsp;
+              <script> settings( 'logged_in',false) </script>
             {% endif %}
             <a class='hlink' style='font-size:25pt;' href='{{ url_for("about_mobile") }}'>About</a>
           </td>
@@ -80,9 +82,13 @@
             {% if current_user.is_authenticated %}
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('account') }}">Account</a>&nbsp;
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('logout') }}">Logout</a>&nbsp;
+              <script> settings( 'logged_in',true) </script>
             {% else %}
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('login') }}">Login</a>&nbsp;
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('register') }}">Register</a>&nbsp;
+              <script>
+               settings( 'logged_in',false)
+              </script>
             {% endif %}
             <a class='hlink' style='font-size:12pt;' href='{{ url_for("about") }}'>About</a>
           </td>

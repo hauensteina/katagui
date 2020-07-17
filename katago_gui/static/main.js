@@ -81,7 +81,7 @@ function main( JGO, axutil, p_options) {
     $('#handi_8').click( function() { $('#handi_menu').html('8'); $('#komi_menu').html('0.5') })
     $('#handi_9').click( function() { $('#handi_menu').html('9'); $('#komi_menu').html('0.5') })
 
-    $('#game_start_save').click( function() { // New Game -> Go
+    $('#game_start').click( function() { // New Game -> Go
       $('#donate_modal').html('')
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
@@ -1151,7 +1151,8 @@ function main( JGO, axutil, p_options) {
       const STRONG = 0
       var d = new Date()
       var h = d.getUTCHours()
-      if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF || STRONG) {
+      if (settings( 'logged_in')) {
+        // if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF || STRONG) {
         $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
         $('#btn_tgl_strong').addClass('active')
         $('#btn_tgl_free').removeClass('active')
@@ -1160,9 +1161,10 @@ function main( JGO, axutil, p_options) {
       }
       else {
         fast_or_strong( 'free') // Strong is disabled
-        var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
-         class='touch-allow'>donate</a>`
-        var tstr = `Strong is currently disabled due to high server load. Please ${link} for a new server.`
+        /* var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
+         *  class='touch-allow'>donate</a>` */
+        //var tstr = `Strong is currently disabled due to high server load. Please ${link} for a new server.`
+        var tstr = `Please log in.`
 
         $('#donate_modal').html(tstr)
       }
@@ -1217,29 +1219,6 @@ function main( JGO, axutil, p_options) {
     var res = ('0' + hours).slice(-2) + ':' + ('0' + mins).slice(-2) + ':' + ('0' + secs).slice(-2)
     return res
   } // hhmmss_strong_off()
-
-  // Get a value from the settings screen via localStorage
-  //--------------------------------------------------------
-  function settings( key, value) {
-    const settings_defaults = { show_emoji:true, show_prob:true }
-    var settings = JSON.parse( localStorage.getItem( 'settings'))
-    if (!settings) {
-      localStorage.setItem( 'settings', JSON.stringify( settings_defaults))
-      settings = JSON.parse( localStorage.getItem( 'settings'))
-    }
-    // init
-    if (typeof key == 'undefined') { return }
-    // getter
-    else if (typeof value == 'undefined') {
-      var res = settings[key] || ''
-      return res
-    }
-    // setter
-    else {
-      settings[key] = value
-      localStorage.setItem( 'settings', JSON.stringify( settings))
-    }
-  } // settings()
 
   // Build HTML for donation status
   //-------------------------------------------
