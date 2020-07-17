@@ -181,6 +181,12 @@ class Postgres:
             self.pexc(e)
             return 0
 
+    def getRows( self, table, col, val):
+        ''' Get rows where col equals val, as dicts '''
+        sql = 'select * from %s where %s = %%s' % (table,col)
+        res = self.runReadQueryDict( sql, (val,))
+        return res
+
     def slurp( self, table, cols=[]):
         ''' Slurp some table columns into list of dicts '''
         self.get_conn()
@@ -490,22 +496,30 @@ class Postgres:
         print( res)
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
-        # setParm, getParm
+        # getRows
         testnum = 11
+        db.runWriteQuery( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':1,'txt':'uno'},{'val':2,'txt':'two'}])
+        res = db.getRows( 't_test', 'val', 1)
+        print( res)
+        print( 'Test %d passed\n' % testnum) if len(res) == 2 else  print( '############ Test %d failed' % testnum)
+
+        # setParm, getParm
+        testnum = 12
         db.setParm( 'counter', 42) # int accepted, but strings are better
         res = db.getParm( 'counter') # always returns a string
         print( res)
         print( 'Test %d passed\n' % testnum) if res == '42' else  print( '############ Test %d failed' % testnum)
 
         # rmParm
-        testnum = 12
+        testnum = 13
         db.setParm( 'blub', '13')
         db.rmParm( 'blub')
         res = db.getParm( 'blub')
         print( 'Test %d passed\n' % testnum) if not res else  print( '############ Test %d failed' % testnum)
 
         # perr
-        testnum = 13
+        testnum = 14
         db.runWriteQuery( 'delete from t_log')
         db.perr( 'some error')
         res = db.runReadQuery( 'select * from t_log')
@@ -513,7 +527,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # plog
-        testnum = 14
+        testnum = 15
         db.runWriteQuery( 'delete from t_log')
         db.plog( 'some log')
         res = db.runReadQuery( 'select * from t_log')
@@ -521,7 +535,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # pstart
-        testnum = 15
+        testnum = 16
         db.runWriteQuery( 'delete from t_log')
         db.pstart()
         res = db.runReadQuery( 'select * from t_log')
@@ -529,7 +543,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # pend
-        testnum = 15
+        testnum = 17
         db.runWriteQuery( 'delete from t_log')
         db.pend()
         res = db.runReadQuery( 'select * from t_log')

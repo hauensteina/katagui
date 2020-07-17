@@ -13,13 +13,14 @@ from datetime import datetime
 import uuid
 from io import BytesIO
 
-from flask import jsonify, request, send_file, render_template, flash
+from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
+from flask_login import login_user, current_user, logout_user, login_required
 
 from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app
+from katago_gui import app, auth
 from katago_gui.forms import LoginForm, RegistrationForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
@@ -36,36 +37,36 @@ def index_mobile():
     return render_template( 'index_mobile.tmpl', mobile=True)
 
 @app.route('/help')
-#-------------------------------
+#---------------------
 def help():
     return render_template( 'help.tmpl', mobile=False)
 @app.route('/help_mobile')
 
-#-------------------------------
+#--------------------
 def help_mobile():
     return render_template( 'help.tmpl', mobile=True)
 
-#--------------------------
-def login_base( mobile):
+@app.route('/login', methods=['GET','POST'])
+@app.route('/login_mobile', methods=['GET','POST'])
+#----------------------------------------------------
+def login():
+    if current_user.is_authenticated:
+        return redirect( url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            return redirect( url_for( 'home'))
+        user = auth.User( form.email.data)
+        if user.valid and user.auth( form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next') # Magically populated to where we came from
+            return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
-            flash( 'Login Unsuccessful. Please check username and password.', 'danger')
-    res = render_template( 'login.tmpl', form=form, mobile=mobile)
-    return res
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.tmpl', title='Login', form=form)
 
-
-@app.route('/login', methods=['GET','POST'])
-#--------------------------------------------
-def login():
-    return login_base( mobile=False)
-
-@app.route('/login_mobile', methods=['GET','POST'])
-#-----------------------------------------------------
-def login_mobile():
-    return login_base( mobile=True)
+# @app.route('/login_mobile', methods=['GET','POST'])
+# #-----------------------------------------------------
+# def login_mobile():
+#     return login_base( mobile=True)
 
 @app.route('/register')
 #-------------------------------
