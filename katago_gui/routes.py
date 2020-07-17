@@ -47,11 +47,10 @@ def help_mobile():
     return render_template( 'help.tmpl', mobile=True)
 
 @app.route('/login', methods=['GET','POST'])
-@app.route('/login_mobile', methods=['GET','POST'])
-#----------------------------------------------------
+#---------------------------------------------
 def login():
     if current_user.is_authenticated:
-        return redirect( url_for('home'))
+        return redirect( url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
@@ -63,13 +62,19 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.tmpl', title='Login', form=form)
 
-# @app.route('/login_mobile', methods=['GET','POST'])
-# #-----------------------------------------------------
-# def login_mobile():
-#     return login_base( mobile=True)
+@app.route("/logout")
+#-------------------------
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.route("/account")
+#-------------------------
+def account():
+    pass
 
 @app.route('/register')
-#-------------------------------
+#--------------------------
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
