@@ -12,6 +12,11 @@ class User(UserMixin):
         self.data = rows[0]
         self.id = self.data['email']
 
+    def create( self, data):
+        self.data = data
+        db.insert( 't_user', (data,))
+        self.valid = True
+
     def auth( self, passwd_hash):
         return bcrypt.check_password_hash( self.data['password'], passwd_hash)
 

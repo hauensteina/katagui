@@ -20,7 +20,8 @@ from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app, auth
+from katago_gui import app, bcrypt
+from katago_gui import auth
 from katago_gui.forms import LoginForm, RegistrationForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
@@ -73,14 +74,28 @@ def logout():
 def account():
     pass
 
-@app.route('/register')
-#--------------------------
+@app.route('/register', methods=['GET','POST'])
+#------------------------------------------------
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash( f'Account created for {form.username.data}!', 'success')
-        return redirect( url_for( 'home'))
-    return render_template( 'register.tmpl', title='Register', form=form)
+        user = auth.User( form.email.data)
+        if user.valid:
+            flash( 'An account with this email already exists.', 'danger')
+            return render_template('register.html', title='Register', form=form)
+
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user_data = {'username':form.username.data
+                     ,'email':form.email.data
+                     ,'password':hashed_password
+                     ,'fname':form.fname.data
+                     ,'lname':form.lname.data }
+        user.create( user_data)
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.tmpl', title='Register', form=form)
 
 @app.route('/register_mobile')
 #-------------------------------

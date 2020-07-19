@@ -6,6 +6,8 @@ class RegistrationForm( FlaskForm):
     username = StringField( 'Username',
                             validators=[InputRequired(message='Field required'), Length(min=2, max=20)])
     email = StringField( 'Email', validators=[DataRequired(), Email()])
+    fname = StringField( 'First Name', validators=[DataRequired()])
+    lname = StringField( 'Last Name', validators=[DataRequired()])
     password = PasswordField( 'Password', validators=[DataRequired()])
     confirm_password = PasswordField( 'Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')

@@ -11,6 +11,7 @@ def create_t_user(db):
     sql = '''
     create table t_user (
     id bigserial not null primary key
+    ,username text
     ,email text
     ,password text
     ,fname text
@@ -23,9 +24,10 @@ def create_t_user(db):
     phash = bcrypt.generate_password_hash( 'welcome').decode('utf-8')
     db.insert( 't_user',
                [{
-              'email':'test@test.com'
-              ,'password':phash
-              ,'fname':'Joe'
-              ,'lname':'Schmoe'
-              ,'json':'{"hint":"welcome"}'
+                   'username':'tester'
+                   ,'email':'tester@test.com'
+                   ,'password':phash
+                   ,'fname':'Joe'
+                   ,'lname':'Schmoe'
+                   ,'json':'{"hint":"welcome"}'
                }])
