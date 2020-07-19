@@ -12,7 +12,6 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from katago_gui.postgres import Postgres
-from katago_gui.create_tables import create_tables
 
 here = os.path.dirname( __file__)
 static_path = os.path.join( here, 'static')
@@ -38,11 +37,12 @@ else: # local
     db_url = os.environ['KATAGO_DB_URL']
 
 db = Postgres( db_url)
-create_tables( db)
 
 bcrypt = Bcrypt( app) # Our password hasher
 login_manager = LoginManager( app)
 login_manager.login_view = 'login' # The route if you should be logged in but aren't
 login_manager.login_message_category = 'info' # Flash category for 'Please log in' message
 
+from katago_gui.create_tables import create_tables
+create_tables( db)
 from katago_gui import routes

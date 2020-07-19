@@ -5,7 +5,7 @@ from pdb import set_trace as BP
 class User(UserMixin):
     def __init__( self, email):
         self.valid = True
-        rows = db.getRows( 't_user', 'email', email)
+        rows = db.find( 't_user', 'email', email)
         if not rows:
             self.valid = False
             return
