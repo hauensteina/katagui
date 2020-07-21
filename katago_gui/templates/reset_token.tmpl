@@ -1,0 +1,63 @@
+{% extends "layout.tmpl" %}
+
+<script>
+ if (isMobile()) { $('#resetdiv').css( {'transform': 'translateY(200px) scale(2.0)'} )}
+ else { $('#resetdiv').css( {'transform': ''} )}
+</script>
+
+{% block content %}
+  <div class='center'>
+    <table width='400px' class='center'>
+      <tr><td>
+        {% with messages = get_flashed_messages( with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class='alert alert-{{ category }}'>
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% else %}
+            <br><br>
+          {% endif %}
+        {% endwith %}
+      </td></tr>
+      <tr><td>
+        <form method="POST" action="">
+          {{ form.hidden_tag() }}
+          <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Reset Password</legend>
+            <div class="form-group">
+              {{ form.password.label(class="form-control-label") }}
+              {% if form.password.errors %}
+                {{ form.password(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                  {% for error in form.password.errors %}
+                    <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {{ form.password(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+            <div class="form-group">
+              {{ form.confirm_password.label(class="form-control-label") }}
+              {% if form.confirm_password.errors %}
+                {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                  {% for error in form.confirm_password.errors %}
+                    <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {{ form.confirm_password(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+          </fieldset>
+          <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+          </div>
+        </form>
+      </td></tr>
+    </table>
+  </div>
+{% endblock content %}

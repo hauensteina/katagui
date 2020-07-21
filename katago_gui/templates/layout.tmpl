@@ -34,6 +34,19 @@
 	   gtag('config', 'UA-139708851-3');
 	  </script>
 
+    <!-- Standard frameworks -->
+    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+
+    <!-- Our own stuff -->
+    <script type='text/javascript' src='static/ahaux_utils.js?v=0.2'></script>
+    <script type='text/javascript'> const axutil = new AhauxUtils( d3, $) </script>
+    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
+
+    <!-- Main module -->
+    <script type='text/javascript' src='static/main.js?v={{ VERSION }}'></script>
+
     <!-- Bootstrap CSS -->
     <link rel='stylesheet'
           href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
@@ -59,11 +72,11 @@
             {% if current_user.is_authenticated %}
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('account') }}">Account</a>&nbsp;
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('logout') }}">Logout</a>&nbsp;
-              <script> settings( 'logged_in',true) </script>
+              <script> axutil.settings( 'logged_in',true) </script>
             {% else %}
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('login') }}">Login</a>&nbsp;
               <a class='hlink' style='font-size:25pt;' href="{{ url_for('register_mobile') }}">Register</a>&nbsp;
-              <script> settings( 'logged_in',false) </script>
+              <script> axutil.settings( 'logged_in',false) </script>
             {% endif %}
             <a class='hlink' style='font-size:25pt;' href='{{ url_for("about_mobile") }}'>About</a>
           </td>
@@ -82,12 +95,12 @@
             {% if current_user.is_authenticated %}
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('account') }}">Account</a>&nbsp;
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('logout') }}">Logout</a>&nbsp;
-              <script> settings( 'logged_in',true) </script>
+              <script> axutil.settings( 'logged_in',true) </script>
             {% else %}
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('login') }}">Login</a>&nbsp;
               <a class='hlink' style='font-size:12pt;' href="{{ url_for('register') }}">Register</a>&nbsp;
               <script>
-               settings( 'logged_in',false)
+               axutil.settings( 'logged_in',false)
               </script>
             {% endif %}
             <a class='hlink' style='font-size:12pt;' href='{{ url_for("about") }}'>About</a>
@@ -104,21 +117,6 @@
       </div>
     </main>
 
-    <!-- ------------------ -->
-    <!-- Javascript modules -->
-    <!-- ------------------ -->
-
-    <!-- Standard frameworks -->
-    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
-    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
-    <script src='https://d3js.org/d3.v5.min.js'></script>
-
-    <!-- Our own stuff -->
-    <script type='text/javascript' src='static/ahaux_utils.js?v=0.1'></script>
-    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
-
-    <!-- Main module -->
-    <script type='text/javascript' src='static/main.js?v={{ VERSION }}'></script>
 
     <!-- Any other js we want to add -->
     {% block js %}

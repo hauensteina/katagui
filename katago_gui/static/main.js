@@ -32,6 +32,7 @@ const HANDISTONES = ['',''
 //=======================================
 function main( JGO, axutil, p_options) {
   $ = axutil.$
+  const settings = axutil.settings
 
   const BOT = 'katago_gtp_bot'
   const BOARD_SIZE = 19

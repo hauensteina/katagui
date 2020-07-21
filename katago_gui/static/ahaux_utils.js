@@ -45,6 +45,29 @@ class AhauxUtils
 
   } // constructor()
 
+  // Store and retrieve global client-side settings
+  //--------------------------------------------------------
+  settings( key, value) {
+    const settings_defaults = { show_emoji:true, show_prob:true, logged_in:false }
+    var settings = JSON.parse( localStorage.getItem( 'settings'))
+    if (!settings) {
+      localStorage.setItem( 'settings', JSON.stringify( settings_defaults))
+      settings = JSON.parse( localStorage.getItem( 'settings'))
+    }
+    // init
+    if (typeof key == 'undefined') { return }
+    // getter
+    else if (typeof value == 'undefined') {
+      var res = settings[key] || ''
+      return res
+    }
+    // setter
+    else {
+      settings[key] = value
+      localStorage.setItem( 'settings', JSON.stringify( settings))
+    }
+  } // settings()
+
   //----------------------------
   //--- D3 graphics routines ---
   //----------------------------

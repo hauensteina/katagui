@@ -23,9 +23,9 @@ from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app, bcrypt, mail
+from katago_gui import app, db, bcrypt, mail
 from katago_gui import auth
-from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm
+from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
 @app.route('/')
