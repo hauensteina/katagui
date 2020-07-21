@@ -8,7 +8,7 @@
 #
 
 from pdb import set_trace as BP
-import os, sys, re
+import os, sys, re, json
 import requests
 from datetime import datetime
 import uuid
@@ -59,6 +59,9 @@ def login():
     if form.validate_on_submit():
         user = auth.User( form.email.data)
         if user.valid and user.auth( form.password.data):
+            if not user.email_verified():
+                flash('This email has not been verified.', 'danger')
+                return redirect( url_for('login'))
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next') # Magically populated to where we came from
             return redirect(next_page) if next_page else redirect(url_for('index'))
@@ -89,21 +92,49 @@ def register():
             flash( 'An account with this email already exists.', 'danger')
             return render_template('register.html', title='Register', form=form)
 
+        jjson = user.json()
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user_data = {'username':form.username.data
                      ,'email':form.email.data
                      ,'password':hashed_password
                      ,'fname':form.fname.data
-                     ,'lname':form.lname.data }
+                     ,'lname':form.lname.data
+                     ,'json':json.dumps( jjson.update( {'email_verified':False}))
+        }
         user.create( user_data)
-        flash('Your account has been created! You are now able to log in', 'success')
+        send_register_email( user)
+        flash('An email has been sent to verify your address.', 'info')
         return redirect(url_for('login'))
     return render_template('register.tmpl', title='Register', form=form)
 
-@app.route('/register_mobile')
 #-------------------------------
-def register_mobile():
-    return render_template( 'register.tmpl', mobile=True)
+def send_register_email( user):
+    ''' User register. Send him an email to verify email address before creating account. '''
+    expires_sec = 1800
+    s = Serializer( app.config['SECRET_KEY'], expires_sec)
+    token = s.dumps( {'user_id': user.id}).decode('utf-8')
+    msg = Message('Katagui Email Verification',
+                  sender='noreply@ahaux.com',
+                  recipients=[user.data['email']])
+    msg.body = f'''To activate your Katagui account, visit the following link:
+    {url_for('verify_email', token=token, _external=True)}
+
+    If you did not register a Katagui account, you can safely ignore this email.
+    '''
+    mail.send(msg)
+
+@app.route("/verify_email/<token>", methods=['GET', 'POST'])
+#-------------------------------------------------------------
+def verify_email(token):
+    ''' User clicked on email verification link. '''
+    s = Serializer(app.config['SECRET_KEY'])
+    user_id = s.loads(token)['user_id']
+    user = auth.User( user_id)
+    jjson = user.json()
+    jjson.update( {'email_verified':True} )
+    db.update_row( 't_user', 'email', user.data['email'], { 'json':json.dumps( jjson) })
+    flash('Your email has been verified! You are now able to log in', 'success')
+    return redirect(url_for('login'))
 
 #------------------------------
 def send_reset_email( user):
