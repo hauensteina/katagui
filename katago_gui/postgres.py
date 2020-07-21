@@ -24,6 +24,7 @@ class Postgres:
     ''' Class to easily use postgres '''
     conns = {} # Remember the db connections in a class var, for re-use
 
+    #------------------------------
     def __init__( self, db_url):
         self.db_url = db_url
         self._get_conn()
@@ -32,6 +33,7 @@ class Postgres:
         if not self.table_exists( 't_parameters'):
             self._create_t_parameters()
 
+    #------------------------------
     def _get_conn( self):
         ''' Return connection if good, else make a new one '''
         try:
@@ -49,6 +51,7 @@ class Postgres:
             traceback.print_exc(e)
             raise
 
+    #------------------------------
     def _create_t_log( self):
         sql = '''
         create table t_log (
@@ -59,6 +62,7 @@ class Postgres:
         ); '''
         self.run( sql)
 
+    #------------------------------
     def _create_t_parameters( self):
         sql = '''
         create table t_parameters (
@@ -67,9 +71,11 @@ class Postgres:
         ); '''
         self.run( sql)
 
+    #------------------------------
     def clear_log( self):
         self.run( 'delete from t_log')
 
+    #-----------------------------------------------
     def insert( self, table, data, unique_cols=[]):
         '''
         Performs a single, or multiple, insert operation(s) on the given table
@@ -128,6 +134,7 @@ class Postgres:
         curs.close()
         return num_inserted
 
+    #-------------------------------------------------------
     def insert_bulk( self, table, data, unique_cols=[]):
         '''
         Just like insert, except we use the postgres COPY function
@@ -182,12 +189,34 @@ class Postgres:
             self.pexc(e)
             return 0
 
+    #----------------------------------
     def find( self, table, col, val):
         ''' Get rows where col equals val, as dicts '''
         sql = 'select * from %s where %s = %%s' % (table,col)
         res = self.select( sql, (val,))
         return res
 
+    #---------------------------------------------------
+    def update_row( self, table, col, val, data_dict):
+        ''' Find the row where col = val, update with data_dict.
+        Return 1 on success, -n if more than one row matches.
+        Return 0 if no row matches, -n if more than one row matches. '''
+        sql = 'select * from %s where %s = %%s' % (table,col)
+        res = self.select( sql, (val,))
+        if len(res) > 1: return -1 * len(res)
+        if len(res) == 0: return 0
+        sql = 'update %s ' % table
+        params = []
+        for k in data_dict.keys():
+            sql += 'set %s = %%s,' % k
+            params.append( data_dict[k])
+        sql = chop(sql)
+        sql += ' where %s = %%s ' % col
+        params.append(val)
+        self.run( sql, params)
+        return 1
+
+    #----------------------------------
     def slurp( self, table, cols=[]):
         ''' Slurp some table columns from all rows into a list of dicts '''
         self._get_conn()
@@ -210,6 +239,7 @@ class Postgres:
             curs.close()
         return rows
 
+    #-------------------------------------------
     def slurp_distinct( self, table, cols=[]):
         ''' Slurp some table columns into list of dicts, without dups '''
         self._get_conn()
@@ -232,6 +262,7 @@ class Postgres:
             curs.close()
         return rows
 
+    #----------------------------------
     def select( self, query, args=()):
         '''
         Get SQL output into a list of dicts (one dict per row).
@@ -248,6 +279,7 @@ class Postgres:
             curs.close()
         return rows
 
+    #---------------------------------------
     def select_iter( self, query, args=()):
         '''
         Executes an SQL query and returns an iterator giving the rows as dicts.
@@ -261,6 +293,7 @@ class Postgres:
         except Exception as e:
             raise
 
+    #--------------------------------
     def run( self, query, args=()):
         '''
         Executes a custom SQL query which modifies data in the database.
@@ -285,6 +318,7 @@ class Postgres:
         finally:
             curs.close()
 
+    #----------------------------------
     def table_exists( self, tabname):
         ''' Return true if table exists, else false '''
         self._get_conn()
@@ -294,6 +328,7 @@ class Postgres:
         except Exception as e:
             raise
 
+    #-------------------------------
     def drop_table( self, tabname):
         '''  Drop a table, if it exists '''
         try:
@@ -302,6 +337,7 @@ class Postgres:
         except Exception as e:
             raise
 
+    #--------------------------------
     def get_parm(self, param_name):
         ''' Retrieves the value of a parameter stored in the "t_parameters" table '''
         rows = self.select( "select value from t_parameters where name = %s", (param_name,))
@@ -311,6 +347,7 @@ class Postgres:
         else:
             return None
 
+    #----------------------------------------------
     def set_parm (self, param_name, param_value):
         '''
         Adds a parameter to the "t_parameter" table and sets it to the given
@@ -323,6 +360,7 @@ class Postgres:
         else:
             self.run ("INSERT INTO t_parameters (name, value) VALUES (%s,%s)", (param_name, param_value))
 
+    #-------------------------------
     def rm_parm (self, param_name):
         ''' Removes a parameter from the "t_parameters" table. '''
         self.run ("DELETE FROM t_parameters WHERE name = %s", (param_name,))
@@ -331,6 +369,7 @@ class Postgres:
     ''' Tracing to t_log '''
     '''-------------------'''
 
+    #------------------------------
     def pexc( self, e, p_txt=''):
         ''' Trace Exception to Postgres t_log '''
         func = parent_funcname()
@@ -346,6 +385,7 @@ class Postgres:
             msg = '%s %s():%d %s %s' % (fname, func, line, str(exname), str(exmsg))
             self.trace( 'EXCEPTION', msg)
 
+    #-------------------------
     def perr( self, p_msg):
         ''' Trace Error to Postgres t_log '''
         func = parent_funcname()
@@ -353,6 +393,7 @@ class Postgres:
         msg = "%s %s(): %s" % (fname, func, p_msg)
         self.trace( "ERROR",msg)
 
+    #-----------------------
     def plog( self, p_msg):
         ''' Trace Log msg to Postgres t_log '''
         func = parent_funcname()
@@ -360,6 +401,7 @@ class Postgres:
         msg = '%s %s(): %s' % (fname, func, p_msg)
         self.trace( 'LOG',msg)
 
+    #------------------
     def pstart( self):
         ''' Write function start log to Postgres t_log '''
         func = parent_funcname()
@@ -367,6 +409,7 @@ class Postgres:
         msg = '%s %s()' % (fname, func)
         self.trace( 'START',msg)
 
+    #-----------------
     def pend( self):
         ''' Write function end log to Postgres t_log '''
         func = parent_funcname()
@@ -374,6 +417,7 @@ class Postgres:
         msg = '%s %s()' % (fname, func)
         self.trace ('END',msg)
 
+    #------------------------------------
     def trace( self, p_level, p_msg):
         ''' Basic trace function. plog,perr,pexc call this. '''
         now = str(datetime.now())
@@ -384,6 +428,7 @@ class Postgres:
                    [{'level':p_level,'msg':p_msg,'dtime':now}])
 
     @classmethod
+    #-------------------------
     def run_tests( cclass):
         os.system( 'psql -c "drop database test"')
         os.system( 'psql -c "create database test"')
@@ -461,22 +506,31 @@ class Postgres:
         print( res)
         print( 'Test %d passed\n' % testnum) if len(res) == 2 else  print( '############ Test %d failed' % testnum)
 
-        # set_parm, get_parm
         testnum = 10
+        db.run( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':2,'txt':'two'}])
+        db.update_row( 't_test', 'val', 2, { 'txt':'dos' })
+        res = db.find( 't_test', 'val', 2)[0]
+        print(res)
+        print( 'Test %d passed\n' % testnum) if res['txt'] == 'dos' else  print( '############ Test %d failed' % testnum)
+
+        # set_parm, get_parm
+        testnum = 11
         db.set_parm( 'counter', 42) # int accepted, but strings are better
         res = db.get_parm( 'counter') # always returns a string
         print( res)
         print( 'Test %d passed\n' % testnum) if res == '42' else  print( '############ Test %d failed' % testnum)
 
         # rm_parm
-        testnum = 11
+        testnum = 12
         db.set_parm( 'blub', '13')
         db.rm_parm( 'blub')
         res = db.get_parm( 'blub')
+        print(res)
         print( 'Test %d passed\n' % testnum) if not res else  print( '############ Test %d failed' % testnum)
 
         # perr
-        testnum = 12
+        testnum = 13
         db.run( 'delete from t_log')
         db.perr( 'some error')
         res = db.select( 'select * from t_log')
@@ -484,7 +538,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # plog
-        testnum = 13
+        testnum = 14
         db.run( 'delete from t_log')
         db.plog( 'some log')
         res = db.select( 'select * from t_log')
@@ -492,7 +546,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # pstart
-        testnum = 14
+        testnum = 15
         db.run( 'delete from t_log')
         db.pstart()
         res = db.select( 'select * from t_log')
@@ -500,7 +554,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # pend
-        testnum = 15
+        testnum = 16
         db.run( 'delete from t_log')
         db.pend()
         res = db.select( 'select * from t_log')
@@ -509,18 +563,23 @@ class Postgres:
 
 ''' Utility funcs '''
 '''---------------'''
+
+#------------------
 def funcname():
     ''' Name of current function '''
     return inspect.stack()[1][3]
 
+#-------------------------
 def parent_funcname():
     ''' Name of parent function '''
     return inspect.stack()[2][3]
 
+#------------------------
 def parent_filename():
     ''' File of parent function '''
     return os.path.basename( inspect.getsourcefile(sys._getframe(2)))
 
+#----------------
 def chop(str):
     ''' Chop last char off a string '''
     return str[0:-1]

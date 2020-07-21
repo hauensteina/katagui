@@ -1,0 +1,49 @@
+{% extends "layout.tmpl" %}
+
+<script>
+ if (isMobile()) { $('#resetdiv').css( {'transform': 'translateY(200px) scale(2.0)'} )}
+ else { $('#resetdiv').css( {'transform': ''} )}
+</script>
+
+{% block content %}
+  <div id='logindiv' class='center'>
+    <table width='400px' class='center'>
+      <tr><td>
+        {% with messages = get_flashed_messages( with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class='alert alert-{{ category }}'>
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% else %}
+            <br><br>
+          {% endif %}
+        {% endwith %}
+      </td></tr>
+      <tr><td>
+        <form method="POST" action="">
+          {{ form.hidden_tag() }}
+          <fieldset class="form-group">
+            <div class="form-group">
+              {{ form.email.label(class="form-control-label") }}
+              {% if form.email.errors %}
+                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                  {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {{ form.email(class="form-control form-control-lg") }}
+              {% endif %}
+            </div>
+          </fieldset>
+          <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+          </div>
+        </form>
+      </td></tr>
+    </table>
+  </div>
+{% endblock content %}

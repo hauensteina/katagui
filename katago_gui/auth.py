@@ -5,12 +5,12 @@ from pdb import set_trace as BP
 class User(UserMixin):
     def __init__( self, email):
         self.valid = True
+        self.id = email
         rows = db.find( 't_user', 'email', email)
         if not rows:
             self.valid = False
             return
         self.data = rows[0]
-        self.id = self.data['email']
 
     def create( self, data):
         self.data = data

@@ -9,20 +9,23 @@
 
 from pdb import set_trace as BP
 import os, sys, re
+import requests
 from datetime import datetime
 import uuid
 from io import BytesIO
 
 from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app, bcrypt
+from katago_gui import app, bcrypt, mail
 from katago_gui import auth
-from katago_gui.forms import LoginForm, RegistrationForm
+from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
 @app.route('/')
@@ -101,6 +104,58 @@ def register():
 #-------------------------------
 def register_mobile():
     return render_template( 'register.tmpl', mobile=True)
+
+#------------------------------
+def send_reset_email( user):
+    ''' User requested a password reset. Send him an email with a reset link. '''
+    expires_sec = 1800
+    s = Serializer( app.config['SECRET_KEY'], expires_sec)
+    token = s.dumps( {'user_id': user.id}).decode('utf-8')
+    msg = Message('Password Reset Request',
+                  sender='noreply@ahaux.com',
+                  recipients=[user.data['email']])
+    msg.body = f'''To reset your katagui password, visit the following link:
+    {url_for('reset_token', token=token, _external=True)}
+
+    If you did not make this request then simply ignore this email and no changes will be made.
+    '''
+    mail.send(msg)
+
+@app.route("/reset_request", methods=['GET', 'POST'])
+#--------------------------------------------------------
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect( url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = auth.User( form.email.data)
+        if not user.valid:
+            flash( 'An account with this email does not exist.', 'danger')
+            return render_template('register.html', title='Register', form=form)
+        send_reset_email( user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.tmpl', title='Reset Password', form=form)
+
+@app.route("/reset_token/<token>", methods=['GET', 'POST'])
+#----------------------------------------------------------------
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect( url_for('index'))
+    s = Serializer(app.config['SECRET_KEY'])
+    user_id = s.loads(token)['user_id']
+    user = auth.User( user_id)
+    if not user.valid:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect( url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash( form.password.data).decode('utf-8')
+        user.data['password'] = hashed_password
+        db.update_row( 't_user', 'email', user.data['email'], { 'password':hashed_password })
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.tmpl', title='Reset Password', form=form)
 
 @app.route('/about')
 #-------------------------------
