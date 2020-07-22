@@ -1,14 +1,12 @@
 {% extends 'layout.tmpl' %}
 
-<script>
- if (isMobile()) { $('#logindiv').css( {'transform': 'translateY(200px) scale(2.0)'} )}
- else { $('#logindiv').css( {'transform': ''} )}
-</script>
-
+{% block css %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+{% endblock %}
 
 {% block content %}
-  <div id='logindiv' class='center'>
-    <table width='400px' class='center' style='font-size:100%'>
+  <div id='regdiv' class='center'>
+    <table class='center'>
       <tr><td>
         {% with messages = get_flashed_messages( with_categories=true) %}
           {% if messages %}
@@ -18,7 +16,7 @@
               </div>
             {% endfor %}
           {% else %}
-            <br><br>
+            <br>
           {% endif %}
         {% endwith %}
       </td></tr>
@@ -100,7 +98,7 @@
                     <span>{{ error }}</span>
                   {% endfor %}
                 </div>
-          {% else %}
+              {% else %}
                 {{ form.confirm_password( class='form-control form-control-lg') }}
               {% endif %}
             </div>
@@ -108,9 +106,9 @@
           <div class='form-group'>
             {{ form.submit( class='btn btn-outline-info') }}
           </div><br>
-          <small class='text-muted'>
+          <div class='text-muted'>
             Already Have An Account? <a class='ml-2' href='{{ url_for("login") }}'> Sign In </a>
-          </small>
+          </div>
         </form>
       </td></tr>
     </table>

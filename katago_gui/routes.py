@@ -33,12 +33,12 @@ from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, move
 @app.route('/home')
 #-------------------------------
 def index():
-    return render_template( 'index.tmpl', mobile=False)
+    return render_template( 'index.tmpl', mobile=False, home=True)
 
 @app.route('/index_mobile')
 #-------------------------------
 def index_mobile():
-    return render_template( 'index_mobile.tmpl', mobile=True)
+    return render_template( 'index_mobile.tmpl', mobile=True, home=True)
 
 @app.route('/help')
 #---------------------

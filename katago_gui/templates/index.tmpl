@@ -8,16 +8,12 @@
     * Desktop web interface to play against KataGo.
     */
   </script>
-
-  <script type="text/javascript">
-   function isMobile() { return typeof window.orientation !== "undefined" }
-   function isDesktop() { return typeof window.orientation == "undefined" }
-   if (isMobile()) { document.location.href = '/index_mobile' }
-
-  </script>
 {% endblock pre %}
 
 {% block css %}
+  <script type="text/javascript">
+   if (axutil.isMobile()) { document.location.href = '/index_mobile' }
+  </script>
   <style>
    /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
    /*----------------------------------------------------------------------*/

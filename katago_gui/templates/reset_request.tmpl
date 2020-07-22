@@ -1,13 +1,12 @@
 {% extends "layout.tmpl" %}
 
-<script>
- if (isMobile()) { $('#resetdiv').css( {'transform': 'translateY(200px) scale(2.0)'} )}
- else { $('#resetdiv').css( {'transform': ''} )}
-</script>
+{% block css %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+{% endblock %}
 
 {% block content %}
-  <div id='logindiv' class='center'>
-    <table width='400px' class='center'>
+  <div class='center'>
+    <table class='center'>
       <tr><td>
         {% with messages = get_flashed_messages( with_categories=true) %}
           {% if messages %}

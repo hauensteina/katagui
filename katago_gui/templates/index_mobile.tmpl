@@ -9,14 +9,12 @@
     */
   </script>
 
-  <script type="text/javascript">
-   function isMobile() { return typeof window.orientation !== "undefined" }
-   function isDesktop() { return typeof window.orientation == "undefined" }
-   if (isDesktop()) { document.location.href = '/index' }
-  </script>
 {% endblock pre %}
 
 {% block css %}
+  <script type="text/javascript">
+   if (axutil.isDesktop()) { document.location.href = '/index' }
+  </script>
   <style>
    /* Disable hover color change on buttons */
    .btn:hover { background-color:#CCCCCC;  color:#343A40; }

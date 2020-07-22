@@ -68,6 +68,9 @@ class AhauxUtils
     }
   } // settings()
 
+  isMobile() { return typeof window.orientation !== "undefined" }
+  isDesktop() { return typeof window.orientation == "undefined" }
+
   //----------------------------
   //--- D3 graphics routines ---
   //----------------------------
