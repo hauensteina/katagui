@@ -223,10 +223,10 @@ class Postgres:
         res = self.select( sql, (val,))
         if len(res) > 1: return -1 * len(res)
         if len(res) == 0: return 0
-        sql = 'update %s ' % table
+        sql = 'update %s set ' % table
         params = []
         for k in data_dict.keys():
-            sql += 'set %s = %%s,' % k
+            sql += '%s = %%s,' % k
             params.append( data_dict[k])
         sql = chop(sql)
         sql += ' where %s = %%s ' % col

@@ -5,7 +5,7 @@ from wtforms.validators import InputRequired, DataRequired, Length, Email, Equal
 
 class RegistrationForm( FlaskForm):
     username = StringField( 'Username',
-                            validators=[InputRequired(message='Field required'), Length(min=2, max=20)])
+                            validators=[DataRequired(), Length(min=2, max=20)])
     email = EmailField( 'Email', validators=[DataRequired(), Email()])
     fname = StringField( 'First Name', validators=[DataRequired()])
     lname = StringField( 'Last Name', validators=[DataRequired()])
@@ -29,3 +29,10 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username')
+    email = EmailField('Email')
+    fname = StringField( 'First Name', validators=[DataRequired()])
+    lname = StringField( 'Last Name', validators=[DataRequired()])
+    submit = SubmitField('Update')

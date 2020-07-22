@@ -6,9 +6,9 @@ from pdb import set_trace as BP
 class User(UserMixin):
     def __init__( self, email):
         self.valid = True
-        self.id = email
+        self.id = email.strip().lower()
         self.data = {}
-        rows = db.find( 't_user', 'email', email)
+        rows = db.find( 't_user', 'email', self.id)
         if not rows:
             self.valid = False
             return
@@ -16,6 +16,10 @@ class User(UserMixin):
 
     def create( self, data):
         self.data = data
+        self.data['email'] = self.data['email'].strip().lower()
+        self.data['fname'] = self.data['fname'].strip()
+        self.data['lname'] = self.data['lname'].strip()
+        self.data['username'] = self.data['username'].strip()
         db.insert( 't_user', (data,))
         self.valid = True
 

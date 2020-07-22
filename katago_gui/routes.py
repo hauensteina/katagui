@@ -25,7 +25,7 @@ from katago_gui.go_utils import coords_from_point
 
 from katago_gui import app, db, bcrypt, mail
 from katago_gui import auth
-from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm
+from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
 
 @app.route('/')
@@ -74,11 +74,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-@app.route("/account")
-#-------------------------
-def account():
-    pass
 
 @app.route('/register', methods=['GET','POST'])
 #------------------------------------------------
@@ -187,6 +182,24 @@ def reset_token(token):
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.tmpl', title='Reset Password', form=form)
+
+@app.route("/account", methods=['GET', 'POST'])
+@login_required
+#-------------------
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.data['fname'] = form.fname.data.strip().strip()
+        current_user.data['lname'] = form.lname.data.strip().strip()
+        db.update_row( 't_user', 'email', current_user.id, current_user.data)
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.data['username']
+        form.email.data = current_user.data['email']
+        form.fname.data = current_user.data['fname']
+        form.lname.data = current_user.data['lname']
+    return render_template('account.tmpl', title='Account', form=form)
 
 @app.route('/about')
 #-------------------------------
