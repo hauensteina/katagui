@@ -36,17 +36,30 @@ class Postgres:
     #------------------------------
     def _get_conn( self):
         ''' Return connection if good, else make a new one '''
+
+        def reconnect():
+            ''' Close connection, make a new one '''
+            try:
+                Postgres.conns[self.db_url].close()
+            except:
+                pass
+            Postgres.conns[self.db_url] = None
+            self.conn = psycopg2.connect( self.db_url)
+            self.conn.set_isolation_level( psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+            Postgres.conns[self.db_url] = self.conn
+
         try:
             if self.db_url in Postgres.conns and Postgres.conns[self.db_url].status == STATUS_READY:
                 self.conn = Postgres.conns[self.db_url]
-                return self.conn
+                try:
+                    curs = self.conn.cursor()
+                    curs.execute( 'SELECT 1')
+                    return self.conn
+                except:
+                    reconnect()
+                    return self.conn
             else:
-                if self.db_url in Postgres.conns:
-                    Postgres.conns[self.db_url].close()
-                Postgres.conns[self.db_url] = None
-                self.conn = psycopg2.connect( self.db_url)
-                self.conn.set_isolation_level( psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-                Postgres.conns[self.db_url] = self.conn
+                reconnect()
         except Exception as e:
             traceback.print_exc(e)
             raise
@@ -70,6 +83,11 @@ class Postgres:
         ,value  varchar(1000) default null
         ); '''
         self.run( sql)
+
+    #--------------------
+    def recover( self):
+        ''' Try to recover a bad connection '''
+
 
     #------------------------------
     def clear_log( self):
