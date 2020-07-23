@@ -209,10 +209,10 @@ def account():
 def about():
     return render_template( 'about.tmpl')
 
-@app.route('/about_mobile')
+@app.route('/settings')
 #-------------------------------
-def about_mobile():
-    return render_template( 'about.tmpl')
+def settings():
+    return render_template( 'settings.tmpl')
 
 @app.route('/favicon.ico')
 #-------------------------------
