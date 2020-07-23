@@ -207,12 +207,12 @@ def account():
 @app.route('/about')
 #-------------------------------
 def about():
-    return render_template( 'help.tmpl', mobile=False)
+    return render_template( 'about.tmpl')
 
 @app.route('/about_mobile')
 #-------------------------------
 def about_mobile():
-    return render_template( 'help.tmpl', mobile=True)
+    return render_template( 'about.tmpl')
 
 @app.route('/favicon.ico')
 #-------------------------------

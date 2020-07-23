@@ -1,0 +1,46 @@
+{% extends 'layout.tmpl' %}
+
+{% block pre %}
+  <script type='text/javascript'>
+   /* Filename: katago-gui/about.tmpl
+    * Author: AHN
+    * Creation Date: Jul, 2020
+    */
+  </script>
+{% endblock pre %}
+
+{% block css %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+{% endblock %}
+
+{% block content %}
+  <table align='center'>
+    <tr><td class='text-center'> &nbsp; </td></tr>
+    <tr><td class='text-center'> <h1> About </h1> </td></tr>
+    <tr><td><pre>
+This is KataGo 1.4.5 .
+It plays well against higher handicaps, and
+komi can be adjusted freely. The network has
+its own built in territory estimation.
+
+Credits:
+---------
+
+KataGo, by David J. Wu, is here:
+https://github.com/lightvector/KataGo
+
+Go data structures were pilfered from the
+book 'Deep Learning and the Game of Go'
+by Max Pumperla and Kevin Ferguson.
+
+The Go board is jGoBoard by
+Joonas Pihlajamaa.
+
+Plumbing and glue is by me:
+
+Andreas Hauenstein
+hauensteina@gmail.com
+</pre>
+    </td></tr>
+  </table>
+{% endblock content %}
