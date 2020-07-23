@@ -251,25 +251,15 @@ function main( JGO, axutil, p_options) {
     var_button_state( 'off')
 
     $('#img_bot, #descr_bot').click( () => {
-      // if (!settings('logged_in') @@@
-      if (hhmmss_strong_on()) {
-        $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
-        var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
-         class='touch-allow'>donate</a>`
-        var tstr = `Strong is currently disabled due to high server load. Please ${link} for a new server.<br>`
-        $('#please_donate_modal_text').html( tstr)
-        $('#please_donate_modal').modal('show')
-      }
-      else {
-        fast_or_strong('toggle')
-      }
+      fast_or_strong('toggle')
     })
 
     $('#btn_tgl_guest').click( () => {
+      $('#donate_modal').html('\&nbsp;')
       fast_or_strong('guest')
     })
 
-    $('#btn_tgl_guest').click( () => {
+    $('#btn_tgl_fast').click( () => {
       fast_or_strong('fast')
     })
 
@@ -1137,94 +1127,67 @@ function main( JGO, axutil, p_options) {
   } // hover()
   hover.coord = null
 
-  // Get or set fast or strong mode
-  //---------------------------------
+  // Get or set guest, fast, strong mode
+  //---------------------------------------
   function fast_or_strong( val) {
     if (typeof val == 'undefined') { // getter
       if ($('#btn_tgl_strong').hasClass('active')) {
         fast_or_strong('strong')
-        return {'val':'strong', 'ep':'/select-move-x/' } }
-      else {
-        fast_or_strong('free')
-        return {'val':'free', 'ep':'/select-move/' } }
-    }
+        return {'val':'strong', 'ep':'/select-move-x/' }
+      } else if ($('#btn_tgl_fast').hasClass('active')) {
+        fast_or_strong('fast')
+        return {'val':'fast', 'ep':'/select-move/' }
+      } else {
+        if (!settings('logged_in')) {
+          fast_or_strong('guest')
+          return {'val':'guest', 'ep':'/select-move-guest/' }
+        } else { // logged in, use 20b
+          fast_or_strong('fast')
+          return {'val':'fast', 'ep':'/select-move/' }
+        }
+      }
+    } // if getter
     // setter
     if (val == 'toggle') {
-      if ($('#btn_tgl_strong').hasClass('active')) { return fast_or_strong('free') }
-      else {  return fast_or_strong('strong') }
-    }
-    else if (val == 'strong') {
-      const STRONG = 0
-      var d = new Date()
-      var h = d.getUTCHours()
-      if (settings( 'logged_in')) {
-        // if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF || STRONG) {
-        $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
-        $('#btn_tgl_strong').addClass('active')
-        $('#btn_tgl_free').removeClass('active')
-        $('#img_bot').attr('src', 'static/kata-red.png');
-        return
+      if (!settings('logged_in')) {
+        return fast_or_strong( 'guest')
+      } else if ($('#btn_tgl_strong').hasClass('active')) {
+        return fast_or_strong('fast')
+      } else {
+        return fast_or_strong('strong')
       }
+    }
+    else if (val == 'strong' || val == 'fast') {
+      if (settings( 'logged_in')) {
+        if (val == 'strong') {
+          $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
+          $('#btn_tgl_strong').addClass('active')
+          $('#btn_tgl_fast').removeClass('active')
+          $('#btn_tgl_guest').removeClass('active')
+          $('#img_bot').attr('src', 'static/kata-red.png')
+          return
+        } else if (val == 'fast') {
+          $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
+          $('#btn_tgl_fast').addClass('active')
+          $('#btn_tgl_strong').removeClass('active')
+          $('#btn_tgl_guest').removeClass('active')
+          $('#img_bot').attr('src', 'static/kata.png')
+        }
+      } // if logged in
       else {
         fast_or_strong( 'free') // Strong is disabled
-        /* var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
-         *  class='touch-allow'>donate</a>` */
-        //var tstr = `Strong is currently disabled due to high server load. Please ${link} for a new server.`
-        var tstr = `Please log in.`
-
+        var tstr = '<a href="/login">Please log in.</a>'
         $('#donate_modal').html(tstr)
       }
     }
-    else { // free
-      $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
-      $('#btn_tgl_free').addClass('active')
+    else { // val == guest
+      $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
+      $('#btn_tgl_guest').addClass('active')
+      $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
-      $('#img_bot').attr('src', 'static/kata.png');
+      $('#img_bot').attr('src', 'static/kata.png')
     }
   } // fast_or_strong()
-
-  // How long until strong comes back. Currently 3pm to 1am.
-  //----------------------------------------------------------
-  function hhmmss_strong_on() {
-    var now = new Date()
-    now = new Date( now.getTime() + now.getTimezoneOffset() * 60000) // utc
-    var h = now.getHours()
-    if (h >= HOUR_STRONG_ON || h < HOUR_STRONG_OFF) { // already on
-      return 0
-    }
-    var tback = new Date(now)
-    //tback.setDate( tover.getDate() + 1)
-    tback.setHours( HOUR_STRONG_ON,0,0,0)
-    var delta = tback - now
-    var hours = Math.floor( delta / (1000*60*60))
-    var mins  = Math.floor( delta / (1000*60)) - hours * 60
-    var secs  = Math.floor( delta / (1000)) - mins * 60 - hours * 3600
-    var res = ('0' + hours).slice(-2) + ':' + ('0' + mins).slice(-2) + ':' + ('0' + secs).slice(-2)
-    return res
-  } // hhmmss_strong_on()
-
-  // How long until strong is disabled. Currently 3pm to 1am.
-  //----------------------------------------------------------
-  function hhmmss_strong_off() {
-    var now = new Date()
-    now = new Date( now.getTime() + now.getTimezoneOffset() * 60000) // utc
-    var h = now.getHours()
-    if (h < HOUR_STRONG_ON && h >= HOUR_STRONG_OFF) { // already off
-      return 0
-    }
-    var toff = new Date(now)
-    if (h >= HOUR_STRONG_ON) {
-      toff.setDate( toff.getDate() + 1)
-    }
-
-    toff.setHours( HOUR_STRONG_OFF,0,0,0)
-    var delta = toff - now
-    var hours = Math.floor( delta / (1000*60*60))
-    var mins  = Math.floor( delta / (1000*60)) - hours * 60
-    var secs  = Math.floor( delta / (1000)) - mins * 60 - hours * 3600
-    var res = ('0' + hours).slice(-2) + ':' + ('0' + mins).slice(-2) + ':' + ('0' + secs).slice(-2)
-    return res
-  } // hhmmss_strong_off()
 
   // Build HTML for donation status
   //-------------------------------------------
@@ -1282,23 +1245,10 @@ function main( JGO, axutil, p_options) {
   // Save game record once a second
   function once_per_sec() {
     save_state()
-    if (hhmmss_strong_on()) {
-      var tstr = 'Strong coming back in ' + hhmmss_strong_on()
-      $('#strong_time').html( tstr)
-      $('#please_donate_modal_timer').html( tstr)
-    }
-    else {
-      $('#strong_time').html( 'Strong turning off in ' + hhmmss_strong_off())
-    }
-    setTimeout(once_per_sec, 1000)
+    setTimeout( once_per_sec, 1000)
   }
   once_per_sec()
 
-  $('#donating').html( donate_string(DONATED,DONATE_LIMIT))
-
-  hhmmss_strong_off()
-
-  // Default to fast (20b less playouts)
-  //$('input[name=fast_strong]').filter('[value=fast]').prop('checked',true)
+  $('#donating').html( donate_string( DONATED, DONATE_LIMIT))
 
 } // function main()

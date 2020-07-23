@@ -293,13 +293,29 @@
           </table>
           <br>
           <div align='left'>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <label id='btn_tgl_free' class='btn btn-outline-dark' style='font-size:24pt;'>Fast</label>
-            &nbsp;&nbsp;
-            <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:24pt;'>Strong</label>
+            <table width='80%'>
+              {% if not current_user.is_authenticated %}
+                <tr align='center' height='90px'>
+                  <td>
+                    <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:24pt;'>Guest (10 blocks)</label>
+                  </td>
+                </tr>
+              {% endif %}
+              <tr align='center' height='90px'>
+                <td>
+                  <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:24pt;'>Fast (20 blocks)</label>
+                </td>
+              </tr>
+              <tr align='center' height='90px'>
+                <td>
+                  <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:24pt;'>Strong (40 blocks)</label>
+                </td>
+              </tr>
+              <tr class='touch-allow' align='center' height='90px'>
+                <td id='donate_modal' style='font-size:24pt'> </td>
+              </tr>
+            </table>
           </div>
-          <div id='donate_modal' style='font-size:24pt'> </div>
-          <div id='strong_time' style='font-size:24pt'> </div>
         </div>
         <div class='modal-footer'>
           <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->

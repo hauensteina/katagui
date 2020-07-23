@@ -26,7 +26,7 @@ from katago_gui.go_utils import coords_from_point
 from katago_gui import app, db, bcrypt, mail
 from katago_gui import auth
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
-from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, moves2sgf
+from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf
 
 @app.route('/')
 @app.route('/index')
@@ -242,6 +242,18 @@ def select_move_x( bot_name):
         return jsonify( res)
     except:
         print( 'select move x error: %s' % res)
+
+@app.route('/select-move-guest/<bot_name>', methods=['POST'])
+# Forward select-move to the katago server
+#------------------------------------------
+def select_move_guest( bot_name):
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+    res = fwd_to_katago_guest( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move guest error: %s' % res)
 
 @app.route('/score/<bot_name>', methods=['POST'])
 # Forward score to the katago server

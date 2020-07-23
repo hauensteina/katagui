@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-{% set VERSION = '1.xx' %}
+{% set VERSION = '2.0' %}
 
 {% block pre %}
   <script type='text/javascript'>
@@ -92,13 +92,15 @@
           <td width='5%'>&nbsp;</td>
         </tr>
         <tr>
-          <td width='5%'>&nbsp;</td>
+      </table>
+      <table style="width:100%">
+        <tr>
           {% if current_user.is_authenticated %}
-            <td class='font-m' align='left' style='color: #cbd5db;'>User: {{ current_user.data["username"] }}</td>
+            <td class='font-m' align='right'>{{ current_user.data["username"] }}</td>
           {% else %}
-            <td class='font-m' align='left' style='color: #cbd5db;'>User: Guest</td>
+            <td class='font-m' align='right'>Guest</td>
           {% endif %}
-          <td></td><td></td>
+          <td width='5%'>&nbsp;</td>
         </tr>
       </table>
     {% endif %}

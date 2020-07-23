@@ -29,17 +29,17 @@ app.config.update(
 app.config['DEBUG'] = os.getenv("DEBUG", False)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
-# 20b 512 playouts
+# 20b 256 playouts
 KATAGO_SERVER = 'http://www.ahaux.com/katago_server/'
 # 40b 1024 playouts
 KATAGO_SERVER_X = 'http://www.ahaux.com/katago_server_x/'
+# 10b 256 playouts
+KATAGO_SERVER_GUEST = 'http://www.ahaux.com/katago_server_guest/'
 
 if 'HEROKU_FLAG' in os.environ: # prod on heroku
     db_url = os.environ['DATABASE_URL']
-    mailgun_api_key = os.environ['MAILGUN_API_KEY']
 else: # local
     db_url = os.environ['KATAGUI_DB_URL']
-    mailgun_api_key = os.environ['KATAGUI_MAILGUN_KEY']
 
 db = Postgres( db_url)
 

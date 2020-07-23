@@ -7,7 +7,7 @@
 # Various utility functions
 #
 
-from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X
+from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X, KATAGO_SERVER_GUEST
 from katago_gui.go_utils import point_from_coords
 import requests
 import os, sys, re
@@ -33,6 +33,14 @@ def fwd_to_katago( endpoint, args):
 #----------------------------------------
 def fwd_to_katago_x( endpoint, args):
     url = KATAGO_SERVER_X + endpoint
+    resp = requests.post( url, json=args)
+    res = resp.json()
+    return res
+
+# Forward request to katago server
+#----------------------------------------
+def fwd_to_katago_guest( endpoint, args):
+    url = KATAGO_SERVER_GUEST + endpoint
     resp = requests.post( url, json=args)
     res = resp.json()
     return res
