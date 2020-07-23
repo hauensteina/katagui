@@ -300,8 +300,12 @@
             </table>
             <br>
             <div align='left'>
+              {% if not current_user.is_authenticated %}
+                &nbsp;&nbsp;
+                <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:8pt;'>Guest</label>
+              {% endif  %}
               &nbsp;&nbsp;
-              <label id='btn_tgl_free' class='btn btn-outline-dark' style='font-size:8pt;'>Fast</label>
+              <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:8pt;'>Fast</label>
               &nbsp;&nbsp;
               <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:8pt;'>Strong</label>
             </div>

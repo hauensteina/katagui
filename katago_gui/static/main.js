@@ -251,6 +251,7 @@ function main( JGO, axutil, p_options) {
     var_button_state( 'off')
 
     $('#img_bot, #descr_bot').click( () => {
+      // if (!settings('logged_in') @@@
       if (hhmmss_strong_on()) {
         $('#strong_time').html( 'Strong coming back in ' + hhmmss_strong_on())
         var link = `<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T322ZZH9TKMMN&source=url'
@@ -264,8 +265,12 @@ function main( JGO, axutil, p_options) {
       }
     })
 
-    $('#btn_tgl_free').click( () => {
-      fast_or_strong('free')
+    $('#btn_tgl_guest').click( () => {
+      fast_or_strong('guest')
+    })
+
+    $('#btn_tgl_guest').click( () => {
+      fast_or_strong('fast')
     })
 
     $('#btn_tgl_strong').click( () => {

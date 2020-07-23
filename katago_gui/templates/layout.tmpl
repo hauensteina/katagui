@@ -65,7 +65,7 @@
           <td width='5%'>&nbsp;</td>
           <td  align='left'>
             <a class='hlink' style='font-size:20pt' href='{{ url_for("index") }}'>
-              &nbsp;KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
+              KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
           </td>
         </tr>
       </table>
@@ -75,7 +75,7 @@
           <td width='5%'>&nbsp;</td>
           <td  align='left'>
             <a class='hlink font-l' href='{{ url_for("index") }}'>
-              &nbsp;KataGui <span class='font-s'>{{ VERSION }}</span></a>
+              KataGui <span class='font-s'>{{ VERSION }}</span></a>
           </td>
           <td align='right'>
             {% if current_user.is_authenticated %}
@@ -90,6 +90,15 @@
             <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>About</a>
           </td>
           <td width='5%'>&nbsp;</td>
+        </tr>
+        <tr>
+          <td width='5%'>&nbsp;</td>
+          {% if current_user.is_authenticated %}
+            <td class='font-m' align='left' style='color: #cbd5db;'>User: {{ current_user.data["username"] }}</td>
+          {% else %}
+            <td class='font-m' align='left' style='color: #cbd5db;'>User: Guest</td>
+          {% endif %}
+          <td></td><td></td>
         </tr>
       </table>
     {% endif %}

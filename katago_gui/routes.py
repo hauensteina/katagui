@@ -83,9 +83,12 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
+        if form.username.data.strip().lower() == 'guest':
+            flash( 'Guest is not a valid username.', 'danger')
+            return render_template('register.tmpl', title='Register', form=form)
         if user.valid:
             flash( 'An account with this email already exists.', 'danger')
-            return render_template('register.html', title='Register', form=form)
+            return render_template('register.tmpl', title='Register', form=form)
 
         jjson = user.json()
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -157,7 +160,7 @@ def reset_request():
         user = auth.User( form.email.data)
         if not user.valid:
             flash( 'An account with this email does not exist.', 'danger')
-            return render_template('register.html', title='Register', form=form)
+            return render_template('register.tmpl', title='Register', form=form)
         send_reset_email( user)
         flash('An email has been sent with instructions to reset your password.', 'info')
         return redirect(url_for('login'))
