@@ -7,13 +7,13 @@
 
 'use strict'
 
-const DDATE = '2020-07-14'
+const DDATE = '2020-07-23'
 const DEBUG = false
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
 const HOUR_STRONG_OFF = 3 // 1
-const DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10+100
+const DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10+100+20+19
 const DONATE_LIMIT = 2000
 
 
@@ -1176,7 +1176,7 @@ function main( JGO, axutil, p_options) {
       } // if logged in
       else {
         fast_or_strong( 'free') // Strong is disabled
-        var tstr = '<a href="/login">Please log in.</a>'
+        var tstr = '<a href="/login" class="touch-allow">Please log in.</a>'
         $('#donate_modal').html(tstr)
       }
     }
