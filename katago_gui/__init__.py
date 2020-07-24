@@ -38,10 +38,10 @@ KATAGO_SERVER_GUEST = 'http://www.ahaux.com/katago_server_guest/'
 
 if 'HEROKU_FLAG' in os.environ: # prod on heroku
     db_url = os.environ['DATABASE_URL']
-    mailgun_api_key = os.environ['MAILGUN_API_KEY']
+    #mailgun_api_key = os.environ['MAILGUN_API_KEY']
 else: # local
     db_url = os.environ['KATAGUI_DB_URL']
-    mailgun_api_key = os.environ['KATAGUI_MAILGUN_API_KEY']
+    #mailgun_api_key = os.environ['KATAGUI_MAILGUN_API_KEY']
 
 db = Postgres( db_url)
 
