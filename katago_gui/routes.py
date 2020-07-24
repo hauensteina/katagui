@@ -100,7 +100,7 @@ def register():
             return render_template('register.tmpl', title='Register', form=form)
 
         jjson = user.json()
-        jjson.update( {'email_verified':True})
+        jjson.update( {'email_verified':False})
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user_data = {'username':form.username.data
                      ,'email':form.email.data
@@ -117,8 +117,8 @@ def register():
             flash( 'Error creating user.', 'danger')
             return render_template('register.tmpl', title='Register', form=form)
 
-        #send_register_email( user)
-        flash('Account has been created. Please log in.', 'info')
+        send_register_email( user)
+        flash('An email has been sent to verify your address.', 'info')
         return redirect(url_for('login'))
     return render_template('register.tmpl', title='Register', form=form)
 
