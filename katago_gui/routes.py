@@ -91,17 +91,18 @@ def register():
             return render_template('register.tmpl', title='Register', form=form)
 
         jjson = user.json()
+        jjson.update( {'email_verified':True})
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user_data = {'username':form.username.data
                      ,'email':form.email.data
                      ,'password':hashed_password
                      ,'fname':form.fname.data
                      ,'lname':form.lname.data
-                     ,'json':json.dumps( jjson.update( {'email_verified':False}))
+                     ,'json':json.dumps( jjson)
         }
         user.create( user_data)
-        send_register_email( user)
-        flash('An email has been sent to verify your address.', 'info')
+        #send_register_email( user)
+        flash('Account has been created. Please log in.', 'info')
         return redirect(url_for('login'))
     return render_template('register.tmpl', title='Register', form=form)
 
@@ -112,7 +113,7 @@ def send_register_email( user):
     s = Serializer( app.config['SECRET_KEY'], expires_sec)
     token = s.dumps( {'user_id': user.id}).decode('utf-8')
     msg = Message('Katagui Email Verification',
-                  sender='noreply@ahaux.com',
+                  sender='hauensteina@ahaux.com',
                   recipients=[user.data['email']])
     msg.body = f'''To activate your Katagui account, visit the following link:
     {url_for('verify_email', token=token, _external=True)}
