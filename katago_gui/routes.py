@@ -43,12 +43,21 @@ def ttest():
 @app.route('/home')
 #-------------------------------
 def index():
+    if not check_https(): return redirect( 'https://katagui.herokuapp.com')
     return render_template( 'index.tmpl', mobile=False, home=True)
 
 @app.route('/index_mobile')
 #-------------------------------
 def index_mobile():
+    if not check_https(): return redirect( 'https://katagui.herokuapp.com')
     return render_template( 'index_mobile.tmpl', mobile=True, home=True)
+
+#-------------------------
+def check_https():
+    protocol = request.headers.get('X-Forwarded-Proto', 'http')
+    if protocol != 'https' and 'HEROKU_FLAG' in os.environ:
+        return False
+    return True
 
 @app.route('/login', methods=['GET','POST'])
 #---------------------------------------------
