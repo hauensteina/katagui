@@ -100,7 +100,14 @@ def register():
                      ,'lname':form.lname.data
                      ,'json':json.dumps( jjson)
         }
-        user.create( user_data)
+        ret = user.create( user_data)
+        if ret == 'err_user_exists':
+            flash( 'That username is taken.', 'danger')
+            return render_template('register.tmpl', title='Register', form=form)
+        elif ret != 'ok':
+            flash( 'Error creating user.', 'danger')
+            return render_template('register.tmpl', title='Register', form=form)
+
         #send_register_email( user)
         flash('Account has been created. Please log in.', 'info')
         return redirect(url_for('login'))

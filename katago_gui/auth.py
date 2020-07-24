@@ -20,8 +20,12 @@ class User(UserMixin):
         self.data['fname'] = self.data['fname'].strip()
         self.data['lname'] = self.data['lname'].strip()
         self.data['username'] = self.data['username'].strip()
+        rows = db.find( 't_user', 'username',  self.data['username'])
+        if rows:
+            return 'err_user_exists'
         db.insert( 't_user', (data,))
         self.valid = True
+        return 'ok'
 
     def auth( self, passwd_hash):
         return bcrypt.check_password_hash( self.data['password'], passwd_hash)
