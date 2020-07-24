@@ -28,6 +28,16 @@ from katago_gui import auth
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf
 
+@app.route('/ttest')
+#-------------------------------
+def ttest():
+    msg = Message('Python test',
+                  sender='hauensteina@ahaux.com',
+                  recipients=['hauensteina@gmail.com'])
+    msg.body = 'hi there from python'
+    ret = mail.send(msg)
+    return render_template( 'ttest.tmpl', msg='ttest')
+
 @app.route('/')
 @app.route('/index')
 @app.route('/home')
@@ -39,16 +49,6 @@ def index():
 #-------------------------------
 def index_mobile():
     return render_template( 'index_mobile.tmpl', mobile=True, home=True)
-
-@app.route('/help')
-#---------------------
-def help():
-    return render_template( 'help.tmpl', mobile=False)
-@app.route('/help_mobile')
-
-#--------------------
-def help_mobile():
-    return render_template( 'help.tmpl', mobile=True)
 
 @app.route('/login', methods=['GET','POST'])
 #---------------------------------------------
