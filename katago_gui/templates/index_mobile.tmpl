@@ -89,149 +89,147 @@
 {% endblock css %}
 
 {% block content %}
-  <br>
-  <div class='container-fluid' style='width:100vw; left:0; margin:0; padding:0;'>
-    <!-- <table class='center' style='width:100%;'> -->
-    <table class='center'>
-      <tr><td>&nbsp;</td></tr>
-      <tr><td>&nbsp;</td></tr>
-      <tr><td>
-        <div class='container-fluid'>
-          <div class='row'>
-            <div class='col-4'>
-              <img id='img_bot' src='static/kata.png' style='height:200px' class='touch-allow'>
-              <div id='descr_bot' style='font-size:20pt' class='touch-allow'>
-                KataGo 20 blocks<br>2020-05-30
-              </div>
-              <div>
-                <a class='glink' href="{{ url_for('settings') }}" style='font-size:30pt;text-align:right;'>Settings</a>
-              </div>
-              <br>
+  <table class='center'>
+    <tr><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr><td>
+      <div class='container-fluid'>
+        <div class='row'>
+          <div class='col-4'>
+            <img id='img_bot' src='static/kata.png' style='height:200px' class='touch-allow'>
+            <div id='descr_bot' style='font-size:20pt' class='touch-allow'>
+              KataGo 20 blocks<br>2020-05-30
             </div>
-            <div class='col-4' style='font-size:30pt;margin:auto'>
-              <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-                     style='font-size:40pt'>
-                New Game
-              </label><br>
+            <div>
+              <a class='glink' href="{{ url_for('settings') }}" style='font-size:30pt;text-align:right;'>Settings</a>
             </div>
-            <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
-          </div>
-        </div>
-      </td></tr>
-      <tr><td>
-        <table class='center' style='font-size:24pt;' width='800px'>
-          <tr><td id='donating'>
-          </td></tr>
-          <tr><td>
             <br>
-            <form action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_top' style='font-size:24pt;' >
-              <input type='hidden' name='cmd' value='_s-xclick' />
-              <input type='hidden' name='hosted_button_id' value='T322ZZH9TKMMN' />
-              <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit'
-                     title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' width='300px'/>
-              <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
-            </form>
-          </td></tr>
-        </table>
-        <table class='center' style='font-size:22pt'>
-          <tr><td colspan='2' style='font-weight:bold'> Top Three Donors: </td></tr>
-          <tr><td align='left'>Darrell Malick</td> <td align='right'> &nbsp; 100 </td>  </tr>
-          <tr><td align='left'>Tobias Berben</td> <td align='right'> &nbsp; 50 </td>  </tr>
-          <tr><td align='left'>Terry Assael</td> <td align='right'> &nbsp; 30 </td>  </tr>
-        </table>
-        <br>
-
-      </td></tr>
-      <tr><td id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
-      <tr><td id='fname' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
-      <tr><td id='lb_komi' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
-
-      <tr><td id='board'> </td></tr>
-      <!-- Status and Emoji -->
-      <!-- <tr><td> &nbsp; </td></tr> -->
-      <tr style='transform:translate(0,-18px)'><td>
-        <div class='container-fluid'>
-          <div class='row center'>
-            <div id='movenum' class='col-3' style='font-size:26pt;margin:auto'> &nbsp; </div>
-            <div id='status' class='col-6' style='font-size:26pt;margin:auto'> &nbsp; </div>
-            <div id='emo' class='col-3' style='font-size:60pt;margin:auto'> &nbsp; </div>
           </div>
+          <div class='col-4' style='font-size:30pt;margin:auto'>
+            <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                   style='font-size:40pt'>
+              New Game
+            </label><br>
+          </div>
+          <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
         </div>
-      </td></tr>
-      <!-- Play buttons -->
-      <!-- <tr><td> &nbsp; </td></tr> -->
-      <tr style='transform:translate(0,-20px)'><td>
-        <div>
-          <table class='center'><tr>
-            <td>
-              <label class='switch'>
-                <input id='opt_auto' type='checkbox'>
-                <span class='slider round'></span>
-              </label>
-              &nbsp;
-            </td><td>
-              <label id='btn_play' class='btn btn-outline-dark' style='font-size:40pt'>Play</label>
-              &nbsp;&nbsp;
-            </td><td>
-              <label id='btn_undo' class='btn btn-outline-dark' style='font-size:40pt'>Undo</label>
-              &nbsp;&nbsp;
-            </td><td>
-              <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>Best</label>
-              &nbsp;&nbsp;
-            </td><td>
-              <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
-              &nbsp;&nbsp;
-            </td><td>
-              <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
-            </td>
-          </tr></table>
-        </div>
-      </td></tr>
-      <!-- Nav Buttons -->
-      <tr><td>
-        <div>
-          <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>Back to Main Line</label>
-          &nbsp;
-          <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>Score</label>
-        </div>
-      </td></tr>
-      <!-- More Nav Buttons -->
-      <tr><td> &nbsp; </td></tr>
-      <tr><td>
-        <div>
-          <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>First</label>
-          <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>Back 10</label>
-          <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>Fwd 10</label>
-          <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>Last</label>
-        </div>
-      </td></tr>
-      <!-- Score and Save -->
-      <tr><td> &nbsp; </td></tr>
-      <tr><td>
-        <div>
-          <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>Pass</label>
-          <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>Save sgf</label>
-        </div>
-      </td></tr>
-      <!-- Input form for load sgf -->
-      <tr><td> &nbsp; </td></tr>
-      <tr><td>
-        <div>
-          <form method='post' enctype='multipart/form-data'>
-            <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
-              Load sgf  <input type='file' id='sgf-file' style='display:none'>
-            </label>
+      </div>
+    </td></tr>
+    <tr><td>
+      <table class='center' style='font-size:24pt;' width='800px'>
+        <tr><td id='donating'>
+        </td></tr>
+        <tr><td>
+          <br>
+          <form action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_top' style='font-size:24pt;' >
+            <input type='hidden' name='cmd' value='_s-xclick' />
+            <input type='hidden' name='hosted_button_id' value='T322ZZH9TKMMN' />
+            <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit'
+                   title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' width='300px'/>
+            <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
           </form>
+        </td></tr>
+      </table>
+      <table class='center' style='font-size:22pt'>
+        <tr><td colspan='2' style='font-weight:bold'> Top Three Donors: </td></tr>
+        <tr><td align='left'>Darrell Malick</td> <td align='right'> &nbsp; 100 </td>  </tr>
+        <tr><td align='left'>Tobias Berben</td> <td align='right'> &nbsp; 50 </td>  </tr>
+        <tr><td align='left'>Terry Assael</td> <td align='right'> &nbsp; 30 </td>  </tr>
+      </table>
+      <br>
+
+    </td></tr>
+    <tr><td id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+    <tr><td id='fname' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+    <tr><td id='lb_komi' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+
+    <tr><td id='board'> </td></tr>
+    <!-- Status and Emoji -->
+    <!-- <tr><td> &nbsp; </td></tr> -->
+    <tr style='transform:translate(0,-18px)'><td>
+      <div class='container-fluid'>
+        <div class='row center'>
+          <div id='movenum' class='col-3' style='font-size:26pt;margin:auto'> &nbsp; </div>
+          <div id='status' class='col-6' style='font-size:26pt;margin:auto'> &nbsp; </div>
+          <div id='emo' class='col-3' style='font-size:60pt;margin:auto'> &nbsp; </div>
         </div>
-      </td></tr>
-      <!-- Score Histogram -->
-      <tr><td> &nbsp; </td></tr>
-      <tr><td>
-        <div id='histo' class='center' style='width:750px;height:450px'>
-        </div>
-      </td></tr>
-    </table>
-  </div>
+      </div>
+    </td></tr>
+    <!-- Play buttons -->
+    <!-- <tr><td> &nbsp; </td></tr> -->
+    <tr style='transform:translate(0,-20px)'><td>
+      <div>
+        <table class='center'><tr>
+          <td>
+            <label class='switch'>
+              <input id='opt_auto' type='checkbox'>
+              <span class='slider round'></span>
+            </label>
+            &nbsp;
+          </td><td>
+            <label id='btn_play' class='btn btn-outline-dark' style='font-size:40pt'>Play</label>
+            &nbsp;&nbsp;
+          </td><td>
+            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:40pt'>Undo</label>
+            &nbsp;&nbsp;
+          </td><td>
+            <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>Best</label>
+            &nbsp;&nbsp;
+          </td><td>
+            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
+            &nbsp;&nbsp;
+          </td><td>
+            <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
+          </td>
+        </tr></table>
+      </div>
+    </td></tr>
+    <!-- Nav Buttons -->
+    <tr><td>
+      <div>
+        <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>Back to Main Line</label>
+        &nbsp;
+        <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>Score</label>
+      </div>
+    </td></tr>
+    <!-- More Nav Buttons -->
+    <tr><td> &nbsp; </td></tr>
+    <tr><td>
+      <div>
+        <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>First</label>
+        <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>Back 10</label>
+        <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>Fwd 10</label>
+        <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>Last</label>
+      </div>
+    </td></tr>
+    <!-- Score and Save -->
+    <tr><td> &nbsp; </td></tr>
+    <tr><td>
+      <div>
+        <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>Pass</label>
+        <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>Save sgf</label>
+      </div>
+    </td></tr>
+    <!-- Input form for load sgf -->
+    <tr><td> &nbsp; </td></tr>
+    <tr><td>
+      <div>
+        <form method='post' enctype='multipart/form-data'>
+          <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
+            Load sgf  <input type='file' id='sgf-file' style='display:none'>
+          </label>
+        </form>
+      </div>
+    </td></tr>
+    <!-- Score Histogram -->
+    <tr><td> &nbsp; </td></tr>
+    <tr><td>
+      <div id='histo' class='center' style='width:750px;height:450px'>
+      </div>
+    </td></tr>
+  </table>
+    </td></tr>
+  </table>
 
   <!-- Modal dialog to pick komi and handicap -->
   <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
