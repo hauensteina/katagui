@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-07-23'
+const DDATE = '2020-07-25'
 const DEBUG = false
 const KATAGO_SERVER = ''
 const NIL_P = 0.0001
@@ -970,7 +970,7 @@ function main( JGO, axutil, p_options) {
       if (delta_prob < PROB_BINS[prob_idx]) break;
     }
     // Get angry if we lose points
-    const SCORE_BINS = [3, 5, 10]
+    const SCORE_BINS = [2.5, 5, 10]
     var score_idx
     for (score_idx=0; score_idx < SCORE_BINS.length; score_idx++) {
       if (delta_score < SCORE_BINS[score_idx]) break;
