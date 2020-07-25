@@ -84,11 +84,6 @@ class Postgres:
         ); '''
         self.run( sql)
 
-    #--------------------
-    def recover( self):
-        ''' Try to recover a bad connection '''
-
-
     #------------------------------
     def clear_log( self):
         self.run( 'delete from t_log')
@@ -217,7 +212,7 @@ class Postgres:
     #---------------------------------------------------
     def update_row( self, table, col, val, data_dict):
         ''' Find the row where col = val, update with data_dict.
-        Return 1 on success, -n if more than one row matches.
+        Return 1 on success.
         Return 0 if no row matches, -n if more than one row matches. '''
         sql = 'select * from %s where %s = %%s' % (table,col)
         res = self.select( sql, (val,))
@@ -232,6 +227,13 @@ class Postgres:
         sql += ' where %s = %%s ' % col
         params.append(val)
         self.run( sql, params)
+        return 1
+
+    #---------------------------------------------------
+    def tstamp( self, table, col, val, tcol):
+        ''' Put current timestamp into tcol, for all matching rows. '''
+        sql = 'update %s set %s = now() where %s = %%s' % (table, tcol, col)
+        self.run( sql, (val,))
         return 1
 
     #----------------------------------
@@ -453,7 +455,7 @@ class Postgres:
         db_url = 'postgresql://localhost/test'
         db = Postgres( db_url)
         # Create a table
-        db.run( 'create table t_test ( val int, txt text );')
+        db.run( 'create table t_test ( val int, txt text, created timestamptz );')
         print('')
 
         # insert
@@ -524,6 +526,7 @@ class Postgres:
         print( res)
         print( 'Test %d passed\n' % testnum) if len(res) == 2 else  print( '############ Test %d failed' % testnum)
 
+        # update
         testnum = 10
         db.run( 'delete from t_test;')
         db.insert( 't_test', [{'val':1,'txt':'one'},{'val':2,'txt':'two'}])
@@ -539,8 +542,17 @@ class Postgres:
         print( res)
         print( 'Test %d passed\n' % testnum) if res == '42' else  print( '############ Test %d failed' % testnum)
 
-        # rm_parm
+        # Tstamp
         testnum = 12
+        db.run( 'delete from t_test;')
+        db.insert( 't_test', [{'val':1,'txt':'one'},{'val':2,'txt':'two'}])
+        db.tstamp( 't_test','val',1,'created')
+        rows = db.select( 'select * from t_test where created is not null')
+        print( rows)
+        print( 'Test %d passed\n' % testnum) if len(rows) == 1 else  print( '############ Test %d failed' % testnum)
+
+        # rm_parm
+        testnum = 13
         db.set_parm( 'blub', '13')
         db.rm_parm( 'blub')
         res = db.get_parm( 'blub')
@@ -548,7 +560,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if not res else  print( '############ Test %d failed' % testnum)
 
         # perr
-        testnum = 13
+        testnum = 14
         db.run( 'delete from t_log')
         db.perr( 'some error')
         res = db.select( 'select * from t_log')
@@ -556,7 +568,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # plog
-        testnum = 14
+        testnum = 15
         db.run( 'delete from t_log')
         db.plog( 'some log')
         res = db.select( 'select * from t_log')
@@ -564,7 +576,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # pstart
-        testnum = 15
+        testnum = 16
         db.run( 'delete from t_log')
         db.pstart()
         res = db.select( 'select * from t_log')
@@ -572,7 +584,7 @@ class Postgres:
         print( 'Test %d passed\n' % testnum) if len(res) == 1 else  print( '############ Test %d failed' % testnum)
 
         # pend
-        testnum = 16
+        testnum = 17
         db.run( 'delete from t_log')
         db.pend()
         res = db.select( 'select * from t_log')
