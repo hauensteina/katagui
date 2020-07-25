@@ -60,69 +60,70 @@
 
   <body style='left:0; margin:0; padding:0;'>
     {% if not home %}
-      <table style="width:100%;background-color:green">
-        <tr>
+      <table class='center' style='width:100%'>
+        <!-- Page Header -->
+        <tr style='background-color:green'>
           <td width='5%'>&nbsp;</td>
           <td  align='left'>
             <a class='hlink' style='font-size:20pt' href='{{ url_for("index") }}'>
               KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
           </td>
         </tr>
-      </table>
+        <tr><td colspan='2'>
     {% else %}
-    <table class='center' style='width:100%;'>
-      <!-- Page Header -->
-      <tr style="background-color:green">
-        <td width='20px' class=''></td>
-        <td class='' align='left'>
-          <a class='hlink font-l' href='{{ url_for("index") }}'>
-            KataGui <span class='font-s'>{{ VERSION }}</span></a>
-        </td>
-        <td class='' align='right'>
-          {% if current_user.is_authenticated %}
-            <a class='hlink font-m' href="{{ url_for('account') }}">Account</a>&nbsp;&nbsp;&nbsp;
-            <a class='hlink font-m' href="{{ url_for('logout') }}">Logout</a>&nbsp;&nbsp;&nbsp;
-            <script> axutil.settings( 'logged_in',true) </script>
-          {% else %}
-            <a class='hlink font-m' href="{{ url_for('login') }}">Login</a>&nbsp;&nbsp;&nbsp;
-            <a class='hlink font-m' href="{{ url_for('register') }}">Register</a>&nbsp;&nbsp;&nbsp;
-            <script> axutil.settings( 'logged_in',false) </script>
-          {% endif %}
-          <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>About</a>
-        </td>
-        <td width='20px' class=''></td>
-      </tr>
-      <tr>
-        {% if current_user.is_authenticated %}
-          <td colspan='3' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
-        {% else %}
-          <td colspan='3' class='font-m' align='right'>Guest</td>
-        {% endif %}
-        <td width='20px' class=''></td>
-      </tr>
-      <tr><td colspan='4'>
-        {% block content %}
-        {% endblock content %}
-      </td></tr>
-    </table>
+          <table class='center' style='width:100%;'>
+            <!-- Page Header -->
+            <tr style='background-color:green'>
+              <td width='20px' class=''></td>
+              <td class='' align='left'>
+                <a class='hlink font-l' href='{{ url_for("index") }}'>
+                  KataGui <span class='font-s'>{{ VERSION }}</span></a>
+              </td>
+              <td class='' align='right'>
+                {% if current_user.is_authenticated %}
+                  <a class='hlink font-m' href="{{ url_for('account') }}">Account</a>&nbsp;&nbsp;&nbsp;
+                  <a class='hlink font-m' href="{{ url_for('logout') }}">Logout</a>&nbsp;&nbsp;&nbsp;
+                  <script> axutil.settings( 'logged_in',true) </script>
+                {% else %}
+                  <a class='hlink font-m' href="{{ url_for('login') }}">Login</a>&nbsp;&nbsp;&nbsp;
+                  <a class='hlink font-m' href="{{ url_for('register') }}">Register</a>&nbsp;&nbsp;&nbsp;
+                  <script> axutil.settings( 'logged_in',false) </script>
+                {% endif %}
+                <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>About</a>
+              </td>
+              <td width='20px' class=''></td>
+            </tr>
+            <tr>
+              {% if current_user.is_authenticated %}
+                <td colspan='3' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
+              {% else %}
+                <td colspan='3' class='font-m' align='right'>Guest</td>
+              {% endif %}
+              <td width='20px' class=''></td>
+            </tr>
+            <tr><td colspan='4'>
     {% endif %}
-    <script>
-     var lfont = '20pt'
-     var mfont = '12pt'
-     var sfont = '9pt'
-     if (axutil.isMobile()) {
-       lfont = '35pt'
-       mfont = '30pt'
-       sfont = '20pt'
-     }
-     $( '.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
-     $( '.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
-     $( '.font-s' ).each( function( index ) { this.style.fontSize = sfont } )
-    </script>
+    {% block content %}
+    {% endblock content %}
+            </td></tr>
+          </table>
+          <script>
+           var lfont = '20pt'
+           var mfont = '12pt'
+           var sfont = '9pt'
+           if (axutil.isMobile()) {
+             lfont = '35pt'
+             mfont = '30pt'
+             sfont = '20pt'
+           }
+           $( '.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
+           $( '.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
+           $( '.font-s' ).each( function( index ) { this.style.fontSize = sfont } )
+          </script>
 
-    <!-- Any other js we want to add -->
-    {% block js %}
-    {% endblock js %}
+          <!-- Any other js we want to add -->
+          {% block js %}
+          {% endblock js %}
 
   </body>
 </html>
