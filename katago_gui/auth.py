@@ -24,6 +24,7 @@ class User(UserMixin):
         if rows:
             return 'err_user_exists'
         db.insert( 't_user', (data,))
+        db.tstamp( 't_user', 'email', self.data['email'], 'ts_created')
         self.valid = True
         return 'ok'
 
