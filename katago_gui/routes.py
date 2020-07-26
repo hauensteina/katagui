@@ -118,7 +118,8 @@ def register():
             return render_template('register.tmpl', title='Register', form=form)
 
         send_register_email( user)
-        flash('An email has been sent to verify your address.', 'info')
+        flash('An email has been sent to verify your address.<br>' +
+              '귀하의 주소를 확인하는 이메일이 발송되었습니다.', 'info')
         return redirect(url_for('login'))
     return render_template('register.tmpl', title='Register', form=form)
 
