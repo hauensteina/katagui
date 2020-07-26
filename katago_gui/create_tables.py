@@ -18,6 +18,9 @@ def create_t_user(db):
     ,lname text
     ,json text
     ,ts_created timestamptz
+    ,ts_last_seen timestamptz
+    ,active boolean
+    ,logged_in boolean
     ) '''
     db.run( sql)
 

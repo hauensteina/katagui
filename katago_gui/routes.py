@@ -134,7 +134,9 @@ def send_register_email( user):
     msg.body = f'''To activate your Katagui account, visit the following link:
     {url_for('verify_email', token=token, _external=True)}
 
-    If you did not register a Katagui account, you can safely ignore this email.
+    Katagui 계정을 활성화하려면 다음 링크를 방문하십시오.
+    {url_for('verify_email', token=token, _external=True)}
+
     '''
     mail.send(msg)
 
