@@ -78,7 +78,7 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.tmpl', title='Login', form=form)
 
-@app.route("/logout")
+@app.route('/logout')
 #-------------------------
 def logout():
     logout_user()
@@ -141,7 +141,7 @@ def send_register_email( user):
     '''
     mail.send(msg)
 
-@app.route("/verify_email/<token>", methods=['GET', 'POST'])
+@app.route('/verify_email/<token>', methods=['GET', 'POST'])
 #-------------------------------------------------------------
 def verify_email(token):
     ''' User clicked on email verification link. '''
@@ -170,7 +170,7 @@ def send_reset_email( user):
     '''
     mail.send(msg)
 
-@app.route("/reset_request", methods=['GET', 'POST'])
+@app.route('/reset_request', methods=['GET', 'POST'])
 #--------------------------------------------------------
 def reset_request():
     if current_user.is_authenticated:
@@ -186,7 +186,7 @@ def reset_request():
         return redirect(url_for('login'))
     return render_template('reset_request.tmpl', title='Reset Password', form=form)
 
-@app.route("/reset_token/<token>", methods=['GET', 'POST'])
+@app.route('/reset_token/<token>', methods=['GET', 'POST'])
 #----------------------------------------------------------------
 def reset_token(token):
     if current_user.is_authenticated:
@@ -206,7 +206,23 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_token.tmpl', title='Reset Password', form=form)
 
-@app.route("/account", methods=['GET', 'POST'])
+@app.route('/visible', methods=['GET', 'POST'])
+#---------------------------------------------------
+def visible():
+    ''' Katagui page foregrounded '''
+    if current_user.is_authenticated:
+        db.update_row( 't_user', 'email', current_user.data['email'], { 'active':True })
+    return jsonify( {'result': 'ok' })
+
+@app.route('/hidden', methods=['GET', 'POST'])
+#---------------------------------------------------
+def hidden():
+    ''' Katagui page backgrounded '''
+    if current_user.is_authenticated:
+        db.update_row( 't_user', 'email', current_user.data['email'], { 'active':False })
+    return jsonify( {'result': 'ok' })
+
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 #-------------------
 def account():

@@ -9,7 +9,6 @@
 
 const DDATE = '2020-07-26'
 const DEBUG = false
-const KATAGO_SERVER = ''
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
 const HOUR_STRONG_OFF = 3 // 1
@@ -545,7 +544,7 @@ function main( JGO, axutil, p_options) {
   // Get next move from the bot and show on board
   //----------------------------------------------------
   function get_bot_move( handicap, komi, playouts) {
-    axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
+    axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(g_record),
 			'config':{'komi':komi } }, bot_move_callback)
   } // get_bot_move()
 
@@ -844,7 +843,7 @@ function main( JGO, axutil, p_options) {
     else {
       $('#status').html( '...')
     }
-    axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT,
+    axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
         get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
@@ -882,7 +881,7 @@ function main( JGO, axutil, p_options) {
   //----------------------------------------------------------
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( 'KataGo is thinking...')
-    axutil.hit_endpoint( KATAGO_SERVER + fast_or_strong().ep + BOT,
+    axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
 			  if (completion) { completion(data) }
@@ -989,7 +988,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------
   function score_position() {
     $('#status').html( 'Scoring...')
-    axutil.hit_endpoint( KATAGO_SERVER + '/score/' + BOT,
+    axutil.hit_endpoint( '/score/' + BOT,
       {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi }, 'tt':Math.random() },
 			(data) => {
         var winprob = parseFloat(data.diagnostics.winprob)
@@ -1189,6 +1188,19 @@ function main( JGO, axutil, p_options) {
     }
   } // fast_or_strong()
 
+  // Register site visibility handlers
+  //--------------------------------------
+  function visibility() {
+    document.addEventListener("visibilitychange", function() {
+      if (document.visibilityState === 'visible') {
+        axutil.hit_endpoint_simple( '/visible',{}, (resp)=>{})
+      }
+      else {
+        axutil.hit_endpoint_simple( '/hidden',{}, (resp)=>{})
+      }
+    })
+  } // visibility()
+
   // Build HTML for donation status
   //-------------------------------------------
   function donate_string( given, tot) {
@@ -1250,5 +1262,6 @@ function main( JGO, axutil, p_options) {
   once_per_sec()
 
   $('#donating').html( donate_string( DONATED, DONATE_LIMIT))
+  visibility()
 
 } // function main()

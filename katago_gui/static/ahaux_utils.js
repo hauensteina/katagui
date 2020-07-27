@@ -248,6 +248,29 @@ class AhauxUtils
     )
   } // hit_endpoint()
 
+  // Hit an endpoint, no questions asked.
+  //-------------------------------------------------
+  hit_endpoint_simple( url, args, completion) {
+    url += '?tt=' + Math.random() // prevent caching
+    fetch( url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify( args)
+      }
+    ).then( (resp) => {
+      resp.json().then( (resp) => {
+        completion( resp)
+      }) }
+    ).catch(
+      (error) => {
+        console.log( error)
+      }
+    )
+  } // hit_endpoint_simple()
+
   // Upload a file to the server
   //--------------------------------------
   upload_file( url, args, completion) {
@@ -306,7 +329,7 @@ class AhauxUtils
   //--------------------------
   slog( msg) {
     var url = '/slog'
-    args = { 'msg': msg }
+    var args = { 'msg': msg }
     fetch( url,
       {
         method: 'POST',
