@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-07-26'
+const DDATE = '2020-07-28'
 const DEBUG = false
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -851,9 +851,16 @@ function main( JGO, axutil, p_options) {
 			})
   } // get_prob_genmove()
 
+  // Update ts_last_seen in db
+  //----------------------------------
+  function record_activity() {
+    axutil.hit_endpoint_simple( '/record_activity',{}, (resp)=>{}) // update ts_last_seen in db
+  } // record_activity()
+
   // Continue after prob and score came back from the server
   //-------------------------------------------------------------------
   function get_prob_callback( winprob, score, update_emo, playing) {
+    record_activity()
 		if (g_record.length) {
 			var p = parseFloat(winprob)
 			g_record[ g_record.length - 1].p = p // Remember win prob of position

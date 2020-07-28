@@ -36,7 +36,7 @@ class User(UserMixin):
 
     def update_db( self):
         ''' Write our data back to the db '''
-        db.update_row( 't_user', 'email', self.id, current_user.data)
+        db.update_row( 't_user', 'email', self.id, self.data)
 
     def read_from_db( self):
         ''' Read our data from the db '''
@@ -68,7 +68,7 @@ class User(UserMixin):
 # flask_login needs this callback
 @login_manager.user_loader
 def load_user( email):
-    print('################# load user')
+    #print('################# load user')
     user = User( email)
     if not user.valid:
         return None

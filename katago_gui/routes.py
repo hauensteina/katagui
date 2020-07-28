@@ -67,8 +67,9 @@ def check_https():
 # If we are not logged in, log in as guest
 #--------------------------------------------
 def login_as_guest():
+    print('>>>>>>>>>>>>>>> login guest')
     if current_user.is_authenticated:return
-    print('>>>>>>>>>>>>>>> guest')
+    print('>>>>>>>>>>>>>>> create guest')
     uname = 'guest_' + uuid.uuid4().hex[:7]
     email = uname + '@guest.guest'
     user = auth.User( email)
@@ -220,7 +221,10 @@ def reset_token(token):
 #--------------------------------------------------------
 def record_activity():
      ''' Set ts_last_seen to now() '''
+     if not current_user.is_authenticated:
+         login_as_guest()
      current_user.record_activity()
+     return jsonify( {'result': 'ok' })
 
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
