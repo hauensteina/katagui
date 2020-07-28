@@ -130,7 +130,7 @@ def register():
             return render_template('register.tmpl', title='Register', form=form)
         user.set_password( form.password.data)
         send_register_email( user)
-        flash('An email has been sent to verify your address.<br>' +
+        flash('An email has been sent to verify your address. Make sure to check your Spam folder. <br>' +
               '귀하의 주소를 확인하는 이메일이 발송되었습니다.', 'info')
         return redirect(url_for('login'))
     return render_template('register.tmpl', title='Register', form=form)
@@ -149,6 +149,8 @@ def send_register_email( user):
 
     Katagui 계정을 활성화하려면 다음 링크를 방문하십시오.
     {url_for('verify_email', token=token, _external=True)}
+
+    If you did not register, you can safely ignore this email.
 
     '''
     mail.send(msg)
