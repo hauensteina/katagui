@@ -16,11 +16,9 @@ def create_t_user(db):
     ,password text
     ,fname text
     ,lname text
-    ,json text
     ,ts_created timestamptz
     ,ts_last_seen timestamptz
-    ,active boolean
-    ,logged_in boolean
+    ,email_verified boolean
     ) '''
     db.run( sql)
 
@@ -33,5 +31,4 @@ def create_t_user(db):
                    ,'password':phash
                    ,'fname':'Joe'
                    ,'lname':'Schmoe'
-                   ,'json':'{"hint":"welcome"}'
                }])

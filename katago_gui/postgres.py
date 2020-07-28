@@ -319,7 +319,7 @@ class Postgres:
         Executes a custom SQL query which modifies data in the database.
 
         arguments:
-        query - a string representing the SQL query to be executed. %s placeholders for arg values
+        query - a string representing the SQL query to be executed. %s placeholders for arg values.
         args  - a tuple with the arg values
 
         example:

@@ -1190,16 +1190,17 @@ function main( JGO, axutil, p_options) {
 
   // Register site visibility handlers
   //--------------------------------------
-  function visibility() {
-    document.addEventListener("visibilitychange", function() {
-      if (document.visibilityState === 'visible') {
-        axutil.hit_endpoint_simple( '/visible',{}, (resp)=>{})
-      }
-      else {
-        axutil.hit_endpoint_simple( '/hidden',{}, (resp)=>{})
-      }
-    })
-  } // visibility()
+  /* function visibility() {
+   *   document.addEventListener("visibilitychange", function() {
+   *     if (document.visibilityState === 'visible') {
+   *       axutil.hit_endpoint_simple( '/visible',{}, (resp)=>{})
+   *     }
+   *     else {
+   *       axutil.hit_endpoint_simple( '/hidden',{}, (resp)=>{})
+   *     }
+   *   })
+   * } // visibility()
+   */
 
   // Build HTML for donation status
   //-------------------------------------------
@@ -1262,6 +1263,4 @@ function main( JGO, axutil, p_options) {
   once_per_sec()
 
   $('#donating').html( donate_string( DONATED, DONATE_LIMIT))
-  visibility()
-
 } // function main()

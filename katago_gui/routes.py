@@ -23,10 +23,15 @@ from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app, db, bcrypt, mail
+from katago_gui import app, bcrypt, mail
 from katago_gui import auth
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf
+
+# @app.before_request
+# def before_request():
+# #-----------------------
+#     login_as_guest()
 
 @app.route('/ttest')
 #-------------------------------
@@ -59,15 +64,26 @@ def check_https():
         return False
     return True
 
+# If we are not logged in, log in as guest
+#--------------------------------------------
+def login_as_guest():
+    if current_user.is_authenticated:return
+    print('>>>>>>>>>>>>>>> guest')
+    uname = 'guest_' + uuid.uuid4().hex[:7]
+    email = uname + '@guest.guest'
+    user = auth.User( email)
+    user.createdb( { 'fname':'f', 'lname':'l', 'username':uname, 'email_verified':True })
+    login_user( user, remember=False)
+
 @app.route('/login', methods=['GET','POST'])
 #---------------------------------------------
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and not current_user.data['username'].startswith('guest_'):
         return redirect( url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
-        if user.valid and user.auth( form.password.data):
+        if user.valid and user.password_matches( form.password.data):
             if not user.email_verified():
                 flash('This email has not been verified.', 'danger')
                 return redirect( url_for('login'))
@@ -92,31 +108,27 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
-        if form.username.data.strip().lower() == 'guest':
+        if form.username.data.strip().lower().startswith('guest'):
             flash( 'Guest is not a valid username.', 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         if user.valid:
             flash( 'An account with this email already exists.', 'danger')
             return render_template('register.tmpl', title='Register', form=form)
 
-        jjson = user.json()
-        jjson.update( {'email_verified':False})
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user_data = {'username':form.username.data
-                     ,'email':form.email.data
-                     ,'password':hashed_password
                      ,'fname':form.fname.data
                      ,'lname':form.lname.data
-                     ,'json':json.dumps( jjson)
+                     ,'email_verified':False
         }
-        ret = user.create( user_data)
+        ret = user.createdb( user_data)
         if ret == 'err_user_exists':
             flash( 'That username is taken.', 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         elif ret != 'ok':
             flash( 'Error creating user.', 'danger')
             return render_template('register.tmpl', title='Register', form=form)
-
+        user.set_password( form.password.data)
         send_register_email( user)
         flash('An email has been sent to verify your address.<br>' +
               '귀하의 주소를 확인하는 이메일이 발송되었습니다.', 'info')
@@ -148,9 +160,7 @@ def verify_email(token):
     s = Serializer(app.config['SECRET_KEY'])
     user_id = s.loads(token)['user_id']
     user = auth.User( user_id)
-    jjson = user.json()
-    jjson.update( {'email_verified':True} )
-    db.update_row( 't_user', 'email', user.data['email'], { 'json':json.dumps( jjson) })
+    user.set_email_verified()
     flash('Your email has been verified! You are now able to log in', 'success')
     return redirect(url_for('login'))
 
@@ -199,28 +209,16 @@ def reset_token(token):
         return redirect( url_for('reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash( form.password.data).decode('utf-8')
-        user.data['password'] = hashed_password
-        db.update_row( 't_user', 'email', user.data['email'], { 'password':hashed_password })
+        user.set_password( form.password.data)
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.tmpl', title='Reset Password', form=form)
 
-@app.route('/visible', methods=['GET', 'POST'])
-#---------------------------------------------------
-def visible():
-    ''' Katagui page foregrounded '''
-    if current_user.is_authenticated:
-        db.update_row( 't_user', 'email', current_user.data['email'], { 'active':True })
-    return jsonify( {'result': 'ok' })
-
-@app.route('/hidden', methods=['GET', 'POST'])
-#---------------------------------------------------
-def hidden():
-    ''' Katagui page backgrounded '''
-    if current_user.is_authenticated:
-        db.update_row( 't_user', 'email', current_user.data['email'], { 'active':False })
-    return jsonify( {'result': 'ok' })
+@app.route('/record_activity', methods=['GET', 'POST'])
+#--------------------------------------------------------
+def record_activity():
+     ''' Set ts_last_seen to now() '''
+     current_user.record_activity()
 
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
@@ -230,7 +228,7 @@ def account():
     if form.validate_on_submit():
         current_user.data['fname'] = form.fname.data.strip().strip()
         current_user.data['lname'] = form.lname.data.strip().strip()
-        db.update_row( 't_user', 'email', current_user.id, current_user.data)
+        current_user.update_db()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':

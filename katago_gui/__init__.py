@@ -10,7 +10,7 @@
 import os
 from flask import Flask
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, user_logged_out, user_logged_in
 from flask_mail import Mail
 from katago_gui.postgres import Postgres
 
@@ -59,4 +59,14 @@ mail = Mail(app)
 
 from katago_gui.create_tables import create_tables
 create_tables( db)
+
+# Make sure the DB knows if we are logged in or out
+# def logout_db( sender, user, **extra):
+#     db.update_row( 't_user', 'email', user.data['email'], { 'logged_in':False, 'active':False })
+# user_logged_out.connect( logout_db, app)
+
+# def login_db( sender, user, **extra):
+#     db.update_row( 't_user', 'email', user.data['email'], { 'logged_in':True, 'active':True })
+# user_logged_in.connect( login_db, app)
+
 from katago_gui import routes

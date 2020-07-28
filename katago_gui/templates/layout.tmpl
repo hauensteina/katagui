@@ -80,7 +80,7 @@
                   KataGui <span class='font-s'>{{ VERSION }}</span></a>
               </td>
               <td class='' align='right'>
-                {% if current_user.is_authenticated %}
+                {% if current_user.is_authenticated and not current_user.data['username'].strip().lower().startswith('guest') %}
                   <a class='hlink font-m' href="{{ url_for('account') }}">Account</a>&nbsp;&nbsp;&nbsp;
                   <a class='hlink font-m' href="{{ url_for('logout') }}">Logout</a>&nbsp;&nbsp;&nbsp;
                   <script> axutil.settings( 'logged_in',true) </script>
@@ -94,7 +94,7 @@
               <td width='20px' class=''></td>
             </tr>
             <tr>
-              {% if current_user.is_authenticated %}
+              {% if current_user.is_authenticated and not current_user.data['username'].strip().lower().startswith('guest') %}
                 <td colspan='3' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
               {% else %}
                 <td colspan='3' class='font-m' align='right'>Guest</td>
