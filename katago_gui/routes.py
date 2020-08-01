@@ -25,7 +25,8 @@ from katago_gui.go_utils import coords_from_point
 
 from katago_gui import app, bcrypt, mail, logged_in
 from katago_gui import auth
-import katago_gui.translations as tr
+from katago_gui.translations import get_translation_table
+from katago_gui.translations import translate as tr
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf
 
@@ -71,7 +72,7 @@ def check_https():
 # Get internationalization lookup dictionary
 #---------------------------------------------------------
 def get_translation_table():
-    tab = tr.get_translation_table()
+    tab = get_translation_table()
     return jsonify( tab)
 
 @app.route('/english', methods=['GET'])
@@ -208,6 +209,7 @@ def send_reset_email( user):
     msg = Message('Password Reset Request',
                   sender='noreply@ahaux.com',
                   recipients=[user.data['email']])
+    BP()
     msg.body = f'''{tr( 'visit_link_password')}
     {url_for('reset_token', token=token, _external=True)}
     {tr( 'password_ignore')}
