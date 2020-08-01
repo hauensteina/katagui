@@ -37,8 +37,6 @@ app.config.update(
     SECRET_KEY = 'secret_xxx'
 )
 
-# This gives you decent error messages in the browser
-app.config['DEBUG'] = os.getenv("DEBUG", False)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 # 20b 256 playouts
