@@ -209,7 +209,6 @@ def send_reset_email( user):
     msg = Message('Password Reset Request',
                   sender='noreply@ahaux.com',
                   recipients=[user.data['email']])
-    BP()
     msg.body = f'''{tr( 'visit_link_password')}
     {url_for('reset_token', token=token, _external=True)}
     {tr( 'password_ignore')}
