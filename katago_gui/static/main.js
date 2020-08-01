@@ -12,9 +12,6 @@ const DEBUG = false
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
 const HOUR_STRONG_OFF = 3 // 1
-const DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10+100+20+19+29
-const DONATE_LIMIT = 2000
-
 
 const HANDISTONES = ['',''
   ,['D4','Q16']
@@ -86,7 +83,7 @@ function main( JGO, axutil, p_options) {
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
 
-      $('#lb_komi').html( 'Komi: ' + g_komi)
+      $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
       reset_game();
       set_emoji();
       activate_bot( 'on')
@@ -410,7 +407,7 @@ function main( JGO, axutil, p_options) {
       axutil.upload_file( '/sgf2list', myfile, (response) => {
         var res = response.result
         var moves = res.moves
-        $('#lb_komi').html( 'Komi: ' + res.komi)
+        $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
         set_emoji()
         replay_move_list( moves)
         // Restoring probs prevents analysis, don't do it.
@@ -460,7 +457,7 @@ function main( JGO, axutil, p_options) {
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( g_record.length + 1)
     // Do not analyze handicap stones
-    if (g_record.length < 20  && g_complete_record[ g_record.length].mv == 'pass') {
+    if (g_record.length < 20 && g_complete_record[ g_record.length] && g_complete_record[ g_record.length].mv == 'pass') {
       goto_move( g_record.length + 1)
       return
     }
@@ -826,7 +823,7 @@ function main( JGO, axutil, p_options) {
     g_complete_record = JSON.parse( localStorage.getItem('complete_record'))
     g_komi = JSON.parse( localStorage.getItem('komi'))
     activate_bot.state = localStorage.getItem('bot_active')
-    $('#lb_komi').html( 'Komi: ' + g_komi)
+    $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
     goto_move( g_record.length)
   }
 
@@ -911,12 +908,12 @@ function main( JGO, axutil, p_options) {
       if (playing && !settings('show_prob')) {
         $('#status').html('')
       } else {
-        var scorestr = '&nbsp;&nbsp;B+'
+        var scorestr = '&nbsp;&nbsp;' + translate('B') + '+'
         if (score < 0) {
-          scorestr = '&nbsp;&nbsp;W+'
+          scorestr = '&nbsp;&nbsp;' + translate('W') + '+'
         }
         scorestr += Math.abs(score)
-        var tstr = 'P(B wins): ' + p.toFixed(2)
+        var tstr = translate('P(B wins)') + ': ' + p.toFixed(2)
         if (typeof(g_record[n].score) !== 'undefined') {
           tstr += scorestr
         }
@@ -1209,50 +1206,41 @@ function main( JGO, axutil, p_options) {
    * } // visibility()
    */
 
-  // Build HTML for donation status
-  //-------------------------------------------
-  function donate_string( given, tot) {
-    var frac = given / tot
-    var pct = Math.round(100 * frac) + '%'
-    var rest = 100 - Math.round(100 * frac) + '%'
-    var tstr = given + ' / ' + tot + ' dollars '
-    var fontsize = '10pt'; var height = '20px'
-    if (p_options.mobile) {
-      fontsize = '20pt'
-      height = '40px'
-    }
-    var res = `
-            <table>
-            <tr><td colspan=3 align='center'>
-                To keep KataGo up and running, we need a dedicated server.
-                A total of ${DONATE_LIMIT} dollars will do it.
-                Only ${rest} to go! You know you want this.
-                If you donate over 20 dollars, I'll buy you a beer when you visit me in California.
-            <tr><td colspan=3 align='center'>
-                <br>
-                Status (updated daily): ${tstr}
-            </td></tr>
-    `
-    res += `
-    <tr>
-    <td width=20%></td>
-    <td>
-    <div class='progress' style='font-size:${fontsize};height:${height}'>
-    <div class='progress-bar' role='progressbar' style='width:${pct}' aria-valuenow=${given} aria-valuemin='0' aria-valuemax=$tot></div>
-    ${pct} </div>
-    </td>
-    <td width=20%></td>
-    </tr>
-    </table>`
-    return res
-  } // donate_string()
+  // Get a field from the user data, or fetch the user from the back end
+  //-------------------------------------------------------------------------
+  function user(key) {
+    return user.data[key]
+  } // user()
+  user.data = {}
+
+  // Translate a text into current language, or get translation table from the back end
+  //---------------------------------------------------------------------------------------
+  function translate(text) {
+    var tab = translate.table[user.data['lang']]
+    if (!tab) { return '' }
+    if (!tab[text]) { return text }
+    return tab[text]
+  } // translate()
+  translate.table = {}
+
+  // Get stuff from the back end and proceed when it came
+  //-------------------------------------------------------
+  function get_user_and_translations( completion) {
+    axutil.hit_endpoint_simple( '/get_user_data', {},
+      (userdata)=>{
+        user.data = userdata
+        axutil.hit_endpoint_simple( '/get_translation_table',{}, (ttable)=>{
+          translate.table = ttable
+          completion()
+        })
+      })
+  } // get_user_and_translations()
 
   settings()
   set_btn_handlers()
   set_dropdown_handlers()
   reset_game()
   setup_jgo()
-  load_state()
   document.onkeydown = check_key
 
   if (p_options.mobile) {
@@ -1267,7 +1255,8 @@ function main( JGO, axutil, p_options) {
     save_state()
     setTimeout( once_per_sec, 1000)
   }
-  once_per_sec()
-
-  $('#donating').html( donate_string( DONATED, DONATE_LIMIT))
+  get_user_and_translations( ()=>{
+    load_state()
+    once_per_sec()
+  })
 } // function main()

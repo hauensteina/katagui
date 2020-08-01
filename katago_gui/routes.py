@@ -6,8 +6,8 @@
 #
 # URL Endpoints
 #
-
 from pdb import set_trace as BP
+
 import os, sys, re, json
 import requests
 from datetime import datetime
@@ -23,8 +23,9 @@ from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app, bcrypt, mail
+from katago_gui import app, bcrypt, mail, logged_in
 from katago_gui import auth
+import katago_gui.translations as tr
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf
 
@@ -49,12 +50,14 @@ def ttest():
 #-------------------------------
 def index():
     if not check_https(): return redirect( 'https://katagui.herokuapp.com')
+    if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index.tmpl', mobile=False, home=True)
 
 @app.route('/index_mobile')
 #-------------------------------
 def index_mobile():
     if not check_https(): return redirect( 'https://katagui.herokuapp.com')
+    if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index_mobile.tmpl', mobile=True, home=True)
 
 #-------------------------
@@ -63,6 +66,36 @@ def check_https():
     if protocol != 'https' and 'HEROKU_FLAG' in os.environ:
         return False
     return True
+
+@app.route('/get_translation_table', methods=['POST'])
+# Get internationalization lookup dictionary
+#---------------------------------------------------------
+def get_translation_table():
+    tab = tr.get_translation_table()
+    return jsonify( tab)
+
+@app.route('/english', methods=['GET'])
+# Switch user language to English
+#---------------------------------------------------------
+def english():
+    current_user.data['lang'] = 'eng'
+    current_user.update_db()
+    return redirect(url_for('index'))
+
+@app.route('/korean', methods=['GET'])
+# Switch user language to Korean
+#---------------------------------------------------------
+def korean():
+    current_user.data['lang'] = 'kor'
+    current_user.update_db()
+    return redirect(url_for('index'))
+
+@app.route('/get_user_data', methods=['POST'])
+# Get current user data
+#------------------------------------------------
+def get_user_data():
+    data = current_user.data
+    return jsonify( data)
 
 # If we are not logged in, log in as guest
 #--------------------------------------------
@@ -76,24 +109,28 @@ def login_as_guest():
     user.createdb( { 'fname':'f', 'lname':'l', 'username':uname, 'email_verified':True })
     login_user( user, remember=True)
 
+
+
 @app.route('/login', methods=['GET','POST'])
 #---------------------------------------------
 def login():
-    if current_user.is_authenticated and not current_user.data['username'].startswith('guest_'):
+    if logged_in():
         return redirect( url_for('index'))
+    LoginForm.translate()
     form = LoginForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
         if user.valid and user.password_matches( form.password.data):
             if not user.email_verified():
-                flash('This email has not been verified.', 'danger')
+                flash(tr('not_verified'), 'danger')
                 return redirect( url_for('login'))
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next') # Magically populated to where we came from
             return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.tmpl', title='Login', form=form)
+            flash(tr('login_failed'), 'danger')
+    res = render_template('login.tmpl', title='Login', form=form)
+    return res
 
 @app.route('/logout')
 #-------------------------
@@ -104,16 +141,17 @@ def logout():
 @app.route('/register', methods=['GET','POST'])
 #------------------------------------------------
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
+    if logged_in():
+        return redirect(url_for('index'))
+    RegistrationForm.translate()
     form = RegistrationForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
         if form.username.data.strip().lower().startswith('guest'):
-            flash( 'Guest is not a valid username.', 'danger')
+            flash( tr('guest_invalid'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         if user.valid:
-            flash( 'An account with this email already exists.', 'danger')
+            flash( tr('account_exists'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
 
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -124,15 +162,14 @@ def register():
         }
         ret = user.createdb( user_data)
         if ret == 'err_user_exists':
-            flash( 'That username is taken.', 'danger')
+            flash( tr('name_taken'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         elif ret != 'ok':
-            flash( 'Error creating user.', 'danger')
+            flash( tr('err_create_user'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         user.set_password( form.password.data)
         send_register_email( user)
-        flash('An email has been sent to verify your address. Make sure to check your Spam folder. <br>' +
-              '귀하의 주소를 확인하는 이메일이 발송되었습니다.', 'info')
+        flash( tr('email_sent'), 'info')
         return redirect(url_for('login'))
     return render_template('register.tmpl', title='Register', form=form)
 
@@ -145,14 +182,9 @@ def send_register_email( user):
     msg = Message('Katagui Email Verification',
                   sender='hauensteina@ahaux.com',
                   recipients=[user.data['email']])
-    msg.body = f'''To activate your Katagui account, visit the following link:
-    {url_for('verify_email', token=token, _external=True)}
-
-    Katagui 계정을 활성화하려면 다음 링크를 방문하십시오.
-    {url_for('verify_email', token=token, _external=True)}
-
-    If you did not register, you can safely ignore this email.
-
+    msg.body = f'''{tr( 'visit_link_activate')}
+                   url_for('verify_email', token=token, _external=True)
+                   {tr( 'register_ignore')}
     '''
     mail.send(msg)
 
@@ -164,7 +196,7 @@ def verify_email(token):
     user_id = s.loads(token)['user_id']
     user = auth.User( user_id)
     user.set_email_verified()
-    flash('Your email has been verified! You are now able to log in', 'success')
+    flash( tr( 'email_verified'), 'success')
     return redirect(url_for('login'))
 
 #------------------------------
@@ -176,44 +208,45 @@ def send_reset_email( user):
     msg = Message('Password Reset Request',
                   sender='noreply@ahaux.com',
                   recipients=[user.data['email']])
-    msg.body = f'''To reset your katagui password, visit the following link:
-    {url_for('reset_token', token=token, _external=True)}
-
-    If you did not make this request then simply ignore this email and no changes will be made.
+    msg.body = f'''{tr( 'visit_link_password')}
+    url_for('reset_token', token=token, _external=True)
+    {tr( 'password_ignore')}
     '''
     mail.send(msg)
 
 @app.route('/reset_request', methods=['GET', 'POST'])
 #--------------------------------------------------------
 def reset_request():
-    if current_user.is_authenticated:
+    if logged_in():
         return redirect( url_for('home'))
+    RequestResetForm.translate()
     form = RequestResetForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
         if not user.valid:
-            flash( 'An account with this email does not exist.', 'danger')
+            flash( tr('email_not_exists'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         send_reset_email( user)
-        flash('An email has been sent with instructions to reset your password.', 'info')
+        flash( tr('reset_email_sent'), 'info')
         return redirect(url_for('login'))
     return render_template('reset_request.tmpl', title='Reset Password', form=form)
 
 @app.route('/reset_token/<token>', methods=['GET', 'POST'])
 #----------------------------------------------------------------
 def reset_token(token):
-    if current_user.is_authenticated:
+    if logged_in():
         return redirect( url_for('index'))
     s = Serializer(app.config['SECRET_KEY'])
     user_id = s.loads(token)['user_id']
     user = auth.User( user_id)
     if not user.valid:
-        flash('That is an invalid or expired token', 'warning')
+        flash( tr( 'invalid_token', 'warning'))
         return redirect( url_for('reset_request'))
+    ResetPasswordForm.translate()
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password( form.password.data)
-        flash('Your password has been updated! You are now able to log in', 'success')
+        flash( tr( 'password_updated'), 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.tmpl', title='Reset Password', form=form)
 
@@ -221,8 +254,7 @@ def reset_token(token):
 #--------------------------------------------------------
 def record_activity():
      ''' Set ts_last_seen to now() '''
-     if not current_user.is_authenticated:
-         login_as_guest()
+     if not current_user.is_authenticated: login_as_guest()
      current_user.record_activity()
      return jsonify( {'result': 'ok' })
 
@@ -230,12 +262,13 @@ def record_activity():
 @login_required
 #-------------------
 def account():
+    UpdateAccountForm.translate()
     form = UpdateAccountForm()
     if form.validate_on_submit():
         current_user.data['fname'] = form.fname.data.strip().strip()
         current_user.data['lname'] = form.lname.data.strip().strip()
         current_user.update_db()
-        flash('Your account has been updated!', 'success')
+        flash( tr( 'account_updated'), 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.data['username']

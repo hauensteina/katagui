@@ -107,7 +107,7 @@
             {{ form.submit( class='btn btn-outline-info') }}
           </div><br>
           <div class='text-muted'>
-            Already Have An Account? <a class='ml-2' href='{{ url_for("login") }}'> Sign In </a>
+            {{ tr('Already Have An Account?') }} <a class='ml-2' href='{{ url_for("login") }}'> {{tr('Sign In.')}} </a>
           </div>
         </form>
       </td></tr>

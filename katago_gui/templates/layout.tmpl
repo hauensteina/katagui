@@ -65,7 +65,7 @@
         <tr style='background-color:green'>
           <td width='5%'>&nbsp;</td>
           <td  align='left'>
-            <a class='hlink' style='font-size:20pt' href='{{ url_for("index") }}'>
+            <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
               KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
           </td>
         </tr>
@@ -74,34 +74,38 @@
           <table class='center' style='width:100%;'>
             <!-- Page Header -->
             <tr style='background-color:green'>
-              <td width='20px' class=''></td>
-              <td class='' align='left'>
-                <a class='hlink font-l' href='{{ url_for("index") }}'>
+              <td width='20px'></td>
+              <td align='left' width='200px'>
+                <a class='hlink font-l' href="{{ url_for('index') }}">
                   KataGui <span class='font-s'>{{ VERSION }}</span></a>
               </td>
-              <td class='' align='right'>
-                {% if current_user.is_authenticated and not current_user.data['username'].strip().lower().startswith('guest') %}
-                  <a class='hlink font-m' href="{{ url_for('account') }}">Account</a>&nbsp;&nbsp;&nbsp;
-                  <a class='hlink font-m' href="{{ url_for('logout') }}">Logout</a>&nbsp;&nbsp;&nbsp;
+              <td align='left'>
+                <a class='hlink' href="{{ url_for('english') }}"><img border='0' height='15px' src='static/eng.png'></a> &nbsp;
+                <a class='hlink' href="{{ url_for('korean') }}"><img border='0' height='15px' src='static/kor.png'></a>
+              </td>
+              <td align='right'>
+                {% if logged_in() %}
+                  <a class='hlink font-m' href="{{ url_for('account') }}">{{tr('Account')}}</a>&nbsp;&nbsp;&nbsp;
+                  <a class='hlink font-m' href="{{ url_for('logout') }}">{{tr('Logout')}}</a>&nbsp;&nbsp;&nbsp;
                   <script> axutil.settings( 'logged_in',true) </script>
                 {% else %}
-                  <a class='hlink font-m' href="{{ url_for('login') }}">Login</a>&nbsp;&nbsp;&nbsp;
-                  <a class='hlink font-m' href="{{ url_for('register') }}">Register</a>&nbsp;&nbsp;&nbsp;
+                  <a class='hlink font-m' href="{{ url_for('login') }}">{{tr('Login')}}</a>&nbsp;&nbsp;&nbsp;
+                  <a class='hlink font-m' href="{{ url_for('register') }}">{{tr('Register')}}</a>&nbsp;&nbsp;&nbsp;
                   <script> axutil.settings( 'logged_in',false) </script>
                 {% endif %}
-                <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>About</a>
+                <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>{{tr('About')}}</a>
               </td>
               <td width='20px' class=''></td>
             </tr>
             <tr>
-              {% if current_user.is_authenticated and not current_user.data['username'].strip().lower().startswith('guest') %}
-                <td colspan='3' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
+              {% if logged_in() %}
+                <td colspan='4' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
               {% else %}
-                <td colspan='3' class='font-m' align='right'>Guest</td>
+                <td colspan='4' class='font-m' align='right'>Guest</td>
               {% endif %}
               <td width='20px' class=''></td>
             </tr>
-            <tr><td colspan='4'>
+            <tr><td colspan='5'>
     {% endif %}
     {% block content %}
     {% endblock content %}

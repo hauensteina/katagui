@@ -21,6 +21,7 @@ class User(UserMixin):
         self.data['password'] = ''
         self.data['fname'] = self.data['fname'].strip()
         self.data['lname'] = self.data['lname'].strip()
+        self.data['lang'] = 'eng'
         rows = db.find( 't_user', 'username',  self.data['username'])
         if rows:
             return 'err_user_exists'
