@@ -183,7 +183,7 @@ def send_register_email( user):
                   sender='hauensteina@ahaux.com',
                   recipients=[user.data['email']])
     msg.body = f'''{tr( 'visit_link_activate')}
-                   url_for('verify_email', token=token, _external=True)
+                   {url_for('verify_email', token=token, _external=True)}
                    {tr( 'register_ignore')}
     '''
     mail.send(msg)
@@ -209,7 +209,7 @@ def send_reset_email( user):
                   sender='noreply@ahaux.com',
                   recipients=[user.data['email']])
     msg.body = f'''{tr( 'visit_link_password')}
-    url_for('reset_token', token=token, _external=True)
+    {url_for('reset_token', token=token, _external=True)}
     {tr( 'password_ignore')}
     '''
     mail.send(msg)
