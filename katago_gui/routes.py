@@ -147,13 +147,16 @@ def register():
     RegistrationForm.translate()
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = auth.User( form.email.data)
-        if form.username.data.strip().lower().startswith('guest'):
+        formname = form.username.data.strip()
+        formemail = form.email.data.strip().lower()
+        user = auth.User( formemail)
+        if formname.lower().startswith('guest'):
             flash( tr('guest_invalid'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         if user.valid:
-            flash( tr('account_exists'), 'danger')
-            return render_template('register.tmpl', title='Register', form=form)
+            if user.data['username'] != formname:
+                flash( tr('account_exists'), 'danger')
+                return render_template('register.tmpl', title='Register', form=form)
 
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user_data = {'username':form.username.data
@@ -163,15 +166,16 @@ def register():
         }
         ret = user.createdb( user_data)
         if ret == 'err_user_exists':
-            flash( tr('name_taken'), 'danger')
-            return render_template('register.tmpl', title='Register', form=form)
+            user.update_db()
+            #flash( tr('name_taken'), 'danger')
+            #return render_template('register.tmpl', title='Register', form=form)
         elif ret != 'ok':
             flash( tr('err_create_user'), 'danger')
             return render_template('register.tmpl', title='Register', form=form)
         user.set_password( form.password.data)
         send_register_email( user)
         flash( tr('email_sent'), 'info')
-        return redirect(url_for('login'))
+        return redirect(url_for('flash_only'))
     return render_template('register.tmpl', title='Register', form=form)
 
 #-------------------------------
@@ -201,7 +205,12 @@ def verify_email(token):
     user = auth.User( user_id)
     user.set_email_verified()
     flash( tr( 'email_verified'), 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('flash_only'))
+
+@app.route('/flash_only', methods=['GET'])
+#--------------------------------------------------------
+def flash_only():
+    return render_template('flash_only.tmpl')
 
 #------------------------------
 def send_reset_email( user):
