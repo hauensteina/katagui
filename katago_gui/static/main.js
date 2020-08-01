@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-07-28'
+const DDATE = '2020-08-01'
 const DEBUG = false
 const NIL_P = 0.0001
 const HOUR_STRONG_ON = 15
@@ -141,7 +141,7 @@ function main( JGO, axutil, p_options) {
 
   //---------------------------------
   function best_btn_callback() {
-    $('#status').html( 'Thinking...')
+    $('#status').html( translate('KataGo is thinking ...'))
     get_best_move( (data) => {
       var botCoord = string2jcoord( data.bot_move)
       var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
@@ -437,9 +437,10 @@ function main( JGO, axutil, p_options) {
 
   //-----------------------------------------
   function show_game_info( loaded_game) {
+    var tr = translate
     if (loaded_game) {
       $('#game_info').html(
-        `B:${loaded_game.pb} &nbsp;&nbsp; W:${loaded_game.pw} &nbsp;&nbsp; Result:${loaded_game.RE} &nbsp;&nbsp; Date:${loaded_game.DT}`)
+        `${tr('B')}:${loaded_game.pb} &nbsp;&nbsp; ${tr('W')}:${loaded_game.pw} &nbsp;&nbsp; ${tr('Result')}:${loaded_game.RE} &nbsp;&nbsp; ${tr('Date')}:${loaded_game.DT}`)
       $('#fname').html( loaded_game.fname)
     } else {
       $('#game_info').html('')
@@ -523,7 +524,7 @@ function main( JGO, axutil, p_options) {
   //-----------------------------
   function get_katago_move() {
     log_event( 'katago')
-    $('#status').html( 'KataGo is thinking...')
+    $('#status').html( translate('KataGo is thinking ...'))
     var randomness = 0.0
     get_bot_move( g_handi, g_komi, 0)
   } // get_katago_move()
@@ -553,11 +554,12 @@ function main( JGO, axutil, p_options) {
 		if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
 		if (data.bot_move == 'pass') {
-			alert( 'Katago passes. Click on the Score button.')
+			alert( translate('KataGo passes. Click on the Score button.'))
+      $('#status').html('')
 		}
 		else if (data.bot_move == 'resign') {
-			alert( 'Katago resigns.')
-			$('#status').html( botcol + ' resigned')
+			alert( translate('KataGo resigns.'))
+			$('#status').html( translate('KataGo resigns.'))
       return
 		}
 		else if ( (!handle_variation.var_backup) && (g_record.length > 150) && ( // do not resign in variation or too early
@@ -566,8 +568,8 @@ function main( JGO, axutil, p_options) {
       (botprob < 0.001))
     )
     {
-			alert( 'Katago resigns. You beat Katago!')
-			$('#status').html( botcol + ' resigned')
+			alert( translate('KataGo resigns. You beat KataGo!'))
+			$('#status').html( translate('KataGo resigns.'))
       return
 		}
 		else {
@@ -835,7 +837,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------------------------
   function get_prob_genmove( completion, update_emo, playing) {
     if (activate_bot.state == 'on') {
-      $('#status').html( 'KataGo is counting...')
+      $('#status').html( translate('KataGo is counting ...'))
     }
     else {
       $('#status').html( '...')
@@ -884,7 +886,7 @@ function main( JGO, axutil, p_options) {
   // Get the best move
   //----------------------------------------------------------
   function get_best_move( completion, update_emo, playing) {
-    $('#status').html( 'KataGo is thinking...')
+    $('#status').html( translate('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
 			(data) => {
@@ -1179,7 +1181,7 @@ function main( JGO, axutil, p_options) {
       } // if logged in
       else {
         fast_or_strong( 'free') // Strong is disabled
-        var tstr = '<a href="/login" class="touch-allow">Please log in.</a>'
+        var tstr = '<a href="/login" class="touch-allow">' + translate('Please Log In') + '</a>'
         $('#donate_modal').html(tstr)
       }
     }

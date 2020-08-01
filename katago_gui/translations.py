@@ -2,16 +2,17 @@
 from pdb import set_trace as BP
 from flask_login import current_user
 
-def translate( txt):
+def translate( txt, lang=None):
     '''
     Translate txt into the current user's language.
     Used in Jinja templates.
     '''
-    u = current_user
-    if not u:
-        lang = 'eng'
-    else:
-        lang = u.data.get( 'lang', 'eng')
+    if not lang:
+        u = current_user
+        if not u:
+            lang = 'eng'
+        else:
+            lang = u.data.get( 'lang', 'eng')
     tab = _langdict.get( lang, _langdict['eng'])
     res = tab.get( txt, txt)
     return res
@@ -118,6 +119,7 @@ _kor = {
     ,'Fast (20 blocks)':'패스트 (20 블럭)'
     ,'Strong (40 blocks)':'스트롱 (40 블럭)'
     # Login and Registration
+    ,'Guest':'게스트'
     ,'Please Log In':'로그인 해주세요'
     ,'Email':'이메일'
     ,'Password':'비밀번호'
@@ -141,10 +143,11 @@ _kor = {
     ,'Show probability during play':'플레이 중 착수 가능성 퍼센티지 보이기'
     ,'Save':'저장'
     ,'P(B wins)':'P(흑 기준)'
-    ,'Katago resigns. You beat Katago!':'카타고가 불계를 선언했습니다. 카타고에계 승리했습니다!'
-    ,'Katago passes. Click on the Score button':'카타고가 패스 하였습니다. 스코어 버튼을 클릭해주세요.'
-    ,'Katago is thinking ...':'카타고가 생각 중입니다.'
-    ,'Katago is counting ...':'카타고가 스코어 중입니다.'
+    ,'KataGo resigns. You beat Katago!':'카타고가 불계를 선언했습니다. 카타고에계 승리했습니다!'
+    ,'KataGo resigns.':'카타고가 불계를 선언했습니다.'
+    ,'KataGo passes. Click on the Score button.':'카타고가 패스 하였습니다. 스코어 버튼을 클릭해주세요.'
+    ,'KataGo is thinking ...':'카타고가 생각 중입니다.'
+    ,'KataGo is counting ...':'카타고가 스코어 중입니다.'
     ,'dollars':'달러'
     # Donation
     ,'donation_blurb': '카타고 운영을 위해 전용 서버를 구축하려면 총 2000 달러 정도의 비용이 소모됩니다. 목표 달성까지 74%가 남았습니다! 카타고 운영을 위해 후원을 고려해주세요. 20달러 이상 후원시 캘리포니아에 방문하면 맥주 한 잔을 사드립니다.'
@@ -171,6 +174,8 @@ _kor = {
     ,'invalid_token':'유효하지 않거나 만료 된 토큰입니다'
     ,'W':'백'
     ,'B':'흑'
+    ,'Result':'결과'
+    ,'Date':'날짜'
 }
 
 _langdict = { 'eng':_eng, 'kor':_kor }

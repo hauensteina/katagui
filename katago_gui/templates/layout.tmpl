@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-{% set VERSION = '2.0.5' %}
+{% set VERSION = '2.0.6' %}
 
 {% block pre %}
   <script type='text/javascript'>
@@ -44,7 +44,7 @@
     <script type='text/javascript' src='static/jgoboard-latest.js'></script>
 
     <!-- Main module -->
-    <script type='text/javascript' src='static/main.js?v=204'></script>
+    <script type='text/javascript' src='static/main.js?v=206'></script>
 
     <!-- Bootstrap CSS -->
     <link rel='stylesheet'
@@ -63,7 +63,7 @@
       <table class='center' style='width:100%'>
         <!-- Page Header -->
         <tr style='background-color:green'>
-          <td width='5%'>&nbsp;</td>
+          <td width='20px'>&nbsp;</td>
           <td  align='left'>
             <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
               KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
@@ -71,17 +71,13 @@
         </tr>
         <tr><td colspan='2'>
     {% else %}
-          <table class='center' style='width:100%;'>
+          <table class='center' style='width:100%'>
             <!-- Page Header -->
             <tr style='background-color:green'>
               <td width='20px'></td>
-              <td align='left' width='200px'>
+              <td id='homelogo' align='left' width='200px'>
                 <a class='hlink font-l' href="{{ url_for('index') }}">
                   KataGui <span class='font-s'>{{ VERSION }}</span></a>
-              </td>
-              <td align='left'>
-                <a class='hlink' href="{{ url_for('english') }}"><img border='0' height='15px' src='static/eng.png'></a> &nbsp;
-                <a class='hlink' href="{{ url_for('korean') }}"><img border='0' height='15px' src='static/kor.png'></a>
               </td>
               <td align='right'>
                 {% if logged_in() %}
@@ -97,15 +93,25 @@
               </td>
               <td width='20px' class=''></td>
             </tr>
+          </table>
+          <table class='center' style='width:100%'>
+            <tr><td colspan='4' style='height:10px'></td></tr>
             <tr>
+              <td width='20px'></td>
+              <td align='left'>
+                <a class='hlink' href="{{ url_for('english') }}">
+                  <img class='flag' border='0' height='30px' src='static/eng.png'></a>
+                  <a style='padding-left:20px' class='hlink' href="{{ url_for('korean') }}">
+                    <img class='flag' border='0' height='30px' src='static/kor.png'></a>
+              </td>
               {% if logged_in() %}
-                <td colspan='4' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
+                <td class='font-m' align='right'>{{ current_user.data["username"] }}</td>
               {% else %}
-                <td colspan='4' class='font-m' align='right'>Guest</td>
+                <td class='font-m' align='right'>{{tr('Guest')}}</td>
               {% endif %}
-              <td width='20px' class=''></td>
+              <td width='20px'></td>
             </tr>
-            <tr><td colspan='5'>
+            <tr><td colspan='4'>
     {% endif %}
     {% block content %}
     {% endblock content %}
@@ -119,10 +125,12 @@
              lfont = '35pt'
              mfont = '30pt'
              sfont = '20pt'
+             $('#homelogo').width('300px')
+             $('.flag').height('60px')
            }
-           $( '.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
-           $( '.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
-           $( '.font-s' ).each( function( index ) { this.style.fontSize = sfont } )
+           $('.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
+           $('.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
+           $('.font-s' ).each( function( index ) { this.style.fontSize = sfont } )
           </script>
 
           <!-- Any other js we want to add -->

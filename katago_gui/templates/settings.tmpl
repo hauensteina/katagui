@@ -10,8 +10,10 @@
    .switch {
      position: relative;
      display: inline-block;
-     width: 60px;
-     height: 34px;
+     /* width: 60px;
+        height: 34px; */
+     width: 40px;
+     height: 20px;
    }
 
    /* Hide default HTML checkbox */
@@ -37,10 +39,12 @@
    .slider:before {
      position: absolute;
      content: "";
-     height: 26px;
-     width: 26px;
-     left: 4px;
-     bottom: 4px;
+     /* height: 26px;
+        width: 26px; */
+     height: 19px;
+     width: 19px;
+     left: 2px;
+     bottom: 1px;
      background-color: white;
      -webkit-transition: .1s;
      transition: .1s;
@@ -55,9 +59,12 @@
    }
 
    input:checked + .slider:before {
-     -webkit-transform: translateX(26px);
-     -ms-transform: translateX(26px);
-     transform: translateX(26px);
+     /* -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px); */
+     -webkit-transform: translateX(18px);
+     -ms-transform: translateX(18px);
+     transform: translateX(18px);
    }
 
    /* Rounded sliders */
@@ -76,15 +83,15 @@
   <div id='setdiv'>
     <table style='margin-left:50px'>
       <tr style='height:50px' ><td>&nbsp;</td></tr>
-        <tr style='height:50px' >
-          <td>
+      <tr style='height:50px' >
+        <td>
           <label class='switch'>
             <input id='opt_show_emoji' type='checkbox'>
             <span class='slider round'></span>
           </label>
         </td>
-        <td style='text-align:left;font-size:15pt'>
-          &nbsp; Show emoji during play
+        <td style='text-align:left;font-size:12pt'>
+          &nbsp; {{tr('Show emoji during play')}}
         </td>
       </tr>
       <tr style='height:50px'>
@@ -94,13 +101,13 @@
             <span class='slider round'></span>
           </label>
         </td>
-        <td style='text-align:left;font-size:15pt'>
-          &nbsp; Show probability during play
+        <td style='text-align:left;font-size:12pt'>
+          &nbsp; {{tr('Show probability during play')}}
         </td>
       </tr>
       <tr style='height:100px'>
         <td colspan='2' align='center'>
-          <label id='btn_settings_done' class='btn btn-outline-dark' style='font-size:15pt;'>Save</label>
+          <label id='btn_settings_done' class='btn btn-outline-dark' style='font-size:15pt;'>{{tr('Save')}}</label>
         </td>
       </tr>
     </table>

@@ -60,9 +60,9 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
     @classmethod
-    def translate( cclass):
+    def translate( cclass, lang='eng'):
         ''' Call this from routes.py to translate to current language setting '''
-        cclass.password = PasswordField( tr('Password'), validators=[DataRequired()])
+        cclass.password = PasswordField( tr('Password', lang), validators=[DataRequired()])
         cclass.confirm_password = PasswordField( tr('Confirm Password'),
                                                  validators=[DataRequired(), EqualTo('password')])
         cclass.submit = SubmitField( tr('Reset Password'))

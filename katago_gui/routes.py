@@ -183,9 +183,12 @@ def send_register_email( user):
     msg = Message('Katagui Email Verification',
                   sender='hauensteina@ahaux.com',
                   recipients=[user.data['email']])
-    msg.body = f'''{tr( 'visit_link_activate')}
-                   {url_for('verify_email', token=token, _external=True)}
-                   {tr( 'register_ignore')}
+    msg.body = f'''
+{tr( 'visit_link_activate')}
+
+{url_for('verify_email', token=token, _external=True)}
+
+{tr( 'register_ignore')}
     '''
     mail.send(msg)
 
@@ -248,7 +251,7 @@ def reset_token(token):
     if not user.valid:
         flash( tr( 'invalid_token', 'warning'))
         return redirect( url_for('reset_request'))
-    ResetPasswordForm.translate()
+    ResetPasswordForm.translate( user.data.get( 'lang', 'eng'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password( form.password.data)
