@@ -104,8 +104,8 @@ def logout():
 @app.route('/register', methods=['GET','POST'])
 #------------------------------------------------
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
+    if current_user.is_authenticated and not current_user.data['username'].startswith('guest_'):
+        return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
@@ -186,8 +186,8 @@ def send_reset_email( user):
 @app.route('/reset_request', methods=['GET', 'POST'])
 #--------------------------------------------------------
 def reset_request():
-    if current_user.is_authenticated:
-        return redirect( url_for('home'))
+    if current_user.is_authenticated and not current_user.data['username'].startswith('guest_'):
+        return redirect( url_for('index'))
     form = RequestResetForm()
     if form.validate_on_submit():
         user = auth.User( form.email.data)
