@@ -19,6 +19,7 @@ def create_t_user(db):
     ,ts_created timestamptz
     ,ts_last_seen timestamptz
     ,email_verified boolean
+    ,lang text
     ) '''
     db.run( sql)
 

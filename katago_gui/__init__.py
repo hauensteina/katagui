@@ -7,26 +7,36 @@
 # Imports and Globals
 #
 
+from pdb import set_trace as BP
+
 import os
 from flask import Flask
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, user_logged_out, user_logged_in
+from flask_login import LoginManager, user_logged_out, user_logged_in, current_user
 from flask_mail import Mail
 from katago_gui.postgres import Postgres
+from katago_gui.translations import translate, donation_blurb
 
-from pdb import set_trace as BP
+app = Flask( __name__)
 
-here = os.path.dirname( __file__)
-static_path = os.path.join( here, 'static')
-app = Flask( __name__, static_folder=static_path, static_url_path='/static')
+#----------------
+def logged_in():
+    return current_user.is_authenticated and not current_user.data['username'].startswith('guest_')
+
+# Make some functions available in the jinja templates.
+# Black Magic.
+@app.context_processor
+def inject_template_funcs():
+    return {'tr':translate # {{ tr('Play') }} now puts the result of translate('Play') into the template
+            ,'donation_blurb':donation_blurb
+            ,'logged_in':logged_in
+            }
 
 app.config.update(
     DEBUG = True,
     SECRET_KEY = 'secret_xxx'
 )
 
-# This gives you decent error messages in the browser
-app.config['DEBUG'] = os.getenv("DEBUG", False)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 # 20b 256 playouts
@@ -38,10 +48,8 @@ KATAGO_SERVER_GUEST = 'http://www.ahaux.com/katago_server_guest/'
 
 if 'HEROKU_FLAG' in os.environ: # prod on heroku
     db_url = os.environ['DATABASE_URL']
-    #mailgun_api_key = os.environ['MAILGUN_API_KEY']
 else: # local
     db_url = os.environ['KATAGUI_DB_URL']
-    #mailgun_api_key = os.environ['KATAGUI_MAILGUN_API_KEY']
 
 db = Postgres( db_url)
 
@@ -59,14 +67,5 @@ mail = Mail(app)
 
 from katago_gui.create_tables import create_tables
 create_tables( db)
-
-# Make sure the DB knows if we are logged in or out
-# def logout_db( sender, user, **extra):
-#     db.update_row( 't_user', 'email', user.data['email'], { 'logged_in':False, 'active':False })
-# user_logged_out.connect( logout_db, app)
-
-# def login_db( sender, user, **extra):
-#     db.update_row( 't_user', 'email', user.data['email'], { 'logged_in':True, 'active':True })
-# user_logged_in.connect( login_db, app)
 
 from katago_gui import routes

@@ -58,10 +58,10 @@
             {{ form.submit( class='btn btn-outline-info') }}
           </div><br>
           <div class='text-muted ml-2'>
-            <a href='{{ url_for("reset_request") }}'>Forgot Password?</a>
+            <a href='{{ url_for("reset_request") }}'>{{tr('Forgot Password?')}}</a>
           </div><br>
           <div class='text-muted'>
-            Need An Account? <a class='ml-2' href='{{ url_for("register") }}'> Sign Up Now </a>
+            {{tr('Need An Account?')}} <a class='ml-2' href='{{ url_for("register") }}'> {{tr('Sign Up Now.')}} </a>
           </div>
         </form>
       </td></tr>

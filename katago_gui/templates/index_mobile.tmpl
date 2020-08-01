@@ -101,14 +101,14 @@
               KataGo 20 blocks<br>2020-05-30
             </div>
             <div>
-              <a class='glink' href="{{ url_for('settings') }}" style='font-size:30pt;text-align:right;'>Settings</a>
+              <a class='glink' href="{{ url_for('settings') }}" style='font-size:30pt;text-align:right;'>{{tr('Settings')}}</a>
             </div>
             <br>
           </div>
           <div class='col-4' style='font-size:30pt;margin:auto'>
             <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
                    style='font-size:40pt'>
-              New Game
+              {{tr('New Game')}}
             </label><br>
           </div>
           <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
@@ -118,6 +118,7 @@
     <tr><td>
       <table class='center' style='font-size:24pt;' width='800px'>
         <tr><td id='donating'>
+          {{ donation_blurb(mobile=true) }}
         </td></tr>
         <tr><td>
           <br>
@@ -131,7 +132,7 @@
         </td></tr>
       </table>
       <table class='center' style='font-size:22pt'>
-        <tr><td colspan='2' style='font-weight:bold'> Top Three Donors: </td></tr>
+        <tr><td colspan='2' style='font-weight:bold'> {{tr('Top Three Donors')}} </td></tr>
         <tr><td align='left'>Darrell Malick</td> <td align='right'> &nbsp; 100 </td>  </tr>
         <tr><td align='left'>Tobias Berben</td> <td align='right'> &nbsp; 50 </td>  </tr>
         <tr><td align='left'>Terry Assael</td> <td align='right'> &nbsp; 30 </td>  </tr>
@@ -167,19 +168,19 @@
             </label>
             &nbsp;
           </td><td>
-            <label id='btn_play' class='btn btn-outline-dark' style='font-size:40pt'>Play</label>
+            <label id='btn_play' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Play')}}</label>
             &nbsp;&nbsp;
           </td><td>
-            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:40pt'>Undo</label>
+            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Undo')}}</label>
             &nbsp;&nbsp;
           </td><td>
-            <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>Best</label>
+            <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Best')}}</label>
             &nbsp;&nbsp;
           </td><td>
-            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>Prev</label>
+            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Prev')}}</label>
             &nbsp;&nbsp;
           </td><td>
-            <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>Next</label>
+            <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Next')}}</label>
           </td>
         </tr></table>
       </div>
@@ -187,27 +188,27 @@
     <!-- Nav Buttons -->
     <tr><td>
       <div>
-        <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>Back to Main Line</label>
+        <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>{{tr('Back to Main Line')}}</label>
         &nbsp;
-        <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>Score</label>
+        <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Score')}}</label>
       </div>
     </td></tr>
     <!-- More Nav Buttons -->
     <tr><td> &nbsp; </td></tr>
     <tr><td>
       <div>
-        <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>First</label>
-        <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>Back 10</label>
-        <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>Fwd 10</label>
-        <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>Last</label>
+        <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('First')}}First</label>
+        <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Back 10')}}</label>
+        <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Fwd 10')}}</label>
+        <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Last')}}</label>
       </div>
     </td></tr>
     <!-- Score and Save -->
     <tr><td> &nbsp; </td></tr>
     <tr><td>
       <div>
-        <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>Pass</label>
-        <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>Save sgf</label>
+        <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Pass')}}</label>
+        <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Save Sgf')}}</label>
       </div>
     </td></tr>
     <!-- Input form for load sgf -->
@@ -216,7 +217,7 @@
       <div>
         <form method='post' enctype='multipart/form-data'>
           <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
-            Load sgf  <input type='file' id='sgf-file' style='display:none'>
+            {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
           </label>
         </form>
       </div>
@@ -236,20 +237,20 @@
     <div class='modal-dialog' role='document'>
       <div class='modal-content'>
         <div class='modal-header'>
-          <h5 class='modal-title' id='komi_handi_heading' style='font-size:30pt'>New Game</h5>
+          <h5 class='modal-title' id='komi_handi_heading' style='font-size:30pt'>{{tr('New Game')}}</h5>
           <button  id='cancel_new_game' type='button' class='close' style='font-size:40pt' data-dismiss='modal' aria-label='Close'>
             <span  aria-hidden='true' class='touch-allow'>&times;</span>
           </button>
         </div>
         <div class='modal-body'>
           <table>
-            <tr><td style='font-size:30pt'>Handicap</td><td>&nbsp;&nbsp;</td><td style='font-size:30pt'>Komi</td></tr>
+            <tr><td style='font-size:30pt'>{{tr('Handicap')}}</td><td>&nbsp;&nbsp;</td><td style='font-size:30pt'>{{tr('Komi')}}</td></tr>
             <tr>
               <td>
                 <div class='dropdown'>
                   <button style='font-size:30pt' class='btn btn-secondary btn-lg dropdown-toggle' type='button' id='handi_menu'
                           data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' >
-                    Handicap
+                    {{tr('Handicap')}}
                   </button>
                   <div class='dropdown-menu' aria-labelledby='handi_menu'>
                     <a id='handi_0' class='dropdown-item' style='font-size:30pt'>0</a>
@@ -269,7 +270,7 @@
                 <div class='dropdown'>
                   <button  style='font-size:30pt'class='btn btn-secondary btn-lg dropdown-toggle' type='button' id='komi_menu'
                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    Komi
+                    {{tr('Komi')}}
                   </button>
                   <div class='dropdown-menu' aria-labelledby='komi_menu'>
                     <a id='komi_m75' class='dropdown-item' style='font-size:30pt'>-7.5</a>
@@ -290,21 +291,21 @@
           <br>
           <div align='left'>
             <table width='80%'>
-              {% if not current_user.is_authenticated %}
+              {% if current_user.data['username'].strip().lower().startswith('guest') %}
                 <tr align='center' height='90px'>
                   <td>
-                    <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:24pt;'>Guest (10 blocks)</label>
+                    <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Guest (10 blocks)')}}</label>
                   </td>
                 </tr>
               {% endif %}
               <tr align='center' height='90px'>
                 <td>
-                  <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:24pt;'>Fast (20 blocks)</label>
+                  <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Fast (20 blocks)')}}</label>
                 </td>
               </tr>
               <tr align='center' height='90px'>
                 <td>
-                  <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:24pt;'>Strong (40 blocks)</label>
+                  <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Strong (40 blocks)')}}</label>
                 </td>
               </tr>
               <tr class='touch-allow' align='center' height='90px'>
