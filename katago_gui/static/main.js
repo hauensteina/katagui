@@ -139,27 +139,37 @@ function main( JGO, axutil, p_options) {
       settings('show_emoji'), playing )
   } // board_click_callback()
 
-  //---------------------------------
+  //-------------------------------
   function best_btn_callback() {
     $('#status').html( translate('KataGo is thinking ...'))
+    best_btn_callback.active = true
     get_best_move( (data) => {
-      var botCoord = string2jcoord( data.bot_move)
-      var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
-      var node = g_jrecord.createNode( true)
-      replay_move_list( g_record) // remove artifacts, preserve mark on last play
-      var mmax = 0
-      // Mark candidates with letters if psv is close enough to max
-      for (const [idx,m] of best.entries()) {
-        if (mmax == 0) { mmax = m.psv }
-        if (m.psv < mmax / 4.0) continue
-        var botCoord = string2jcoord( m.move)
-        if (botCoord != 'pass' && botCoord != 'resign') {
-          var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
-          node.setMark( botCoord, letter)
-        }
-      } // for
+      show_best_moves(data)
     })
   } // best_btn_callback()
+  best_btn_callback.active = false
+
+  //----------------------------------
+  function show_best_moves( data) {
+    if (data) { show_best_moves.data = data }
+    data = show_best_moves.data
+    var botCoord = string2jcoord( data.bot_move)
+    var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
+    var node = g_jrecord.createNode( true)
+    replay_move_list( g_record) // remove artifacts, preserve mark on last play
+    var mmax = 0
+    // Mark candidates with letters if psv is close enough to max
+    for (const [idx,m] of best.entries()) {
+      if (mmax == 0) { mmax = m.psv }
+      if (m.psv < mmax / 4.0) continue
+      var botCoord = string2jcoord( m.move)
+      if (botCoord != 'pass' && botCoord != 'resign') {
+        var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
+        node.setMark( botCoord, letter)
+      }
+    } // for
+  } // show_best_moves()
+  show_best_moves.data = {}
 
   // Black moves at the beginning are handicap
   //--------------------------------------------
@@ -211,6 +221,9 @@ function main( JGO, axutil, p_options) {
               if (score_position.active) {
                 draw_estimate( score_position.probs)
               }
+              if (best_btn_callback.active) {
+                show_best_moves()
+              }
             }
 					}
 				) // mousemove
@@ -221,6 +234,9 @@ function main( JGO, axutil, p_options) {
 					  hover()
             if (score_position.active) {
               draw_estimate( score_position.probs)
+            }
+            if (best_btn_callback.active) {
+              show_best_moves()
             }
 					}
 				) // mouseout
@@ -693,6 +709,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------
   function goto_move( n) {
     score_position.active = false
+    best_btn_callback.active = false
     var totmoves = g_complete_record.length
     if (n > totmoves) { n = totmoves }
     if (n < 1) { goto_first_move(); set_emoji(); return }
