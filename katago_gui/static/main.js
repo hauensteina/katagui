@@ -221,7 +221,7 @@ function main( JGO, axutil, p_options) {
               if (score_position.active) {
                 draw_estimate( score_position.probs)
               }
-              if (best_btn_callback.active) {
+              else if (best_btn_callback.active) {
                 show_best_moves()
               }
             }
@@ -235,7 +235,7 @@ function main( JGO, axutil, p_options) {
             if (score_position.active) {
               draw_estimate( score_position.probs)
             }
-            if (best_btn_callback.active) {
+            else if (best_btn_callback.active) {
               show_best_moves()
             }
 					}
@@ -301,6 +301,7 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_best').click( () => {
+      if (score_position.active) return
       if (axutil.hit_endpoint('waiting')) {
         g_best_btn_buffer = true; return
       }
