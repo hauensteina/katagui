@@ -7,11 +7,9 @@
 
 'use strict'
 
-const DDATE = '2020-08-01'
+const DDATE = '2020-08-03'
 const DEBUG = false
 const NIL_P = 0.0001
-const HOUR_STRONG_ON = 15
-const HOUR_STRONG_OFF = 3 // 1
 
 const HANDISTONES = ['',''
   ,['D4','Q16']
