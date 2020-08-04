@@ -209,18 +209,25 @@
     <tr><td>
       <div>
         <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Pass')}}</label>
-        <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Save Sgf')}}</label>
+        <label id='btn_selfplay' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Self Play')}}</label>
       </div>
     </td></tr>
     <!-- Input form for load sgf -->
     <tr><td> &nbsp; </td></tr>
     <tr><td>
       <div>
-        <form method='post' enctype='multipart/form-data'>
-          <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
-            {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
-          </label>
-        </form>
+        <table class='center'><tr>
+          <td>
+            <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Save Sgf')}}</label>
+          </td>
+          <td style='padding-left:5px'>
+            <form method='post' enctype='multipart/form-data'>
+              <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
+                {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
+              </label>
+            </form>
+          </td>
+        </tr> </table>
       </div>
     </td></tr>
     <!-- Score Histogram -->
