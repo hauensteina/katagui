@@ -99,10 +99,10 @@
             <tr>
               <td width='20px'></td>
               <td align='left'>
-                <a class='hlink' href="{{ url_for('english') }}">
-                  <img class='flag' border='0' height='30px' src='static/eng.png'></a>
-                  <a style='padding-left:20px' class='hlink' href="{{ url_for('korean') }}">
-                    <img class='flag' border='0' height='30px' src='static/kor.png'></a>
+                <a class='hlink' href="{{ url_for('korean') }}">
+                  <img class='flag' border='0' height='30px' src='static/kor.png'></a>
+                  <a style='padding-left:20px' class='hlink' href="{{ url_for('english') }}">
+                    <img class='flag' border='0' height='30px' src='static/eng.png'></a>
               </td>
               {% if logged_in() %}
                 <td class='font-m' align='right'>{{ current_user.data["username"] }}</td>
