@@ -291,6 +291,10 @@ function main( JGO, axutil, p_options) {
       botmove_if_active()
     })
 
+    $('#btn_selfplay').click( () => {
+      selfplay()
+    })
+
     // Autoplay slider
     $('#opt_auto').click( () => {
       var state = $('#opt_auto').prop('checked')
@@ -408,6 +412,39 @@ function main( JGO, axutil, p_options) {
       }
     })
   } // set_btn_handlers()
+
+  // Start and stop selfplay
+  //--------------------------
+  function selfplay() {
+    const INTERVAL = 3000 // msec
+    if (selfplay.active) {
+      selfplay.active = false
+      return
+    }
+    selfplay.active = true
+    setTimeout( cb_selfplay, INTERVAL)
+    function cb_selfplay() { // timer callback
+      if (selfplay.ready) {
+        selfplay.ready = false
+        axutil.hit_endpoint( fast_or_strong().ep + BOT,
+          {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi } },
+          (data) => {
+            var botCoord = string2jcoord( data.bot_move)
+            show_move( turn(), botCoord, 0.0, 'bot')
+		        g_complete_record = g_record.slice()
+		        replay_move_list( g_record)
+		        show_movenum()
+            const show_emoji = false
+		        const playing = true
+            get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+            selfplay.ready = true
+          }) // hit_endpoint()
+      } // if ready
+      if (selfplay.active) { setTimeout( cb_selfplay, INTERVAL) }
+    } // cb_selfplay()
+  } // selfplay()
+  selfplay.ready = true
+  selfplay.active = false
 
   // Load Sgf button
   //-----------------------------------
@@ -649,12 +686,6 @@ function main( JGO, axutil, p_options) {
       if(play.ko)
         node.setMark (play.ko, JGO.MARK.CIRCLE) // mark ko, too
       g_ko = play.ko
-    }
-    else {
-      /* var tstr = player + coord
-       * var node = g_jrecord.getCurrentNode()
-       * node.setMark( coord, JGO.MARK.SQUARE)
-       * alert( 'Illegal move: ' + play.errorMsg + ' ' + tstr) */
     }
   } // show_move()
 
