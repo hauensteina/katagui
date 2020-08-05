@@ -112,6 +112,10 @@ _kor = {
     ,'Back to Main Line':'메인으로 돌아가기'
     ,'Auto Play':'자동 플레이'
     ,'Self Play':'셀프 플레이'
+    ,'Self Play Speed:':'셀프 플레이 속도:'
+    ,'Fast':'빠른'
+    ,'Medium':'매질'
+    ,'Slow':'느린'
     # Starting a Game
     ,'Handicap':'접바둑'
     ,'Komi':'덤'

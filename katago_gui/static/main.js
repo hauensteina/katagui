@@ -277,6 +277,8 @@ function main( JGO, axutil, p_options) {
       fast_or_strong('strong')
     })
 
+
+
     $('#btn_clear_var').click( () => {
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation( 'clear')
@@ -416,17 +418,21 @@ function main( JGO, axutil, p_options) {
   // Start and stop selfplay
   //--------------------------
   function selfplay() {
-    const INTERVAL = 3000 // msec
-    if (selfplay.active) {
-      selfplay.active = false
+    if ($('#btn_selfplay').hasClass('btn-success')) {
+      $('#btn_selfplay').removeClass('btn-success')
       return
     }
-    selfplay.active = true
-    setTimeout( cb_selfplay, INTERVAL)
+    $('#btn_selfplay').addClass('btn-success')
+    var interval = 4000
+    if (settings('selfplay_speed')) {
+      if (settings('selfplay_speed') == 'fast') { interval = 3000 }
+      else if (settings('selfplay_speed') == 'slow') { interval = 5000 }
+    }
+    setTimeout( cb_selfplay, interval)
     function cb_selfplay() { // timer callback
       if (selfplay.ready) {
         selfplay.ready = false
-        axutil.hit_endpoint( fast_or_strong().ep + BOT,
+        axutil.hit_endpoint( fast_or_strong('guest').ep + BOT,
           {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi } },
           (data) => {
             var botCoord = string2jcoord( data.bot_move)
@@ -440,11 +446,10 @@ function main( JGO, axutil, p_options) {
             selfplay.ready = true
           }) // hit_endpoint()
       } // if ready
-      if (selfplay.active) { setTimeout( cb_selfplay, INTERVAL) }
+      if ($('#btn_selfplay').hasClass('btn-success')) { setTimeout( cb_selfplay, interval) }
     } // cb_selfplay()
   } // selfplay()
   selfplay.ready = true
-  selfplay.active = false
 
   // Load Sgf button
   //-----------------------------------
@@ -618,6 +623,7 @@ function main( JGO, axutil, p_options) {
       (g_handi < 3 && botprob < 0.01) ||
       (g_handi < 2 && botprob < 0.02) ||
       (botprob < 0.001))
+      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
     )
     {
 			alert( translate('KataGo resigns. You beat KataGo!'))
@@ -858,7 +864,7 @@ function main( JGO, axutil, p_options) {
     /* var bot = localStorage.getItem('bot')
      * if (BOTS.indexOf( bot) < 0) { bot = BOTS[0] }
      * change_bot(bot) */
-    fast_or_strong('free')
+    fast_or_strong('guest')
     if (localStorage.getItem('fast_or_strong') == 'strong') {
       fast_or_strong('strong')
     }
@@ -1184,18 +1190,14 @@ function main( JGO, axutil, p_options) {
   function fast_or_strong( val) {
     if (typeof val == 'undefined') { // getter
       if ($('#btn_tgl_strong').hasClass('active')) {
-        fast_or_strong('strong')
-        return {'val':'strong', 'ep':'/select-move-x/' }
+        return fast_or_strong('strong')
       } else if ($('#btn_tgl_fast').hasClass('active')) {
-        fast_or_strong('fast')
-        return {'val':'fast', 'ep':'/select-move/' }
+        return fast_or_strong('fast')
       } else {
         if (!settings('logged_in')) {
-          fast_or_strong('guest')
-          return {'val':'guest', 'ep':'/select-move-guest/' }
+          return fast_or_strong('guest')
         } else { // logged in, use 20b
-          fast_or_strong('fast')
-          return {'val':'fast', 'ep':'/select-move/' }
+          return fast_or_strong('fast')
         }
       }
     } // if getter
@@ -1217,17 +1219,18 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
           $('#img_bot').attr('src', 'static/kata-red.png')
-          return
+          return {'val':'strong', 'ep':'/select-move-x/' }
         } else if (val == 'fast') {
           $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
           $('#btn_tgl_fast').addClass('active')
           $('#btn_tgl_strong').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
           $('#img_bot').attr('src', 'static/kata.png')
+          return {'val':'fast', 'ep':'/select-move/' }
         }
       } // if logged in
       else {
-        fast_or_strong( 'free') // Strong is disabled
+        fast_or_strong( 'guest') // Strong is disabled
         var tstr = '<a href="/login" class="touch-allow">' + translate('Please Log In') + '</a>'
         $('#donate_modal').html(tstr)
       }
@@ -1238,22 +1241,21 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
       $('#img_bot').attr('src', 'static/kata.png')
+      return {'val':'guest', 'ep':'/select-move-guest/' }
     }
   } // fast_or_strong()
 
   // Register site visibility handlers
   //--------------------------------------
-  /* function visibility() {
-   *   document.addEventListener("visibilitychange", function() {
-   *     if (document.visibilityState === 'visible') {
-   *       axutil.hit_endpoint_simple( '/visible',{}, (resp)=>{})
-   *     }
-   *     else {
-   *       axutil.hit_endpoint_simple( '/hidden',{}, (resp)=>{})
-   *     }
-   *   })
-   * } // visibility()
-   */
+  function visibility() {
+    document.addEventListener("visibilitychange", function() {
+      if (document.visibilityState === 'visible') {
+        // pass
+      } else {
+        $('#btn_selfplay').removeClass('btn-success')
+      }
+    })
+  } // visibility()
 
   // Get a field from the user data, or fetch the user from the back end
   //-------------------------------------------------------------------------
@@ -1290,6 +1292,7 @@ function main( JGO, axutil, p_options) {
   set_dropdown_handlers()
   reset_game()
   setup_jgo()
+  visibility()
   document.onkeydown = check_key
 
   if (p_options.mobile) {

@@ -83,6 +83,25 @@
   <div id='setdiv'>
     <table style='margin-left:50px'>
       <tr style='height:50px' ><td>&nbsp;</td></tr>
+      <tr style='height:50px'>
+        <td colspan='2' align='left'>
+          {{tr('Self Play Speed:')}}
+        </td>
+      </tr>
+      <tr style='height:50px'>
+        <td colspan='2'>
+          <table> <tr>
+            <td> <label id='btn_tgl_selfplay_fast' class='btn btn-outline-dark' style='font-size:12pt;'>{{tr('Fast')}}</label> </td>
+            <td style='padding-left:10px'>
+              <label id='btn_tgl_selfplay_normal' class='btn btn-outline-dark' style='font-size:12pt;'>{{tr('Medium')}}</label>
+            </td>
+            <td style='padding-left:10px'>
+              <label id='btn_tgl_selfplay_slow' class='btn btn-outline-dark' style='font-size:12pt;'>{{tr('Slow')}}</label>
+            </td>
+          </tr> </table>
+        </td>
+      </tr>
+      <tr style='height:25px' ><td>&nbsp;</td></tr>
       <tr style='height:50px' >
         <td>
           <label class='switch'>
@@ -115,15 +134,41 @@
     <script>
      'use strict'
      $( function() {
+       // Load settings
        var settings = JSON.parse( localStorage.getItem( 'settings'))
        if ('show_emoji' in settings) { $('#opt_show_emoji').prop('checked', settings.show_emoji)}
        if ('show_prob'  in settings) { $('#opt_show_prob').prop('checked', settings.show_prob)}
+       $('[id^=btn_tgl_selfplay]').removeClass('active')
+       var sp_id = '#btn_tgl_selfplay_normal'
+       if ('selfplay_speed' in settings) { sp_id = '#btn_tgl_selfplay_' + settings.selfplay_speed }
+       $(sp_id).addClass('active')
+
+       // Self Play Speed
+       $('#btn_tgl_selfplay_slow').click( () => {
+         $('[id^=btn_tgl_selfplay]').removeClass('active')
+         $('#btn_tgl_selfplay_slow').addClass('active')
+         settings.selfplay_speed = 'slow'
+       })
+       $('#btn_tgl_selfplay_normal').click( () => {
+         $('[id^=btn_tgl_selfplay]').removeClass('active')
+         $('#btn_tgl_selfplay_normal').addClass('active')
+         settings.selfplay_speed = 'normal'
+       })
+       $('#btn_tgl_selfplay_fast').click( () => {
+         $('[id^=btn_tgl_selfplay]').removeClass('active')
+         $('#btn_tgl_selfplay_fast').addClass('active')
+         settings.selfplay_speed = 'fast'
+       })
+
+       // Save
        $('#btn_settings_done').click( () => {
          settings.show_emoji = $('#opt_show_emoji').prop('checked')
          settings.show_prob = $('#opt_show_prob').prop('checked')
          localStorage.setItem('settings', JSON.stringify(settings))
-         history.go(-1) })
-     })
+         history.go(-1)
+       })
+     }) // $
+
     </script>
   </div>
 {% endblock content %}
