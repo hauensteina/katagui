@@ -104,6 +104,7 @@ function main( JGO, axutil, p_options) {
 
   //----------------------------------------
   function board_click_callback( coord) {
+    selfplay('off')
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
     //SLOG(navigator.userAgent.toLowerCase())
@@ -139,6 +140,7 @@ function main( JGO, axutil, p_options) {
 
   //-------------------------------
   function best_btn_callback() {
+    selfplay('off')
     $('#status').html( translate('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move( (data) => {
@@ -261,6 +263,7 @@ function main( JGO, axutil, p_options) {
     var_button_state( 'off')
 
     $('#img_bot, #descr_bot').click( () => {
+      selfplay('off')
       fast_or_strong('toggle')
     })
 
@@ -277,14 +280,14 @@ function main( JGO, axutil, p_options) {
       fast_or_strong('strong')
     })
 
-
-
     $('#btn_clear_var').click( () => {
+      selfplay('off')
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation( 'clear')
     })
 
     $('#btn_play').click( () => {
+      selfplay('off')
       set_emoji()
       if (g_record.length == 0) {
         reset_game()
@@ -293,18 +296,20 @@ function main( JGO, axutil, p_options) {
       botmove_if_active()
     })
 
-    $('#btn_selfplay').click( () => {
-      selfplay()
+    $('#btn_tgl_selfplay').click( () => {
+      selfplay('toggle')
     })
 
     // Autoplay slider
     $('#opt_auto').click( () => {
+      selfplay('off')
       var state = $('#opt_auto').prop('checked')
       if (state) { activate_bot('on') }
       else { activate_bot('off') }
     })
 
     $('#btn_best').click( () => {
+      selfplay('off')
       if (score_position.active) return
       if (axutil.hit_endpoint('waiting')) {
         g_best_btn_buffer = true; return
@@ -312,8 +317,8 @@ function main( JGO, axutil, p_options) {
       best_btn_callback()
     })
 
-
     $('#btn_save').click( () => {
+      selfplay('off')
       var rec = moves_only(g_complete_record)
       var probs = probs_only(g_complete_record)
       var scores = scores_only(g_complete_record)
@@ -345,6 +350,7 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_nnscore').click( () => {
+      selfplay('off')
       if (score_position.active) {
 			  goto_move( g_record.length)
 			  return
@@ -354,6 +360,7 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_pass').click( () => {
+      selfplay('off')
       g_complete_record = g_record.slice()
       g_complete_record.push( {'mv':'pass', 'p':NIL_P, 'agent':'human'} )
       goto_move( g_complete_record.length)
@@ -361,6 +368,7 @@ function main( JGO, axutil, p_options) {
     })
 
     $('#btn_undo').click( () => {
+      selfplay('off')
       axutil.hit_endpoint('cancel')
       var len = g_record.length
       var at_end = (len == g_complete_record.length)
@@ -377,10 +385,10 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_prev').click( btn_prev)
     $('#btn_next').click( btn_next)
-    $('#btn_back10').click( () => { goto_move( g_record.length - 10); update_emoji(); activate_bot('off') })
-    $('#btn_fwd10').click( () => { goto_move( g_record.length + 10); update_emoji(); activate_bot('off') })
-    $('#btn_first').click( () => { goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
-    $('#btn_last').click( () => { goto_move( g_complete_record.length); update_emoji(); activate_bot('off') })
+    $('#btn_back10').click( () => { selfplay('off'); goto_move( g_record.length - 10); update_emoji(); activate_bot('off') })
+    $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( g_record.length + 10); update_emoji(); activate_bot('off') })
+    $('#btn_first').click( () => {  selfplay('off'); goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
+    $('#btn_last').click( () => {  selfplay('off'); goto_move( g_complete_record.length); update_emoji(); activate_bot('off') })
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
@@ -417,24 +425,38 @@ function main( JGO, axutil, p_options) {
 
   // Start and stop selfplay
   //--------------------------
-  function selfplay() {
-    if ($('#btn_selfplay').hasClass('btn-success')) {
-      $('#btn_selfplay').removeClass('btn-success')
-      return
+  function selfplay( action) {
+    if (action == 'on') {
+      $('#btn_tgl_selfplay').css('background-color','rgb(40, 167, 69)')
+      return $('#btn_tgl_selfplay').addClass('btn-success')
     }
-    $('#btn_selfplay').addClass('btn-success')
+    else if (action == 'off') {
+      $('#btn_tgl_selfplay').css('background-color','')
+      return $('#btn_tgl_selfplay').removeClass('btn-success')
+    }
+    else if (action == 'ison') {
+      return $('#btn_tgl_selfplay').hasClass('btn-success')
+    }
+
+    // action == 'toggle'
+    if (selfplay('ison')) {
+      return selfplay('off')
+    }
+    selfplay('on')
     var interval = 4000
     if (settings('selfplay_speed')) {
       if (settings('selfplay_speed') == 'fast') { interval = 3000 }
       else if (settings('selfplay_speed') == 'slow') { interval = 5000 }
     }
-    setTimeout( cb_selfplay, interval)
+    cb_selfplay()
     function cb_selfplay() { // timer callback
       if (selfplay.ready) {
         selfplay.ready = false
         axutil.hit_endpoint( fast_or_strong('guest').ep + BOT,
           {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi } },
           (data) => {
+            selfplay.ready = true
+            if (!selfplay('ison')) return;
             var botCoord = string2jcoord( data.bot_move)
             show_move( turn(), botCoord, 0.0, 'bot')
 		        g_complete_record = g_record.slice()
@@ -443,10 +465,9 @@ function main( JGO, axutil, p_options) {
             const show_emoji = false
 		        const playing = true
             get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
-            selfplay.ready = true
           }) // hit_endpoint()
       } // if ready
-      if ($('#btn_selfplay').hasClass('btn-success')) { setTimeout( cb_selfplay, interval) }
+      if (selfplay('ison')) { setTimeout( cb_selfplay, interval) }
     } // cb_selfplay()
   } // selfplay()
   selfplay.ready = true
@@ -507,11 +528,13 @@ function main( JGO, axutil, p_options) {
 
   //-------------------------
   function btn_prev() {
+    selfplay('off');
     goto_move( g_record.length - 1); update_emoji(); activate_bot('off')
   }
 
   //-------------------------
   function btn_next() {
+    selfplay('off');
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( g_record.length + 1)
     // Do not analyze handicap stones
@@ -825,21 +848,13 @@ function main( JGO, axutil, p_options) {
     if (state == 'on') {
       $('#btn_clear_var').removeClass('disabled')
       $('#btn_clear_var').addClass('btn-success')
-      /* $('#btn_accept_var').removeClass('disabled')
-       * $('#btn_accept_var').addClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black')
       $('#btn_clear_var').css('background-color', '')
-      /* $('#btn_accept_var').css('color', 'black'); */
-      //$('#btn_clear_var').css('visibility', 'visible');
     }
     else {
       $('#btn_clear_var').addClass('disabled')
       $('#btn_clear_var').removeClass('btn-success')
-      /* $('#btn_accept_var').addClass('disabled')
-       * $('#btn_accept_var').removeClass('btn-danger') */
       $('#btn_clear_var').css('color', 'black')
-      /* $('#btn_accept_var').css('color', 'black'); */
-      //$('#btn_clear_var').css('visibility', 'hidden');
     }
   } // var_button_state()
 
@@ -1252,7 +1267,7 @@ function main( JGO, axutil, p_options) {
       if (document.visibilityState === 'visible') {
         // pass
       } else {
-        $('#btn_selfplay').removeClass('btn-success')
+        selfplay('off')
       }
     })
   } // visibility()
@@ -1268,7 +1283,7 @@ function main( JGO, axutil, p_options) {
   //---------------------------------------------------------------------------------------
   function translate(text) {
     var tab = translate.table[user.data['lang']]
-    if (!tab) { return '' }
+    if (!tab) { get_user_and_translations(); return '' }
     if (!tab[text]) { return text }
     return tab[text]
   } // translate()

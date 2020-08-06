@@ -48,7 +48,7 @@ class AhauxUtils
   // Store and retrieve global client-side settings
   //--------------------------------------------------------
   settings( key, value) {
-    const settings_defaults = { show_emoji:true, show_prob:true, logged_in:false }
+    const settings_defaults = { show_emoji:true, show_prob:true, logged_in:false, selfplay:false }
     var settings = JSON.parse( localStorage.getItem( 'settings'))
     if (!settings) {
       localStorage.setItem( 'settings', JSON.stringify( settings_defaults))
