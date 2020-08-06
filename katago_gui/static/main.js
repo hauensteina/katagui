@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-08-03'
+const DDATE = '2020-08-06'
 const DEBUG = false
 const NIL_P = 0.0001
 
@@ -450,10 +450,17 @@ function main( JGO, axutil, p_options) {
     }
     cb_selfplay()
     function cb_selfplay() { // timer callback
+      if (!settings('logged_in')) {
+        selfplay('off')
+        $('#alertbox_title').html('')
+        $('#alertbox_message').html(translate('Please Log In'))
+        $('#alertbox').modal('show')
+        return
+      }
       if (selfplay.ready) {
         selfplay.ready = false
         axutil.hit_endpoint( fast_or_strong('guest').ep + BOT,
-          {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi } },
+          {'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi':g_komi }, 'selfplay':1 },
           (data) => {
             selfplay.ready = true
             if (!selfplay('ison')) return;
