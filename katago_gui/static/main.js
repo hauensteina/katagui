@@ -53,15 +53,12 @@ function main( JGO, axutil, p_options) {
   //-----------------------------------
   function set_dropdown_handlers() {
     $('#komi_menu').html(g_komi)
-    $('#komi_m75').click( function() {  $('#komi_menu').html('-7.5') })
-    $('#komi_m55').click( function() { $('#komi_menu').html('-5.5') })
-    $('#komi_m35').click( function() { $('#komi_menu').html('-3.5') })
-    $('#komi_m15').click( function() { $('#komi_menu').html('-1.5') })
-    $('#komi_m05').click( function() { $('#komi_menu').html('-0.5') })
+    $('#komi_m505').click( function() {  $('#komi_menu').html('-50.5') })
+    $('#komi_m405').click( function() { $('#komi_menu').html('-40.5') })
+    $('#komi_m305').click( function() { $('#komi_menu').html('-30.5') })
+    $('#komi_m205').click( function() { $('#komi_menu').html('-20.5') })
+    $('#komi_m105').click( function() { $('#komi_menu').html('-10.5') })
     $('#komi_05').click( function()  { $('#komi_menu').html('0.5') })
-    $('#komi_15').click( function()  { $('#komi_menu').html('1.5') })
-    $('#komi_35').click( function()  { $('#komi_menu').html('3.5') })
-    $('#komi_55').click( function()  { $('#komi_menu').html('5.5') })
     $('#komi_75').click( function()  { $('#komi_menu').html('7.5') })
 
     $('#handi_menu').html(g_handi)
