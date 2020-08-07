@@ -1286,8 +1286,8 @@ function main( JGO, axutil, p_options) {
   } // user()
   user.data = {}
 
-  // Translate a text into current language, or get translation table from the back end
-  //---------------------------------------------------------------------------------------
+  // Translate a text into current language.
+  //-------------------------------------------
   function translate(text) {
     if (!(user.data)) { return text }
     if (!(translate.table)) { return text }
