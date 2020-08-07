@@ -7,7 +7,7 @@
 
 'use strict'
 
-const DDATE = '2020-08-06'
+const DDATE = '2020-08-07'
 const DEBUG = false
 const NIL_P = 0.0001
 
