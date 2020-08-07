@@ -217,7 +217,7 @@ def send_reset_email( user):
     ''' User requested a password reset. Send him an email with a reset link. '''
     expires_sec = 3600 * 24 * 7
     s = Serializer( app.config['SECRET_KEY'], expires_sec)
-    token = s.dumps( {'user_id': user.id}).decode('utf-8')
+    token = s.dumps( {'user_id': user.id, 'lang':user.data.get(lang,'eng') }).decode('utf-8')
     msg = Message('Password Reset Request',
                   sender='noreply@ahaux.com',
                   recipients=[user.data['email']])
@@ -256,11 +256,12 @@ def reset_token(token):
         return redirect( url_for('index'))
     s = Serializer(app.config['SECRET_KEY'])
     user_id = s.loads(token)['user_id']
+    lang = s.loads(token)['lang']
     user = auth.User( user_id)
     if not user.valid:
         flash( tr( 'invalid_token', 'warning'))
         return redirect( url_for('reset_request'))
-    ResetPasswordForm.translate( user.data.get( 'lang', 'eng'))
+    ResetPasswordForm.translate( lang)
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password( form.password.data)
