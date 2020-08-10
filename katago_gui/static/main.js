@@ -283,6 +283,8 @@ function main( JGO, axutil, p_options) {
       handle_variation( 'clear')
     })
 
+    $('#btn_watch').click( () => { location.href = 'watch' })
+
     $('#btn_play').click( () => {
       selfplay('off')
       set_emoji()

@@ -29,25 +29,18 @@ from katago_gui import auth
 import katago_gui.translations
 from katago_gui.translations import translate as tr
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
-from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf
+from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf, check_https
 
 @app.route('/watch')
 #-------------------------------
-def index():
+def watch():
     if not check_https(): return redirect( 'https://katagui.herokuapp.com/watch')
     if not current_user.is_authenticated: login_as_guest()
-    return render_template( 'watch.tmpl', mobile=False)
+    return render_template( 'watch.tmpl', mobile=False, home=True)
 
 @app.route('/watch_mobile')
 #-------------------------------
-def index_mobile():
+def watch_mobile():
     if not check_https(): return redirect( 'https://katagui.herokuapp.com/watch_mobile')
     if not current_user.is_authenticated: login_as_guest()
-    return render_template( 'watch_mobile.tmpl', mobile=True)
-
-#-------------------------
-def check_https():
-    protocol = request.headers.get('X-Forwarded-Proto', 'http')
-    if protocol != 'https' and 'HEROKU_FLAG' in os.environ:
-        return False
-    return True
+    return render_template( 'watch_mobile.tmpl', mobile=True, home=True)

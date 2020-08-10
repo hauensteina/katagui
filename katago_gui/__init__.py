@@ -69,3 +69,4 @@ from katago_gui.create_tables import create_tables
 create_tables( db)
 
 from katago_gui import routes
+from katago_gui import routes_watch

@@ -12,6 +12,14 @@ from katago_gui.go_utils import point_from_coords
 import requests
 import os, sys, re
 from datetime import datetime
+from flask import request
+
+#-------------------------
+def check_https():
+    protocol = request.headers.get('X-Forwarded-Proto', 'http')
+    if protocol != 'https' and 'HEROKU_FLAG' in os.environ:
+        return False
+    return True
 
 #--------------------------------
 def get_sgf_tag( sgfstr, tag):

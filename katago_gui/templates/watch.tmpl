@@ -2,18 +2,15 @@
 
 {% block pre %}
   <script type='text/javascript'>
-   /* Filename: templates/index.tmpl
+   /* Filename: templates/watch.tmpl
     * Author: AHN
-    * Creation Date: Jan, 2020
-    * Desktop web interface to play against KataGo.
+    * Creation Date: Aug, 2020
+    * A board to watch other peoples' games
     */
   </script>
 {% endblock pre %}
 
 {% block css %}
-  <script type="text/javascript">
-   if (axutil.isMobile()) { document.location.href = '/index_mobile' }
-  </script>
   <style>
    /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
    /*----------------------------------------------------------------------*/
@@ -195,8 +192,6 @@
             <!-- </div> -->
           </div>
           <div class='row justify-content-center'>
-            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Undo')}}</label>&nbsp;
-            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Pass')}}</label>&nbsp;
             <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>
           </div>
           <div class='row' style='font-size:5pt'>
