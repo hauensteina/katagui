@@ -492,19 +492,6 @@ function main( JGO, axutil, p_options) {
         $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
         set_emoji()
         replay_move_list( moves)
-        // Restoring probs prevents analysis, don't do it.
-	      /* if ('probs' in res) {
-	         var probs = res.probs
-	         for (var i=0; i < moves.length; i++) {
-	         g_record[i].p = parseFloat( probs[i])
-	         }
-	         }
-	         if ('scores' in res) {
-	         var scores = res.scores
-	         for (var i=0; i < moves.length; i++) {
-	         g_record[i].score = parseFloat( scores[i])
-	         }
-	         } */
         g_complete_record = g_record.slice()
         show_movenum()
         g_komi = res.komi
@@ -880,9 +867,6 @@ function main( JGO, axutil, p_options) {
 
   //--------------------------
   function load_state() {
-    /* var bot = localStorage.getItem('bot')
-     * if (BOTS.indexOf( bot) < 0) { bot = BOTS[0] }
-     * change_bot(bot) */
     fast_or_strong('guest')
     if (localStorage.getItem('fast_or_strong') == 'strong') {
       fast_or_strong('strong')
