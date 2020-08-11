@@ -21,6 +21,7 @@ def create_t_user(db):
     ,ts_last_seen timestamptz
     ,email_verified boolean
     ,lang text
+    ,game_hash text
     ) '''
     db.run( sql)
 

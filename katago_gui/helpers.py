@@ -7,12 +7,18 @@
 # Various utility functions
 #
 
+import os, sys, re, uuid
+import requests
+from datetime import datetime
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import request, url_for
+from flask_login import current_user, login_user
+from flask_mail import Message
+
+from katago_gui import app, auth, mail
 from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X, KATAGO_SERVER_GUEST
 from katago_gui.go_utils import point_from_coords
-import requests
-import os, sys, re
-from datetime import datetime
-from flask import request
+from katago_gui.translations import translate as tr
 
 #-------------------------
 def check_https():
@@ -95,3 +101,54 @@ def moves2sgf( moves, probs, scores, meta):
     sgf += movestr
     sgf += ')'
     return sgf
+
+#---------------------------
+def login_as_guest():
+    """ If we are not logged in, log in as guest """
+    print('>>>>>>>>>>>>>>> login guest')
+    if current_user.is_authenticated:return
+    print('>>>>>>>>>>>>>>> create guest')
+    uname = 'guest_' + uuid.uuid4().hex[:7]
+    email = uname + '@guest.guest'
+    user = auth.User( email)
+    user.createdb( { 'fname':'f', 'lname':'l', 'username':uname, 'email_verified':True })
+    login_user( user, remember=True)
+
+
+#-------------------------------
+def send_register_email( user):
+    ''' User register. Send him an email to verify email address before creating account. '''
+    expires_sec = 3600 * 24 * 7
+    s = Serializer( app.config['SECRET_KEY'], expires_sec)
+    token = s.dumps( {'user_id': user.id}).decode('utf-8')
+    msg = Message('Katagui Email Verification',
+                  sender='hauensteina@ahaux.com',
+                  recipients=[user.data['email']])
+    msg.body = f'''
+{tr( 'visit_link_activate')}
+
+{url_for('verify_email', token=token, _external=True)}
+
+{tr( 'register_ignore')}
+    '''
+    mail.send(msg)
+
+#------------------------------
+def send_reset_email( user):
+    ''' User requested a password reset. Send him an email with a reset link. '''
+    expires_sec = 3600 * 24 * 7
+    s = Serializer( app.config['SECRET_KEY'], expires_sec)
+    token = s.dumps( {'user_id': user.id, 'lang':user.data.get('lang','eng') }).decode('utf-8')
+    msg = Message('Password Reset Request',
+                  sender='noreply@ahaux.com',
+                  recipients=[user.data['email']])
+    #msg.body = 'hi there testing a reset'
+    tstr = f'''
+{tr( 'visit_link_password')}
+
+{url_for('reset_token', token=token, _external=True)}
+
+{tr( 'password_ignore')}
+    '''
+    msg.body = tstr
+    mail.send(msg)

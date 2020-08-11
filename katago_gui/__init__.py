@@ -70,3 +70,4 @@ create_tables( db)
 
 from katago_gui import routes
 from katago_gui import routes_watch
+from katago_gui import routes_api

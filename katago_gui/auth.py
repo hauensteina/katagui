@@ -23,7 +23,7 @@ class User(UserMixin):
         self.data = rows[0]
 
     def createdb( self, data):
-        ''' Create User in DB '''
+        """ Create User in DB """
         self.data = data
         self.data['email'] = self.id
         self.data['username'] = self.data['username'].strip()
@@ -45,30 +45,30 @@ class User(UserMixin):
         return 'ok'
 
     def update_db( self):
-        ''' Write our data back to the db '''
+        """ Write our data back to the db """
         db.update_row( 't_user', 'email', self.id, self.data)
 
     def read_from_db( self):
-        ''' Read our data from the db '''
+        """ Read our data from the db """
         data = db.find( 't_user', 'email', self.id)[0]
         self.data.update( data)
 
     def record_activity( self):
-        ''' Set ts_last_seen to now() '''
+        """ Set ts_last_seen to now() """
         db.tstamp( 't_user', 'email', self.id, 'ts_last_seen')
 
     def password_matches( self, password):
-        ''' Check password '''
+        """ Check password """
         return bcrypt.check_password_hash( self.data['password'], password)
 
     def set_password( self, password):
-        ''' Update password '''
+        """ Update password """
         hashed_password = bcrypt.generate_password_hash( password).decode('utf-8')
         self.data['password'] = hashed_password
         db.update_row( 't_user', 'email', self.id, { 'password':hashed_password })
 
     def set_email_verified( self):
-        ''' Mark email as verified '''
+        """ Mark email as verified """
         self.data['email_verified'] = True
         db.update_row( 't_user', 'email', self.id, { 'email_verified':True })
 
