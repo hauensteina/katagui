@@ -24,7 +24,7 @@ from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
 from katago_gui import app, bcrypt, mail, logged_in
-from katago_gui import auth
+from katago_gui import auth, dbmodel
 import katago_gui.translations
 from katago_gui.translations import translate as tr
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
@@ -60,6 +60,16 @@ def index_mobile():
     if not check_https(): return redirect( 'https://katagui.herokuapp.com')
     if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index_mobile.tmpl', mobile=True, home=True)
+
+@app.route('/create_game', methods=['POST'])
+# Create a new game in the database
+#---------------------------------------------------------
+def create_game():
+    data = request.json
+    data.update( {'owner_email':current_user.data['email']})
+    game = dbmodel.Game()
+    game.update_db( data)
+    return jsonify( {'result': 'ok' })
 
 @app.route('/get_translation_table', methods=['POST'])
 # Get internationalization lookup dictionary

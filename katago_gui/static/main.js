@@ -77,6 +77,7 @@ function main( JGO, axutil, p_options) {
       $('#donate_modal').html('')
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
+      axutil.hit_endpoint_simple( '/create_game',{'handicap':g_handi, 'komi':g_komi}, (resp)=>{}) // create new game in db
 
       $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
       reset_game();

@@ -1,3 +1,12 @@
+# /********************************************************************
+# Filename: katago-gui/katago_gui/auth.py
+# Author: AHN
+# Creation Date: Aug, 2020
+# **********************************************************************/
+#
+# Flask login with postgres
+#
+
 from flask_login import UserMixin
 from katago_gui import db, login_manager, bcrypt
 from pdb import set_trace as BP

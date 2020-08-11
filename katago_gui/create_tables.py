@@ -4,6 +4,7 @@ from katago_gui import bcrypt
 
 def create_tables(db):
     create_t_user(db)
+    create_t_game(db)
 
 def create_t_user(db):
     if db.table_exists( 't_user'):
@@ -23,13 +24,18 @@ def create_t_user(db):
     ) '''
     db.run( sql)
 
-    # Insert a test user
-    phash = bcrypt.generate_password_hash( 'welcome').decode('utf-8')
-    db.insert( 't_user',
-               [{
-                   'username':'tester'
-                   ,'email':'tester@test.com'
-                   ,'password':phash
-                   ,'fname':'Joe'
-                   ,'lname':'Schmoe'
-               }])
+def create_t_game(db):
+    if db.table_exists( 't_game'):
+        return
+    sql = '''
+    create table t_game (
+    game_hash text not null primary key
+    ,owner_email text
+    ,handicap integer
+    ,komi real
+    ,ts_started timestamptz
+    ,ts_latest_move timestamptz
+    ,g_record text
+    ,g_complete_record text
+    ) '''
+    db.run( sql)
