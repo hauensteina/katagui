@@ -38,6 +38,8 @@ def create_game():
     data.update( {'owner_email':current_user.data['email']})
     game = dbmodel.Game()
     game.update_db( data)
+    current_user.data['game_hash'] = game.id
+    current_user.update_db()
     return jsonify( {'result': 'ok' })
 
 @app.route('/english', methods=['GET'])

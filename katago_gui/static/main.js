@@ -37,8 +37,8 @@ function main( JGO, axutil, p_options) {
   //var g_player = null
   var g_ko = null // ko coordinate
   var g_last_move = null // last move coordinate
-  var g_record = []
-  var g_complete_record = []
+  //var g_record = []
+  //var g_complete_record = []
   var g_play_btn_buffer = false // buffer one play btn click
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
@@ -91,10 +91,10 @@ function main( JGO, axutil, p_options) {
     })
   } // set_dropdown_handlers()
 
-  // BLACK or WHITE depending on length of g_record
+  // BLACK or WHITE depending on grec.pos()
   //-------------------------------------------------
   function turn() {
-    if (g_record.length % 2) {
+    if (grec.pos() % 2) {
       return JGO.WHITE
     }
     return JGO.BLACK
@@ -120,16 +120,17 @@ function main( JGO, axutil, p_options) {
 		hover()
 
 		// Click on empty board resets everything
-		if (g_record.length == 0) {
+		if (grec.pos() == 0) {
 			reset_game()
 		}
 
 		// Add the new move
 		maybe_start_var()
 		var mstr = jcoord2string( coord)
-		g_complete_record = g_record.slice()
-		g_complete_record.push( {'mv':mstr, 'p':0.0, 'agent':'human'} )
-		goto_move( g_complete_record.length)
+		//g_complete_record = g_record.slice() //@@@
+		//g_complete_record.push( {'mv':mstr, 'p':0.0, 'agent':'human'} )
+    grec.append( {'mv':mstr, 'p':0.0, 'agent':'human'})
+		goto_move( grec.len())
 		set_emoji()
 		const playing = true
 		get_prob_genmove( function( data) { if (activate_bot.state == 'on') { bot_move_callback( data) } },
@@ -361,7 +362,7 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_pass').click( () => {
       selfplay('off')
-      g_complete_record = g_record.slice()
+      g_complete_record = g_record.slice() //@@@
       g_complete_record.push( {'mv':'pass', 'p':NIL_P, 'agent':'human'} )
       goto_move( g_complete_record.length)
       botmove_if_active()
@@ -378,7 +379,7 @@ function main( JGO, axutil, p_options) {
 	      goto_move( g_record.length - 1)
       }
       if (at_end) {
-        g_complete_record = g_record
+        g_complete_record = g_record //@@@
       }
       show_movenum()
     })
@@ -466,7 +467,7 @@ function main( JGO, axutil, p_options) {
             if (!selfplay('ison')) return;
             var botCoord = string2jcoord( data.bot_move)
             show_move( turn(), botCoord, 0.0, 'bot')
-		        g_complete_record = g_record.slice()
+		        g_complete_record = g_record.slice() //@@@
 		        replay_move_list( g_record)
 		        show_movenum()
             const show_emoji = false
@@ -495,7 +496,7 @@ function main( JGO, axutil, p_options) {
         $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
         set_emoji()
         replay_move_list( moves)
-        g_complete_record = g_record.slice()
+        g_complete_record = g_record.slice() //@@@
         show_movenum()
         g_komi = res.komi
         get_handicap()
@@ -652,7 +653,7 @@ function main( JGO, axutil, p_options) {
 			var botCoord = string2jcoord( data.bot_move)
 		}
 		show_move( turn(), botCoord, 0.0, 'bot')
-		g_complete_record = g_record.slice()
+		g_complete_record = g_record.slice() //@@@
 		replay_move_list( g_record)
 		show_movenum()
 		const show_emoji = false
@@ -681,17 +682,17 @@ function main( JGO, axutil, p_options) {
   // Moves
   //========
 
-  // Show a move on the board and append it to g_record
-  //------------------------------------------------------
+  // Show a move on the board
+  //-----------------------------
   function show_move(player, coord, prob, score, agent) {
     if (coord == 'pass' || coord == 'resign') {
       g_ko = false
-      g_record.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } )
+      grec.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } ) //@@@
       return
     }
     var play = g_jrecord.jboard.playMove( coord, player, g_ko)
     if (play.success) {
-      g_record.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } )
+      grec.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } ) //@@@
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
       node.setType( coord, player) // play stone
@@ -717,7 +718,7 @@ function main( JGO, axutil, p_options) {
     //g_player = JGO.BLACK
     g_ko = false
     g_last_move = false
-    g_record = []
+    grec.seek(0) // g_record = [] //@@@
     g_jrecord.jboard.clear()
     g_jrecord.root = g_jrecord.current = null
     show_movenum()
@@ -728,8 +729,9 @@ function main( JGO, axutil, p_options) {
     handle_variation( 'clear')
     set_load_sgf_handler.loaded_game = null
     show_game_info( set_load_sgf_handler.loaded_game)
-    g_complete_record = []
-    g_record = []
+    grec.reset()
+    //g_complete_record = []
+    //g_record = [] //@@@
     goto_first_move()
     if (g_handi < 2) { return }
     var hstones =  HANDISTONES[g_handi]
@@ -763,10 +765,10 @@ function main( JGO, axutil, p_options) {
   function goto_move( n) {
     score_position.active = false
     best_btn_callback.active = false
-    var totmoves = g_complete_record.length
+    var totmoves = grec.len() // g_complete_record.length
     if (n > totmoves) { n = totmoves }
     if (n < 1) { goto_first_move(); set_emoji(); return }
-    var record = g_complete_record.slice( 0, n)
+    var record = grec.prefix(n)
     replay_move_list( record)
     show_movenum()
     show_prob()
@@ -775,9 +777,9 @@ function main( JGO, axutil, p_options) {
 
   //----------------------------
   function show_movenum() {
-    if (!g_complete_record) { return }
-    var totmoves = g_complete_record.length
-    var n = g_record.length
+    if (!grec.len()) { return }
+    var totmoves = grec.len()
+    var n = grec.pos()
     $('#movenum').html( `${n} / ${totmoves}`)
   } // show_movenum()
 
@@ -796,10 +798,10 @@ function main( JGO, axutil, p_options) {
     else if (action == 'clear') { // Restore game record and forget the variation
       if (handle_variation.var_backup) {
         g_complete_record = JSON.parse( JSON.stringify( handle_variation.var_backup))
-        g_record = g_complete_record.slice( 0, handle_variation.var_pos)
+        g_record = g_complete_record.slice( 0, handle_variation.var_pos) //@@@
 	      // If there is only one more move, forget it.
 	      if (g_record.length + 1 == g_complete_record.length) {
-	        g_complete_record.pop()
+	        g_complete_record.pop() //@@@
 	      }
         goto_move( g_record.length)
         update_emoji(); activate_bot('off')
@@ -811,7 +813,7 @@ function main( JGO, axutil, p_options) {
     else if (action == 'accept') { // Forget saved game record and replace it with the variation
       if (var_button_state() == 'off') { return }
       handle_variation.var_backup = null
-      g_complete_record = g_record
+      g_complete_record = g_record //@@@
       var_button_state( 'off')
       $('#status').html( 'Variation accepted')
     }
@@ -822,7 +824,7 @@ function main( JGO, axutil, p_options) {
   // Start a variation if we're not at the end
   //---------------------------------------------
   function maybe_start_var() {
-    if (g_complete_record && g_record.length < g_complete_record.length) {
+    if (grec.len() && grec.pos() < grec.len()) {
       if (!handle_variation.var_backup) { // we are not in a variation, make one
         handle_variation( 'save')
       }
@@ -860,8 +862,8 @@ function main( JGO, axutil, p_options) {
   function save_state() {
     localStorage.setItem('fast_or_strong', fast_or_strong().val)
     if (var_button_state() == 'off') { // don't save if in variation
-      localStorage.setItem('record', JSON.stringify( g_record))
-      localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
+      localStorage.setItem('game_record', grec.dumps())
+      //localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
       localStorage.setItem('komi', JSON.stringify( g_komi))
       localStorage.setItem('bot_active', activate_bot.state)
       localStorage.setItem('loaded_game', JSON.stringify( set_load_sgf_handler.loaded_game))
@@ -874,18 +876,17 @@ function main( JGO, axutil, p_options) {
     if (localStorage.getItem('fast_or_strong') == 'strong') {
       fast_or_strong('strong')
     }
-    if (localStorage.getItem('record') === null) { return }
-    if (localStorage.getItem('complete_record') === null) { return }
-    if (localStorage.getItem('record') === 'null') { return }
-    if (localStorage.getItem('complete_record') === 'null') { return }
+    if (localStorage.getItem('game_record') === null) { return }
+    if (localStorage.getItem('game_record') === 'null') { return }
     set_load_sgf_handler.loaded_game = JSON.parse( localStorage.getItem( 'loaded_game'))
     show_game_info( set_load_sgf_handler.loaded_game)
-    g_record = JSON.parse( localStorage.getItem('record'))
-    g_complete_record = JSON.parse( localStorage.getItem('complete_record'))
+    //g_record = JSON.parse( localStorage.getItem('record')) //@@@
+    //g_complete_record = JSON.parse( localStorage.getItem('complete_record'))
+    grec.loads( localStorage.getItem('game_record'))
     g_komi = JSON.parse( localStorage.getItem('komi'))
     activate_bot.state = localStorage.getItem('bot_active')
     $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
-    goto_move( g_record.length)
+    goto_move( grec.pos())
   }
 
   //======================
@@ -902,7 +903,7 @@ function main( JGO, axutil, p_options) {
       $('#status').html( '...')
     }
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			{'board_size': BOARD_SIZE, 'moves': moves_only(g_record), 'config':{'komi': g_komi } },
+			{'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
 			(data) => {
         get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
 			  if (completion) { completion(data) }
@@ -919,7 +920,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------------------------------
   function get_prob_callback( winprob, score, update_emo, playing) {
     record_activity()
-		if (g_record.length) {
+		if (grec.pos()) {
 			var p = parseFloat(winprob)
 			g_record[ g_record.length - 1].p = p // Remember win prob of position
 			g_complete_record[ g_record.length - 1].p = p
@@ -956,10 +957,10 @@ function main( JGO, axutil, p_options) {
 
   //------------------------------------------
   function show_prob( update_emo, playing) {
-    var n = g_record.length - 1
-    if (n >= 0) {
-      var p = g_record[n].p
-      var score = g_record[n].score
+    var cur = grec.curmove()
+    if (cur) {
+      var p = cur.p
+      var score = cur.score
       // 0.8 -> 1.0; 1.3 -> 1.5 etc
       score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
       if (p == 0) {
@@ -975,7 +976,7 @@ function main( JGO, axutil, p_options) {
         }
         scorestr += Math.abs(score)
         var tstr = translate('P(B wins)') + ': ' + p.toFixed(2)
-        if (typeof(g_record[n].score) !== 'undefined') {
+        if (typeof(cur.score) !== 'undefined') {
           tstr += scorestr
         }
         $('#status').html(tstr)
@@ -1179,14 +1180,14 @@ function main( JGO, axutil, p_options) {
       jboard.setType( coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
       hover.coord = coord
       if (col) {
-        replay_move_list( g_record) // remove artifacts
+        replay_move_list( grec.board_moves()) // remove artifacts
         jboard.setType( coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
       }
     }
     else if (hover.coord) {
       jboard.setType( hover.coord, JGO.CLEAR)
       hover.coord = null
-      replay_move_list( g_record) // remove artifacts
+      replay_move_list( grec.board_moves()) // remove artifacts
     }
   } // hover()
   hover.coord = null
@@ -1295,6 +1296,31 @@ function main( JGO, axutil, p_options) {
       })
   } // get_user_and_translations()
 
+  // Keep track of the moves in two lists:
+  // complete_record has all moves
+  // record has all moves currently on the board. A prefix of complete_record.
+  //--------------------------------
+  class GameRecord {
+    constructor() { this.complete_record = []; this.record = [] }
+    init( record, complete_record) { this.complete_record = complete_record; this.record = record }
+    reset() { this.complete_record = []; this.record = [] }
+    append( mv) { this.complete_record = this.record.slice(); this.complete_record.push( mv) }
+    push( mv) { this.record.push( mv) }
+    pos() { this.record.length }
+    board_moves() { return this.record }
+    len() { this.complete_record.length }
+    curmove() { return this.record[ this.record.length - 1] }
+    prefix(n) { return this.complete_record.slice(0,n) }
+    seek( movenum) { this.record = this.complete_record.slice( 0,movenum) }
+    dumps() { return JSON.stringify( { 'complete_record':this.complete_record, 'record':this.record })}
+    loads(json) {
+      var tt = JSON.parse( json)
+      this.record = tt.record; this.complete_record = tt.complete_record
+    }
+
+  } // class GameRecord
+
+  var grec = new GameRecord()
   settings()
   set_btn_handlers()
   set_dropdown_handlers()
