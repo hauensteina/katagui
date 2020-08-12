@@ -27,7 +27,7 @@ class AhauxUtils
 
     var res = parts1.reduce( comp, 0)
     return res
-  }
+  } // compversions()
 
   // We need d3 and jquery
   //-------------------------
@@ -44,6 +44,12 @@ class AhauxUtils
     this.hit_endpoint('init')
 
   } // constructor()
+
+  // Make a deep copy of any object
+  //----------------------------------
+  deepcopy( x) {
+    return JSON.parse( JSON.stringify( x))
+  } // deepcopy()
 
   // Store and retrieve global client-side settings
   //--------------------------------------------------------
