@@ -313,9 +313,9 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_save').click( () => {
       selfplay('off')
-      var rec = moves_only(g_complete_record)
-      var probs = probs_only(g_complete_record)
-      var scores = scores_only(g_complete_record)
+      var rec = moves_only( grec.all_moves())
+      var probs = probs_only( grec.all_moves())
+      var scores = scores_only( grec.all_moves())
       for (var i=0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
       for (var i=0; i < scores.length; i++) { scores[i] = scores[i]?scores[i].toFixed(1):'0.0' }
       // Kludge to manage passes
@@ -382,7 +382,7 @@ function main( JGO, axutil, p_options) {
     $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); activate_bot('off') })
     $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); activate_bot('off') })
     $('#btn_first').click( () => {  selfplay('off'); goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
-    $('#btn_last').click( () => {  selfplay('off'); goto_move( g_complete_record.length); update_emoji(); activate_bot('off') })
+    $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); activate_bot('off') })
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
@@ -714,9 +714,9 @@ function main( JGO, axutil, p_options) {
     var hstones =  HANDISTONES[g_handi]
     for (const [idx,s] of hstones.entries()) {
       if (idx > 0) {
-        g_complete_record.push( {'mv':'pass', 'p':NIL_P, 'agent':''} )
+        grec.ppush( {'mv':'pass', 'p':NIL_P, 'agent':''} )
       }
-      g_complete_record.push( {'mv':s, 'p':NIL_P, 'agent':''} )
+      grec.ppush( {'mv':s, 'p':NIL_P, 'agent':''} )
     }
     goto_move(1000)
   } // reset_game()
@@ -1282,15 +1282,16 @@ function main( JGO, axutil, p_options) {
       this.complete_record[ this.record.length-1].p = p
     }
     push( mv) { this.record.push( mv) }
+    ppush( mv) { this.complete_record.push( mv) }
     pop() { return this.complete_record.pop() }
     pos() { return this.record.length }
     board_moves() { return this.record }
+    all_moves() { return this.complete_record }
     len() { return this.complete_record.length }
     curmove() { return this.record[ this.record.length - 1] }
     prevmove() { return this.record[ this.record.length - 2] }
     nextmove() { return this.complete_record[ this.record.length] }
     prefix(n) { return this.complete_record.slice(0,n) }
-    seek( movenum) { this.record = this.complete_record.slice( 0,movenum) }
     dumps() { return JSON.stringify( { 'complete_record':this.complete_record, 'record':this.record })}
     loads(json) {
       var tt = JSON.parse( json)
