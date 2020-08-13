@@ -122,7 +122,7 @@ function main( JGO, axutil, p_options) {
 		// Add the new move
 		maybe_start_var()
 		var mstr = jcoord2string( coord)
-    grec.append( {'mv':mstr, 'p':0.0, 'agent':'human'})
+    grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
 		goto_move( grec.len())
 		set_emoji()
 		const playing = true
@@ -357,7 +357,7 @@ function main( JGO, axutil, p_options) {
       selfplay('off')
       if (score_position.active) { goto_move( grec.pos()); return }
       maybe_start_var()
-      grec.append( {'mv':'pass', 'p':NIL_P, 'agent':'human'})
+      grec.push( {'mv':'pass', 'p':NIL_P, 'agent':'human'})
       goto_move( grec.len())
       botmove_if_active()
     })
@@ -372,7 +372,7 @@ function main( JGO, axutil, p_options) {
 	      goto_move( grec.pos() - 1)
       }
       if (at_end) {
-        grec.sync()
+        grec.truncate()
       }
       show_movenum()
     })
@@ -666,12 +666,12 @@ function main( JGO, axutil, p_options) {
   function show_move(player, coord, prob, score, agent) {
     if (coord == 'pass' || coord == 'resign') {
       g_ko = false
-      grec.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } ) //@@@
+      grec.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } )
       return
     }
     var play = g_jrecord.jboard.playMove( coord, player, g_ko)
     if (play.success) {
-      grec.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } ) //@@@
+      grec.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } )
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
       node.setType( coord, player) // play stone
@@ -697,7 +697,7 @@ function main( JGO, axutil, p_options) {
     //g_player = JGO.BLACK
     g_ko = false
     g_last_move = false
-    grec.seek(0)
+    grec.rewind()
     g_jrecord.jboard.clear()
     g_jrecord.root = g_jrecord.current = null
     show_movenum()
@@ -708,15 +708,15 @@ function main( JGO, axutil, p_options) {
     handle_variation( 'clear')
     set_load_sgf_handler.loaded_game = null
     show_game_info( set_load_sgf_handler.loaded_game)
-    grec.reset()
+    grec = new GameRecord()
     goto_first_move()
     if (g_handi < 2) { return }
     var hstones =  HANDISTONES[g_handi]
     for (const [idx,s] of hstones.entries()) {
       if (idx > 0) {
-        grec.ppush( {'mv':'pass', 'p':NIL_P, 'agent':''} )
+        grec.push( {'mv':'pass', 'p':NIL_P, 'agent':''} )
       }
-      grec.ppush( {'mv':s, 'p':NIL_P, 'agent':''} )
+      grec.push( {'mv':s, 'p':NIL_P, 'agent':''} )
     }
     goto_move(1000)
   } // reset_game()
@@ -742,7 +742,7 @@ function main( JGO, axutil, p_options) {
   function goto_move( n) {
     score_position.active = false
     best_btn_callback.active = false
-    var totmoves = grec.len() // g_complete_record.length
+    var totmoves = grec.len()
     if (n > totmoves) { n = totmoves }
     if (n < 1) { goto_first_move(); set_emoji(); return }
     var record = grec.prefix(n)
@@ -1264,38 +1264,33 @@ function main( JGO, axutil, p_options) {
   // The list 'record' has all moves currently on the board. A prefix of complete_record.
   //----------------------------------------------------------------------------------------
   class GameRecord {
-    constructor() { this.complete_record = []; this.record = [] }
+    constructor() { this.record = []; this.n_visible = 0 }
     clone() {
       var copy = new GameRecord()
-      copy.complete_record = axutil.deepcopy( this.complete_record)
       copy.record = axutil.deepcopy( this.record)
+      copy.n_visible = this.n_visible
       return copy
     }
-    init( record, complete_record) { this.complete_record = complete_record; this.record = record }
-    reset() { this.complete_record = []; this.record = [] }
-    append( mv) { this.complete_record = this.record.slice(); this.complete_record.push( mv) }
-    sync() { this.complete_record = this.record.slice() }
     update( p, score) {
       this.record[ this.record.length-1].score = score
-      this.complete_record[ this.record.length-1].score = score
       this.record[ this.record.length-1].p = p
-      this.complete_record[ this.record.length-1].p = p
     }
-    push( mv) { this.record.push( mv) }
-    ppush( mv) { this.complete_record.push( mv) }
-    pop() { return this.complete_record.pop() }
-    pos() { return this.record.length }
-    board_moves() { return this.record }
-    all_moves() { return this.complete_record }
-    len() { return this.complete_record.length }
-    curmove() { return this.record[ this.record.length - 1] }
-    prevmove() { return this.record[ this.record.length - 2] }
-    nextmove() { return this.complete_record[ this.record.length] }
-    prefix(n) { return this.complete_record.slice(0,n) }
-    dumps() { return JSON.stringify( { 'complete_record':this.complete_record, 'record':this.record })}
+    push( mv) { this.record.push( mv); this.n_visible = this.record.length }
+    pop() { return this.record.pop(); this.n_visible = this.record.length }
+    pos() { return this.n_visible }
+    rewind() { this.n_visible = 0 }
+    board_moves() { return this.record.slice( 0, this.n_visible) }
+    truncate() { this.record = board_moves() }
+    all_moves() { return this.record }
+    len() { return this.record.length }
+    curmove() { return this.record[ this.n_visible - 1] }
+    prevmove() { return this.record[ this.n_visible - 2] }
+    nextmove() { return this.record[ this.n_visible] }
+    prefix(n) { return this.record.slice(0,n) }
+    dumps() { return JSON.stringify( { 'record':this.record, 'n_visible':this.n_visible })}
     loads(json) {
       var tt = JSON.parse( json)
-      this.record = tt.record; this.complete_record = tt.complete_record
+      this.record = tt.record; this.n_visible = tt.n_visible
     }
   } // class GameRecord
 
