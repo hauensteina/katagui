@@ -48,7 +48,15 @@ class AhauxUtils
   // Make a deep copy of any object
   //----------------------------------
   deepcopy( x) {
-    return JSON.parse( JSON.stringify( x))
+    var res;
+    try {
+      res = JSON.parse( JSON.stringify( x))
+      return res
+    }
+    catch(err) {
+      debugger
+      var tt = 42
+    }
   } // deepcopy()
 
   // Store and retrieve global client-side settings

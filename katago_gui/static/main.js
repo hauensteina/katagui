@@ -91,8 +91,9 @@ function main( JGO, axutil, p_options) {
 
   // BLACK or WHITE depending on grec.pos()
   //-------------------------------------------------
-  function turn() {
-    if (grec.pos() % 2) {
+  function turn( idx_) {
+    var idx = idx_ || grec.pos()
+    if (idx % 2) {
       return JGO.WHITE
     }
     return JGO.BLACK
@@ -148,7 +149,7 @@ function main( JGO, axutil, p_options) {
     var botCoord = string2jcoord( data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
     var node = g_jrecord.createNode( true)
-    replay_move_list( grec.board_moves()) // remove artifacts, preserve mark on last play
+    replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
     var mmax = 0
     // Mark candidates with letters if psv is close enough to max
     for (const [idx,m] of best.entries()) {
@@ -460,8 +461,7 @@ function main( JGO, axutil, p_options) {
             if (!selfplay('ison')) return;
             var botCoord = string2jcoord( data.bot_move)
             show_move( turn(), botCoord, 0.0, 'bot')
-		        grec.sync()
-		        replay_move_list( grec.board_moves())
+		        replay_moves( grec.pos())
 		        show_movenum()
             const show_emoji = false
 		        const playing = true
@@ -489,7 +489,6 @@ function main( JGO, axutil, p_options) {
         $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
         set_emoji()
         replay_move_list( moves)
-        grec.sync()
         show_movenum()
         g_komi = res.komi
         get_handicap()
@@ -629,11 +628,11 @@ function main( JGO, axutil, p_options) {
 		}
 		else {
 			maybe_start_var()
-			var botCoord = string2jcoord( data.bot_move)
+			//var botCoord = string2jcoord( data.bot_move)
 		}
-		show_move( turn(), botCoord, 0.0, 'bot')
-		grec.sync()
-		replay_move_list( grec.board_moves())
+    grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':'bot' } )
+		//show_move( turn(), botCoord, 0.0, 'bot')
+		replay_moves( grec.pos())
 		show_movenum()
 		const show_emoji = false
 		const playing = true
@@ -662,16 +661,16 @@ function main( JGO, axutil, p_options) {
   //========
 
   // Show a move on the board
-  //-----------------------------
-  function show_move(player, coord, prob, score, agent) {
+  //------------------------------------
+  function show_move(player, coord) {
     if (coord == 'pass' || coord == 'resign') {
       g_ko = false
-      grec.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } )
+      //grec.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } )
       return
     }
     var play = g_jrecord.jboard.playMove( coord, player, g_ko)
     if (play.success) {
-      grec.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } )
+      //grec.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } )
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
       node.setType( coord, player) // play stone
@@ -697,7 +696,7 @@ function main( JGO, axutil, p_options) {
     //g_player = JGO.BLACK
     g_ko = false
     g_last_move = false
-    grec.rewind()
+    grec.seek(0)
     g_jrecord.jboard.clear()
     g_jrecord.root = g_jrecord.current = null
     show_movenum()
@@ -707,7 +706,7 @@ function main( JGO, axutil, p_options) {
   function reset_game() {
     handle_variation( 'clear')
     set_load_sgf_handler.loaded_game = null
-    show_game_info( set_load_sgf_handler.loaded_game)
+    show_game_info() // clear
     grec = new GameRecord()
     goto_first_move()
     if (g_handi < 2) { return }
@@ -718,24 +717,25 @@ function main( JGO, axutil, p_options) {
       }
       grec.push( {'mv':s, 'p':NIL_P, 'agent':''} )
     }
-    goto_move(1000)
+    goto_move( grec.len())
   } // reset_game()
 
-  // Replay game from empty board.
+  // Replay n moves from empty board.
   //------------------------------------
-  function replay_move_list( mlist) {
+  function replay_moves( n) {
     var jboard = g_jrecord.jboard
     goto_first_move()
-    for (var move_prob of mlist) {
-      if (typeof move_prob == 'string') { // pass or resign
-        move_prob = { 'mv':move_prob, 'p':NIL_P, 'agent':'' }
-      }
+    for (const [idx, move_prob] of grec.prefix(n).entries()) {
+      //if (typeof move_prob == 'string') { // pass or resign
+      //  move_prob = { 'mv':move_prob, 'p':NIL_P, 'agent':'' }
+      //}
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
-      show_move( turn(), coord, move_prob.p, move_prob.score, move_prob.agent)
+      show_move( turn(idx), coord)
     }
+    grec.seek(n)
     show_movenum()
-  } // replay_move_list()
+  } // replay_moves()
 
   // Replay and show game up to move n
   //-------------------------------------
@@ -745,8 +745,8 @@ function main( JGO, axutil, p_options) {
     var totmoves = grec.len()
     if (n > totmoves) { n = totmoves }
     if (n < 1) { goto_first_move(); set_emoji(); return }
-    var record = grec.prefix(n)
-    replay_move_list( record)
+    //var record = grec.prefix(n)
+    replay_moves( n)
     show_movenum()
     show_prob()
     //update_emoji()
@@ -768,25 +768,26 @@ function main( JGO, axutil, p_options) {
   //--------------------------------------------------------
   function handle_variation( action) {
     if (action == 'save') { // Save record and start a variation
-      handle_variation.var_backup = grec.clone()
+      grec.enter_var()
+      //handle_variation.var_backup = grec.clone()
       var_button_state('on')
     }
     else if (action == 'clear') { // Restore game record and forget the variation
-      if (handle_variation.var_backup) {
-        grec = handle_variation.var_backup.clone()
+      grec.exit_var()
+//      if (grec.var_active) {
+//        grec = handle_variation.var_backup.clone()
 	      // If there is only one more move, forget it.
-	      if (grec.pos() + 1 == grec.len()) {
-	        grec.pop()
-	      }
-        goto_move( grec.pos())
-        update_emoji(); activate_bot('off')
-        handle_variation.var_backup = null
-        var_button_state('off')
-        $('#status').html( 'Variation deleted')
-      }
+//	      if (grec.pos() + 1 == grec.len()) {
+//	        grec.pop()
+//	      }
+      goto_move( grec.pos())
+      update_emoji(); activate_bot('off')
+      //handle_variation.var_backup = null
+      var_button_state('off')
+      $('#status').html( 'Variation deleted')
     }
   } // handle_variation()
-  handle_variation.var_backup = null
+  //handle_variation.var_backup = null
 
   // Start a variation if we're not at the end
   //---------------------------------------------
@@ -1143,14 +1144,14 @@ function main( JGO, axutil, p_options) {
       jboard.setType( coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
       hover.coord = coord
       if (col) {
-        replay_move_list( grec.board_moves()) // remove artifacts
+        replay_moves( grec.pos()) // remove artifacts
         jboard.setType( coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
       }
     }
     else if (hover.coord) {
       jboard.setType( hover.coord, JGO.CLEAR)
       hover.coord = null
-      replay_move_list( grec.board_moves()) // remove artifacts
+      replay_moves( grec.pos()) // remove artifacts
     }
   } // hover()
   hover.coord = null
@@ -1262,23 +1263,36 @@ function main( JGO, axutil, p_options) {
   // Keep track of the moves in two lists:
   // The list 'complete_record' has all moves.
   // The list 'record' has all moves currently on the board. A prefix of complete_record.
-  //----------------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------
   class GameRecord {
-    constructor() { this.record = []; this.n_visible = 0 }
+    constructor() { this.record = []; this.n_visible = 0; this.var_record = []; this.var_n_visible = 0; }
     clone() {
       var copy = new GameRecord()
       copy.record = axutil.deepcopy( this.record)
       copy.n_visible = this.n_visible
+      copy.var_record = axutil.deepcopy( this.var_record)
+      copy.var_n_visible = this.var_n_visible
       return copy
     }
     update( p, score) {
       this.record[ this.record.length-1].score = score
       this.record[ this.record.length-1].p = p
     }
-    push( mv) { this.record.push( mv); this.n_visible = this.record.length }
-    pop() { return this.record.pop(); this.n_visible = this.record.length }
+    push( mv) {
+      this.record.push( mv); this.n_visible = this.record.length }
+    pop() { this.record.pop(); this.n_visible = this.record.length }
     pos() { return this.n_visible }
-    rewind() { this.n_visible = 0 }
+    enter_var() {
+      // squirrel away the game
+      this.var_record = axutil.deepcopy( this.record); this.var_n_visible = this.n_visible;
+      // Branch off at current move
+      this.record = axutil.deepcopy( this.board_moves()); this.n_visible = this.len()
+    }
+    exit_var() {
+      this.record = axutil.deepcopy( this.var_record); this.n_visible = this.var_n_visible;
+      this.var_record = []; this.var_n_visible = 0;
+    }
+    seek(n) { this.n_visible = n }
     board_moves() { return this.record.slice( 0, this.n_visible) }
     truncate() { this.record = board_moves() }
     all_moves() { return this.record }
@@ -1287,10 +1301,15 @@ function main( JGO, axutil, p_options) {
     prevmove() { return this.record[ this.n_visible - 2] }
     nextmove() { return this.record[ this.n_visible] }
     prefix(n) { return this.record.slice(0,n) }
-    dumps() { return JSON.stringify( { 'record':this.record, 'n_visible':this.n_visible })}
+    dumps() { return JSON.stringify( {
+      'record':this.record, 'n_visible':this.n_visible,
+      'var_record':this.var_record, 'var_n_visible':this.var_n_visible })
+    }
     loads(json) {
+      //debugger
       var tt = JSON.parse( json)
       this.record = tt.record; this.n_visible = tt.n_visible
+      this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
     }
   } // class GameRecord
 
