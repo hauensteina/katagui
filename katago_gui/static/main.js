@@ -578,8 +578,8 @@ function main( JGO, axutil, p_options) {
   //-----------------------------
   function get_katago_move() {
     $('#status').html( translate('KataGo is thinking ...'))
-    var randomness = 0.0
-    get_bot_move( g_handi, g_komi, 0)
+    axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
+			'config':{'komi':g_komi } }, bot_move_callback)
   } // get_katago_move()
 
   //--------------------------------
@@ -591,13 +591,6 @@ function main( JGO, axutil, p_options) {
     get_katago_move()
     return true
   } // botmove_if_active()
-
-  // Get next move from the bot and show on board
-  //----------------------------------------------------
-  function get_bot_move( handicap, komi, playouts) {
-    axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
-			'config':{'komi':komi } }, bot_move_callback)
-  } // get_bot_move()
 
   // Do things after the bot came back with move and estimate
   //------------------------------------------------------------
@@ -774,8 +767,8 @@ function main( JGO, axutil, p_options) {
     }
     else if (action == 'clear') { // Restore game record and forget the variation
       grec.exit_var()
-//      if (grec.var_active) {
-//        grec = handle_variation.var_backup.clone()
+      //      if (grec.var_active) {
+      //        grec = handle_variation.var_backup.clone()
 	      // If there is only one more move, forget it.
 //	      if (grec.pos() + 1 == grec.len()) {
 //	        grec.pop()
@@ -793,9 +786,9 @@ function main( JGO, axutil, p_options) {
   //---------------------------------------------
   function maybe_start_var() {
     if (grec.len() && grec.pos() < grec.len()) {
-      if (var_button_state() == 'off') {
+      //if (var_button_state() == 'off') {
         handle_variation( 'save')
-      }
+      //}
     }
   } // maybe_start_var()
 
@@ -1283,18 +1276,23 @@ function main( JGO, axutil, p_options) {
     pop() { this.record.pop(); this.n_visible = this.record.length }
     pos() { return this.n_visible }
     enter_var() {
-      // squirrel away the game
-      this.var_record = axutil.deepcopy( this.record); this.var_n_visible = this.n_visible;
-      // Branch off at current move
-      this.record = axutil.deepcopy( this.board_moves()); this.n_visible = this.len()
-    }
+      if (this.var_record.length) { // truncate at cur move if in var
+        this.record = this.record.slice( 0, this.n_visible)
+        this.n_visible = this.record.length
+      } else { // start var
+        // squirrel away the game
+        this.var_record = axutil.deepcopy( this.record); this.var_n_visible = this.n_visible;
+        // Branch off at current move
+        this.record = axutil.deepcopy( this.board_moves()); this.n_visible = this.len()
+      }
+    } // enter_var()
     exit_var() {
-      this.record = axutil.deepcopy( this.var_record); this.n_visible = this.var_n_visible;
+      this.record = axutil.deepcopy( this.var_record); this.n_visible = this.var_n_visible+1;
       this.var_record = []; this.var_n_visible = 0;
     }
     seek(n) { this.n_visible = n }
     board_moves() { return this.record.slice( 0, this.n_visible) }
-    truncate() { this.record = board_moves() }
+    truncate() { this.record = this.board_moves() }
     all_moves() { return this.record }
     len() { return this.record.length }
     curmove() { return this.record[ this.n_visible - 1] }
@@ -1306,7 +1304,6 @@ function main( JGO, axutil, p_options) {
       'var_record':this.var_record, 'var_n_visible':this.var_n_visible })
     }
     loads(json) {
-      //debugger
       var tt = JSON.parse( json)
       this.record = tt.record; this.n_visible = tt.n_visible
       this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
