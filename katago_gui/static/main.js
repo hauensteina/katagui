@@ -488,7 +488,12 @@ function main( JGO, axutil, p_options) {
         var moves = res.moves
         $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
         set_emoji()
-        replay_move_list( moves)
+        grec = new GameRecord()
+        for (var move of moves) {
+          var move_prob = { 'mv':move, 'p':NIL_P, 'agent':'' }
+          grec.push( move_prob)
+        }
+		    replay_moves( grec.pos())
         show_movenum()
         g_komi = res.komi
         get_handicap()
@@ -769,10 +774,10 @@ function main( JGO, axutil, p_options) {
       grec.exit_var()
       //      if (grec.var_active) {
       //        grec = handle_variation.var_backup.clone()
-	      // If there is only one more move, forget it.
-//	      if (grec.pos() + 1 == grec.len()) {
-//	        grec.pop()
-//	      }
+	    // If there is only one more move, forget it.
+      //	      if (grec.pos() + 1 == grec.len()) {
+      //	        grec.pop()
+      //	      }
       goto_move( grec.pos())
       update_emoji(); activate_bot('off')
       //handle_variation.var_backup = null
@@ -787,7 +792,7 @@ function main( JGO, axutil, p_options) {
   function maybe_start_var() {
     if (grec.len() && grec.pos() < grec.len()) {
       //if (var_button_state() == 'off') {
-        handle_variation( 'save')
+      handle_variation( 'save')
       //}
     }
   } // maybe_start_var()
@@ -1253,10 +1258,8 @@ function main( JGO, axutil, p_options) {
       })
   } // get_user_and_translations()
 
-  // Keep track of the moves in two lists:
-  // The list 'complete_record' has all moves.
-  // The list 'record' has all moves currently on the board. A prefix of complete_record.
-  //--------------------------------------------------------------------------------------------------------
+  // Keep track of the game record, visible moves, variation.
+  //------------------------------------------------------------
   class GameRecord {
     constructor() { this.record = []; this.n_visible = 0; this.var_record = []; this.var_n_visible = 0; }
     clone() {
@@ -1268,11 +1271,10 @@ function main( JGO, axutil, p_options) {
       return copy
     }
     update( p, score) {
-      this.record[ this.record.length-1].score = score
-      this.record[ this.record.length-1].p = p
+      this.record[ this.n_visible-1].score = score
+      this.record[ this.n_visible-1].p = p
     }
-    push( mv) {
-      this.record.push( mv); this.n_visible = this.record.length }
+    push( mv) { this.record.push( mv); this.n_visible = this.record.length }
     pop() { this.record.pop(); this.n_visible = this.record.length }
     pos() { return this.n_visible }
     enter_var() {
