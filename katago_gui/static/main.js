@@ -9,7 +9,6 @@
 
 const DDATE = '2020-08-07'
 const DEBUG = false
-const NIL_P = 0.0001
 
 const HANDISTONES = ['',''
   ,['D4','Q16']
@@ -34,7 +33,6 @@ function main( JGO, axutil, p_options) {
 
   var g_jrecord = new JGO.Record(BOARD_SIZE)
   var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
-  //var g_player = null
   var g_ko = null // ko coordinate
   var g_last_move = null // last move coordinate
   var g_play_btn_buffer = false // buffer one play btn click
@@ -358,7 +356,7 @@ function main( JGO, axutil, p_options) {
       selfplay('off')
       if (score_position.active) { goto_move( grec.pos()); return }
       maybe_start_var()
-      grec.push( {'mv':'pass', 'p':NIL_P, 'agent':'human'})
+      grec.push( {'mv':'pass', 'p':0, 'agent':'human'})
       goto_move( grec.len())
       botmove_if_active()
     })
@@ -460,9 +458,9 @@ function main( JGO, axutil, p_options) {
             selfplay.ready = true
             if (!selfplay('ison')) return;
             var botCoord = string2jcoord( data.bot_move)
-            show_move( turn(), botCoord, 0.0, 'bot')
+            maybe_start_var()
+            grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
 		        replay_moves( grec.pos())
-		        show_movenum()
             const show_emoji = false
 		        const playing = true
             get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
@@ -490,7 +488,7 @@ function main( JGO, axutil, p_options) {
         set_emoji()
         grec = new GameRecord()
         for (var move of moves) {
-          var move_prob = { 'mv':move, 'p':NIL_P, 'agent':'' }
+          var move_prob = { 'mv':move, 'p':0, 'agent':'' }
           grec.push( move_prob)
         }
 		    replay_moves( grec.pos())
@@ -534,7 +532,7 @@ function main( JGO, axutil, p_options) {
       goto_move( grec.pos() + 1)
       return
     }
-    if (grec.curmove().p <= NIL_P) {
+    if (grec.curmove().p == 0) {
       btn_next.waiting = true
       get_prob_genmove( (data) => {
         update_emoji()
@@ -663,12 +661,10 @@ function main( JGO, axutil, p_options) {
   function show_move(player, coord) {
     if (coord == 'pass' || coord == 'resign') {
       g_ko = false
-      //grec.push( { 'mv':coord, 'p':prob, 'score':score, 'agent':agent } )
       return
     }
     var play = g_jrecord.jboard.playMove( coord, player, g_ko)
     if (play.success) {
-      //grec.push( { 'mv':jcoord2string( coord), 'p':prob, 'score':score, 'agent':agent } )
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
       node.setType( coord, player) // play stone
@@ -691,7 +687,6 @@ function main( JGO, axutil, p_options) {
 
   //------------------------
   function goto_first_move() {
-    //g_player = JGO.BLACK
     g_ko = false
     g_last_move = false
     grec.seek(0)
@@ -711,9 +706,9 @@ function main( JGO, axutil, p_options) {
     var hstones =  HANDISTONES[g_handi]
     for (const [idx,s] of hstones.entries()) {
       if (idx > 0) {
-        grec.push( {'mv':'pass', 'p':NIL_P, 'agent':''} )
+        grec.push( {'mv':'pass', 'p':0, 'agent':''} )
       }
-      grec.push( {'mv':s, 'p':NIL_P, 'agent':''} )
+      grec.push( {'mv':s, 'p':0, 'agent':''} )
     }
     goto_move( grec.len())
   } // reset_game()
@@ -724,9 +719,6 @@ function main( JGO, axutil, p_options) {
     var jboard = g_jrecord.jboard
     goto_first_move()
     for (const [idx, move_prob] of grec.prefix(n).entries()) {
-      //if (typeof move_prob == 'string') { // pass or resign
-      //  move_prob = { 'mv':move_prob, 'p':NIL_P, 'agent':'' }
-      //}
       var move_string = move_prob.mv
       var coord = string2jcoord( move_string)
       show_move( turn(idx), coord)
@@ -743,11 +735,9 @@ function main( JGO, axutil, p_options) {
     var totmoves = grec.len()
     if (n > totmoves) { n = totmoves }
     if (n < 1) { goto_first_move(); set_emoji(); return }
-    //var record = grec.prefix(n)
     replay_moves( n)
     show_movenum()
     show_prob()
-    //update_emoji()
   } // goto_move()
 
   //----------------------------
@@ -767,20 +757,12 @@ function main( JGO, axutil, p_options) {
   function handle_variation( action) {
     if (action == 'save') { // Save record and start a variation
       grec.enter_var()
-      //handle_variation.var_backup = grec.clone()
       var_button_state('on')
     }
     else if (action == 'clear') { // Restore game record and forget the variation
       grec.exit_var()
-      //      if (grec.var_active) {
-      //        grec = handle_variation.var_backup.clone()
-	    // If there is only one more move, forget it.
-      //	      if (grec.pos() + 1 == grec.len()) {
-      //	        grec.pop()
-      //	      }
       goto_move( grec.pos())
       update_emoji(); activate_bot('off')
-      //handle_variation.var_backup = null
       var_button_state('off')
       $('#status').html( 'Variation deleted')
     }
@@ -791,9 +773,7 @@ function main( JGO, axutil, p_options) {
   //---------------------------------------------
   function maybe_start_var() {
     if (grec.len() && grec.pos() < grec.len()) {
-      //if (var_button_state() == 'off') {
       handle_variation( 'save')
-      //}
     }
   } // maybe_start_var()
 
@@ -829,7 +809,6 @@ function main( JGO, axutil, p_options) {
     localStorage.setItem('fast_or_strong', fast_or_strong().val)
     if (var_button_state() == 'off') { // don't save if in variation
       localStorage.setItem('game_record', grec.dumps())
-      //localStorage.setItem('complete_record', JSON.stringify( g_complete_record))
       localStorage.setItem('komi', JSON.stringify( g_komi))
       localStorage.setItem('bot_active', activate_bot.state)
       localStorage.setItem('loaded_game', JSON.stringify( set_load_sgf_handler.loaded_game))
@@ -960,7 +939,6 @@ function main( JGO, axutil, p_options) {
     if (prev) {
       if (cur.mv == 'pass') {  set_emoji(); return }
       if (prev.mv == 'pass') {  set_emoji(); return }
-      if (prev.p == NIL_P) {  set_emoji(); return }
       if (prev.p == 0) {  set_emoji(); return }
       var pp = prev.p
       var pscore = prev.score
