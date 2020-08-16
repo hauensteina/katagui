@@ -40,7 +40,25 @@ def create_game():
     game.update_db( data)
     current_user.data['game_hash'] = game.id
     current_user.update_db()
+    return jsonify( {'game_hash': game.id })
+
+@app.route('/update_game', methods=['POST'])
+#---------------------------------------------------------
+def update_game():
+    """ Update a game in the database """
+    data = request.json
+    game_hash = current_user.data['game_hash']
+    game = dbmodel.Game( game_hash)
+    game.update_db( data)
     return jsonify( {'result': 'ok' })
+
+@app.route('/load_game', methods=['POST'])
+#----------------------------------------------
+def load_game():
+    """ Load a game from the database """
+    game_hash = current_user.data['game_hash']
+    game = dbmodel.Game( game_hash)
+    return jsonify( game.data)
 
 @app.route('/english', methods=['GET'])
 #---------------------------------------------------------

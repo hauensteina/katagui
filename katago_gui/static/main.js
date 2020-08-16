@@ -70,18 +70,24 @@ function main( JGO, axutil, p_options) {
     $('#handi_9').click( function() { $('#handi_menu').html('9'); $('#komi_menu').html('0.5') })
 
     $('#game_start').click( function() { // New Game -> Go
+      end_game()
       $('#donate_modal').html('')
       g_handi = parseInt( $('#handi_menu').html())
       g_komi = parseFloat( $('#komi_menu').html())
-      axutil.hit_endpoint_simple( '/create_game',{'handicap':g_handi, 'komi':g_komi}, (resp)=>{}) // create new game in db
-
-      $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
       reset_game();
+      $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
       set_emoji();
       activate_bot( 'on')
-      if (g_handi > 1) { botmove_if_active() }
       $('#status').html( '&nbsp;')
+
+      // create new game in db
+      axutil.hit_endpoint_simple( '/create_game',{'handicap':g_handi, 'komi':g_komi},
+        (resp)=>{
+          settings('game_hash', resp.game_hash)
+          if (g_handi > 1) { botmove_if_active() }
+        })
     })
+
     $('#cancel_new_game').click( function() { // New Game -> x
       $('#donate_modal').html('')
     })
@@ -116,6 +122,7 @@ function main( JGO, axutil, p_options) {
 		// Click on empty board resets everything
 		if (grec.pos() == 0) {
 			reset_game()
+      end_game()
 		}
 
 		// Add the new move
@@ -284,6 +291,7 @@ function main( JGO, axutil, p_options) {
       set_emoji()
       if (grec.pos() == 0) {
         reset_game()
+        end_game()
       }
       activate_bot( 'on')
       botmove_if_active()
@@ -486,6 +494,7 @@ function main( JGO, axutil, p_options) {
         var moves = res.moves
         $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
         set_emoji()
+        end_game()
         grec = new GameRecord()
         for (var move of moves) {
           var move_prob = { 'mv':move, 'p':0, 'agent':'' }
@@ -712,6 +721,12 @@ function main( JGO, axutil, p_options) {
     }
     goto_move( grec.len())
   } // reset_game()
+
+  // The active game has ended.
+  //----------------------------
+  function end_game() {
+    settings('game_hash', '')
+  } // end_game()
 
   // Replay n moves from empty board.
   //------------------------------------
@@ -1251,8 +1266,13 @@ function main( JGO, axutil, p_options) {
     update( p, score) {
       this.record[ this.n_visible-1].score = score
       this.record[ this.n_visible-1].p = p
+      if (settings( 'game_hash')) { // we are in an active game
+        this.dbsave()
+      }
     }
-    push( mv) { this.record.push( mv); this.n_visible = this.record.length }
+    push( mv) {
+      this.record.push( mv); this.n_visible = this.record.length
+    } // push()
     pop() { this.record.pop(); this.n_visible = this.record.length }
     pos() { return this.n_visible }
     enter_var() {
@@ -1288,6 +1308,16 @@ function main( JGO, axutil, p_options) {
       this.record = tt.record; this.n_visible = tt.n_visible
       this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
     }
+    dbsave() { // update game in db
+      axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps()}, (resp)=>{})
+    }
+    dbload() { // load game from db
+      axutil.hit_endpoint_simple( '/load_game',{},
+        (resp)=>{
+          this.record = resp.record; this.n_visible = resp.n_visible
+          this.var_record = resp.var_record; this.var_n_visible = resp.var_n_visible
+        })
+    } // dbload()
   } // class GameRecord
 
   var grec = new GameRecord()

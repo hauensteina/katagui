@@ -38,7 +38,6 @@ def create_t_game(db):
     ,komi real
     ,ts_started timestamptz
     ,ts_latest_move timestamptz
-    ,g_record text
-    ,g_complete_record text
+    ,game_record text
     ) '''
     db.run( sql)
