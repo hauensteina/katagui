@@ -136,6 +136,12 @@ def select_move( bot_name):
     current_user.record_activity()
     endpoint = 'select-move/' + bot_name
     args = request.json
+
+    if 'selfplay' in args:
+        current_user.count_selfplay_move()
+    else:
+        current_user.count_move()
+
     res = fwd_to_katago( endpoint, args)
     try:
         return jsonify( res)
@@ -149,6 +155,12 @@ def select_move_guest( bot_name):
     current_user.record_activity()
     endpoint = 'select-move/' + bot_name
     args = request.json
+
+    if 'selfplay' in args:
+        current_user.count_selfplay_move()
+    else:
+        current_user.count_move()
+
     res = fwd_to_katago_guest( endpoint, args)
     try:
         return jsonify( res)
@@ -162,6 +174,12 @@ def select_move_x( bot_name):
     current_user.record_activity()
     endpoint = 'select-move/' + bot_name
     args = request.json
+
+    if 'selfplay' in args:
+        current_user.count_selfplay_move()
+    else:
+        current_user.count_move()
+
     res = fwd_to_katago_x( endpoint, args)
     try:
         return jsonify( res)

@@ -22,6 +22,8 @@ def create_t_user(db):
     ,email_verified boolean
     ,lang text
     ,game_hash text
+    ,move_count integer not null default 0
+    ,self_move_count integer not null default 0
     ) '''
     db.run( sql)
 

@@ -57,6 +57,14 @@ class User(UserMixin):
         """ Set ts_last_seen to now() """
         db.tstamp( 't_user', 'email', self.id, 'ts_last_seen')
 
+    def count_selfplay_move( self):
+        """ Count a selfplay move in the db """
+        db.incr( 't_user', 'email', self.id, 'self_move_count')
+
+    def count_move( self):
+        """ Count a non-selfplay move in the db """
+        db.incr( 't_user', 'email', self.id, 'move_count')
+
     def password_matches( self, password):
         """ Check password """
         return bcrypt.check_password_hash( self.data['password'], password)

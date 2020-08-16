@@ -236,6 +236,13 @@ class Postgres:
         self.run( sql, (val,))
         return 1
 
+    #---------------------------------------------------
+    def incr( self, table, col, val, icol):
+        ''' Increment the value in col, for all matching rows. '''
+        sql = 'update %s set %s = %s + 1 where %s = %%s' % (table, icol, icol, col)
+        self.run( sql, (val,))
+        return 1
+
     #----------------------------------
     def slurp( self, table, cols=[]):
         ''' Slurp some table columns from all rows into a list of dicts '''
