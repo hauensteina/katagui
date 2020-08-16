@@ -78,13 +78,13 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/record_activity', methods=['GET', 'POST'])
-#--------------------------------------------------------
-def record_activity():
-     """ Set ts_last_seen to now() """
-     if not current_user.is_authenticated: login_as_guest()
-     current_user.record_activity()
-     return jsonify( {'result': 'ok' })
+# @app.route('/record_activity', methods=['GET', 'POST'])
+# #--------------------------------------------------------
+# def record_activity():
+#      """ Set ts_last_seen to now() """
+#      if not current_user.is_authenticated: login_as_guest()
+#      current_user.record_activity()
+#      return jsonify( {'result': 'ok' })
 
 @app.route('/save-sgf', methods=['GET'])
 #-------------------------------------------------------------
@@ -133,6 +133,7 @@ def score( bot_name):
 #---------------------------------------------------------
 def select_move( bot_name):
     """ Forward select-move to the katago server """
+    current_user.record_activity()
     endpoint = 'select-move/' + bot_name
     args = request.json
     res = fwd_to_katago( endpoint, args)
@@ -145,6 +146,7 @@ def select_move( bot_name):
 #----------------------------------------------------------------
 def select_move_guest( bot_name):
     """ Forward select-move to the katago server """
+    current_user.record_activity()
     endpoint = 'select-move/' + bot_name
     args = request.json
     res = fwd_to_katago_guest( endpoint, args)
@@ -157,6 +159,7 @@ def select_move_guest( bot_name):
 #-----------------------------------------------------------
 def select_move_x( bot_name):
     """ Forward select-move to the katago server """
+    current_user.record_activity()
     endpoint = 'select-move/' + bot_name
     args = request.json
     res = fwd_to_katago_x( endpoint, args)

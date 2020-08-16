@@ -855,14 +855,14 @@ function main( JGO, axutil, p_options) {
 
   // Update ts_last_seen in db
   //----------------------------------
-  function record_activity() {
-    axutil.hit_endpoint_simple( '/record_activity',{}, (resp)=>{}) // update ts_last_seen in db
-  } // record_activity()
+  //function record_activity() {
+  //  axutil.hit_endpoint_simple( '/record_activity',{}, (resp)=>{}) // update ts_last_seen in db
+  //} // record_activity()
 
   // Continue after prob and score came back from the server
   //-------------------------------------------------------------------
   function get_prob_callback( winprob, score, update_emo, playing) {
-    record_activity()
+    //record_activity()
 		if (grec.pos()) {
 			var p = parseFloat( winprob)
 			var score = parseFloat( score)
