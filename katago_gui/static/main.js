@@ -120,10 +120,10 @@ function main( JGO, axutil, p_options) {
 		hover()
 
 		// Click on empty board resets everything
-		if (grec.pos() == 0) {
-			reset_game()
-      end_game()
-		}
+		//if (grec.pos() == 0) {
+		//	reset_game()
+    //  end_game()
+		//}
 
 		// Add the new move
 		maybe_start_var()
@@ -380,6 +380,7 @@ function main( JGO, axutil, p_options) {
       }
       if (at_end) {
         grec.truncate()
+        grec.dbsave()
       }
       show_movenum()
     })
@@ -388,7 +389,7 @@ function main( JGO, axutil, p_options) {
     $('#btn_next').click( btn_next)
     $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); activate_bot('off') })
     $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); activate_bot('off') })
-    $('#btn_first').click( () => {  selfplay('off'); goto_first_move(); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
+    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
     $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); activate_bot('off') })
 
     // Prevent zoom on double tap
@@ -704,6 +705,12 @@ function main( JGO, axutil, p_options) {
     show_movenum()
   } // goto_first_move()
 
+  //----------------------------
+  //function place_handi() {
+  //  if (g_handi < 2) return
+  //  goto_move( g_handi * 2)
+  //} // place_handi()
+
   //-----------------------
   function reset_game() {
     handle_variation( 'clear')
@@ -745,6 +752,7 @@ function main( JGO, axutil, p_options) {
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move( n) {
+    n = Math.max( n, 2 * g_handi)
     score_position.active = false
     best_btn_callback.active = false
     var totmoves = grec.len()
@@ -753,6 +761,11 @@ function main( JGO, axutil, p_options) {
     replay_moves( n)
     show_movenum()
     show_prob()
+    if ( (grec.pos() != grec.len()) || grec.var_active() )  {
+      $('#btn_undo').addClass( 'disabled')
+    } else {
+      $('#btn_undo').removeClass( 'disabled')
+    }
   } // goto_move()
 
   //----------------------------
@@ -868,20 +881,16 @@ function main( JGO, axutil, p_options) {
 			})
   } // get_prob_genmove()
 
-  // Update ts_last_seen in db
-  //----------------------------------
-  //function record_activity() {
-  //  axutil.hit_endpoint_simple( '/record_activity',{}, (resp)=>{}) // update ts_last_seen in db
-  //} // record_activity()
-
   // Continue after prob and score came back from the server
   //-------------------------------------------------------------------
   function get_prob_callback( winprob, score, update_emo, playing) {
-    //record_activity()
 		if (grec.pos()) {
 			var p = parseFloat( winprob)
 			var score = parseFloat( score)
       grec.update( p, score)
+      if (settings( 'game_hash')) { // we are in an active game
+        grec.dbsave()
+      }
 		}
 		show_prob( update_emo, playing)
     if (g_click_coord_buffer) { // user clicked while waiting, do it now
@@ -1266,9 +1275,6 @@ function main( JGO, axutil, p_options) {
     update( p, score) {
       this.record[ this.n_visible-1].score = score
       this.record[ this.n_visible-1].p = p
-      if (settings( 'game_hash')) { // we are in an active game
-        this.dbsave()
-      }
     }
     push( mv) {
       this.record.push( mv); this.n_visible = this.record.length
@@ -1290,6 +1296,7 @@ function main( JGO, axutil, p_options) {
       this.record = axutil.deepcopy( this.var_record); this.n_visible = this.var_n_visible+1;
       this.var_record = []; this.var_n_visible = 0;
     }
+    var_active() { return this.var_record.length > 0 }
     seek(n) { this.n_visible = n }
     board_moves() { return this.record.slice( 0, this.n_visible) }
     truncate() { this.record = this.board_moves() }
@@ -1343,6 +1350,7 @@ function main( JGO, axutil, p_options) {
   }
   get_user_and_translations( ()=>{
     load_state()
+    get_handicap()
     once_per_sec()
   })
 } // function main()
