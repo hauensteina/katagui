@@ -7,6 +7,7 @@
 # Wrapper classes for the DB tables
 #
 
+import json
 import uuid
 from katago_gui import db
 from pdb import set_trace as BP
@@ -22,6 +23,8 @@ class Game:
             self.valid = False
             return
         self.data = rows[0]
+        if self.data['game_record']:
+            self.data['game_record'] = json.loads( self.data['game_record'])
 
     def update_db( self, data):
         """ Create or update game in DB """

@@ -329,10 +329,10 @@
   <!-- Entry Point -->
   <script type='text/javascript' src='static/small/board.js'></script>
   <script type='text/javascript'>
-   const GAME_HASH = '{{ game_hash }}'
+   //const GAME_HASH = '{{ game_hash }}'
    $(function () {
      //main( JGO, new AhauxUtils( d3, $), {mobile:false} )
-     watch( JGO, axutil, {mobile:false} )
+     watch( JGO, axutil, '{{ game_hash }}', {mobile:false} )
    })
   </script>
 {% endblock js %}

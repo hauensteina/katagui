@@ -56,9 +56,10 @@ def update_game():
 #----------------------------------------------
 def load_game():
     """ Load a game from the database """
-    game_hash = current_user.data['game_hash']
+    game_hash = request.json['game_hash']
     game = dbmodel.Game( game_hash)
-    return jsonify( game.data)
+    res = jsonify( game.data)
+    return res
 
 @app.route('/english', methods=['GET'])
 #---------------------------------------------------------

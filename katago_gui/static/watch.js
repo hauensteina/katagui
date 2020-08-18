@@ -22,11 +22,10 @@ const HANDISTONES = ['',''
 ]
 
 
-//=======================================
-function watch( JGO, axutil, p_options) {
+//=====================================================
+function watch( JGO, axutil, game_hash, p_options) {
   $ = axutil.$
   const settings = axutil.settings
-
   const BOT = 'katago_gtp_bot'
   const BOARD_SIZE = 19
   const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
@@ -1216,18 +1215,6 @@ function watch( JGO, axutil, p_options) {
     }
   } // fast_or_strong()
 
-  // Register site visibility handlers
-  //--------------------------------------
-  function visibility() {
-    document.addEventListener("visibilitychange", function() {
-      if (document.visibilityState === 'visible') {
-        // pass
-      } else {
-        selfplay('off')
-      }
-    })
-  } // visibility()
-
   // Get a field from the user data, or fetch the user from the back end
   //-------------------------------------------------------------------------
   function user(key) {
@@ -1247,110 +1234,13 @@ function watch( JGO, axutil, p_options) {
   } // translate()
   translate.table = {}
 
-  // Get stuff from the back end and proceed when it came
-  //-------------------------------------------------------
-  function get_user_and_translations( completion) {
-    axutil.hit_endpoint_simple( '/get_user_data', {},
-      (userdata)=>{
-        user.data = userdata
-        axutil.hit_endpoint_simple( '/get_translation_table',{}, (ttable)=>{
-          translate.table = ttable
-          completion()
-        })
-      })
-  } // get_user_and_translations()
-
-  // Keep track of the game record, visible moves, variation.
-  //------------------------------------------------------------
-  class GameRecord {
-    constructor() { this.record = []; this.n_visible = 0; this.var_record = []; this.var_n_visible = 0; }
-    clone() {
-      var copy = new GameRecord()
-      copy.record = axutil.deepcopy( this.record)
-      copy.n_visible = this.n_visible
-      copy.var_record = axutil.deepcopy( this.var_record)
-      copy.var_n_visible = this.var_n_visible
-      return copy
-    }
-    update( p, score) {
-      this.record[ this.n_visible-1].score = score
-      this.record[ this.n_visible-1].p = p
-    }
-    push( mv) {
-      this.record.push( mv); this.n_visible = this.record.length
-    } // push()
-    pop() { this.record.pop(); this.n_visible = this.record.length }
-    pos() { return this.n_visible }
-    enter_var() {
-      if (this.var_record.length) { // truncate at cur move if in var
-        this.record = this.record.slice( 0, this.n_visible)
-        this.n_visible = this.record.length
-      } else { // start var
-        // squirrel away the game
-        this.var_record = axutil.deepcopy( this.record); this.var_n_visible = this.n_visible;
-        // Branch off at current move
-        this.record = axutil.deepcopy( this.board_moves()); this.n_visible = this.len()
-      }
-    } // enter_var()
-    exit_var() {
-      this.record = axutil.deepcopy( this.var_record); this.n_visible = this.var_n_visible+1;
-      this.var_record = []; this.var_n_visible = 0;
-    }
-    var_active() { return this.var_record.length > 0 }
-    seek(n) { this.n_visible = n }
-    board_moves() { return this.record.slice( 0, this.n_visible) }
-    truncate() { this.record = this.board_moves() }
-    all_moves() { return this.record }
-    len() { return this.record.length }
-    curmove() { return this.record[ this.n_visible - 1] }
-    prevmove() { return this.record[ this.n_visible - 2] }
-    nextmove() { return this.record[ this.n_visible] }
-    prefix(n) { return this.record.slice(0,n) }
-    dumps() { return JSON.stringify( {
-      'record':this.record, 'n_visible':this.n_visible,
-      'var_record':this.var_record, 'var_n_visible':this.var_n_visible })
-    }
-    loads(json) {
-      var tt = JSON.parse( json)
-      this.record = tt.record; this.n_visible = tt.n_visible
-      this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
-    }
-    dbsave() { // update game in db
-      axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps()}, (resp)=>{})
-    }
-    dbload() { // load game from db
-      axutil.hit_endpoint_simple( '/load_game',{},
-        (resp)=>{
-          this.record = resp.record; this.n_visible = resp.n_visible
-          this.var_record = resp.var_record; this.var_n_visible = resp.var_n_visible
-        })
-    } // dbload()
-  } // class GameRecord
-
-  var grec = new GameRecord()
   settings()
-  set_btn_handlers()
-  set_dropdown_handlers()
-  reset_game()
-  setup_jgo()
-  visibility()
-  document.onkeydown = check_key
-
-  if (p_options.mobile) {
-    window.onpagehide = save_state
-  }
-  else {
-    window.onbeforeunload = save_state
-  }
-
-  // Save game record once a second
-  function once_per_sec() {
-    save_state()
-    setTimeout( once_per_sec, 1000)
-  }
-  get_user_and_translations( ()=>{
-    load_state()
-    get_handicap()
-    once_per_sec()
+  var grec = new GameRecord()
+  grec.dbload( game_hash, ()=>{
+    set_btn_handlers()
+    set_dropdown_handlers()
+    setup_jgo()
+    document.onkeydown = check_key
+    replay_moves( grec.len())
   })
 } // function watch()

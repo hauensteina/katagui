@@ -535,6 +535,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------
   function btn_next() {
     selfplay('off');
+    if (!grec.len()) return
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( grec.pos() + 1)
     // Do not analyze handicap stones
@@ -1156,6 +1157,14 @@ function main( JGO, axutil, p_options) {
   } // hover()
   hover.coord = null
 
+  // Set attr via jQuery if it was different
+  //--------------------------------------------
+  function set_attr( elt, attr, val) {
+    if ($(elt).attr(attr) != val) {
+      $(elt).attr(attr,val)
+    }
+  } // set_attr()
+
   // Get or set guest, fast, strong mode
   //---------------------------------------
   function fast_or_strong( val) {
@@ -1164,14 +1173,14 @@ function main( JGO, axutil, p_options) {
     const GUEST = {'val':'guest', 'ep':'/select-move-guest/' }
     if (typeof val == 'undefined') { // getter
       if ($('#btn_tgl_strong').hasClass('active')) {
-        return STRONG
+        return fast_or_strong('strong')
       } else if ($('#btn_tgl_fast').hasClass('active')) {
-        return FAST
+        return fast_or_strong('fast')
       } else {
         if (!settings('logged_in')) {
-          return GUEST
+          return fast_or_strong('guest')
         } else { // logged in, use 20b
-          return FAST
+          return fast_or_strong('fast')
         }
       }
     } // if getter
@@ -1192,14 +1201,14 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_strong').addClass('active')
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
-          $('#img_bot').attr('src', 'static/kata-red.png')
+          set_attr( '#img_bot', 'src', 'static/kata.png')
           return STRONG
         } else if (val == 'fast') {
           $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
           $('#btn_tgl_fast').addClass('active')
           $('#btn_tgl_strong').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
-          $('#img_bot').attr('src', 'static/kata.png')
+          set_attr( '#img_bot', 'src', 'static/kata.png')
           return FAST
         }
       } // if logged in
@@ -1214,7 +1223,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
-      $('#img_bot').attr('src', 'static/kata.png')
+      set_attr( '#img_bot', 'src', 'static/kata.png')
       return GUEST
     }
   } // fast_or_strong()
@@ -1262,73 +1271,6 @@ function main( JGO, axutil, p_options) {
         })
       })
   } // get_user_and_translations()
-
-  // Keep track of the game record, visible moves, variation.
-  //------------------------------------------------------------
-  class GameRecord {
-    constructor() { this.record = []; this.n_visible = 0; this.var_record = []; this.var_n_visible = 0; }
-    clone() {
-      var copy = new GameRecord()
-      copy.record = axutil.deepcopy( this.record)
-      copy.n_visible = this.n_visible
-      copy.var_record = axutil.deepcopy( this.var_record)
-      copy.var_n_visible = this.var_n_visible
-      return copy
-    }
-    update( p, score) {
-      this.record[ this.n_visible-1].score = score
-      this.record[ this.n_visible-1].p = p
-    }
-    push( mv) {
-      this.record.push( mv); this.n_visible = this.record.length
-    } // push()
-    pop() { this.record.pop(); this.n_visible = this.record.length }
-    pos() { return this.n_visible }
-    enter_var() {
-      if (this.var_record.length) { // truncate at cur move if in var
-        this.record = this.record.slice( 0, this.n_visible)
-        this.n_visible = this.record.length
-      } else { // start var
-        // squirrel away the game
-        this.var_record = axutil.deepcopy( this.record); this.var_n_visible = this.n_visible;
-        // Branch off at current move
-        this.record = axutil.deepcopy( this.board_moves()); this.n_visible = this.len()
-      }
-    } // enter_var()
-    exit_var() {
-      this.record = axutil.deepcopy( this.var_record); this.n_visible = this.var_n_visible+1;
-      this.var_record = []; this.var_n_visible = 0;
-    }
-    var_active() { return this.var_record.length > 0 }
-    seek(n) { this.n_visible = n }
-    board_moves() { return this.record.slice( 0, this.n_visible) }
-    truncate() { this.record = this.board_moves() }
-    all_moves() { return this.record }
-    len() { return this.record.length }
-    curmove() { return this.record[ this.n_visible - 1] }
-    prevmove() { return this.record[ this.n_visible - 2] }
-    nextmove() { return this.record[ this.n_visible] }
-    prefix(n) { return this.record.slice(0,n) }
-    dumps() { return JSON.stringify( {
-      'record':this.record, 'n_visible':this.n_visible,
-      'var_record':this.var_record, 'var_n_visible':this.var_n_visible })
-    }
-    loads(json) {
-      var tt = JSON.parse( json)
-      this.record = tt.record; this.n_visible = tt.n_visible
-      this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
-    }
-    dbsave() { // update game in db
-      axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps()}, (resp)=>{})
-    }
-    dbload() { // load game from db
-      axutil.hit_endpoint_simple( '/load_game',{},
-        (resp)=>{
-          this.record = resp.record; this.n_visible = resp.n_visible
-          this.var_record = resp.var_record; this.var_n_visible = resp.var_n_visible
-        })
-    } // dbload()
-  } // class GameRecord
 
   var grec = new GameRecord()
   settings()
