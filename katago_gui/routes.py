@@ -40,7 +40,7 @@ def index():
     """ Main entry point """
     if not check_https(): return redirect( 'https://katagui.herokuapp.com')
     if not current_user.is_authenticated: login_as_guest()
-    return render_template( 'index.tmpl', mobile=False, home=True)
+    return render_template( 'index.tmpl', home=True)
 
 @app.route('/index_mobile')
 #-------------------------------
@@ -48,7 +48,7 @@ def index_mobile():
     """ Main entry point for mobile devices """
     if not check_https(): return redirect( 'https://katagui.herokuapp.com')
     if not current_user.is_authenticated: login_as_guest()
-    return render_template( 'index_mobile.tmpl', mobile=True, home=True)
+    return render_template( 'index_mobile.tmpl', home=True)
 
 @app.route('/about')
 #-------------------------------

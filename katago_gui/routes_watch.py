@@ -10,37 +10,36 @@
 from pdb import set_trace as BP
 
 import os, sys, re, json
-import requests
 from datetime import datetime
-import uuid
-from io import BytesIO
 
 from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-from katago_gui.gotypes import Point
-from katago_gui.sgf import Sgf_game
-from katago_gui.go_utils import coords_from_point
-
-from katago_gui import app, bcrypt, mail, logged_in
-from katago_gui import auth
-import katago_gui.translations
+from katago_gui import app, logged_in
+from katago_gui import auth, db
 from katago_gui.translations import translate as tr
-from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
-from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf, check_https
 
-@app.route('/watch')
-#-------------------------------
-def watch():
-    if not check_https(): return redirect( 'https://katagui.herokuapp.com/watch')
-    if not current_user.is_authenticated: login_as_guest()
-    return render_template( 'watch.tmpl', mobile=False, home=True)
+@app.route('/watch_select_game')
+#---------------------------------
+def watch_select_game():
+    sql = """
+    select
+      u.username, u.game_hash, now() - g.ts_latest_move as t_idle
+      from t_user u, t_game g
+      where u.game_hash = g.game_hash
+      order by t_idle
+    """
+    rows = db.select( sql)
+    games = []
+    for row in rows:
+        g = {}
+        g['user'] = row['username']
+        g['age'] = row['t_idle']
+        g['link'] = url_for( 'watch_game',game_hash=row['game_hash'])
+        games.append( g)
+    return render_template( 'watch_select_game.tmpl', games=games)
 
-@app.route('/watch_mobile')
-#-------------------------------
-def watch_mobile():
-    if not check_https(): return redirect( 'https://katagui.herokuapp.com/watch_mobile')
-    if not current_user.is_authenticated: login_as_guest()
-    return render_template( 'watch_mobile.tmpl', mobile=True, home=True)
+@app.route('/watch_game')
+#----------------------------
+def watch_game():
+    gh = request.args['game_hash']
+    return render_template( 'watch.tmpl', game_hash=gh)

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+
+{% set VERSION = '2.0.d' %}
+
+{% block pre %}
+  <script type='text/javascript'>
+   /* Filename: katago-gui/layout_watch.tmpl
+    * Author: AHN
+    * Creation Date: Jul, 2020
+    */
+  </script>
+{% endblock pre %}
+
+<html lang='en'>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset='utf-8'>
+    <meta name='description' content='Play Go Against KataGo'>
+    <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence'>
+    <meta name='author' content='Andreas Hauenstein'>
+
+    <title>Play Go Against KataGo</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+	  <!-- Global site tag (gtag.js) - Google Analytics -->
+	  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
+	  <script>
+	   window.dataLayer = window.dataLayer || [];
+	   function gtag(){dataLayer.push(arguments);}
+	   gtag('js', new Date());
+
+	   gtag('config', 'UA-139708851-3');
+	  </script>
+
+    <!-- Standard frameworks -->
+    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+    <script src='https://d3js.org/d3.v5.min.js'></script>
+
+    <!-- Our own stuff -->
+    <script type='text/javascript' src='static/ahaux_utils.js?v=0.2'></script>
+    <script type='text/javascript'> const axutil = new AhauxUtils( d3, $) </script>
+    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
+
+    <!-- Main module -->
+    <script type='text/javascript' src='static/watch.js?v=20d'></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel='stylesheet'
+          href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
+          integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T'
+          crossorigin='anonymous'>
+    <!-- Our CSS -->
+    <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="main.css") }}'>
+    {% block css %}
+    {% endblock css %}
+
+  </head>
+
+  <body style='left:0; margin:0; padding:0;'>
+    <table class='center' style='width:100%'>
+      <!-- Page Header -->
+      <tr style='background-color:green'>
+        <td width='20px'>&nbsp;</td>
+        <td  align='left'>
+          <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
+            KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
+        </td>
+      </tr>
+      <tr><td colspan='2'>
+        {% block content %}
+        {% endblock content %}
+      </td></tr>
+    </table>
+    <script>
+     var lfont = '20pt'
+     var mfont = '12pt'
+     var sfont = '9pt'
+     if (axutil.isMobile()) {
+       lfont = '35pt'
+       mfont = '30pt'
+       sfont = '20pt'
+       $('#homelogo').width('300px')
+       $('.flag').height('60px')
+     }
+     $('.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
+     $('.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
+     $('.font-s' ).each( function( index ) { this.style.fontSize = sfont } )
+    </script>
+
+    <!-- Any other js we want to add -->
+    {% block js %}
+    {% endblock js %}
+
+  </body>
+</html>

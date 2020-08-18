@@ -1,8 +1,8 @@
 
 
 /*
- * Main entry point for katago-gui
- * AHN Jan 2020
+ * Entry point for watching katagui games
+ * AHN Aug 2020
  */
 
 'use strict'
@@ -23,7 +23,7 @@ const HANDISTONES = ['',''
 
 
 //=======================================
-function main( JGO, axutil, p_options) {
+function watch( JGO, axutil, p_options) {
   $ = axutil.$
   const settings = axutil.settings
 
@@ -284,7 +284,7 @@ function main( JGO, axutil, p_options) {
       handle_variation( 'clear')
     })
 
-    $('#btn_watch').click( () => { location.href = 'watch_select_game' })
+    $('#btn_watch').click( () => { location.href = 'watch' })
 
     $('#btn_play').click( () => {
       selfplay('off')
@@ -1159,19 +1159,16 @@ function main( JGO, axutil, p_options) {
   // Get or set guest, fast, strong mode
   //---------------------------------------
   function fast_or_strong( val) {
-    const STRONG = {'val':'strong', 'ep':'/select-move-x/' }
-    const FAST =  {'val':'fast', 'ep':'/select-move/' }
-    const GUEST = {'val':'guest', 'ep':'/select-move-guest/' }
     if (typeof val == 'undefined') { // getter
       if ($('#btn_tgl_strong').hasClass('active')) {
-        return STRONG
+        return fast_or_strong('strong')
       } else if ($('#btn_tgl_fast').hasClass('active')) {
-        return FAST
+        return fast_or_strong('fast')
       } else {
         if (!settings('logged_in')) {
-          return GUEST
+          return fast_or_strong('guest')
         } else { // logged in, use 20b
-          return FAST
+          return fast_or_strong('fast')
         }
       }
     } // if getter
@@ -1193,14 +1190,14 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
           $('#img_bot').attr('src', 'static/kata-red.png')
-          return STRONG
+          return {'val':'strong', 'ep':'/select-move-x/' }
         } else if (val == 'fast') {
           $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
           $('#btn_tgl_fast').addClass('active')
           $('#btn_tgl_strong').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
           $('#img_bot').attr('src', 'static/kata.png')
-          return FAST
+          return {'val':'fast', 'ep':'/select-move/' }
         }
       } // if logged in
       else {
@@ -1215,7 +1212,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
       $('#img_bot').attr('src', 'static/kata.png')
-      return GUEST
+      return {'val':'guest', 'ep':'/select-move-guest/' }
     }
   } // fast_or_strong()
 
@@ -1356,4 +1353,4 @@ function main( JGO, axutil, p_options) {
     get_handicap()
     once_per_sec()
   })
-} // function main()
+} // function watch()

@@ -1,0 +1,33 @@
+{% extends 'layout_watch.tmpl' %}
+
+{% block css %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+{% endblock %}
+
+{% block content %}
+  <div id='watchdiv' class='center' tabindex='0'>
+    <table class='center'>
+      <tr><td colspan='3'>
+        {% with messages = get_flashed_messages( with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class='alert alert-{{ category }}'>
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% else %}
+            <br><br>
+          {% endif %}
+        {% endwith %}
+      </td></tr>
+      <tr><th>User</th><th>Age</th><th>Link</th></tr>
+      {% for game in games %}
+        <tr>
+          <td align='left' style='padding:0px 10px 0px 10px'> {{ game.user }} </td>
+          <td style='padding:0px 10px 0px 10px'> {{ game.age }} </td>
+          <td style='padding:0px 10px 0px 10px'> <a href='{{ game.link }}'>Observe</a> </td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+{% endblock content %}
