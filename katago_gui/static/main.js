@@ -450,8 +450,8 @@ function main( JGO, axutil, p_options) {
     }
     cb_selfplay()
     function cb_selfplay() { // timer callback
+      clearTimeout( selfplay.timer)
       if (selfplay('ison')) {
-        clearTimeout( selfplay.timer)
         selfplay.timer = setTimeout( cb_selfplay, interval)
       }
       if (document.visibilityState != 'visible') return
@@ -461,42 +461,39 @@ function main( JGO, axutil, p_options) {
           $('#alertbox_message').html(translate('Please Log In'))
           $('#alertbox').modal('show')
           return
+      }
+      set_emoji()
+      if (selfplay.ready) {
+        selfplay.ready = false
+
+        // Looping on existing game
+        if (grec.pos() < grec.len()) {
+          selfplay.ready = true
+          if (!selfplay('ison')) return;
+          goto_move( grec.pos() + 1)
+          return
         }
-        if (selfplay.ready) {
-          selfplay.ready = false
+        // Game ended, start from beginning
+        if (grec.curmove() && (grec.curmove().p < 0.05 || grec.curmove().p > 0.95 || set_load_sgf_handler.loaded_game)) {
+          selfplay.ready = true
+          if (!selfplay('ison')) return;
+          goto_move(0)
+          return
+        }
 
-          // Looping on existing game
-          if (grec.pos() < grec.len()) {
+        // Continue game
+        axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
+          {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
+          (data) => {
             selfplay.ready = true
             if (!selfplay('ison')) return;
-            goto_move( grec.pos() + 1)
-            //btn_next()
-            //selfplay( 'on')
-            //setTimeout( cb_selfplay, interval)
-            return
-          }
-          // Game ended, start from beginning
-          if (grec.curmove() && (grec.curmove().p < 0.05 || grec.curmove().p > 0.95 || set_load_sgf_handler.loaded_game)) {
-            selfplay.ready = true
-            if (!selfplay('ison')) return;
-            goto_move(0)
-            //setTimeout( cb_selfplay, interval)
-            return
-          }
-
-          // Continue game
-          axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
-            {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
-            (data) => {
-              selfplay.ready = true
-              if (!selfplay('ison')) return;
-              var botCoord = string2jcoord( data.bot_move)
-              maybe_start_var()
-              grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
-		          replay_moves( grec.pos())
-              const show_emoji = false
-		          const playing = true
-              get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+            var botCoord = string2jcoord( data.bot_move)
+            maybe_start_var()
+            grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
+		        replay_moves( grec.pos())
+            const show_emoji = false
+		        const playing = true
+            get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
           }) // hit_endpoint()
       } // if ready
     } // cb_selfplay()
