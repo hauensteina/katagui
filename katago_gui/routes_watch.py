@@ -13,6 +13,7 @@ import os, sys, re, json
 from datetime import datetime
 
 from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
+from flask_login import current_user
 
 from katago_gui import app, logged_in
 from katago_gui import auth, db
@@ -21,6 +22,7 @@ from katago_gui.translations import translate as tr
 @app.route('/watch_select_game')
 #---------------------------------
 def watch_select_game():
+    ''' Show the screen to choose the game to watch '''
     sql = """
     select
       u.username, u.game_hash, now() - g.ts_latest_move as t_idle
@@ -41,5 +43,9 @@ def watch_select_game():
 @app.route('/watch_game')
 #----------------------------
 def watch_game():
+    ''' User clicks on the game he wants to watch '''
     gh = request.args['game_hash']
+    # Remember which game we are watching
+    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
+
     return render_template( 'watch.tmpl', game_hash=gh)

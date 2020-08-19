@@ -35,28 +35,40 @@ def get_sgf_tag( sgfstr, tag):
     if res == tstr: return '' # tag not found
     return res
 
-# Forward request to katago server
+# Forward fast request to katago server
 #----------------------------------------
 def fwd_to_katago( endpoint, args):
     url = KATAGO_SERVER + endpoint
     resp = requests.post( url, json=args)
-    res = resp.json()
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago()')
+        print( 'args %s' % str(args))
     return res
 
-# Forward request to katago server
-#----------------------------------------
+# Forward strong request to katago server
+#------------------------------------------
 def fwd_to_katago_x( endpoint, args):
     url = KATAGO_SERVER_X + endpoint
     resp = requests.post( url, json=args)
-    res = resp.json()
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago_x()')
+        print( 'args %s' % str(args))
     return res
 
-# Forward request to katago server
-#----------------------------------------
+# Forward guest request to katago server
+#------------------------------------------
 def fwd_to_katago_guest( endpoint, args):
     url = KATAGO_SERVER_GUEST + endpoint
     resp = requests.post( url, json=args)
-    res = resp.json()
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago_guest()')
+        print( 'args %s' % str(args))
     return res
 
 # Convert a list of moves like ['Q16',...] to sgf

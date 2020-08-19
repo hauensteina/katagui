@@ -283,7 +283,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       handle_variation( 'clear')
     })
 
-    $('#btn_watch').click( () => { location.href = 'watch' })
+    $('#btn_watch').click( () => { location.href = '/watch_select_game' })
 
     $('#btn_play').click( () => {
       selfplay('off')
@@ -1234,6 +1234,30 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // translate()
   translate.table = {}
 
+  //------------------------------------------
+  function server_sig_received( url, args) {
+    axutil.hit_endpoint_simple( url, args,
+      (resp) => {
+        if (url.indexOf('load_game') >= 0) {
+          debugger
+          var tt = 42
+        }
+      })
+  } // server_sig_received()
+
+  //---------------------------
+  function periodic_interrupt() {
+    axutil.hit_endpoint_simple( '/get_signal_url',{},
+      (resp) => {
+        if (resp.url) {
+          server_sig_received( resp.url, resp.args)
+        }
+      })
+    clearTimeout( periodic_interrupt.timer)
+    periodic_interrupt.timer = setTimeout( periodic_interrupt, 2000)
+  } // periodic_interrupt()
+  periodic_interrupt.timer = null
+
   settings()
   var grec = new GameRecord()
   grec.dbload( game_hash, ()=>{
@@ -1242,5 +1266,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     setup_jgo()
     document.onkeydown = check_key
     replay_moves( grec.len())
+    periodic_interrupt()
   })
 } // function watch()

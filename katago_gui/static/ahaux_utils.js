@@ -296,7 +296,7 @@ class AhauxUtils
           console.log( error)
         }
       )
-  } // upload_file
+  } // upload_file()
 
   // Download a file generated on the back end,
   // with a callback once it got here.

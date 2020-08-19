@@ -21,7 +21,7 @@ from katago_gui.gotypes import Point
 from katago_gui.sgf import Sgf_game
 from katago_gui.go_utils import coords_from_point
 
-from katago_gui import app
+from katago_gui import app, db
 from katago_gui import dbmodel
 import katago_gui.translations
 from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf, login_as_guest
@@ -68,6 +68,29 @@ def english():
     current_user.data['lang'] = 'eng'
     current_user.update_db()
     return redirect(url_for('index'))
+
+@app.route('/get_signal_url', methods=['POST'])
+#---------------------------------------------------------
+def get_signal_url():
+    """ Return a URL the client should hit now """
+
+    # Check whether the observed game has changed
+    sql = f'''
+    select
+      u.watch_game_hash
+    from
+      t_user u join t_game g on
+        u.watch_game_hash = g.game_hash
+    where
+      u.email = '{current_user.id}'
+      and coalesce( u.ts_watched, '1900-01-01'::timestamptz) < g.ts_latest_move
+    '''
+    rows = db.select( sql)
+    if len(rows) == 0:
+        return jsonify( {'url':''} ) # no change
+    game_hash = rows[0]['watch_game_hash'] # This game changed
+    url = url_for( 'load_game')
+    return jsonify( {'url':url, 'args':{'game_hash':game_hash }})
 
 @app.route('/get_translation_table', methods=['POST'])
 #---------------------------------------------------------
