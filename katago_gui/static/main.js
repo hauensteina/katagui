@@ -119,12 +119,6 @@ function main( JGO, axutil, p_options) {
 		// clear hover away
 		hover()
 
-		// Click on empty board resets everything
-		//if (grec.pos() == 0) {
-		//	reset_game()
-    //  end_game()
-		//}
-
 		// Add the new move
 		maybe_start_var()
 		var mstr = jcoord2string( coord)
@@ -132,7 +126,10 @@ function main( JGO, axutil, p_options) {
 		goto_move( grec.len())
 		set_emoji()
 		const playing = true
-		get_prob_genmove( function( data) { if (activate_bot.state == 'on') { bot_move_callback( data) } },
+		get_prob_genmove(
+      function( data) {
+        if (activate_bot.state == 'on') { bot_move_callback( data) }
+      },
       settings('show_emoji'), playing )
   } // board_click_callback()
 
@@ -430,6 +427,7 @@ function main( JGO, axutil, p_options) {
   function selfplay( action) {
     if (action == 'on') {
       $('#btn_tgl_selfplay').css('background-color','rgb(40, 167, 69)')
+      fast_or_strong( 'fast')
       return $('#btn_tgl_selfplay').addClass('btn-success')
     }
     else if (action == 'off') {
@@ -452,33 +450,59 @@ function main( JGO, axutil, p_options) {
     }
     cb_selfplay()
     function cb_selfplay() { // timer callback
-      if (!settings('logged_in')) {
-        selfplay('off')
-        $('#alertbox_title').html('')
-        $('#alertbox_message').html(translate('Please Log In'))
-        $('#alertbox').modal('show')
-        return
+      if (selfplay('ison')) {
+        clearTimeout( selfplay.timer)
+        selfplay.timer = setTimeout( cb_selfplay, interval)
       }
-      if (selfplay.ready) {
-        selfplay.ready = false
-        axutil.hit_endpoint( fast_or_strong('guest').ep + BOT,
-          {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
-          (data) => {
+      if (document.visibilityState != 'visible') return
+      if (!settings('logged_in')) {
+          selfplay('off')
+          $('#alertbox_title').html('')
+          $('#alertbox_message').html(translate('Please Log In'))
+          $('#alertbox').modal('show')
+          return
+        }
+        if (selfplay.ready) {
+          selfplay.ready = false
+
+          // Looping on existing game
+          if (grec.pos() < grec.len()) {
             selfplay.ready = true
             if (!selfplay('ison')) return;
-            var botCoord = string2jcoord( data.bot_move)
-            maybe_start_var()
-            grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
-		        replay_moves( grec.pos())
-            const show_emoji = false
-		        const playing = true
-            get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+            goto_move( grec.pos() + 1)
+            //btn_next()
+            //selfplay( 'on')
+            //setTimeout( cb_selfplay, interval)
+            return
+          }
+          // Game ended, start from beginning
+          if (grec.curmove() && (grec.curmove().p < 0.05 || grec.curmove().p > 0.95 || set_load_sgf_handler.loaded_game)) {
+            selfplay.ready = true
+            if (!selfplay('ison')) return;
+            goto_move(0)
+            //setTimeout( cb_selfplay, interval)
+            return
+          }
+
+          // Continue game
+          axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
+            {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
+            (data) => {
+              selfplay.ready = true
+              if (!selfplay('ison')) return;
+              var botCoord = string2jcoord( data.bot_move)
+              maybe_start_var()
+              grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
+		          replay_moves( grec.pos())
+              const show_emoji = false
+		          const playing = true
+              get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
           }) // hit_endpoint()
       } // if ready
-      if (selfplay('ison')) { setTimeout( cb_selfplay, interval) }
     } // cb_selfplay()
   } // selfplay()
   selfplay.ready = true
+  selfplay.timer = null
 
   // Load Sgf button
   //-----------------------------------
@@ -580,6 +604,9 @@ function main( JGO, axutil, p_options) {
     }
     else if (e.keyCode == '39') { // right arrow
       btn_next()
+    }
+    else if (e.keyCode == '32') { // space bar
+      selfplay( 'toggle')
     }
     check_key.ctrl_pressed = false
   } // check_key()
@@ -1201,7 +1228,7 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_strong').addClass('active')
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
-          set_attr( '#img_bot', 'src', 'static/kata.png')
+          set_attr( '#img_bot', 'src', 'static/kata-red.png')
           return STRONG
         } else if (val == 'fast') {
           $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
@@ -1230,16 +1257,16 @@ function main( JGO, axutil, p_options) {
 
   // Register site visibility handlers
   //--------------------------------------
-  function visibility() {
-    document.addEventListener("visibilitychange", function() {
-      if (document.visibilityState === 'visible') {
-        // pass
-      } else {
-        selfplay('off')
-      }
-    })
-  } // visibility()
-
+  /* function visibility() {
+   *   document.addEventListener("visibilitychange", function() {
+   *     if (document.visibilityState === 'visible') {
+   *       // pass
+   *     } else {
+   *       selfplay('off')
+   *     }
+   *   })
+   * } // visibility()
+   */
   // Get a field from the user data, or fetch the user from the back end
   //-------------------------------------------------------------------------
   function user(key) {
@@ -1278,7 +1305,7 @@ function main( JGO, axutil, p_options) {
   set_dropdown_handlers()
   reset_game()
   setup_jgo()
-  visibility()
+  //visibility()
   document.onkeydown = check_key
 
   if (p_options.mobile) {
@@ -1291,8 +1318,11 @@ function main( JGO, axutil, p_options) {
   // Save game record once a second
   function once_per_sec() {
     save_state()
-    setTimeout( once_per_sec, 1000)
+    clearTimeout( once_per_sec.timer)
+    once_per_sec.timer = setTimeout( once_per_sec, 1000)
   }
+  once_per_sec.timer = null
+
   get_user_and_translations( ()=>{
     load_state()
     get_handicap()
