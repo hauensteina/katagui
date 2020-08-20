@@ -1239,8 +1239,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     axutil.hit_endpoint_simple( url, args,
       (resp) => {
         if (url.indexOf('load_game') >= 0) {
-          debugger
-          var tt = 42
+          grec.from_dict( resp)
+          replay_moves( grec.pos())
+          axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
         }
       })
   } // server_sig_received()
@@ -1250,6 +1251,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     axutil.hit_endpoint_simple( '/get_signal_url',{},
       (resp) => {
         if (resp.url) {
+          $('#status').html('>>> got server signal: ' + resp.url)
+          setTimeout( function() { $('#status').html('')},  500)
           server_sig_received( resp.url, resp.args)
         }
       })

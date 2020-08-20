@@ -1302,6 +1302,7 @@ function main( JGO, axutil, p_options) {
   set_dropdown_handlers()
   reset_game()
   setup_jgo()
+  selfplay('off')
   //visibility()
   document.onkeydown = check_key
 

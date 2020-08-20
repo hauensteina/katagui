@@ -31,7 +31,7 @@ from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_
 #--------------------------------------
 
 @app.route('/create_game', methods=['POST'])
-#---------------------------------------------------------
+#-----------------------------------------------
 def create_game():
     """ Create a new game in the database """
     data = request.json
@@ -42,27 +42,8 @@ def create_game():
     current_user.update_db()
     return jsonify( {'game_hash': game.id })
 
-@app.route('/update_game', methods=['POST'])
-#---------------------------------------------------------
-def update_game():
-    """ Update a game in the database """
-    data = request.json
-    game_hash = current_user.data['game_hash']
-    game = dbmodel.Game( game_hash)
-    game.update_db( data)
-    return jsonify( {'result': 'ok' })
-
-@app.route('/load_game', methods=['POST'])
-#----------------------------------------------
-def load_game():
-    """ Load a game from the database """
-    game_hash = request.json['game_hash']
-    game = dbmodel.Game( game_hash)
-    res = jsonify( game.data)
-    return res
-
 @app.route('/english', methods=['GET'])
-#---------------------------------------------------------
+#-------------------------------------------
 def english():
     """ Switch user language to English """
     current_user.data['lang'] = 'eng'
@@ -70,7 +51,7 @@ def english():
     return redirect(url_for('index'))
 
 @app.route('/get_signal_url', methods=['POST'])
-#---------------------------------------------------------
+#-------------------------------------------------
 def get_signal_url():
     """ Return a URL the client should hit now """
 
@@ -114,22 +95,23 @@ def korean():
     current_user.update_db()
     return redirect(url_for('index'))
 
+@app.route('/load_game', methods=['POST'])
+#----------------------------------------------
+def load_game():
+    """ Load a game from the database """
+    game_hash = request.json['game_hash']
+    game = dbmodel.Game( game_hash)
+    res = jsonify( game.data)
+    return res
+
 @app.route('/logout')
 #-------------------------
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-# @app.route('/record_activity', methods=['GET', 'POST'])
-# #--------------------------------------------------------
-# def record_activity():
-#      """ Set ts_last_seen to now() """
-#      if not current_user.is_authenticated: login_as_guest()
-#      current_user.record_activity()
-#      return jsonify( {'result': 'ok' })
-
 @app.route('/save-sgf', methods=['GET'])
-#-------------------------------------------------------------
+#-------------------------------------------
 def save_sgf():
     """
     Convert moves to sgf and return as file attachment.
@@ -299,11 +281,27 @@ def sgf2list():
     return jsonify( {'result': {'moves':moves, 'probs':probs, 'scores':scores, 'pb':player_black, 'pw':player_white,
                                 'winner':winner, 'komi':komi, 'fname':fname, 'RE':RE, 'DT':DT} } )
 
-
 @app.route('/slog', methods=['POST'])
 #---------------------------------------
 def slog():
     """ Write to the server log """
     msg = request.json.get( 'msg', 'empty_msg')
     print( 'slog: %s' % msg)
+    return jsonify( {'result': 'ok' })
+
+@app.route('/update_game', methods=['POST'])
+#----------------------------------------------
+def update_game():
+    """ Update a game in the database """
+    data = request.json
+    game_hash = current_user.data['game_hash']
+    game = dbmodel.Game( game_hash)
+    game.update_db( data)
+    return jsonify( {'result': 'ok' })
+
+@app.route('/watched', methods=['POST'])
+#-------------------------------------------
+def watched():
+    """ Timestamp user for having watched currently observed game """
+    db.tstamp( 't_user', 'email', current_user.id, 'ts_watched')
     return jsonify( {'result': 'ok' })

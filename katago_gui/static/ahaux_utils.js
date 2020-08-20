@@ -1,6 +1,6 @@
 
 /* Various js utility funcs
-   AHN, Apr 2019
+ AHN, Apr 2019
  */
 
 'use strict'
@@ -62,7 +62,7 @@ class AhauxUtils
       settings = JSON.parse( localStorage.getItem( 'settings'))
     }
     // init
-    if (typeof key == 'undefined') { return }
+    if (typeof key == 'undefined') { return 0 }
     // getter
     else if (typeof value == 'undefined') {
       var res = settings[key] || ''
@@ -73,6 +73,7 @@ class AhauxUtils
       settings[key] = value
       localStorage.setItem( 'settings', JSON.stringify( settings))
     }
+    return 0
   } // settings()
 
   isMobile() { return typeof window.orientation !== "undefined" }
@@ -96,29 +97,29 @@ class AhauxUtils
     var h = $(container).height()
 
     var margin = {top: 50, right: 50, bottom: 50, left: 50}
-      ,width = w - margin.left - margin.right
-      ,height = h - margin.top - margin.bottom
+    ,width = w - margin.left - margin.right
+    ,height = h - margin.top - margin.bottom
 
     var scale_x = d3.scaleLinear()
-      .domain([xlim[0], xlim[1]]) // input
-      .range([0, width]) // output
+	  .domain([xlim[0], xlim[1]]) // input
+	  .range([0, width]) // output
 
     var scale_y = d3.scaleLinear()
-      .domain([ylim[0], ylim[1]]) // input
-      .range([height, 0]) // output
+	  .domain([ylim[0], ylim[1]]) // input
+	  .range([height, 0]) // output
 
     var line = d3.line()
-      .x(function(d, i) {
-        return scale_x( d[0]) }) // set the x values for the line generator
-      .y(function(d, i) {
-        return scale_y( d[1]) }) // set the y values for the line generator
+	  .x(function(d, i) {
+            return scale_x( d[0]) }) // set the x values for the line generator
+	  .y(function(d, i) {
+            return scale_y( d[1]) }) // set the y values for the line generator
 
     // Add the SVG to the container, with margins
     var svg = C.append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+	  .attr('width', width + margin.left + margin.right)
+	  .attr('height', height + margin.top + margin.bottom)
+	  .append('g')
+	  .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     // Add x axis
     svg.append('g')
@@ -153,27 +154,27 @@ class AhauxUtils
     var h = $(container).height()
 
     var margin = {top: 20, right: 20, bottom: 70, left: 40}
-      ,width = w - margin.left - margin.right
-      ,height = h - margin.top - margin.bottom
+    ,width = w - margin.left - margin.right
+    ,height = h - margin.top - margin.bottom
 
     var svg = C.append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
+	  .attr("width", width + margin.left + margin.right)
+	  .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	  .attr("transform",
+		"translate(" + margin.left + "," + margin.top + ")");
 
     var scale_x = d3.scaleBand()
-      .domain( data.map( function(d) { return d[0] }))
-      .rangeRound( [0, width])
-      .padding( 0.05)
+	  .domain( data.map( function(d) { return d[0] }))
+	  .rangeRound( [0, width])
+	  .padding( 0.05)
 
     var scale_y = d3.scaleLinear()
-      .domain( [0, ylim])
-      .range( [height, 0])
+	  .domain( [0, ylim])
+	  .range( [height, 0])
 
     var xAxis = d3.axisBottom(scale_x)
-      .tickFormat( d3.format( '.3f'))
+	  .tickFormat( d3.format( '.3f'))
 
     var yAxis = d3.axisLeft(scale_y)
 
@@ -212,11 +213,11 @@ class AhauxUtils
     if (url == 'init') {
       this.hit_endpoint.waiting = false
       this.hit_endpoint.request_id = ''
-      return
+      return 0
     }
     else if (url == 'waiting') { return this.hit_endpoint.waiting }
-    else if (url == 'cancel') { this.hit_endpoint.waiting = false; return }
-    else if (this.hit_endpoint.waiting) { return false; }
+    else if (url == 'cancel') { this.hit_endpoint.waiting = false; return 0 }
+    else if (this.hit_endpoint.waiting) { return 0 }
 
     this.hit_endpoint.request_id = ''
     url += '?tt=' + Math.random() // prevent caching
@@ -226,33 +227,30 @@ class AhauxUtils
     }
     this.hit_endpoint.waiting = true
     fetch( url,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify( args)
-      }
-    ).then( (resp) => {
-      resp.json().then( (resp) => {
-        if (!this.hit_endpoint.waiting) {
-	        //console.log( 'not waiting')
-          //return
-        }
-        if ('request_id' in resp) {
-	        //console.log( 'req id: ' + resp.request_id + ' ' + this.hit_endpoint.request_id)
-          if (resp.request_id != this.hit_endpoint.request_id) {
-	          return
-	        }
-	      }
-	      this.hit_endpoint.waiting = false
-        completion( resp)
-      }) }
-    ).catch(
-      (error) => {
-        console.log( error)
-      }
-    )
+	   {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify( args)
+	   }
+	 ).then( (resp) => {
+	   resp.json().then( (resp) => {
+             if ('request_id' in resp) {
+               if (resp.request_id != this.hit_endpoint.request_id) {
+	         return 0
+	       }
+	     }
+	     this.hit_endpoint.waiting = false
+             completion( resp)
+	     return 0
+	   })
+	 }).catch(
+	   (error) => {
+	     console.log( error)
+	   }
+	 )
+    return 0
   } // hit_endpoint()
 
   // Hit an endpoint, no questions asked.
@@ -260,22 +258,22 @@ class AhauxUtils
   hit_endpoint_simple( url, args, completion) {
     url += '?tt=' + Math.random() // prevent caching
     fetch( url,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify( args)
-      }
-    ).then( (resp) => {
-      resp.json().then( (resp) => {
-        completion( resp)
-      }) }
-    ).catch(
-      (error) => {
-        console.log( error)
-      }
-    )
+	   {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify( args)
+	   }
+	 ).then( (resp) => {
+	   resp.json().then( (resp) => {
+             completion( resp)
+	   }) }
+	       ).catch(
+		 (error) => {
+		   console.log( error)
+		 }
+	       )
   } // hit_endpoint_simple()
 
   // Upload a file to the server
@@ -286,16 +284,16 @@ class AhauxUtils
     data.append( 'file', myfile)
     url += '?tt=' + Math.random() // prevent caching
     fetch( url,
-      {
-        method: 'POST',
-        body: data
-      }).then( (resp) => {
-        resp.json().then( (resp) => { completion( resp) }) }
-      ).catch(
-        (error) => {
-          console.log( error)
-        }
-      )
+	   {
+             method: 'POST',
+             body: data
+	   }).then( (resp) => {
+             resp.json().then( (resp) => { completion( resp) }) }
+		  ).catch(
+		    (error) => {
+		      console.log( error)
+		    }
+		  )
   } // upload_file()
 
   // Download a file generated on the back end,
@@ -338,14 +336,14 @@ class AhauxUtils
     var url = '/slog'
     var args = { 'msg': msg }
     fetch( url,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify( args)
-      }
-    )
+	   {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify( args)
+	   }
+	 )
   } // slog()
 } // class AhauxUtils
 
@@ -398,7 +396,7 @@ class GameRecord {
   dumps() { return JSON.stringify( {
     'record':this.record, 'n_visible':this.n_visible,
     'var_record':this.var_record, 'var_n_visible':this.var_n_visible })
-  }
+	  }
   loads(json) {
     var tt = JSON.parse( json)
     this.record = tt.record; this.n_visible = tt.n_visible
@@ -409,12 +407,15 @@ class GameRecord {
   }
   dbload( game_hash, completion) { // load game from db
     axutil.hit_endpoint_simple( '/load_game',{'game_hash':game_hash},
-      (resp)=>{
-        this.record = resp.game_record.record
-        this.n_visible = resp.game_record.n_visible
-        this.var_record = resp.game_record.var_record
-        this.var_n_visible = resp.game_record.var_n_visible
-        completion()
-      })
+				(resp)=>{
+				  this.from_dict( resp)
+				  completion()
+				})
   } // dbload()
+  from_dict( d) { // load game from dictionary
+    this.record = d.game_record.record
+    this.n_visible = d.game_record.n_visible
+    this.var_record = d.game_record.var_record
+    this.var_n_visible = d.game_record.var_n_visible
+  } // from_dict()
 } // class GameRecord
