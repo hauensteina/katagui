@@ -782,7 +782,7 @@ function main( JGO, axutil, p_options) {
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move( n) {
-    n = Math.max( n, 2 * g_handi)
+    n = Math.max( n, 2 * g_handi - 1)
     score_position.active = false
     best_btn_callback.active = false
     var totmoves = grec.len()
