@@ -277,6 +277,10 @@ function watch( JGO, axutil, game_hash, p_options) {
       fast_or_strong('strong')
     })
 
+    $('#btn_tgl_live').click( () => {
+      toggle_button( '#btn_tgl_live', 'toggle')
+    })
+
     $('#btn_clear_var').click( () => {
       selfplay('off')
       if ($('#btn_clear_var').hasClass('disabled')) { return }
@@ -794,7 +798,6 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#status').html( 'Variation deleted')
     }
   } // handle_variation()
-  //handle_variation.var_backup = null
 
   // Start a variation if we're not at the end
   //---------------------------------------------
@@ -825,7 +828,38 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#btn_clear_var').removeClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
     }
+    return 0
   } // var_button_state()
+
+  // Get or set button state.
+  // Example: toggle_button( '#btn_tgl_live', 'on')
+  //------------------------------------------------
+  function toggle_button( btn, action) {
+    if (!action) {
+      if ($(btn).hasClass('disabled')) {
+        return 'off'
+      }
+      else {
+        return 'on'
+      }
+    }
+    if (action == 'on') {
+      $(btn).removeClass('disabled')
+      $(btn).addClass('btn-success')
+      $(btn).css('color', 'black')
+      $(btn).css('background-color', '')
+    }
+    else if (action == 'off') {
+      $(btn).addClass('disabled')
+      $(btn).removeClass('btn-success')
+      $(btn).css('color', 'black')
+    }
+    else if (action == 'toggle') {
+      if (toggle_button( btn) == 'on') { return toggle_button( btn, 'off') }
+      return toggle_button( btn, 'on')
+    }
+    return 0
+  } // toggle_button()
 
   //===============================
   // Saving and restoring state
@@ -1246,22 +1280,25 @@ function watch( JGO, axutil, game_hash, p_options) {
       })
   } // server_sig_received()
 
-  //---------------------------
+  //--------------------------------
   function periodic_interrupt() {
-    axutil.hit_endpoint_simple( '/get_signal_url',{},
-      (resp) => {
-        if (resp.url) {
-          $('#status').html('>>> got server signal: ' + resp.url)
-          setTimeout( function() { $('#status').html('')},  500)
-          server_sig_received( resp.url, resp.args)
-        }
-      })
+    if (toggle_button( '#btn_tgl_live') == 'on') {
+      axutil.hit_endpoint_simple( '/get_signal_url',{},
+        (resp) => {
+          if (resp.url) {
+            $('#status').html('>>> got server signal: ' + resp.url)
+            setTimeout( function() { $('#status').html('')},  500)
+            server_sig_received( resp.url, resp.args)
+          }
+        })
+    }
     clearTimeout( periodic_interrupt.timer)
     periodic_interrupt.timer = setTimeout( periodic_interrupt, 2000)
   } // periodic_interrupt()
   periodic_interrupt.timer = null
 
   settings()
+  toggle_button( '#btn_tgl_live', 'on')
   var grec = new GameRecord()
   grec.dbload( game_hash, ()=>{
     set_btn_handlers()

@@ -735,12 +735,6 @@ function main( JGO, axutil, p_options) {
     show_movenum()
   } // goto_first_move()
 
-  //----------------------------
-  //function place_handi() {
-  //  if (g_handi < 2) return
-  //  goto_move( g_handi * 2)
-  //} // place_handi()
-
   //-----------------------
   function reset_game() {
     handle_variation( 'clear')
@@ -820,7 +814,6 @@ function main( JGO, axutil, p_options) {
       $('#status').html( 'Variation deleted')
     }
   } // handle_variation()
-  //handle_variation.var_backup = null
 
   // Start a variation if we're not at the end
   //---------------------------------------------
@@ -851,6 +844,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_clear_var').removeClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
     }
+    return 0
   } // var_button_state()
 
   //===============================
@@ -1250,6 +1244,7 @@ function main( JGO, axutil, p_options) {
       set_attr( '#img_bot', 'src', 'static/kata.png')
       return GUEST
     }
+    return 0
   } // fast_or_strong()
 
   // Register site visibility handlers
