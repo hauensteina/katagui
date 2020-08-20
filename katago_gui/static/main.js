@@ -474,7 +474,8 @@ function main( JGO, axutil, p_options) {
           return
         }
         // Game ended, start from beginning
-        if (grec.curmove() && (grec.curmove().p < 0.05 || grec.curmove().p > 0.95 || set_load_sgf_handler.loaded_game)) {
+        if (grec.curmove() && (grec.curmove().p < 0.05 || (grec.curmove().p > 0.95 && g_handi < 2) || set_load_sgf_handler.loaded_game))
+        {
           selfplay.ready = true
           if (!selfplay('ison')) return;
           goto_move(0)
