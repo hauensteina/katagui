@@ -7,21 +7,6 @@
 
 'use strict'
 
-const DDATE = '2020-08-07'
-const DEBUG = false
-
-const HANDISTONES = ['',''
-  ,['D4','Q16']
-  ,['D4','Q16','Q4']
-  ,['D4','Q16','Q4','D16']
-  ,['D4','Q16','Q4','D16','K10']
-  ,['D4','Q16','Q4','D16','D10','Q10']
-  ,['D4','Q16','Q4','D16','D10','Q10','K10']
-  ,['D4','Q16','Q4','D16','D10','Q10','K4','K16']
-  ,['D4','Q16','Q4','D16','D10','Q10','K4','K16','K10']
-]
-
-
 //=====================================================
 function watch( JGO, axutil, game_hash, p_options) {
   $ = axutil.$
@@ -34,7 +19,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
   var g_ko = null // ko coordinate
   var g_last_move = null // last move coordinate
-  var g_play_btn_buffer = false // buffer one play btn click
+  //var g_play_btn_buffer = false // buffer one play btn click
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
 
@@ -45,55 +30,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   // UI Callbacks
   //================
 
-  //-----------------------------------
-  function set_dropdown_handlers() {
-    $('#komi_menu').html(g_komi)
-    $('#komi_m505').click( function() {  $('#komi_menu').html('-50.5') })
-    $('#komi_m405').click( function() { $('#komi_menu').html('-40.5') })
-    $('#komi_m305').click( function() { $('#komi_menu').html('-30.5') })
-    $('#komi_m205').click( function() { $('#komi_menu').html('-20.5') })
-    $('#komi_m105').click( function() { $('#komi_menu').html('-10.5') })
-    $('#komi_05').click( function()  { $('#komi_menu').html('0.5') })
-    $('#komi_75').click( function()  { $('#komi_menu').html('7.5') })
-
-    $('#handi_menu').html(g_handi)
-    $('#handi_0').click( function() { $('#handi_menu').html('0'); $('#komi_menu').html('7.5') })
-    $('#handi_1').click( function() { $('#handi_menu').html('1'); $('#komi_menu').html('0.5') })
-    $('#handi_2').click( function() { $('#handi_menu').html('2'); $('#komi_menu').html('0.5') })
-    $('#handi_3').click( function() { $('#handi_menu').html('3'); $('#komi_menu').html('0.5') })
-    $('#handi_4').click( function() { $('#handi_menu').html('4'); $('#komi_menu').html('0.5') })
-    $('#handi_5').click( function() { $('#handi_menu').html('5'); $('#komi_menu').html('0.5') })
-    $('#handi_6').click( function() { $('#handi_menu').html('6'); $('#komi_menu').html('0.5') })
-    $('#handi_7').click( function() { $('#handi_menu').html('7'); $('#komi_menu').html('0.5') })
-    $('#handi_8').click( function() { $('#handi_menu').html('8'); $('#komi_menu').html('0.5') })
-    $('#handi_9').click( function() { $('#handi_menu').html('9'); $('#komi_menu').html('0.5') })
-
-    $('#game_start').click( function() { // New Game -> Go
-      end_game()
-      $('#donate_modal').html('')
-      g_handi = parseInt( $('#handi_menu').html())
-      g_komi = parseFloat( $('#komi_menu').html())
-      reset_game();
-      $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
-      set_emoji();
-      activate_bot( 'on')
-      $('#status').html( '&nbsp;')
-
-      // create new game in db
-      axutil.hit_endpoint_simple( '/create_game',{'handicap':g_handi, 'komi':g_komi},
-        (resp)=>{
-          settings('game_hash', resp.game_hash)
-          if (g_handi > 1) { botmove_if_active() }
-        })
-    })
-
-    $('#cancel_new_game').click( function() { // New Game -> x
-      $('#donate_modal').html('')
-    })
-  } // set_dropdown_handlers()
-
   // BLACK or WHITE depending on grec.pos()
-  //-------------------------------------------------
+  //------------------------------------------
   function turn( idx_) {
     var idx = idx_ || grec.pos()
     if (idx % 2) {
@@ -104,40 +42,32 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //----------------------------------------
   function board_click_callback( coord) {
-    selfplay('off')
+    toggle_button( '#btn_tgl_live', 'off');
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
-    //SLOG(navigator.userAgent.toLowerCase())
-		if (score_position.active) { goto_move( grec.pos()); return }
-		var jboard = g_jrecord.jboard
-		if ((jboard.getType(coord) == JGO.BLACK) || (jboard.getType(coord) == JGO.WHITE)) { return }
+    if (score_position.active) { goto_move( grec.pos()); return }
+    var jboard = g_jrecord.jboard
+    if ((jboard.getType(coord) == JGO.BLACK) || (jboard.getType(coord) == JGO.WHITE)) { return }
     if (axutil.hit_endpoint('waiting')) {
       g_click_coord_buffer = coord
-			return
-		}
-		// clear hover away
-		hover()
+      return
+    }
+    // clear hover away
+    hover()
 
-		// Click on empty board resets everything
-		//if (grec.pos() == 0) {
-		//	reset_game()
-    //  end_game()
-		//}
-
-		// Add the new move
-		maybe_start_var()
-		var mstr = jcoord2string( coord)
+    // Add the new move in a variation
+    handle_variation( 'save')
+    var mstr = jcoord2string( coord)
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
-		goto_move( grec.len())
-		set_emoji()
-		const playing = true
-		get_prob_genmove( function( data) { if (activate_bot.state == 'on') { bot_move_callback( data) } },
-      settings('show_emoji'), playing )
+    goto_move( grec.len())
+    set_emoji()
+    const playing = true
+    get_prob_genmove( (data)=>{}, settings('show_emoji'), playing )
   } // board_click_callback()
 
   //-------------------------------
   function best_btn_callback() {
-    selfplay('off')
+    toggle_button( '#btn_tgl_live', 'off');
     $('#status').html( translate('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move( (data) => {
@@ -196,49 +126,36 @@ function watch( JGO, axutil, game_hash, p_options) {
     // Add mouse event listeners for the board
     //------------------------------------------
     g_jsetup.create('board',
-		  function(canvas) {
-		    //----------------------------
-		    canvas.addListener('click', function(coord, ev) { board_click_callback( coord) } );
+		    function(canvas) {
+		      //----------------------------
+		      canvas.addListener( 'click', function(coord, ev) { board_click_callback( coord) } );
 
-		    //------------------------------
-		    canvas.addListener('mousemove',
-					function( coord, ev) {
-					  var jboard = g_jrecord.jboard
-					  if (coord.i == -1 || coord.j == -1)
-					    return
-					  if (coord == hover.coord)
-					    return
-
-            if (DEBUG && score_position.active) {
-              var idx = jcoord2idx( coord)
-              $('#status').html( score_position.probs[idx])
-            }
-            else {
+		      //------------------------------
+		      canvas.addListener( 'mousemove',
+					  function( coord, ev) {
+					    var jboard = g_jrecord.jboard
+					    if (coord.i == -1 || coord.j == -1) { return }
+					    if (coord == hover.coord) { return }
 					    hover( coord, turn())
-              if (score_position.active) {
-                draw_estimate( score_position.probs)
-              }
-              else if (best_btn_callback.active) {
-                show_best_moves()
-              }
-            }
-					}
-				) // mousemove
+					    if (score_position.active) { draw_estimate( score_position.probs) }
+					    else if (best_btn_callback.active) { show_best_moves() }
+					  }
+					) // mousemove
 
-		    //----------------------------
-		    canvas.addListener('mouseout',
-					function(ev) {
-					  hover()
-            if (score_position.active) {
-              draw_estimate( score_position.probs)
-            }
-            else if (best_btn_callback.active) {
-              show_best_moves()
-            }
-					}
-				) // mouseout
-		  } // function(canvas)
-		) // create board
+		      //----------------------------
+		      canvas.addListener( 'mouseout',
+					  function(ev) {
+					    hover()
+					    if (score_position.active) {
+					      draw_estimate( score_position.probs)
+					    }
+					    else if (best_btn_callback.active) {
+					      show_best_moves()
+					    }
+					  }
+					) // mouseout
+		    } // function(canvas)
+		   ) // create board
   } // setup_jgo()
 
   // Blink a translucent stone
@@ -256,64 +173,24 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Set button callbacks
   //------------------------------
   function set_btn_handlers() {
-    set_load_sgf_handler()
     var_button_state( 'off')
 
     $('#img_bot, #descr_bot').click( () => {
-      selfplay('off')
       fast_or_strong('toggle')
-    })
-
-    $('#btn_tgl_guest').click( () => {
-      $('#donate_modal').html('\&nbsp;')
-      fast_or_strong('guest')
-    })
-
-    $('#btn_tgl_fast').click( () => {
-      fast_or_strong('fast')
-    })
-
-    $('#btn_tgl_strong').click( () => {
-      fast_or_strong('strong')
     })
 
     $('#btn_tgl_live').click( () => {
       toggle_button( '#btn_tgl_live', 'toggle')
+      reload_game()
     })
 
     $('#btn_clear_var').click( () => {
-      selfplay('off')
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation( 'clear')
     })
 
-    $('#btn_watch').click( () => { location.href = '/watch_select_game' })
-
-    $('#btn_play').click( () => {
-      selfplay('off')
-      set_emoji()
-      if (grec.pos() == 0) {
-        reset_game()
-        end_game()
-      }
-      activate_bot( 'on')
-      botmove_if_active()
-    })
-
-    $('#btn_tgl_selfplay').click( () => {
-      selfplay('toggle')
-    })
-
-    // Autoplay slider
-    $('#opt_auto').click( () => {
-      selfplay('off')
-      var state = $('#opt_auto').prop('checked')
-      if (state) { activate_bot('on') }
-      else { activate_bot('off') }
-    })
-
     $('#btn_best').click( () => {
-      selfplay('off')
+      toggle_button( '#btn_tgl_live', 'off');
       if (score_position.active) return
       if (axutil.hit_endpoint('waiting')) {
         g_best_btn_buffer = true; return
@@ -322,7 +199,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
 
     $('#btn_save').click( () => {
-      selfplay('off')
+      toggle_button( '#btn_tgl_live', 'off')
       var rec = moves_only( grec.all_moves())
       var probs = probs_only( grec.all_moves())
       var scores = scores_only( grec.all_moves())
@@ -341,59 +218,33 @@ function watch( JGO, axutil, game_hash, p_options) {
         meta.komi = g_komi
       }
       var url = '/save-sgf?q=' + Math.random() +
-        '&moves=' + encodeURIComponent(moves) +
-        '&probs=' + encodeURIComponent(probs) +
-        '&scores=' + encodeURIComponent(scores) +
-        '&pb=' + encodeURIComponent(meta.pb) +
-        '&pw=' + encodeURIComponent(meta.pw) +
-        '&km=' + encodeURIComponent(meta.komi) +
-        '&re=' + encodeURIComponent(meta.RE) +
-        '&dt=' + encodeURIComponent(meta.DT)
+            '&moves=' + encodeURIComponent(moves) +
+            '&probs=' + encodeURIComponent(probs) +
+            '&scores=' + encodeURIComponent(scores) +
+            '&pb=' + encodeURIComponent(meta.pb) +
+            '&pw=' + encodeURIComponent(meta.pw) +
+            '&km=' + encodeURIComponent(meta.komi) +
+            '&re=' + encodeURIComponent(meta.RE) +
+            '&dt=' + encodeURIComponent(meta.DT)
 
       window.location.href = url
     })
 
     $('#btn_nnscore').click( () => {
-      selfplay('off')
+      toggle_button( '#btn_tgl_live', 'off')
       if (score_position.active) {
-			  goto_move( grec.pos())
-			  return
-		  }
+	goto_move( grec.pos())
+	return
+      }
       score_position()
-      return false
-    })
-
-    $('#btn_pass').click( () => {
-      selfplay('off')
-      if (score_position.active) { goto_move( grec.pos()); return }
-      maybe_start_var()
-      grec.push( {'mv':'pass', 'p':0, 'agent':'human'})
-      goto_move( grec.len())
-      botmove_if_active()
-    })
-
-    $('#btn_undo').click( () => {
-      selfplay('off')
-      axutil.hit_endpoint('cancel')
-      var at_end = (grec.pos() == grec.len())
-      if (grec.pos() > 2 && grec.curmove().agent == 'bot' && grec.prevmove().agent == 'human') {
-	      goto_move( grec.pos() - 2 )
-      } else {
-	      goto_move( grec.pos() - 1)
-      }
-      if (at_end) {
-        grec.truncate()
-        grec.dbsave()
-      }
-      show_movenum()
     })
 
     $('#btn_prev').click( btn_prev)
     $('#btn_next').click( btn_next)
-    $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); activate_bot('off') })
-    $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); activate_bot('off') })
-    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
-    $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); activate_bot('off') })
+    $('#btn_back10').click( () => { toggle_button( '#btn_tgl_live', 'off'); goto_move( grec.pos() - 10); update_emoji() })
+    $('#btn_fwd10').click( () => { toggle_button( '#btn_tgl_live', 'off'); goto_move( grec.pos() + 10); update_emoji() })
+    $('#btn_first').click( () => { toggle_button( '#btn_tgl_live', 'off'); goto_move(0); set_emoji(); $('#status').html( '&nbsp;') })
+    $('#btn_last').click( () => { toggle_button( '#btn_tgl_live', 'off'); goto_move( grec.len()); update_emoji() })
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
@@ -428,116 +279,15 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
   } // set_btn_handlers()
 
-  // Start and stop selfplay
-  //--------------------------
-  function selfplay( action) {
-    if (action == 'on') {
-      $('#btn_tgl_selfplay').css('background-color','rgb(40, 167, 69)')
-      return $('#btn_tgl_selfplay').addClass('btn-success')
-    }
-    else if (action == 'off') {
-      $('#btn_tgl_selfplay').css('background-color','')
-      return $('#btn_tgl_selfplay').removeClass('btn-success')
-    }
-    else if (action == 'ison') {
-      return $('#btn_tgl_selfplay').hasClass('btn-success')
-    }
-
-    // action == 'toggle'
-    if (selfplay('ison')) {
-      return selfplay('off')
-    }
-    selfplay('on')
-    var interval = 4000
-    if (settings('selfplay_speed')) {
-      if (settings('selfplay_speed') == 'fast') { interval = 3000 }
-      else if (settings('selfplay_speed') == 'slow') { interval = 5000 }
-    }
-    cb_selfplay()
-    function cb_selfplay() { // timer callback
-      if (!settings('logged_in')) {
-        selfplay('off')
-        $('#alertbox_title').html('')
-        $('#alertbox_message').html(translate('Please Log In'))
-        $('#alertbox').modal('show')
-        return
-      }
-      if (selfplay.ready) {
-        selfplay.ready = false
-        axutil.hit_endpoint( fast_or_strong('guest').ep + BOT,
-          {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
-          (data) => {
-            selfplay.ready = true
-            if (!selfplay('ison')) return;
-            var botCoord = string2jcoord( data.bot_move)
-            maybe_start_var()
-            grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
-		        replay_moves( grec.pos())
-            const show_emoji = false
-		        const playing = true
-            get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
-          }) // hit_endpoint()
-      } // if ready
-      if (selfplay('ison')) { setTimeout( cb_selfplay, interval) }
-    } // cb_selfplay()
-  } // selfplay()
-  selfplay.ready = true
-
-  // Load Sgf button
-  //-----------------------------------
-  function set_load_sgf_handler() {
-    $('#sgf-file').on('change', function() {
-      var input = $(this)
-      var myfile = input.get(0).files[0]
-      var numFiles = input.get(0).files ? input.get(0).files.length : 1
-      var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
-      handle_variation( 'clear')
-      // Call API to get the moves, then replay on the board
-      axutil.upload_file( '/sgf2list', myfile, (response) => {
-        var res = response.result
-        var moves = res.moves
-        $('#lb_komi').html( translate('Komi') + ': ' + res.komi)
-        set_emoji()
-        end_game()
-        grec = new GameRecord()
-        for (var move of moves) {
-          var move_prob = { 'mv':move, 'p':0, 'agent':'' }
-          grec.push( move_prob)
-        }
-		    replay_moves( grec.pos())
-        show_movenum()
-        g_komi = res.komi
-        get_handicap()
-        show_game_info( res)
-        $('#status').html('')
-        set_load_sgf_handler.loaded_game = res
-        $('#sgf-file').val('') // reset to make sure it triggers again
-      })
-    }) // $('sgf-file')
-  } // set_load_sgf_handler()
-
-  //-----------------------------------------
-  function show_game_info( loaded_game) {
-    var tr = translate
-    if (loaded_game) {
-      $('#game_info').html(
-        `${tr('B')}:${loaded_game.pb} &nbsp;&nbsp; ${tr('W')}:${loaded_game.pw} &nbsp;&nbsp; ${tr('Result')}:${loaded_game.RE} &nbsp;&nbsp; ${tr('Date')}:${loaded_game.DT}`)
-      $('#fname').html( loaded_game.fname)
-    } else {
-      $('#game_info').html('')
-      $('#fname').html('')
-    }
-  } // show_game_info()
-
   //-------------------------
   function btn_prev() {
-    selfplay('off');
-    goto_move( grec.pos() - 1); update_emoji(); activate_bot('off')
+    toggle_button( '#btn_tgl_live', 'off');
+    goto_move( grec.pos() - 1); update_emoji();
   }
 
   //-------------------------
   function btn_next() {
-    selfplay('off');
+    toggle_button( '#btn_tgl_live', 'off');
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( grec.pos() + 1)
     // Do not analyze handicap stones
@@ -549,7 +299,6 @@ function watch( JGO, axutil, game_hash, p_options) {
       btn_next.waiting = true
       get_prob_genmove( (data) => {
         update_emoji()
-        activate_bot('off')
         btn_next.waiting = false
         if (btn_next.buffered) {
           btn_next.buffered = false
@@ -559,7 +308,6 @@ function watch( JGO, axutil, game_hash, p_options) {
       return
     }
     update_emoji()
-    activate_bot('off')
   } // btn_next()
   btn_next.waiting = false
   btn_next.buffered = false
@@ -572,10 +320,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (e.keyCode == '17') { // ctrl
       check_key.ctrl_pressed = true
       return
-    }
-    else if (e.keyCode == '38') { // up arrow
-    }
-    else if (e.keyCode == '40') { // down arrow
     }
     else if (e.keyCode == '37') { // left arrow
       btn_prev()
@@ -591,79 +335,45 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Bot Interaction
   //===================
 
-  //-----------------------------
-  function get_katago_move() {
-    $('#status').html( translate('KataGo is thinking ...'))
-    axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
-			'config':{'komi':g_komi } }, bot_move_callback)
-  } // get_katago_move()
-
-  //--------------------------------
-  function botmove_if_active() {
-    if (axutil.hit_endpoint('waiting')) {
-      g_play_btn_buffer = true; return true
-    }
-    if (activate_bot.state == 'off') { return true }
-    get_katago_move()
-    return true
-  } // botmove_if_active()
-
   // Do things after the bot came back with move and estimate
   //------------------------------------------------------------
   function bot_move_callback( data) {
-		hover() // The board thinks the hover stone is actually there. Clear it.
-		var botprob = data.diagnostics.winprob; var botcol = 'Black'
-		if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
+    hover() // The board thinks the hover stone is actually there. Clear it.
+    var botprob = data.diagnostics.winprob; var botcol = 'Black'
+    if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
-		if (data.bot_move == 'pass') {
-			alert( translate('KataGo passes. Click on the Score button.'))
+    if (data.bot_move == 'pass') {
+      alert( translate('KataGo passes. Click on the Score button.'))
       $('#status').html('')
-		}
-		else if (data.bot_move == 'resign') {
-			alert( translate('KataGo resigns.'))
-			$('#status').html( translate('KataGo resigns.'))
+    }
+    else if (data.bot_move == 'resign') {
+      alert( translate('KataGo resigns.'))
+      $('#status').html( translate('KataGo resigns.'))
       return
-		}
-		else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
+    }
+    else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
       (g_handi < 3 && botprob < 0.01) ||
-      (g_handi < 2 && botprob < 0.02) ||
-      (botprob < 0.001))
-      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
-    )
+	(g_handi < 2 && botprob < 0.02) ||
+	(botprob < 0.001))
+	      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
+	    )
     {
-			alert( translate('KataGo resigns. You beat KataGo!'))
-			$('#status').html( translate('KataGo resigns.'))
+      alert( translate('KataGo resigns. You beat KataGo!'))
+      $('#status').html( translate('KataGo resigns.'))
       return
-		}
-		else {
-			maybe_start_var()
-			//var botCoord = string2jcoord( data.bot_move)
-		}
-    grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':'bot' } )
-		//show_move( turn(), botCoord, 0.0, 'bot')
-		replay_moves( grec.pos())
-		show_movenum()
-		const show_emoji = false
-		const playing = true
-    get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
-  } // bot_move_callback()
-
-  //-----------------------------------
-  function activate_bot( on_or_off) {
-    activate_bot.state = on_or_off
-    if (on_or_off == 'on') {
-      $('#opt_auto').prop('checked', true)
-      $('#btn_play').css('border-width', '1px')
-      $('#btn_play').css('border-color', '#FF0000')
     }
     else {
-      axutil.hit_endpoint('cancel')
-      $('#opt_auto').prop('checked', false)
-      $('#btn_play').css('border-width', '1px')
-      $('#btn_play').css('border-color', '#343A40')
+      maybe_start_var()
+      //var botCoord = string2jcoord( data.bot_move)
     }
-  } // activate_bot()
-  activate_bot.state = 'off'
+    grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':'bot' } )
+    //show_move( turn(), botCoord, 0.0, 'bot')
+    replay_moves( grec.pos())
+    show_movenum()
+    const show_emoji = false
+    const playing = true
+    get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+  } // bot_move_callback()
 
   //========
   // Moves
@@ -707,12 +417,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     g_jrecord.root = g_jrecord.current = null
     show_movenum()
   } // goto_first_move()
-
-  //----------------------------
-  //function place_handi() {
-  //  if (g_handi < 2) return
-  //  goto_move( g_handi * 2)
-  //} // place_handi()
 
   //-----------------------
   function reset_game() {
@@ -793,7 +497,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     else if (action == 'clear') { // Restore game record and forget the variation
       grec.exit_var()
       goto_move( grec.pos())
-      update_emoji(); activate_bot('off')
+      update_emoji();
       var_button_state('off')
       $('#status').html( 'Variation deleted')
     }
@@ -861,38 +565,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     return 0
   } // toggle_button()
 
-  //===============================
-  // Saving and restoring state
-  //===============================
-
-  //--------------------------
-  function save_state() {
-    localStorage.setItem('fast_or_strong', fast_or_strong().val)
-    if (var_button_state() == 'off') { // don't save if in variation
-      localStorage.setItem('game_record', grec.dumps())
-      localStorage.setItem('komi', JSON.stringify( g_komi))
-      localStorage.setItem('bot_active', activate_bot.state)
-      localStorage.setItem('loaded_game', JSON.stringify( set_load_sgf_handler.loaded_game))
-    }
-  } // save_state()
-
-  //--------------------------
-  function load_state() {
-    fast_or_strong('guest')
-    if (localStorage.getItem('fast_or_strong') == 'strong') {
-      fast_or_strong('strong')
-    }
-    if (localStorage.getItem('game_record') === null) { return }
-    if (localStorage.getItem('game_record') === 'null') { return }
-    set_load_sgf_handler.loaded_game = JSON.parse( localStorage.getItem( 'loaded_game'))
-    show_game_info( set_load_sgf_handler.loaded_game)
-    grec.loads( localStorage.getItem('game_record'))
-    g_komi = JSON.parse( localStorage.getItem('komi'))
-    activate_bot.state = localStorage.getItem('bot_active')
-    $('#lb_komi').html( translate('Komi') + ': ' + g_komi)
-    goto_move( grec.pos())
-  }
-
   //======================
   // Winning probability
   //======================
@@ -900,39 +572,29 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Get current winning probability from genmove
   //-------------------------------------------------------------
   function get_prob_genmove( completion, update_emo, playing) {
-    if (activate_bot.state == 'on') {
-      $('#status').html( translate('KataGo is counting ...'))
-    }
-    else {
-      $('#status').html( '...')
-    }
+    $('#status').html( translate( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			{'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
-			(data) => {
-        get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
-			  if (completion) { completion(data) }
-			})
+			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+			 (data) => {
+			   get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
+			   if (completion) { completion(data) }
+			 })
   } // get_prob_genmove()
 
   // Continue after prob and score came back from the server
   //-------------------------------------------------------------------
   function get_prob_callback( winprob, score, update_emo, playing) {
-		if (grec.pos()) {
-			var p = parseFloat( winprob)
-			var score = parseFloat( score)
+    if (grec.pos()) {
+      var p = parseFloat( winprob)
+      var score = parseFloat( score)
       grec.update( p, score)
       if (settings( 'game_hash')) { // we are in an active game
-        grec.dbsave()
       }
-		}
-		show_prob( update_emo, playing)
+    }
+    show_prob( update_emo, playing)
     if (g_click_coord_buffer) { // user clicked while waiting, do it now
       board_click_callback( g_click_coord_buffer)
       g_click_coord_buffer = null
-    }
-    else if (g_play_btn_buffer) { // Buffered play button click
-      botmove_if_active()
-      g_play_btn_buffer = false
     }
     else if (g_best_btn_buffer) { // Buffered play button click
       best_btn_callback()
@@ -945,11 +607,11 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( translate('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			{'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
-			(data) => {
-			  if (completion) { completion(data) }
-        $('#status').html( '')
-			})
+			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+			 (data) => {
+			   if (completion) { completion(data) }
+			   $('#status').html( '')
+			 })
   } // get_best_move()
 
   //------------------------------------------
@@ -1052,17 +714,17 @@ function watch( JGO, axutil, game_hash, p_options) {
   function score_position() {
     $('#status').html( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
-      {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':g_komi }, 'tt':Math.random() },
-			(data) => {
-        var winprob = parseFloat(data.diagnostics.winprob)
-        var score = parseFloat(data.diagnostics.score)
-        score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-			  score_position.active = true
-        score_position.probs = data.probs
-        draw_estimate( data.probs)
-        get_prob_genmove( function() {}, false, false )
-      } // (data) =>
-		) // hit_endpoint()
+			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':g_komi }, 'tt':Math.random() },
+			 (data) => {
+			   var winprob = parseFloat(data.diagnostics.winprob)
+			   var score = parseFloat(data.diagnostics.score)
+			   score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
+			   score_position.active = true
+			   score_position.probs = data.probs
+			   draw_estimate( data.probs)
+			   get_prob_genmove( function() {}, false, false )
+			 } // (data) =>
+		       ) // hit_endpoint()
   } // score_position()
   score_position.active = false
   score_position.probs = []
@@ -1074,7 +736,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     for (const [idx, prob] of probs.entries()) {
       var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
       var col = (idx % BOARD_SIZE) + 1
-			var coord = rc2jcoord( row, col)
+      var coord = rc2jcoord( row, col)
       if (prob < 0) { // white
         node.setMark( coord, 'WP:' + Math.trunc(Math.abs(prob)*100))
       } // for
@@ -1247,6 +909,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#img_bot').attr('src', 'static/kata.png')
       return {'val':'guest', 'ep':'/select-move-guest/' }
     }
+    return 0
   } // fast_or_strong()
 
   // Get a field from the user data, or fetch the user from the back end
@@ -1270,27 +933,41 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //------------------------------------------
   function server_sig_received( url, args) {
-    axutil.hit_endpoint_simple( url, args,
-      (resp) => {
-        if (url.indexOf('load_game') >= 0) {
-          grec.from_dict( resp)
-          replay_moves( grec.pos())
-          axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
-        }
-      })
+    if (url.indexOf('load_game') >= 0) {
+      axutil.hit_endpoint_simple(
+	'/watched', {}, // tell DB when we last saw the game
+	(resp)=>{
+	  axutil.hit_endpoint_simple( url, args, // actually get the game
+				      (resp) => {
+					if (url.indexOf('load_game') >= 0) {
+					  grec.from_dict( resp)
+					  replay_moves( grec.pos())
+					}
+				      })
+	})
+    } // if(load_game)
   } // server_sig_received()
+
+  // Reload game from DB
+  //--------------------------
+  function reload_game() {
+    grec.dbload( game_hash, ()=>{
+      replay_moves( grec.pos())
+      axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
+    })
+  } // reload_game()
 
   //--------------------------------
   function periodic_interrupt() {
     if (toggle_button( '#btn_tgl_live') == 'on') {
       axutil.hit_endpoint_simple( '/get_signal_url',{},
-        (resp) => {
-          if (resp.url) {
-            $('#status').html('>>> got server signal: ' + resp.url)
-            setTimeout( function() { $('#status').html('')},  500)
-            server_sig_received( resp.url, resp.args)
-          }
-        })
+				  (resp) => {
+				    if (resp.url) {
+				      $('#status').html('>>> got server signal: ' + resp.url)
+				      setTimeout( function() { $('#status').html('')},  500)
+				      server_sig_received( resp.url, resp.args)
+				    }
+				  })
     }
     clearTimeout( periodic_interrupt.timer)
     periodic_interrupt.timer = setTimeout( periodic_interrupt, 2000)
@@ -1300,12 +977,18 @@ function watch( JGO, axutil, game_hash, p_options) {
   settings()
   toggle_button( '#btn_tgl_live', 'on')
   var grec = new GameRecord()
-  grec.dbload( game_hash, ()=>{
-    set_btn_handlers()
-    set_dropdown_handlers()
-    setup_jgo()
-    document.onkeydown = check_key
-    replay_moves( grec.len())
-    periodic_interrupt()
+  // Load translation table and user data
+  var serverData = new ServerData( axutil, ()=>{
+    // Load the game we are observing
+    grec.dbload( game_hash, ()=>{
+      axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
+      set_btn_handlers()
+      setup_jgo()
+      document.onkeydown = check_key
+      replay_moves( grec.pos())
+      periodic_interrupt()
+    })
   })
+
+  function tr( text) { return serverData.translate( text) }
 } // function watch()

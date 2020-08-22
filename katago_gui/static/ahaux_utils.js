@@ -1,9 +1,11 @@
 
-/* Various js utility funcs
+/* Various js utility funcs and classes
  AHN, Apr 2019
  */
 
 'use strict'
+
+const DDATE = '2020-08-22'
 
 //=====================
 class AhauxUtils
@@ -419,3 +421,34 @@ class GameRecord {
     this.var_n_visible = d.game_record.var_n_visible
   } // from_dict()
 } // class GameRecord
+
+// Get translation table and user data from the server.
+// Cache and provide access methods.
+//--------------------------------------------------------
+class ServerData {
+  constructor( axutil, completion) {
+    this.transtable = {}
+    this.userdata = {}
+    axutil.hit_endpoint_simple( '/get_user_data', {},
+				(userdata)=>{
+				  this.userdata = userdata
+				  axutil.hit_endpoint_simple( '/get_translation_table',{}, (ttable)=>{
+				    this.transtable = ttable
+				    completion()
+				  })
+				})
+  }
+  translate( text) {
+    var lang
+    if (!(this.userdata)) { lang = 'eng' } else { lang = this.userdata['lang'] }
+    if (!(this.transtable)) { return text }
+    var tab = this.transtable[lang]
+    if (!tab) { tab = tab['eng'] }
+    if (!tab) { return text }
+    if (!tab[text]) { return text }
+    return tab[text]
+  }
+  userdata( key) {
+    return this.userdata[key]
+  }
+} // class ServerData
