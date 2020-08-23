@@ -25,11 +25,11 @@ from katago_gui.helpers import check_https, login_as_guest, send_reset_email, se
 #-------------------------------
 def ttest():
     """ Try things here """
-    msg = Message('Python test',
-                  sender='hauensteina@ahaux.com',
-                  recipients=['hauensteina@gmail.com'])
-    msg.body = 'hi there from python'
-    ret = mail.send(msg)
+    # msg = Message('Python test',
+    #               sender='hauensteina@ahaux.com',
+    #               recipients=['hauensteina@gmail.com'])
+    # msg.body = 'hi there from python'
+    # ret = mail.send(msg)
     return render_template( 'ttest.tmpl', msg='ttest')
 
 @app.route('/')

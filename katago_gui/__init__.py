@@ -10,14 +10,20 @@
 from pdb import set_trace as BP
 
 import os
+import logging
+import redis
+import gevent
+
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, user_logged_out, user_logged_in, current_user
 from flask_mail import Mail
+from flask_sockets import Sockets
 from katago_gui.postgres import Postgres
 from katago_gui.translations import translate, donation_blurb
 
 app = Flask( __name__)
+sockets = Sockets(app)
 
 #----------------
 def logged_in():
@@ -64,6 +70,11 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('KATAGUI_EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('KATAGUI_EMAIL_PASS')
 mail = Mail(app)
+
+# Redis and websockets for server push needed to watch games
+REDIS_URL = os.environ['REDISTOGO_URL']
+REDIS_CHAN = 'watch'
+redis = redis.from_url(REDIS_URL)
 
 from katago_gui.create_tables import create_tables
 create_tables( db)

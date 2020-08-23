@@ -931,64 +931,62 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // translate()
   translate.table = {}
 
-  //------------------------------------------
-  function server_sig_received( url, args) {
-    if (url.indexOf('load_game') >= 0) {
-      axutil.hit_endpoint_simple(
-	'/watched', {}, // tell DB when we last saw the game
-	(resp)=>{
-	  axutil.hit_endpoint_simple( url, args, // actually get the game
-				      (resp) => {
-					if (url.indexOf('load_game') >= 0) {
-					  grec.from_dict( resp)
-					  replay_moves( grec.pos())
-					}
-				      })
-	})
-    } // if(load_game)
-  } // server_sig_received()
-
   // Reload game from DB
   //--------------------------
   function reload_game() {
     grec.dbload( game_hash, ()=>{
       replay_moves( grec.pos())
-      axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
+      //axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
     })
   } // reload_game()
 
-  //--------------------------------
-  function periodic_interrupt() {
-    if (toggle_button( '#btn_tgl_live') == 'on') {
-      axutil.hit_endpoint_simple( '/get_signal_url',{},
-				  (resp) => {
-				    if (resp.url) {
-				      $('#status').html('>>> got server signal: ' + resp.url)
-				      setTimeout( function() { $('#status').html('')},  500)
-				      server_sig_received( resp.url, resp.args)
-				    }
-				  })
-    }
-    clearTimeout( periodic_interrupt.timer)
-    periodic_interrupt.timer = setTimeout( periodic_interrupt, 2000)
-  } // periodic_interrupt()
-  periodic_interrupt.timer = null
-
   settings()
   toggle_button( '#btn_tgl_live', 'on')
+
+  //============================================================
+  //=== Websockets Rule!
+  //============================================================
+
+  // Support TLS-specific URLs, when appropriate.
+  if (window.location.protocol == "https:") {
+    var ws_scheme = "wss://"
+  } else {
+    var ws_scheme = "ws://"
+  }
+  var observer_socket = new ReconnectingWebSocket( ws_scheme + location.host + '/register_socket/' + game_hash)
+
+  // Websocket callback to react to server push messages.
+  // This triggers when redis.publish(json.dumps(data)) gets called in routes_api.py.
+  observer_socket.onmessage = function(message) {
+    var data = JSON.parse(message.data)
+    var action = data.action
+    if (action == 'update_game') {
+      if (toggle_button( '#btn_tgl_live') == 'off') { return }
+      var game_hash = data.game_hash
+      axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
+				  (resp) => {
+				    grec.from_dict( resp)
+				    replay_moves( grec.pos())
+				  })
+    }
+  } // onmessage()
+  $(window).on( 'beforeunload', () => { observer_socket.close() } )
+
+  //====================================================================
+  //== Get some data from the server, i.e. translations and user data,
+  //== plus the game we are watching.
+  //====================================================================
+
   var grec = new GameRecord()
-  // Load translation table and user data
   var serverData = new ServerData( axutil, ()=>{
-    // Load the game we are observing
     grec.dbload( game_hash, ()=>{
-      axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
       set_btn_handlers()
       setup_jgo()
       document.onkeydown = check_key
       replay_moves( grec.pos())
-      periodic_interrupt()
     })
   })
 
   function tr( text) { return serverData.translate( text) }
+
 } // function watch()

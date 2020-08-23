@@ -9,8 +9,13 @@
 # A web front end for REST Api katago-server
 #
 
+from pdb import set_trace as BP
 from katago_gui import app
 
 #----------------------------
 if __name__ == '__main__':
+    # This won't work with websockets.
     app.run( host='0.0.0.0', port=8000, debug=True)
+    # Instead:
+    # $ source .env
+    # $ gunicorn -k flask_sockets.worker heroku_app:app -w 1

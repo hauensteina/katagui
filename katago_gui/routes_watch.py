@@ -11,18 +11,20 @@ from pdb import set_trace as BP
 
 import os, sys, re, json
 from datetime import datetime
+import gevent
 
 from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
 from flask_login import current_user
 
 from katago_gui import app, logged_in
-from katago_gui import auth, db
+from katago_gui import auth, db, sockets, redis, REDIS_CHAN
 from katago_gui.translations import translate as tr
+
 
 @app.route('/watch_select_game')
 #---------------------------------
 def watch_select_game():
-    ''' Show the screen to choose the game to watch '''
+    """ Show the screen to choose the game to watch """
     sql = """
     select
       u.username, u.game_hash, now() - g.ts_latest_move as t_idle
@@ -43,9 +45,72 @@ def watch_select_game():
 @app.route('/watch_game')
 #----------------------------
 def watch_game():
-    ''' User clicks on the game he wants to watch '''
+    """ User clicks on the game he wants to watch """
     gh = request.args['game_hash']
     # Remember which game we are watching
     db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
 
     return render_template( 'watch.tmpl', game_hash=gh)
+
+@sockets.route('/register_socket/<game_hash>')
+#-----------------------------------------------
+def register_socket( ws, game_hash):
+    """ Client js registers to receive live pushes when game progresses """
+    app.logger.info( '>>>>>>>>>>>>>>>>> register_socket ' + game_hash)
+    watchers.register( ws, game_hash)
+
+    while not ws.closed:
+        # Context switch while `WatcherSockets.start` is running in the background.
+        gevent.sleep(0.1)
+
+#=======================
+class WatcherSockets:
+    """ Class to keep track of all game watchers and their websockets """
+
+    #----------------------
+    def __init__( self):
+        self.sockets_by_hash = {}
+        self.pubsub = redis.pubsub()
+        self.pubsub.subscribe( REDIS_CHAN)
+
+    #------------------------
+    def __iter_data( self):
+        for message in self.pubsub.listen():
+            data = message.get('data')
+            if message['type'] == 'message':
+                app.logger.info('Sending message: {}'.format(data))
+                yield data
+
+    #--------------------------------------------
+    def register( self, websocket, game_hash):
+        """ Register a WebSocket connection for Redis updates. """
+        if not game_hash in self.sockets_by_hash:
+            self.sockets_by_hash[game_hash] = []
+        self.sockets_by_hash[game_hash].append( websocket)
+
+    #----------------------------------
+    def send( self, websocket, data):
+        """ Send given data to the registered client. Automatically discards invalid connections. """
+        try:
+            websocket.send( data)
+        except Exception:
+            for game_hash in self.sockets_by_hash:
+                for ws in self.sockets_by_hash[game_hash]:
+                    self.sockets_by_hash[game_hash].remove( ws)
+
+    #-----------------
+    def run( self):
+        """ Listens for new messages in Redis, and sends them to clients. """
+        for data in self.__iter_data():
+            msg = data.decode('utf-8')
+            for game_hash in self.sockets_by_hash:
+                for ws in self.sockets_by_hash[game_hash]:
+                    gevent.spawn( self.send, ws, data.decode('utf-8'))
+
+    #--------------------
+    def start( self):
+        """ Maintains Redis subscription in the background. """
+        gevent.spawn(self.run)
+
+watchers = WatcherSockets()
+watchers.start()
