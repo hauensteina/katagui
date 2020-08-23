@@ -940,8 +940,16 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
   } // reload_game()
 
-  settings()
-  toggle_button( '#btn_tgl_live', 'on')
+
+  //=======================
+  //=== Chat input form
+  //=======================
+
+  $('#chat_input_form').on('submit', (e) => {
+    e.preventDefault();
+    var msg = $('#chat_input_text')[0].value
+    $('#chat_input_text')[0].value = ''
+  })
 
   //============================================================
   //=== Websockets Rule!
@@ -971,6 +979,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
   } // onmessage()
   $(window).on( 'beforeunload', () => { observer_socket.close() } )
+
+  settings()
+  toggle_button( '#btn_tgl_live', 'on')
 
   //====================================================================
   //== Get some data from the server, i.e. translations and user data,

@@ -12,70 +12,15 @@
 
 {% block css %}
   <style>
-   /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
-   /*----------------------------------------------------------------------*/
-
-   /* The switch - the box around the slider */
-   .switch {
-     position: relative;
-     display: inline-block;
-     width: 30px;
-     height: 16px;
-   }
-
-   /* Hide default HTML checkbox */
-   .switch input {
-     opacity: 0;
-     width: 0;
-     height: 0;
-   }
-
-   /* The slider */
-   .slider {
-     position: absolute;
-     cursor: pointer;
-     top: 0;
-     left: 0;
-     right: 0;
-     bottom: 0;
-     background-color: #aaaaaa;
-     -webkit-transition: .1s;
-     transition: .1s;
-   }
-
-   .slider:before {
-     position: absolute;
-     content: "";
-     height: 13px;
-     width: 13px;
-     left: 2px;
-     bottom: 2px;
-     background-color: white;
-     -webkit-transition: .1s;
-     transition: .1s;
-   }
-
-   input:checked + .slider {
-     background-color: #2196F3;
-   }
-
-   input:focus + .slider {
-     box-shadow: 0 0 1px #2196F3;
-   }
-
-   input:checked + .slider:before {
-     -webkit-transform: translateX(13px);
-     -ms-transform: translateX(13px);
-     transform: translateX(13px);
-   }
-
-   /* Rounded sliders */
-   .slider.round {
-     border-radius: 9px;
-   }
-
-   .slider.round:before {
-     border-radius: 50%;
+   /* Scrollable div */
+   div.scroll {
+     background-color: #fed9ff;
+     width: 600px;
+     height: 150px;
+     overflow-x: hidden;
+     overflow-y: auto;
+     text-align: center;
+     padding: 20px;
    }
   </style>
 {% endblock css %}
@@ -107,9 +52,11 @@
               <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
             </div>
           </div>
+          <!-- The board -->
           <div class='row'>
             <div id='board' class='col-12 text-center'> </div>
           </div>
+          <!-- Text under board -->
           <div class='row justify-content-center'>
             <table class='center' width='100%'>
               <tr>
@@ -119,9 +66,32 @@
               </tr>
             </table>
           </div>
-        </div>                <!--col-12-->
-        </div>                  <!--row-->
-        </div>                    <!--container-->
+          <table width='100%'>
+            <tr>
+              <td>&nbsp;</td>
+              <td>
+                <!-- Chat output -->
+                <div id='chat_output' class='scroll'
+                     style='height:200px;background-color:white;text-align:left;border:1px solid green'>
+                </div>
+              </td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td style ='padding-top:10px'>
+                <!-- Chat input -->
+                <form id='chat_input_form'>
+                  <input id='chat_input_text' type='text' placeholder='Type here'
+                         style='background-color:white;width:100%;padding-left:20px' autofocus />
+                  <input type="submit" style="display:none"/> <!-- submit on enter -->
+                </form>
+              </td>
+              <td>&nbsp;</td>
+            </tr>
+          </table>
+          <br><br><br>
+        </div> <!-- left container -->
       </td>
       <td style='vertical-align:top' width='300px'>                      <!--right-->
         <div class='container' > <!-- top margin -->
