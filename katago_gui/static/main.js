@@ -277,10 +277,6 @@ function main( JGO, axutil, p_options) {
     $('#btn_play').click( () => {
       selfplay('off')
       set_emoji()
-      if (grec.pos() == 0) {
-        reset_game()
-        end_game()
-      }
       activate_bot( 'on')
       botmove_if_active()
     })

@@ -68,6 +68,16 @@
           <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
             KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
         </td>
+        <td width='20px' class=''></td>
+      </tr>
+      <tr><td colspan='3' style='height:5px'></td></tr>
+      <tr>
+        {% if logged_in() %}
+          <td colspan='2' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
+        {% else %}
+          <td colspan='2' class='font-m' align='right'>{{tr('Guest')}}</td>
+        {% endif %}
+        <td width='20px' class=''></td>
       </tr>
       <tr><td colspan='2'>
         {% block content %}
