@@ -65,7 +65,8 @@ def register_socket( ws, game_hash):
 
 #=======================
 class WatcherSockets:
-    """ Class to keep track of all game watchers and their websockets """
+    """ Class to keep track of all game watchers and their websockets. """
+    """ Black Magic involving Redis, Websockets, Python. """
 
     #----------------------
     def __init__( self):
@@ -90,22 +91,24 @@ class WatcherSockets:
 
     #----------------------------------
     def send( self, websocket, data):
-        """ Send given data to the registered client. Automatically discards invalid connections. """
+        """ Send given data to the registered clients. Automatically discards invalid connections. """
         try:
             websocket.send( data)
-        except Exception:
+        except Exception: # remove dead sockets
             for game_hash in self.sockets_by_hash:
                 for ws in self.sockets_by_hash[game_hash]:
-                    self.sockets_by_hash[game_hash].remove( ws)
+                    if ws is websocket:
+                        self.sockets_by_hash[game_hash].remove( ws)
 
     #-----------------
     def run( self):
         """ Listens for new messages in Redis, and sends them to clients. """
         for data in self.__iter_data():
             msg = data.decode('utf-8')
-            for game_hash in self.sockets_by_hash:
-                for ws in self.sockets_by_hash[game_hash]:
-                    gevent.spawn( self.send, ws, data.decode('utf-8'))
+            game_hash = json.loads( data)['game_hash']
+            # Send to all who are watching this game
+            for ws in self.sockets_by_hash[game_hash]:
+                gevent.spawn( self.send, ws, data.decode('utf-8'))
 
     #--------------------
     def start( self):

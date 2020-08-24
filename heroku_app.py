@@ -17,4 +17,4 @@ if __name__ == '__main__':
     # This won't work with websockets.
     app.run( host='0.0.0.0', port=8000, debug=True)
     # Instead when debugging:
-    # $ source .env; gunicorn -k flask_sockets.worker heroku_app:app -w 1 -b 0.0.0.0:8000
+    # $ source .env; gunicorn -k flask_sockets.worker heroku_app:app -w 1 -b 0.0.0.0:8000 --reload --timeout 1000

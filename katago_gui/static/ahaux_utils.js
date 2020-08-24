@@ -404,7 +404,7 @@ class GameRecord {
     this.record = tt.record; this.n_visible = tt.n_visible
     this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
   }
-  dbsave() { // update game in db
+  dbsave() { // update game in db; notify observers via redis
     axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps()}, (resp)=>{})
   }
   dbload( game_hash, completion) { // load game from db

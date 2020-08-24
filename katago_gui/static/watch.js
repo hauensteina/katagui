@@ -948,6 +948,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   $('#chat_input_form').on('submit', (e) => {
     e.preventDefault();
     var msg = $('#chat_input_text')[0].value
+    if (!msg.trim()) { return }
+    axutil.hit_endpoint_simple( '/chat', {'game_hash':game_hash, 'msg':msg}, (resp) => {})
     $('#chat_input_text')[0].value = ''
   })
 
@@ -956,11 +958,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   //============================================================
 
   // Support TLS-specific URLs, when appropriate.
-  if (window.location.protocol == "https:") {
-    var ws_scheme = "wss://"
-  } else {
-    var ws_scheme = "ws://"
-  }
+  var ws_scheme = "ws://"
+  if (window.location.protocol == "https:") { ws_scheme = "wss://" }
   var observer_socket = new ReconnectingWebSocket( ws_scheme + location.host + '/register_socket/' + game_hash)
 
   // Websocket callback to react to server push messages.
@@ -968,14 +967,20 @@ function watch( JGO, axutil, game_hash, p_options) {
   observer_socket.onmessage = function(message) {
     var data = JSON.parse(message.data)
     var action = data.action
+    var game_hash = data.game_hash
     if (action == 'update_game') {
       if (toggle_button( '#btn_tgl_live') == 'off') { return }
-      var game_hash = data.game_hash
       axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
 				  (resp) => {
 				    grec.from_dict( resp)
 				    replay_moves( grec.pos())
 				  })
+    }
+    else if (action == 'chat') {
+      var msg = data.msg
+      var username = data.username
+      $('#chat_output').append( '<span style="color:green">' + username + '</span>: ' + msg + '<br>')
+      $('#chat_output').scrollTop( $('#chat_output').prop('scrollHeight')) // autoscroll
     }
   } // onmessage()
   $(window).on( 'beforeunload', () => { observer_socket.close() } )

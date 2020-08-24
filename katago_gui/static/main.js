@@ -367,7 +367,7 @@ function main( JGO, axutil, p_options) {
       }
       if (at_end) {
         grec.truncate()
-        grec.dbsave()
+        grec.dbsave() // save and notify observers
       }
       show_movenum()
     })
@@ -894,7 +894,7 @@ function main( JGO, axutil, p_options) {
       var score = parseFloat( score)
       grec.update( p, score)
       if (settings( 'game_hash')) { // we are in an active game
-        grec.dbsave()
+        grec.dbsave() // save and notify observers
       }
     }
     show_prob( update_emo, playing)
