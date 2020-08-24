@@ -25,7 +25,6 @@ def create_t_user(db):
     ,move_count integer not null default 0
     ,self_move_count integer not null default 0
     ,watch_game_hash text
-    ,ts_watched
     ) '''
     db.run( sql)
 

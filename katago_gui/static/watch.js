@@ -936,10 +936,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   function reload_game() {
     grec.dbload( game_hash, ()=>{
       replay_moves( grec.pos())
-      //axutil.hit_endpoint_simple( '/watched', {}, (resp)=>{} )
     })
   } // reload_game()
-
 
   //=======================
   //=== Chat input form

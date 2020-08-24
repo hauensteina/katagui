@@ -87,14 +87,18 @@ class WatcherSockets:
         """ Register a WebSocket connection for Redis updates. """
         if not game_hash in self.sockets_by_hash:
             self.sockets_by_hash[game_hash] = []
+            print('new game hash ' + game_hash)
         self.sockets_by_hash[game_hash].append( websocket)
+        print( str(self.sockets_by_hash))
 
     #----------------------------------
     def send( self, websocket, data):
         """ Send given data to the registered clients. Automatically discards invalid connections. """
         try:
             websocket.send( data)
+            print( 'sent to %s' % str(websocket))
         except Exception: # remove dead sockets
+            print( 'send failed to %s' % str(websocket))
             for game_hash in self.sockets_by_hash:
                 for ws in self.sockets_by_hash[game_hash]:
                     if ws is websocket:
@@ -107,8 +111,12 @@ class WatcherSockets:
             msg = data.decode('utf-8')
             game_hash = json.loads( data)['game_hash']
             # Send to all who are watching this game
-            for ws in self.sockets_by_hash[game_hash]:
-                gevent.spawn( self.send, ws, data.decode('utf-8'))
+            if not game_hash in self.sockets_by_hash:
+                app.logger.info( '>>>>>>>>>>>>>>>>> no observers for game ' + game_hash)
+            else:
+                app.logger.info( '>>>>>>>>>>>>>>>>> sending to observers for game ' + game_hash)
+                for ws in self.sockets_by_hash[game_hash]:
+                    gevent.spawn( self.send, ws, data.decode('utf-8'))
 
     #--------------------
     def start( self):
