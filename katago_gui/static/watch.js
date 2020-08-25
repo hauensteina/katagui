@@ -23,8 +23,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
 
-  var g_komi = 7.5
-  var g_handi = 0
+  //var g_komi = 7.5
+  //var grec.handicap = 0
 
   //================
   // UI Callbacks
@@ -97,28 +97,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     } // for
   } // show_best_moves()
   show_best_moves.data = {}
-
-  // Black moves at the beginning are handicap
-  //--------------------------------------------
-  function get_handicap() {
-    g_handi = 0
-    var handi = 0
-    var rec = grec.prefix(20)
-    for (var i=0; i < rec.length; i++) {
-      if (i%2) { // white
-        if (rec[i].mv != 'pass') {
-          break
-        }
-      }
-      else { // black
-        handi += 1
-      }
-    }
-    if (handi > 1) {
-      g_handi = handi
-    }
-    return g_handi
-  } // get_handicap()
 
   //-------------------------
   function setup_jgo() {
@@ -215,7 +193,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       var meta = set_load_sgf_handler.loaded_game
       if (!meta) {
         meta = {}
-        meta.komi = g_komi
+        meta.komi = grec.komi
       }
       var url = '/save-sgf?q=' + Math.random() +
             '&moves=' + encodeURIComponent(moves) +
@@ -278,6 +256,27 @@ function watch( JGO, axutil, game_hash, p_options) {
       }
     })
   } // set_btn_handlers()
+
+  //-----------------------------------------
+  function show_game_info( loaded_game) {
+    try {
+      var user = grec.username
+      var komi = grec.komi
+      var handicap = grec.handicap
+      var idle_msecs = new Date() - grec.ts_latest_move
+      var idlestr = new Date( idle_msecs).toISOString().substr(11, 8)
+      var tstr = `<table class='center'><tr>
+                 <td>${tr('User')}:${user}&nbsp;</td>
+                 <td>${tr('Komi')}:${komi}&nbsp;</td>
+                 <td>${tr('Handicap')}:${handicap}&nbsp;</td>
+                 <td align='left' width='110px'>${tr('Idle')}:${idlestr} </td>
+                 </tr></table>`
+      $('#game_info').html( tstr)
+    }
+    catch( error) {
+      console.log( 'show_game_info exception')
+    }
+  } // show_game_info()
 
   //-------------------------
   function btn_prev() {
@@ -352,8 +351,8 @@ function watch( JGO, axutil, game_hash, p_options) {
       return
     }
     else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
-      (g_handi < 3 && botprob < 0.01) ||
-	(g_handi < 2 && botprob < 0.02) ||
+      (grec.handicap < 3 && botprob < 0.01) ||
+	(grec.handicap < 2 && botprob < 0.02) ||
 	(botprob < 0.001))
 	      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
 	    )
@@ -425,8 +424,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     show_game_info() // clear
     grec = new GameRecord()
     goto_first_move()
-    if (g_handi < 2) { return }
-    var hstones =  HANDISTONES[g_handi]
+    if (grec.handicap < 2) { return }
+    var hstones =  HANDISTONES[grec.handicap]
     for (const [idx,s] of hstones.entries()) {
       if (idx > 0) {
         grec.push( {'mv':'pass', 'p':0, 'agent':''} )
@@ -459,7 +458,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move( n) {
-    n = Math.max( n, 2 * g_handi)
+    n = Math.max( n, 2 * grec.handicap)
     score_position.active = false
     best_btn_callback.active = false
     var totmoves = grec.len()
@@ -574,7 +573,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_prob_genmove( completion, update_emo, playing) {
     $('#status').html( translate( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
 			 (data) => {
 			   get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
 			   if (completion) { completion(data) }
@@ -607,7 +606,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( translate('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
 			 (data) => {
 			   if (completion) { completion(data) }
 			   $('#status').html( '')
@@ -714,7 +713,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function score_position() {
     $('#status').html( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':g_komi }, 'tt':Math.random() },
+			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
 			 (data) => {
 			   var winprob = parseFloat(data.diagnostics.winprob)
 			   var score = parseFloat(data.diagnostics.score)
@@ -986,6 +985,15 @@ function watch( JGO, axutil, game_hash, p_options) {
   settings()
   toggle_button( '#btn_tgl_live', 'on')
 
+  // Update some things once a second
+  //-------------------------------------
+  function once_per_sec() {
+    show_game_info()
+    clearTimeout( once_per_sec.timer)
+    once_per_sec.timer = setTimeout( once_per_sec, 1000)
+  }
+  once_per_sec.timer = null
+
   //====================================================================
   //== Get some data from the server, i.e. translations and user data,
   //== plus the game we are watching.
@@ -999,6 +1007,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       document.onkeydown = check_key
       replay_moves( grec.pos())
     })
+    once_per_sec()
   })
 
   function tr( text) { return serverData.translate( text) }

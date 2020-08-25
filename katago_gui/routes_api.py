@@ -35,7 +35,7 @@ from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_
 def create_game():
     """ Create a new game in the database """
     data = request.json
-    data.update( {'owner_email':current_user.data['email']})
+    data.update( {'username':current_user.data['username']})
     game = dbmodel.Game()
     game.update_db( data)
     current_user.data['game_hash'] = game.id

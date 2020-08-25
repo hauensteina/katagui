@@ -34,7 +34,7 @@ def create_t_game(db):
     sql = '''
     create table t_game (
     game_hash text not null primary key
-    ,owner_email text
+    ,username text
     ,handicap integer
     ,komi real
     ,ts_started timestamptz

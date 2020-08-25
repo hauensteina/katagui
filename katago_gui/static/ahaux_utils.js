@@ -419,6 +419,10 @@ class GameRecord {
     this.n_visible = d.game_record.n_visible
     this.var_record = d.game_record.var_record
     this.var_n_visible = d.game_record.var_n_visible
+    this.ts_latest_move = new Date( d.ts_latest_move)
+    this.handicap = d.handicap
+    this.komi = d.komi
+    this.username = d.username
   } // from_dict()
 } // class GameRecord
 
@@ -447,8 +451,5 @@ class ServerData {
     if (!tab) { return text }
     if (!tab[text]) { return text }
     return tab[text]
-  }
-  userdata( key) {
-    return this.userdata[key]
   }
 } // class ServerData

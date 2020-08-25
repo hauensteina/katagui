@@ -23,7 +23,7 @@ class Game:
             self.valid = False
             return
         self.data = rows[0]
-        if self.data['game_record']:
+        if self.data['game_record']: # Convert json string to a python object
             self.data['game_record'] = json.loads( self.data['game_record'])
 
     def update_db( self, data):
