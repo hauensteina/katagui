@@ -255,7 +255,7 @@ class Postgres:
         if columns == '': columns = '*'
 
         query = 'SELECT ' + columns + ' FROM ' + table + ';'
-        curs = self.conn.cursor()
+        curs = self.conn.cursor( cursor_factory=psycopg2.extras.RealDictCursor)
         try:
             curs.execute(query)
             rows = curs.fetchall()
@@ -278,7 +278,7 @@ class Postgres:
         if columns == '': columns = '*'
 
         query = 'SELECT distinct ' + columns + ' FROM ' + table + ';'
-        curs = self.conn.cursor()
+        curs = self.conn.cursor( cursor_factory=psycopg2.extras.RealDictCursor)
         try:
             curs.execute(query)
             rows = curs.fetchall()
@@ -349,7 +349,10 @@ class Postgres:
     def table_exists( self, tabname):
         ''' Return true if table exists, else false '''
         self._get_conn()
-        exists_sql = "select * from pg_tables where tablename = '%s'" % tabname
+        exists_sql = '''
+          select tablename from pg_tables where tablename = '%s' union
+          select viewname from pg_views where viewname = '%s'
+        ''' % (tabname, tabname)
         try:
             return self.select( exists_sql,())
         except Exception as e:

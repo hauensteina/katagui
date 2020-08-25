@@ -78,6 +78,37 @@ class AhauxUtils
     return 0
   } // settings()
 
+  // Get or set toggle button state.
+  // Example: toggle_button( '#btn_tgl_live', 'on')
+  //------------------------------------------------
+  toggle_button( btn, action) {
+    if (!action) {
+      if ($(btn).hasClass('disabled')) {
+        return 'off'
+      }
+      else {
+        return 'on'
+      }
+    }
+    if (action == 'on') {
+      $(btn).removeClass('disabled')
+      $(btn).addClass('btn-success')
+      $(btn).css('color', 'black')
+      $(btn).css('background-color', '')
+    }
+    else if (action == 'off') {
+      $(btn).addClass('disabled')
+      $(btn).removeClass('btn-success')
+      $(btn).css('color', 'black')
+    }
+    else if (action == 'toggle') {
+      if (this.toggle_button( btn) == 'on') { return this.toggle_button( btn, 'off') }
+      return this.toggle_button( btn, 'on')
+    }
+    return 0
+  } // toggle_button()
+
+
   isMobile() { return typeof window.orientation !== "undefined" }
   isDesktop() { return typeof window.orientation == "undefined" }
 

@@ -10,7 +10,7 @@
 from pdb import set_trace as BP
 
 import os, sys, re, json
-from datetime import datetime
+from datetime import datetime, timedelta
 import gevent
 
 from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
@@ -25,32 +25,38 @@ from katago_gui.translations import translate as tr
 #---------------------------------
 def watch_select_game():
     """ Show the screen to choose the game to watch """
-    sql = """
-    select
-      u.username, u.game_hash, now() - g.ts_latest_move as t_idle
-      from t_user u, t_game g
-      where u.game_hash = g.game_hash
-      order by t_idle
-    """
-    rows = db.select( sql)
+    rows = db.slurp( 'v_games_24hours')
+
     games = []
     for row in rows:
         g = {}
-        g['user'] = row['username']
-        g['age'] = row['t_idle']
+        g['username'] = row['username']
+        g['handicap'] = row['handicap']
+        g['komi'] = row['komi']
+        g['live'] = row['live']
+        # Format seconds to hhmmss
+        g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
+        g['nmoves'] = json.loads( row['game_record'])['n_visible']
         g['link'] = url_for( 'watch_game',game_hash=row['game_hash'])
         games.append( g)
     return render_template( 'watch_select_game.tmpl', games=games)
 
 @app.route('/watch_game')
-#----------------------------
+#--------------------------------------------------
 def watch_game():
     """ User clicks on the game he wants to watch """
     gh = request.args['game_hash']
+    print( 'hash: ' + gh)
     # Remember which game we are watching
     db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
-
     return render_template( 'watch.tmpl', game_hash=gh)
+
+@app.route('/clear_watch_game', methods=['POST'])
+#--------------------------------------------------
+def clear_watch_game():
+    """ CLear watched game before unload """
+    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
+    return jsonify( {'result': 'ok' })
 
 @sockets.route('/register_socket/<game_hash>')
 #-----------------------------------------------

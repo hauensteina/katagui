@@ -6,7 +6,9 @@
 
 {% block content %}
   <div id='watchdiv' class='center' tabindex='0'>
-    <table class='center'>
+    <style> .gametable td { padding:0px 20px 0px 20px } </style>
+    <h2 class=center> Games Today </h2>
+    <table class='center gametable'>
       <tr><td colspan='3'>
         {% with messages = get_flashed_messages( with_categories=true) %}
           {% if messages %}
@@ -20,12 +22,17 @@
           {% endif %}
         {% endwith %}
       </td></tr>
-      <tr><th>User</th><th>Age</th><th>Link</th></tr>
+
+      <tr><th>User</th><th>Handicap</th><th>Komi</th><th>Moves</th><th>Idle</th><th>Live</th><th>Link</th></tr>
       {% for game in games %}
         <tr>
-          <td align='left' style='padding:0px 10px 0px 10px'> {{ game.user }} </td>
-          <td style='padding:0px 10px 0px 10px'> {{ game.age }} </td>
-          <td style='padding:0px 10px 0px 10px'> <a href='{{ game.link }}'>Observe</a> </td>
+          <td align='left' style='padding:0px 10px 0px 10px'> {{ game.username }} </td>
+          <td> {{ game.handicap }} </td>
+          <td> {{ game.komi }} </td>
+          <td> {{ game.nmoves }} </td>
+          <td> {{ game.t_idle }} </td>
+          <td> {{ game.live }} </td>
+          <td> <a href='{{ game.link }}'>Observe</a> </td>
         </tr>
         {% endfor %}
     </table>
