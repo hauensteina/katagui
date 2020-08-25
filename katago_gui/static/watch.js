@@ -61,8 +61,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
     goto_move( grec.len())
     set_emoji()
-    const playing = true
-    get_prob_genmove( (data)=>{}, settings('show_emoji'), playing )
+    const show_emoji = true
+    get_prob_genmove( (data)=>{}, show_emoji)
   } // board_click_callback()
 
   //-------------------------------
@@ -370,8 +370,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     replay_moves( grec.pos())
     show_movenum()
     const show_emoji = false
-    const playing = true
-    get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+    get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji)
   } // bot_move_callback()
 
   //========
@@ -570,19 +569,19 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   // Get current winning probability from genmove
   //-------------------------------------------------------------
-  function get_prob_genmove( completion, update_emo, playing) {
+  function get_prob_genmove( completion, update_emo) {
     $('#status').html( translate( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
 			 (data) => {
-			   get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
+			   get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo)
 			   if (completion) { completion(data) }
 			 })
   } // get_prob_genmove()
 
   // Continue after prob and score came back from the server
   //-------------------------------------------------------------------
-  function get_prob_callback( winprob, score, update_emo, playing) {
+  function get_prob_callback( winprob, score, update_emo) {
     if (grec.pos()) {
       var p = parseFloat( winprob)
       var score = parseFloat( score)
@@ -590,7 +589,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       if (settings( 'game_hash')) { // we are in an active game
       }
     }
-    show_prob( update_emo, playing)
+    show_prob( update_emo)
     if (g_click_coord_buffer) { // user clicked while waiting, do it now
       board_click_callback( g_click_coord_buffer)
       g_click_coord_buffer = null
@@ -603,7 +602,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   // Get the best move
   //----------------------------------------------------------
-  function get_best_move( completion, update_emo, playing) {
+  function get_best_move( completion) {
     $('#status').html( translate('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
@@ -614,7 +613,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // get_best_move()
 
   //------------------------------------------
-  function show_prob( update_emo, playing) {
+  function show_prob( update_emo) {
     var cur = grec.curmove()
     if (cur) {
       var p = cur.p
@@ -625,20 +624,17 @@ function watch( JGO, axutil, game_hash, p_options) {
         set_emoji(); $('#status').html('')
         return
       }
-      if (playing && !settings('show_prob')) {
-        $('#status').html('')
-      } else {
-        var scorestr = '&nbsp;&nbsp;' + translate('B') + '+'
-        if (score < 0) {
-          scorestr = '&nbsp;&nbsp;' + translate('W') + '+'
-        }
-        scorestr += Math.abs(score)
-        var tstr = translate('P(B wins)') + ': ' + p.toFixed(2)
-        if (typeof(cur.score) !== 'undefined') {
-          tstr += scorestr
-        }
-        $('#status').html(tstr)
+      var scorestr = '&nbsp;&nbsp;' + translate('B') + '+'
+      if (score < 0) {
+        scorestr = '&nbsp;&nbsp;' + translate('W') + '+'
       }
+      scorestr += Math.abs(score)
+      var tstr = translate('P(B wins)') + ': ' + p.toFixed(2)
+      if (typeof(cur.score) !== 'undefined') {
+        tstr += scorestr
+      }
+      $('#status').html(tstr)
+
       // Show emoji
       if (update_emo) { update_emoji() }
     } else {
@@ -850,63 +846,34 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // hover()
   hover.coord = null
 
-  // Get or set guest, fast, strong mode
+  // Get or set fast or strong mode
   //---------------------------------------
   function fast_or_strong( val) {
     if (typeof val == 'undefined') { // getter
-      if ($('#btn_tgl_strong').hasClass('active')) {
+      if ($('#descr_bot').html().indexOf('40b') >= 0) {
         return fast_or_strong('strong')
-      } else if ($('#btn_tgl_fast').hasClass('active')) {
-        return fast_or_strong('fast')
       } else {
-        if (!settings('logged_in')) {
-          return fast_or_strong('guest')
-        } else { // logged in, use 20b
-          return fast_or_strong('fast')
-        }
+        return fast_or_strong('fast')
       }
     } // if getter
     // setter
     if (val == 'toggle') {
-      if (!settings('logged_in')) {
-        return fast_or_strong( 'guest')
-      } else if ($('#btn_tgl_strong').hasClass('active')) {
+      if ($('#descr_bot').html().indexOf('40b') >= 0) {
         return fast_or_strong('fast')
       } else {
         return fast_or_strong('strong')
       }
     }
     else if (val == 'strong' || val == 'fast') {
-      if (settings( 'logged_in')) {
-        if (val == 'strong') {
-          $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
-          $('#btn_tgl_strong').addClass('active')
-          $('#btn_tgl_fast').removeClass('active')
-          $('#btn_tgl_guest').removeClass('active')
-          $('#img_bot').attr('src', 'static/kata-red.png')
-          return {'val':'strong', 'ep':'/select-move-x/' }
-        } else if (val == 'fast') {
-          $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
-          $('#btn_tgl_fast').addClass('active')
-          $('#btn_tgl_strong').removeClass('active')
-          $('#btn_tgl_guest').removeClass('active')
-          $('#img_bot').attr('src', 'static/kata.png')
-          return {'val':'fast', 'ep':'/select-move/' }
-        }
-      } // if logged in
-      else {
-        fast_or_strong( 'guest') // Strong is disabled
-        var tstr = '<a href="/login" class="touch-allow">' + translate('Please Log In') + '</a>'
-        $('#donate_modal').html(tstr)
+      if (val == 'strong') {
+        $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
+        $('#img_bot').attr('src', 'static/kata-red.png')
+        return {'val':'strong', 'ep':'/select-move-x/' }
+      } else if (val == 'fast') {
+        $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
+        $('#img_bot').attr('src', 'static/kata.png')
+        return {'val':'fast', 'ep':'/select-move/' }
       }
-    }
-    else { // val == guest
-      $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
-      $('#btn_tgl_guest').addClass('active')
-      $('#btn_tgl_fast').removeClass('active')
-      $('#btn_tgl_strong').removeClass('active')
-      $('#img_bot').attr('src', 'static/kata.png')
-      return {'val':'guest', 'ep':'/select-move-guest/' }
     }
     return 0
   } // fast_or_strong()
@@ -980,7 +947,10 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#chat_output').scrollTop( $('#chat_output').prop('scrollHeight')) // autoscroll
     }
   } // onmessage()
-  $(window).on( 'beforeunload', () => { observer_socket.close() } )
+  $(window).on( 'beforeunload', () => {
+    observer_socket.close()
+    localStorage.setItem( 'chat', $('#chat_output').html() )
+  })
 
   settings()
   toggle_button( '#btn_tgl_live', 'on')
@@ -1008,6 +978,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       replay_moves( grec.pos())
     })
     once_per_sec()
+    $('#chat_output').html( localStorage.getItem( 'chat') )
   })
 
   function tr( text) { return serverData.translate( text) }
