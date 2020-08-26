@@ -46,16 +46,29 @@ def create_v_games_24hours(db):
     if db.table_exists( 'v_games_24hours'): return
     sql = '''
     create view v_games_24hours as
-    with t as (
+    with obs_by_game as (
+      select
+        watch_game_hash, count(*) as n_obs
+      from
+       t_user
+      where
+        watch_game_hash is not null
+      group by watch_game_hash
+    ),
+    games  as (
     select
        g.game_hash game_hash, u.game_hash as uhash, g.ts_latest_move, g.username
        ,g.handicap, g.komi, g.game_record
+       ,coalesce( o.n_obs, 0) as n_obs
        ,extract( epoch from now() - g.ts_latest_move) as idle_secs
        ,case when u.game_hash is not null then 1 else 0 end as active
        ,case when extract( epoch from now() - g.ts_latest_move) > 10 * 60 then 1 else 0 end as old
     from
-       t_game g left outer join t_user u
+       t_game g
+          left outer join t_user u
        on g.game_hash = u.game_hash
+          left outer join obs_by_game o
+       on g.game_hash = o.watch_game_hash
     where
        g.username is not null
        and g.username not like 'guest*'
@@ -65,7 +78,7 @@ def create_v_games_24hours(db):
     select
     *,
     case when active > 0 and not old > 0 then 1 else 0 end as live
-    from t
+    from games
     order by idle_secs
     '''
     db.run( sql)

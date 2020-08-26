@@ -37,6 +37,7 @@ def watch_select_game():
         # Format seconds to hhmmss
         g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
         g['nmoves'] = json.loads( row['game_record'])['n_visible']
+        g['n_obs'] = row['n_obs']
         g['link'] = url_for( 'watch_game',game_hash=row['game_hash'])
         games.append( g)
     return render_template( 'watch_select_game.tmpl', games=games)

@@ -23,7 +23,7 @@
         {% endwith %}
       </td></tr>
 
-      <tr><th>User</th><th>Handicap</th><th>Komi</th><th>Moves</th><th>Idle</th><th>Live</th><th>Link</th></tr>
+      <tr><th>User</th><th>Handicap</th><th>Komi</th><th>Moves</th><th>Idle</th><th>Live</th><th>Observers</th><th>Link</th></tr>
       {% for game in games %}
         <tr>
           <td align='left' style='padding:0px 10px 0px 10px'> {{ game.username }} </td>
@@ -32,6 +32,7 @@
           <td> {{ game.nmoves }} </td>
           <td> {{ game.t_idle }} </td>
           <td> {{ game.live }} </td>
+          <td> {{ game.n_obs }} </td>
           <td> <a href='{{ game.link }}'>Observe</a> </td>
         </tr>
         {% endfor %}
