@@ -31,7 +31,7 @@
     <tr>
       <td style='vertical-align:top' width='500px'>                      <!--left-->
         <div class='container'>
-          <div class='row' style='font-size:40pt;height:100px'> <!-- top margin -->
+          <div class='row' style='font-size:40pt;height:10px'> <!-- top margin -->
             <div class='col-12'>
               &nbsp;
             </div>
@@ -39,14 +39,6 @@
           <div class='row'>
             <div id='game_info' class='col-12 text-center' style='font-size:12pt'> </div>
           </div>
-          <!-- <div class='row'>
-               <div id='fname' class='col-12 text-center' style='font-size:10pt'> </div>
-               </div>
-               <div class='row'>
-               <div class='col-12'>
-               <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
-               </div>
-               </div> -->
           <br>
           <!-- The board -->
           <div class='row'>
@@ -91,7 +83,7 @@
       </td>
       <td style='vertical-align:top' width='300px'>                      <!--right-->
         <div class='container' > <!-- top margin -->
-          <div class='row' style='font-size:40pt;height:150px'>
+          <div class='row' style='font-size:40pt;height:80px'>
             <div class='col-12'>
               &nbsp;
             </div>
@@ -135,8 +127,6 @@
           <div class='row justify-content-center'>
             <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
           </div>
-          <!-- <div class='row justify-content-center'>
-               </div> -->
           <div class='row' style='font-size:5pt'>
             &nbsp;
           </div>
@@ -169,9 +159,7 @@
   <!-- Entry Point -->
   <script type='text/javascript' src='static/small/board.js'></script>
   <script type='text/javascript'>
-   //const GAME_HASH = '{{ game_hash }}'
    $(function () {
-     //main( JGO, new AhauxUtils( d3, $), {mobile:false} )
      watch( JGO, axutil, '{{ game_hash }}', {mobile:false} )
    })
   </script>

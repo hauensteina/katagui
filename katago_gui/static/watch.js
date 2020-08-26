@@ -928,6 +928,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   settings()
   axutil.toggle_button( '#btn_tgl_live', 'on')
+  fast_or_strong( 'fast')
 
   // Update some things once a second
   //-------------------------------------

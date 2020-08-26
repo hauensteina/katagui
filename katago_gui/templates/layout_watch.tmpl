@@ -1,7 +1,5 @@
 <!DOCTYPE HTML>
 
-{% set VERSION = '2.0.d' %}
-
 {% block pre %}
   <script type='text/javascript'>
    /* Filename: katago-gui/layout_watch.tmpl
@@ -44,8 +42,8 @@
     <script type='text/javascript'> const axutil = new AhauxUtils( d3, $) </script>
     <script type='text/javascript' src='static/jgoboard-latest.js'></script>
 
-    <!-- Main module -->
-    <script type='text/javascript' src='static/watch.js?v=20d'></script>
+    <!-- Watch entry point -->
+    <script type='text/javascript' src='static/watch.js?v=300'></script>
 
     <!-- Bootstrap CSS -->
     <link rel='stylesheet'
@@ -66,7 +64,7 @@
         <td width='20px'>&nbsp;</td>
         <td  align='left'>
           <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
-            KataGui <span style='font-size:9pt'>{{ VERSION }}</span></a>
+            KataGui <span id='version' style='font-size:9pt'>0.0.0</span></a>
         </td>
         <td width='20px' class=''></td>
       </tr>
@@ -85,6 +83,7 @@
       </td></tr>
     </table>
     <script>
+     $('#version').html(VERSION)
      var lfont = '20pt'
      var mfont = '12pt'
      var sfont = '9pt'

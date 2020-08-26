@@ -6,6 +6,7 @@
 'use strict'
 
 const DDATE = '2020-08-26'
+const VERSION = '3.0.0'
 
 //=====================
 class AhauxUtils
