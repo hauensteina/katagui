@@ -119,9 +119,9 @@ class WatcherSockets:
             game_hash = json.loads( data)['game_hash']
             # Send to all who are watching this game
             if not game_hash in self.sockets_by_hash:
-                app.logger.info( '>>>>>>>>>>>>>>>>> no observers for game ' + game_hash)
+                app.logger.info( '>>>>>>>>>>>>>>>>> no observers for game ' + str(game_hash))
             else:
-                app.logger.info( '>>>>>>>>>>>>>>>>> sending to observers for game ' + game_hash)
+                app.logger.info( '>>>>>>>>>>>>>>>>> sending to observers for game ' + str(game_hash))
                 for ws in self.sockets_by_hash[game_hash]:
                     gevent.spawn( self.send, ws, data.decode('utf-8'))
 
