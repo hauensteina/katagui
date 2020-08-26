@@ -74,7 +74,7 @@ function main( JGO, axutil, p_options) {
       reset_game();
       $('#lb_komi').html( tr('Komi') + ': ' + g_komi)
       set_emoji();
-      activate_bot( 'on')
+      bot_active( 'on')
       $('#status').html( '&nbsp;')
 
       // create new game in db
@@ -125,7 +125,7 @@ function main( JGO, axutil, p_options) {
     const playing = true
     get_prob_genmove(
       (data) => {
-        if (activate_bot.state == 'on') { bot_move_callback( data) }
+        if (bot_active()) { bot_move_callback( data) }
       },
       settings('show_emoji'), playing )
   } // board_click_callback()
@@ -277,7 +277,7 @@ function main( JGO, axutil, p_options) {
     $('#btn_play').click( () => {
       selfplay('off')
       set_emoji()
-      activate_bot( 'on')
+      bot_active( 'on')
       botmove_if_active()
     })
 
@@ -289,8 +289,8 @@ function main( JGO, axutil, p_options) {
     $('#opt_auto').click( () => {
       selfplay('off')
       var state = $('#opt_auto').prop('checked')
-      if (state) { activate_bot('on') }
-      else { activate_bot('off') }
+      if (state) { bot_active('on') }
+      else { bot_active('off') }
     })
 
     $('#btn_best').click( () => {
@@ -370,10 +370,10 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_prev').click( btn_prev)
     $('#btn_next').click( btn_next)
-    $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); activate_bot('off') })
-    $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); activate_bot('off') })
-    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); activate_bot('off'); $('#status').html( '&nbsp;') })
-    $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); activate_bot('off') })
+    $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); bot_active('off') })
+    $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); bot_active('off') })
+    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); bot_active('off'); $('#status').html( '&nbsp;') })
+    $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); bot_active('off') })
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
@@ -542,7 +542,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------
   function btn_prev() {
     selfplay('off');
-    goto_move( grec.pos() - 1); update_emoji(); activate_bot('off')
+    goto_move( grec.pos() - 1); update_emoji(); bot_active('off')
   }
 
   //-------------------------
@@ -560,7 +560,7 @@ function main( JGO, axutil, p_options) {
       btn_next.waiting = true
       get_prob_genmove( (data) => {
         update_emoji()
-        activate_bot('off')
+        bot_active('off')
         btn_next.waiting = false
         if (btn_next.buffered) {
           btn_next.buffered = false
@@ -570,7 +570,7 @@ function main( JGO, axutil, p_options) {
       return
     }
     update_emoji()
-    activate_bot('off')
+    bot_active('off')
   } // btn_next()
   btn_next.waiting = false
   btn_next.buffered = false
@@ -617,7 +617,7 @@ function main( JGO, axutil, p_options) {
     if (axutil.hit_endpoint('waiting')) {
       g_play_btn_buffer = true; return true
     }
-    if (activate_bot.state == 'off') { return true }
+    if (!bot_active()) { return true }
     get_katago_move()
     return true
   } // botmove_if_active()
@@ -663,8 +663,10 @@ function main( JGO, axutil, p_options) {
   } // bot_move_callback()
 
   //-----------------------------------
-  function activate_bot( on_or_off) {
-    activate_bot.state = on_or_off
+  function bot_active( on_or_off) {
+    if  (typeof on_or_off == 'undefined') {
+      return $('#opt_auto').prop('checked')
+    }
     if (on_or_off == 'on') {
       $('#opt_auto').prop('checked', true)
       $('#btn_play').css('border-width', '1px')
@@ -676,8 +678,8 @@ function main( JGO, axutil, p_options) {
       $('#btn_play').css('border-width', '1px')
       $('#btn_play').css('border-color', '#343A40')
     }
-  } // activate_bot()
-  activate_bot.state = 'off'
+    return 0
+  } // bot_active()
 
   //========
   // Moves
@@ -796,7 +798,7 @@ function main( JGO, axutil, p_options) {
     else if (action == 'clear') { // Restore game record and forget the variation
       grec.exit_var()
       goto_move( grec.pos())
-      update_emoji(); activate_bot('off')
+      update_emoji(); bot_active('off')
       var_button_state('off')
       $('#status').html( 'Variation deleted')
     }
@@ -844,7 +846,7 @@ function main( JGO, axutil, p_options) {
     if (var_button_state() == 'off') { // don't save if in variation
       localStorage.setItem('game_record', grec.dumps())
       localStorage.setItem('komi', JSON.stringify( g_komi))
-      localStorage.setItem('bot_active', activate_bot.state)
+      localStorage.setItem('bot_active', bot_active())
       localStorage.setItem('loaded_game', JSON.stringify( set_load_sgf_handler.loaded_game))
     }
   } // save_state()
@@ -861,7 +863,7 @@ function main( JGO, axutil, p_options) {
     show_game_info( set_load_sgf_handler.loaded_game)
     grec.loads( localStorage.getItem('game_record'))
     g_komi = JSON.parse( localStorage.getItem('komi'))
-    activate_bot.state = localStorage.getItem('bot_active')
+    if (localStorage.getItem('bot_active') == 'false') { bot_active('off') } else { bot_active('on') }
     $('#lb_komi').html( tr('Komi') + ': ' + g_komi)
     goto_move( grec.pos())
   }
@@ -1198,14 +1200,14 @@ function main( JGO, axutil, p_options) {
     else if (val == 'strong' || val == 'fast') {
       if (settings( 'logged_in')) {
         if (val == 'strong') {
-          $('#descr_bot').html( `KataGo 40b 1000<br>${axutil.DATE}`)
+          $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
           $('#btn_tgl_strong').addClass('active')
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
           set_attr( '#img_bot', 'src', 'static/kata-red.png')
           return STRONG
         } else if (val == 'fast') {
-          $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${axutil.DATE}`)
+          $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
           $('#btn_tgl_fast').addClass('active')
           $('#btn_tgl_strong').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
@@ -1220,7 +1222,7 @@ function main( JGO, axutil, p_options) {
       }
     }
     else { // val == guest
-      $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${axutil.DATE}`)
+      $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')

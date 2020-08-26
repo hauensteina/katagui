@@ -5,7 +5,7 @@
 
 'use strict'
 
-const DDATE = '2020-08-22'
+const DDATE = '2020-08-26'
 
 //=====================
 class AhauxUtils
