@@ -98,6 +98,28 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // show_best_moves()
   show_best_moves.data = {}
 
+  //---------------------------
+  function resizeBoard() {
+    var scale = $(window).width() / 1100 // larger is smaller
+    var tstr = 'scale(' + scale + ')'
+    $('#board').css({
+      'transform-origin':'center center',
+      'transform': tstr
+    })
+    var dimsb = $('#board')[0].getBoundingClientRect()
+    //debugger
+    var dimstd = $('#tdboard')[0].getBoundingClientRect()
+    var dx = dimstd.left - dimsb.left
+    var dy = dimstd.top - dimsb.top
+    tstr = 'translate(' + dx + 'px,' + dy + 'px) ' + 'scale(' + scale + ')'
+    $('#board').css({
+      'transform-origin':'center center',
+      'transform': tstr
+    })
+    $('#tdboard').width( dimsb.width + 'px')
+    $('#tdboard').height( dimsb.width + 'px')
+  } // resizeBoard()
+
   //-------------------------
   function setup_jgo() {
     g_jsetup.setOptions({stars: {points:9}})
@@ -132,8 +154,9 @@ function watch( JGO, axutil, game_hash, p_options) {
 					    }
 					  }
 					) // mouseout
-		    } // function(canvas)
-		   ) // create board
+		      resizeBoard()
+		      window.onresize = resizeBoard
+		    }) // create board
   } // setup_jgo()
 
   // Blink a translucent stone

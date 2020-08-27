@@ -71,7 +71,7 @@ def create_v_games_24hours(db):
        on g.game_hash = o.watch_game_hash
     where
        g.username is not null
-       and g.username not like 'guest*'
+       -- and g.username not like 'guest%'
        and g.ts_latest_move is not null
        and extract( epoch from now() - g.ts_latest_move) < 3600 * 24
     )

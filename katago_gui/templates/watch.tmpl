@@ -14,9 +14,9 @@
   <style>
    /* Scrollable div */
    div.scroll {
-     background-color: #fed9ff;
-     width: 600px;
-     height: 150px;
+     background-color: white;
+     /* width: 600px; */
+     /* height: 150px; */
      overflow-x: hidden;
      overflow-y: auto;
      text-align: center;
@@ -26,139 +26,55 @@
 {% endblock css %}
 
 {% block content %}
-  <br>
-  <table class='center'>
-    <tr>
-      <td style='vertical-align:top' width='500px'>                      <!--left-->
-        <div class='container'>
-          <div class='row' style='font-size:40pt;height:10px'> <!-- top margin -->
-            <div class='col-12'>
-              &nbsp;
-            </div>
-          </div>
-          <div class='row'>
-            <div id='game_info' class='col-12 text-center' style='font-size:12pt'> </div>
-          </div>
-          <br>
-          <!-- The board -->
-          <div class='row'>
-            <div id='board' class='col-12 text-center'> </div>
-          </div>
-          <!-- Text under board -->
-          <div class='row justify-content-center'>
-            <table class='center' width='100%'>
-              <tr>
-                <td id='movenum' align='center' style='font-size:13pt' width='30%'> &nbsp;</td>
-                <td id='status' align='center' style='font-size:13pt' width='40%'> &nbsp;</td>
-                <td id='emo' align='center' style='font-size:30pt' width='30%' height='60px'> &nbsp;</td>
-              </tr>
-            </table>
-          </div>
-          <table width='100%'>
-            <tr>
-              <td>&nbsp;</td>
-              <td>
-                <!-- Chat output -->
-                <div id='chat_output' class='scroll'
-                     style='height:200px;background-color:white;text-align:left;border:1px solid green'>
-                </div>
-              </td>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td style ='padding-top:10px'>
-                <!-- Chat input -->
-                <form id='chat_input_form'>
-                  <input id='chat_input_text' type='text' placeholder='Type here'
-                         style='background-color:white;width:100%;padding-left:20px' autofocus />
-                  <input type="submit" style="display:none"/> <!-- submit on enter -->
-                </form>
-              </td>
-              <td>&nbsp;</td>
-            </tr>
-          </table>
-          <br><br><br>
-        </div> <!-- left container -->
-      </td>
-      <td style='vertical-align:top' width='300px'>                      <!--right-->
-        <div class='container' > <!-- top margin -->
-          <div class='row' style='font-size:40pt;height:80px'>
-            <div class='col-12'>
-              &nbsp;
-            </div>
-          </div>
-          <div class='row'>
-            <div class='col-5'>
-              <img id='img_bot' src='static/kata.png' style='height:120px'>
-            </div>
-            <div class='col-6' style='font-size:11pt'>
-              <div id='descr_bot'>
-                KataGo 20 blocks<br>2020-05-30
+  <table style='width:100%;table-layout:fixed'>
+    <tr id='tabrow' class='red-border'>
+      <td id='tdleft' class='green-border'>
+        <table width='100%' height='100%' class='red-border'>
+          <tr>
+            <td>&nbsp;</td>
+            <td class='blue-border'>
+              <!-- Chat output -->
+              <div id='chat_output' class='scroll'
+                   style='height:300px;background-color:white;text-align:left;border:1px solid green;'>
               </div>
-            </div>
-          </div>
-          <!-- Space on top of buttons -->
-          <div class='row' style='font-size:20pt;height:20px'>
-            <div class='col-12'>
-              &nbsp;
-            </div>
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_tgl_live' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Live')}}</label>
-          </div>
-          <div class='row' style='font-size:5pt'> &nbsp; </div>
-          <div class='row justify-content-center'>
-            <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>&nbsp;
-            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>
-          </div>
-          <div class='row' style='font-size:5pt'> &nbsp; </div>
-          <div class='row justify-content-center'>
-            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Back 10')}}</label>&nbsp;
-            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Prev')}}</label>&nbsp;
-            <label id='btn_next' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Next')}}</label>&nbsp;
-            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Fwd 10')}}</label>
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
-            <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
-          </div>
-          <div class='row' style='font-size:5pt'> &nbsp; </div>
-          <div class='row justify-content-center'>
-            <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
-          </div>
-          <div class='row' style='font-size:5pt'>
-            &nbsp;
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main Line')}}</label>
-          </div>
-        </div>                  <!--right container-->
-      </td>                     <!--right-->
-    </tr></table>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </td>
+      <td id='tdboard' class='green-border' style='padding:0 0 0 0'>
+        <div id='board' class='green-border' style='display:inline-block'> </div>
+      </td>
+      <td id='tdright' class='green-border'>
+          yyyyy
+      </td>
+  </table>
 
-    <!-- General purpose modal popup (alert box) -->
-    <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
-      <div class='modal-dialog' role='document'>
-        <div class='modal-content'>
-          <div class='modal-header'>
-            <h5 id='alertbox_title' class='modal-title'>Very Important Message</h5>
-          </div>
-          <div class='modal-body'>
-            <span id='alertbox_message'> </span>
-          </div>
-          <div class='modal-footer'>
-            <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
-          </div>
+
+  <!-- General purpose modal popup (alert box) -->
+  <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
+    <div class='modal-dialog' role='document'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 id='alertbox_title' class='modal-title'>Very Important Message</h5>
+        </div>
+        <div class='modal-body'>
+          <span id='alertbox_message'> </span>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
         </div>
       </div>
     </div>
+  </div>
 {% endblock content %}
 
 {% block js %}
   <!-- Entry Point -->
   <script type='text/javascript' src='static/small/board.js'></script>
   <script type='text/javascript'>
+
+
    $(function () {
      watch( JGO, axutil, '{{ game_hash }}', {mobile:false} )
    })
