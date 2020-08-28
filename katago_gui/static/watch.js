@@ -127,6 +127,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     $('#divinfo').css( 'top', dimsb.bottom)
     $('#divinfo').css( 'width', dimsb.width)
     $('#divinfo').css( 'left', dimsb.left + 10)
+
   } // resize_board()
 
   //-------------------------
@@ -291,8 +292,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
   } // set_btn_handlers()
 
-  //-----------------------------------------
-  function show_game_info( loaded_game) {
+  //----------------------------
+  function show_game_info() {
     try {
       var user = grec.username
       var komi = grec.komi
@@ -461,7 +462,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       node.setType( play.captures, JGO.CLEAR) // clear opponent's stones
 
       if (g_last_move) {
-        node.setMark( g_last_move, JGO.MARK.NONE) // clear previous mark
+        node.setMark( g_last_move, JGO.MARK.SQUARE) // mark prev move with square
       }
       if (g_ko) {
         node.setMark( g_ko, JGO.MARK.NONE) // clear previous ko mark
@@ -484,24 +485,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     g_jrecord.root = g_jrecord.current = null
     show_movenum()
   } // goto_first_move()
-
-  //-----------------------
-  function reset_game() {
-    handle_variation( 'clear')
-    set_load_sgf_handler.loaded_game = null
-    show_game_info() // clear
-    grec = new GameRecord()
-    goto_first_move()
-    if (grec.handicap < 2) { return }
-    var hstones =  HANDISTONES[grec.handicap]
-    for (const [idx,s] of hstones.entries()) {
-      if (idx > 0) {
-        grec.push( {'mv':'pass', 'p':0, 'agent':''} )
-      }
-      grec.push( {'mv':s, 'p':0, 'agent':''} )
-    }
-    goto_move( grec.len())
-  } // reset_game()
 
   // The active game has ended.
   //----------------------------
@@ -535,11 +518,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     replay_moves( n)
     show_movenum()
     show_prob()
-    if ( (grec.pos() != grec.len()) || grec.var_active() )  {
-      $('#btn_undo').addClass( 'disabled')
-    } else {
-      $('#btn_undo').removeClass( 'disabled')
-    }
   } // goto_move()
 
   //----------------------------
@@ -1007,7 +985,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     grec.dbload( game_hash, ()=>{
       set_btn_handlers()
       document.onkeydown = check_key
-      replay_moves( grec.pos())
+      goto_move( grec.pos())
     })
     once_per_sec()
     if (settings( 'chat_hash') == game_hash) { // restore chat if same game
