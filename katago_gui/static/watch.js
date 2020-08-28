@@ -202,8 +202,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
 
     $('#btn_best').click( () => {
-      debugger
-      return
       toggle_live_button( 'off');
       if (score_position.active) return
       if (axutil.hit_endpoint('waiting')) {
