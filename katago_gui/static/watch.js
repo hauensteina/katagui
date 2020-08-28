@@ -106,7 +106,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     var bwidth = $(window).width() - dimsleft.width - dimsright.width
     var scale = bwidth / 550
     if (scale < 0.7) scale = 0.7
-    console.log( scale)
     var tstr = 'scale(' + scale + ')'
     $('#board').css({
       'transform-origin':'center center',

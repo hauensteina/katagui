@@ -84,6 +84,7 @@ def load_game():
 @app.route('/logout')
 #-------------------------
 def logout():
+    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
     logout_user()
     return redirect(url_for('index'))
 
