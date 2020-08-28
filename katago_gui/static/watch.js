@@ -462,7 +462,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       node.setType( play.captures, JGO.CLEAR) // clear opponent's stones
 
       if (g_last_move) {
-        node.setMark( g_last_move, JGO.MARK.TRIANGLE) // mark prev move with triangle
+        node.setMark( g_last_move, JGO.MARK.NONE) // clear prev move
       }
       if (g_ko) {
         node.setMark( g_ko, JGO.MARK.NONE) // clear previous ko mark
