@@ -38,7 +38,7 @@ def watch_select_game():
         g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
         g['nmoves'] = json.loads( row['game_record'])['n_visible']
         g['n_obs'] = row['n_obs']
-        g['link'] = url_for( 'watch_game',game_hash=row['game_hash'])
+        g['link'] = url_for( 'watch_game',game_hash=row['game_hash'], live=row['live'])
         games.append( g)
     return render_template( 'watch_select_game.tmpl', games=games)
 
@@ -47,10 +47,10 @@ def watch_select_game():
 def watch_game():
     """ User clicks on the game he wants to watch """
     gh = request.args['game_hash']
-    print( 'hash: ' + gh)
+    live = request.args['live']
     # Remember which game we are watching
     db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
-    return render_template( 'watch.tmpl', game_hash=gh)
+    return render_template( 'watch.tmpl', game_hash=gh, live=live)
 
 @app.route('/clear_watch_game', methods=['POST'])
 #--------------------------------------------------
@@ -86,7 +86,7 @@ class WatcherSockets:
         for message in self.pubsub.listen():
             data = message.get('data')
             if message['type'] == 'message':
-                app.logger.info('Sending message: {}'.format(data))
+                #app.logger.info('Sending message: {}'.format(data))
                 yield data
 
     #--------------------------------------------
@@ -119,7 +119,8 @@ class WatcherSockets:
             game_hash = json.loads( data)['game_hash']
             # Send to all who are watching this game
             if not game_hash in self.sockets_by_hash:
-                app.logger.info( '>>>>>>>>>>>>>>>>> no observers for game ' + str(game_hash))
+                pass
+                #app.logger.info( '>>>>>>>>>>>>>>>>> no observers for game ' + str(game_hash))
             else:
                 app.logger.info( '>>>>>>>>>>>>>>>>> sending to observers for game ' + str(game_hash))
                 for ws in self.sockets_by_hash[game_hash]:

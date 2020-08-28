@@ -24,6 +24,7 @@ class User(UserMixin):
 
     def createdb( self, data):
         """ Create User in DB """
+        User.delete_old_guests()
         self.data = data
         self.data['email'] = self.id
         self.data['username'] = self.data['username'].strip()
@@ -82,6 +83,13 @@ class User(UserMixin):
 
     def email_verified( self):
         return self.data.get( 'email_verified', False)
+
+    @classmethod
+    def delete_old_guests( clazz):
+        sql = '''
+        delete from t_user where username like 'guest_%%' and extract(epoch from now() - ts_last_seen)/3600  > 24
+        '''
+        db.run(sql)
 
 # flask_login needs this callback
 @login_manager.user_loader

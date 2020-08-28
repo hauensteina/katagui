@@ -124,7 +124,7 @@ def login_as_guest():
     email = uname + '@guest.guest'
     user = auth.User( email)
     user.createdb( { 'fname':'f', 'lname':'l', 'username':uname, 'email_verified':True })
-    login_user( user, remember=True)
+    login_user( user, remember=False)
 
 
 #-------------------------------

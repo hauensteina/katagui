@@ -31,7 +31,7 @@
           <td> {{ game.komi }} </td>
           <td> {{ game.nmoves }} </td>
           <td> {{ game.t_idle }} </td>
-          <td> {{ game.live }} </td>
+          <td> {{ '\u2713' if game.live else '\u2717' }} </td>
           <td> {{ game.n_obs }} </td>
           <td> <a href='{{ game.link }}'>Observe</a> </td>
         </tr>

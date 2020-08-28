@@ -94,13 +94,11 @@
             </div>
           </div>
           <!-- Space on top of buttons -->
-          <div class='row' style='font-size:20pt;height:20px'>
-            <div class='col-12'>
-              &nbsp;
-            </div>
-          </div>
+          <br>
           <div class='row justify-content-center'>
-            <label id='btn_tgl_live' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Live')}}</label>
+            {% if live == '1' %}
+              <label id='btn_tgl_live' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Live')}}</label>
+            {% endif %}
           </div>
           <div class='row' style='font-size:5pt'> &nbsp; </div>
           <div class='row justify-content-center'>
@@ -158,7 +156,7 @@
 
 
    $(function () {
-     watch( JGO, axutil, '{{ game_hash }}', {mobile:false} )
+     watch( JGO, axutil, '{{ game_hash }}', {mobile:false, live:{{ live }} } )
    })
   </script>
 {% endblock js %}

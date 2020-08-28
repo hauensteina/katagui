@@ -42,7 +42,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //----------------------------------------
   function board_click_callback( coord) {
-    axutil.toggle_button( '#btn_tgl_live', 'off');
+    toggle_live_button( 'off')
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
     if (score_position.active) { goto_move( grec.pos()); return }
@@ -67,7 +67,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //-------------------------------
   function best_btn_callback() {
-    axutil.toggle_button( '#btn_tgl_live', 'off');
+    toggle_live_button( 'off')
     $('#status').html( translate('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move( (data) => {
@@ -192,7 +192,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
 
     $('#btn_tgl_live').click( () => {
-      axutil.toggle_button( '#btn_tgl_live', 'toggle')
+      toggle_live_button( 'toggle')
+      var_button_state('off')
       reload_game()
     })
 
@@ -202,7 +203,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
 
     $('#btn_best').click( () => {
-      axutil.toggle_button( '#btn_tgl_live', 'off');
+      debugger
+      return
+      toggle_live_button( 'off');
       if (score_position.active) return
       if (axutil.hit_endpoint('waiting')) {
         g_best_btn_buffer = true; return
@@ -211,7 +214,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
 
     $('#btn_save').click( () => {
-      axutil.toggle_button( '#btn_tgl_live', 'off')
+      toggle_live_button( 'off')
       var rec = moves_only( grec.all_moves())
       var probs = probs_only( grec.all_moves())
       var scores = scores_only( grec.all_moves())
@@ -243,7 +246,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
 
     $('#btn_nnscore').click( () => {
-      axutil.toggle_button( '#btn_tgl_live', 'off')
+      toggle_live_button( 'off')
       if (score_position.active) {
 	goto_move( grec.pos())
 	return
@@ -253,10 +256,10 @@ function watch( JGO, axutil, game_hash, p_options) {
 
     $('#btn_prev').click( btn_prev)
     $('#btn_next').click( btn_next)
-    $('#btn_back10').click( () => { axutil.toggle_button( '#btn_tgl_live', 'off'); goto_move( grec.pos() - 10); update_emoji() })
-    $('#btn_fwd10').click( () => { axutil.toggle_button( '#btn_tgl_live', 'off'); goto_move( grec.pos() + 10); update_emoji() })
-    $('#btn_first').click( () => { axutil.toggle_button( '#btn_tgl_live', 'off'); goto_move(0); set_emoji(); $('#status').html( '&nbsp;') })
-    $('#btn_last').click( () => { axutil.toggle_button( '#btn_tgl_live', 'off'); goto_move( grec.len()); update_emoji() })
+    $('#btn_back10').click( () => { toggle_live_button( 'off'); goto_move( grec.pos() - 10); update_emoji() })
+    $('#btn_fwd10').click( () => { toggle_live_button( 'off'); goto_move( grec.pos() + 10); update_emoji() })
+    $('#btn_first').click( () => { toggle_live_button( 'off'); goto_move(0); set_emoji(); $('#status').html( '&nbsp;') })
+    $('#btn_last').click( () => { toggle_live_button( 'off'); goto_move( grec.len()); update_emoji() })
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
@@ -298,12 +301,16 @@ function watch( JGO, axutil, game_hash, p_options) {
       var komi = grec.komi
       var handicap = grec.handicap
       var idle_msecs = new Date() - grec.ts_latest_move
-      var idlestr = new Date( idle_msecs).toISOString().substr(11, 8)
+      var idletime = new Date( idle_msecs).toISOString().substr(11, 8)
+      var idlestr = ''
+      if (p_options.live == 1 && toggle_live_button() == 'on') {
+	idlestr = `<td align='left' width='110px'>${tr('Idle')}:${idletime} </td>`
+      }
       var tstr = `<table class='center'><tr>
                  <td>${tr('User')}:${user}&nbsp;</td>
                  <td>${tr('Komi')}:${komi}&nbsp;</td>
                  <td>${tr('Handicap')}:${handicap}&nbsp;</td>
-                 <td align='left' width='110px'>${tr('Idle')}:${idlestr} </td>
+                 ${idlestr}
                  </tr></table>`
       $('#game_info').html( tstr)
     }
@@ -314,13 +321,13 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //-------------------------
   function btn_prev() {
-    axutil.toggle_button( '#btn_tgl_live', 'off');
+    toggle_live_button( 'off');
     goto_move( grec.pos() - 1); update_emoji();
   }
 
   //-------------------------
   function btn_next() {
-    axutil.toggle_button( '#btn_tgl_live', 'off');
+    toggle_live_button( 'off');
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( grec.pos() + 1)
     // Do not analyze handicap stones
@@ -344,6 +351,37 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // btn_next()
   btn_next.waiting = false
   btn_next.buffered = false
+
+  // Get or set live/refresh button state.
+  //---------------------------------------------
+  function toggle_live_button( action) {
+    const $btn = $('#btn_tgl_live')
+    if (!action) {
+      if ($btn.hasClass('ahaux_on')) {
+        return 'on'
+      }
+      else {
+        return 'off'
+      }
+    }
+    if (action == 'on') {
+      $btn.addClass('ahaux_on')
+      //$btn.css('color', 'black')
+      $btn.css('background-color', '#e00000')
+      $btn.html('Live')
+    }
+    else if (action == 'off') {
+      $btn.removeClass('ahaux_on')
+      //$btn.css('color', 'black')
+      $btn.css('background-color', 'green')
+      $btn.html('Refresh')
+    }
+    else if (action == 'toggle') {
+      if (toggle_live_button() == 'on') { return toggle_live_button( 'off') }
+      return toggle_live_button( 'on')
+    }
+    return 0
+  } // toggle_live_button()
 
   // Key actions
   //------------------------
@@ -922,9 +960,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     $('#chat_input_text')[0].value = ''
   })
 
-  //==============================================
+  //=======================
   //=== Websockets Rule!
-  //==============================================
+  //=======================
 
   // Support TLS-specific URLs, when appropriate.
   var ws_scheme = "ws://"
@@ -938,11 +976,12 @@ function watch( JGO, axutil, game_hash, p_options) {
     var action = data.action
     var game_hash = data.game_hash
     if (action == 'update_game') {
-      if (axutil.toggle_button( '#btn_tgl_live') == 'off') { return }
+      if (toggle_live_button() == 'off') { return }
       axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
 				  (resp) => {
 				    grec.from_dict( resp)
 				    replay_moves( grec.pos())
+				    const update_emo = true; show_prob( update_emo)
 				  })
     }
     else if (action == 'chat') {
@@ -961,7 +1000,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   })
 
   settings()
-  axutil.toggle_button( '#btn_tgl_live', 'on')
+  toggle_live_button( 'on')
   fast_or_strong( 'fast')
 
   // Update some things once a second
