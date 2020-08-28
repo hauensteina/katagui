@@ -9,12 +9,15 @@ def translate( txt, lang=None):
     '''
     if not lang:
         u = current_user
-        if not u:
-            lang = 'eng'
-        else:
+        try:
             lang = u.data.get( 'lang', 'eng')
-    tab = _langdict.get( lang, _langdict['eng'])
-    res = tab.get( txt, txt)
+        except:
+            lang = 'eng'
+    try:
+        tab = _langdict.get( lang, _langdict['eng'])
+        res = tab.get( txt, txt)
+    except:
+        res = txt
     return res
 
 def donation_blurb( mobile):
