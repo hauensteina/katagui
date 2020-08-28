@@ -26,27 +26,109 @@
 {% endblock css %}
 
 {% block content %}
-  <table style='width:100%;table-layout:fixed'>
-    <tr id='tabrow' class='red-border'>
-      <td id='tdleft' class='green-border'>
-        <table width='100%' height='100%' class='red-border'>
+
+  <!-- look at watch.js:resize_board() for layout and scaling -->
+  <table id='tab_outer' style='width:100%;table-layout:fixed' class=''>
+    <tr id='tabrow' class='' style='vertical-align:top;'>
+      <!-- left -->
+      <td id='tdleft' class='' style='padding:0 10px 0 10px; width:300px'>
+        <table class='' width='100%'>
           <tr>
-            <td>&nbsp;</td>
-            <td class='blue-border'>
+            <td class=''>
               <!-- Chat output -->
+              <br>
               <div id='chat_output' class='scroll'
-                   style='height:300px;background-color:white;text-align:left;border:1px solid green;'>
+                   style='font-size:11pt;background-color:white;text-align:left;border:1px solid green'>
               </div>
             </td>
-            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td style ='padding-top:10px'>
+              <!-- Chat input -->
+              <form id='chat_input_form'>
+                <input id='chat_input_text' type='text' placeholder='Type here'
+                       style='font-size:11pt;background-color:white;width:100%;padding-left:20px' autofocus />
+                <input type="submit" style="display:none"/> <!-- submit on enter -->
+              </form>
+            </td>
           </tr>
         </table>
+        <br>
       </td>
-      <td id='tdboard' class='green-border' style='padding:0 0 0 0'>
-        <div id='board' class='green-border' style='display:inline-block'> </div>
+      <!-- middle (board)-->
+      <td id='tdboard' class='' style='padding:0 0 0 0'>
+        <div class='row'>
+          <div id='game_info' class='col-12 text-center' style='font-size:12pt'> </div>
+        </div>
+        <div id='board' class='' style='display:inline-block;width=500px'>
+        </div>
+        <!-- Text under board -->
+        <div id='divinfo' class='row justify-content-center' style='position:absolute'>
+          <table class='center' width='100%'>
+            <tr>
+              <td id='movenum' align='center' style='font-size:11pt' width='30%'> &nbsp;</td>
+              <td id='status' align='center' style='font-size:11pt' width='40%'> &nbsp;</td>
+              <td id='emo' align='center' style='font-size:25pt' width='30%' height='60px'> &nbsp;</td>
+            </tr>
+          </table>
+        </div>
       </td>
-      <td id='tdright' class='green-border'>
-          yyyyy
+      <!-- right (remote control-->
+      <td id='tdright' class='' style='width:270px;padding:0 0 0 -10'>
+        <div class='container' > <!-- top margin -->
+          <div class='row' style='height:3px'>
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-12'>
+              <img id='img_bot' src='static/kata.png' style='height:120px'>
+            </div>
+          </div>
+          <div>
+            <div class='col-12' style='font-size:11pt'>
+              <div id='descr_bot'>
+                KataGo 20 blocks<br>2020-05-30
+              </div>
+            </div>
+          </div>
+          <!-- Space on top of buttons -->
+          <div class='row' style='font-size:20pt;height:20px'>
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_tgl_live' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Live')}}</label>
+          </div>
+          <div class='row' style='font-size:5pt'> &nbsp; </div>
+          <div class='row justify-content-center'>
+            <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>&nbsp;
+            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>
+          </div>
+          <div class='row' style='font-size:5pt'> &nbsp; </div>
+          <div class='row justify-content-center'>
+            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Back 10')}}</label>&nbsp;
+            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Prev')}}</label>&nbsp;
+            <label id='btn_next' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Next')}}</label>&nbsp;
+            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Fwd 10')}}</label>
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
+            <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
+          </div>
+          <div class='row' style='font-size:5pt'> &nbsp; </div>
+          <div class='row justify-content-center'>
+            <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
+          </div>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main Line')}}</label>
+          </div>
+        </div>                  <!--right container-->
       </td>
   </table>
 

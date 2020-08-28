@@ -99,26 +99,36 @@ function watch( JGO, axutil, game_hash, p_options) {
   show_best_moves.data = {}
 
   //---------------------------
-  function resizeBoard() {
-    var scale = $(window).width() / 1100 // larger is smaller
+  function resize_board() {
+    var dimsb = $('#board')[0].getBoundingClientRect()
+    var dimsleft = $('#tdleft')[0].getBoundingClientRect()
+    var dimsright = $('#tdleft')[0].getBoundingClientRect()
+    var bwidth = $(window).width() - dimsleft.width - dimsright.width
+    var scale = bwidth / 550
+    if (scale < 0.7) scale = 0.7
+    console.log( scale)
     var tstr = 'scale(' + scale + ')'
     $('#board').css({
       'transform-origin':'center center',
       'transform': tstr
     })
-    var dimsb = $('#board')[0].getBoundingClientRect()
-    //debugger
+    dimsb = $('#board')[0].getBoundingClientRect()
     var dimstd = $('#tdboard')[0].getBoundingClientRect()
-    var dx = dimstd.left - dimsb.left
-    var dy = dimstd.top - dimsb.top
+    var dimsinfo = $('#game_info')[0].getBoundingClientRect()
+    var dx = dimstd.left - dimsb.left + 10
+    var dy = dimstd.top - dimsb.top + dimsinfo.height
     tstr = 'translate(' + dx + 'px,' + dy + 'px) ' + 'scale(' + scale + ')'
     $('#board').css({
       'transform-origin':'center center',
       'transform': tstr
     })
     $('#tdboard').width( dimsb.width + 'px')
-    $('#tdboard').height( dimsb.width + 'px')
-  } // resizeBoard()
+    dimsb = $('#board')[0].getBoundingClientRect()
+    $('#chat_output').css( 'height', dimsb.height)
+    $('#divinfo').css( 'top', dimsb.bottom)
+    $('#divinfo').css( 'width', dimsb.width)
+    $('#divinfo').css( 'left', dimsb.left + 10)
+  } // resize_board()
 
   //-------------------------
   function setup_jgo() {
@@ -154,8 +164,9 @@ function watch( JGO, axutil, game_hash, p_options) {
 					    }
 					  }
 					) // mouseout
-		      resizeBoard()
-		      window.onresize = resizeBoard
+		      resize_board();
+		      setTimeout( resize_board, 2000) // why, oh why do I need this?
+		      window.onresize = resize_board
 		    }) // create board
   } // setup_jgo()
 
@@ -392,7 +403,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     //show_move( turn(), botCoord, 0.0, 'bot')
     replay_moves( grec.pos())
     show_movenum()
-    const show_emoji = false
+    const show_emoji = true
     get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji)
   } // bot_move_callback()
 
@@ -623,7 +634,7 @@ function watch( JGO, axutil, game_hash, p_options) {
         scorestr = '&nbsp;&nbsp;' + translate('W') + '+'
       }
       scorestr += Math.abs(score)
-      var tstr = translate('P(B wins)') + ': ' + p.toFixed(2)
+      var tstr = translate('P(B wins)') + ': ' + p.toFixed(2) + '<br>'
       if (typeof(cur.score) !== 'undefined') {
         tstr += scorestr
       }
@@ -971,7 +982,6 @@ function watch( JGO, axutil, game_hash, p_options) {
   var serverData = new ServerData( axutil, ()=>{
     grec.dbload( game_hash, ()=>{
       set_btn_handlers()
-      setup_jgo()
       document.onkeydown = check_key
       replay_moves( grec.pos())
     })
@@ -984,6 +994,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       localStorage.setItem( 'chat', '')
       settings( 'chat_hash', game_hash)
     }
+    setup_jgo()
   }) // new ServerData
 
   function tr( text) { return serverData.translate( text) }
