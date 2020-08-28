@@ -23,7 +23,8 @@
         {% endwith %}
       </td></tr>
 
-      <tr><th>User</th><th>Handicap</th><th>Komi</th><th>Moves</th><th>Idle</th><th>Live</th><th>Observers</th><th>Link</th></tr>
+      <tr><th>{{tr('User')}}</th><th>{{tr('Handicap')}}</th><th>{{tr('Komi')}}</th><th>{{tr('Moves')}}</th>
+        <th>{{tr('Idle')}}</th><th>{{tr('Live')}}</th><th>{{tr('Observers')}}</th><th>{{tr('Link')}}</th></tr>
       {% for game in games %}
         <tr>
           <td align='left' style='padding:0px 10px 0px 10px'> {{ game.username }} </td>

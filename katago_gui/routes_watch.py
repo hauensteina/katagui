@@ -39,7 +39,8 @@ def watch_select_game():
         g['nmoves'] = json.loads( row['game_record'])['n_visible']
         g['n_obs'] = row['n_obs']
         g['link'] = url_for( 'watch_game',game_hash=row['game_hash'], live=row['live'])
-        games.append( g)
+        if g['live'] or g['nmoves'] > 20:
+            games.append( g)
     return render_template( 'watch_select_game.tmpl', games=games)
 
 @app.route('/watch_game')

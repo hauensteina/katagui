@@ -68,7 +68,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   //-------------------------------
   function best_btn_callback() {
     toggle_live_button( 'off')
-    $('#status').html( translate('KataGo is thinking ...'))
+    $('#status').html( tr('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move( (data) => {
       show_best_moves(data)
@@ -414,12 +414,12 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
     if (data.bot_move == 'pass') {
-      alert( translate('KataGo passes. Click on the Score button.'))
+      alert( tr('KataGo passes. Click on the Score button.'))
       $('#status').html('')
     }
     else if (data.bot_move == 'resign') {
-      alert( translate('KataGo resigns.'))
-      $('#status').html( translate('KataGo resigns.'))
+      alert( tr('KataGo resigns.'))
+      $('#status').html( tr('KataGo resigns.'))
       return
     }
     else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
@@ -429,8 +429,8 @@ function watch( JGO, axutil, game_hash, p_options) {
 	      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
 	    )
     {
-      alert( translate('KataGo resigns. You beat KataGo!'))
-      $('#status').html( translate('KataGo resigns.'))
+      alert( tr('KataGo resigns. You beat KataGo!'))
+      $('#status').html( tr('KataGo resigns.'))
       return
     }
     else {
@@ -613,7 +613,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Get current winning probability from genmove
   //-------------------------------------------------------------
   function get_prob_genmove( completion, update_emo) {
-    $('#status').html( translate( 'Counting ...'))
+    $('#status').html( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
 			 (data) => {
@@ -646,7 +646,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Get the best move
   //----------------------------------------------------------
   function get_best_move( completion) {
-    $('#status').html( translate('KataGo is thinking ...'))
+    $('#status').html( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
 			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
 			 (data) => {
@@ -667,12 +667,12 @@ function watch( JGO, axutil, game_hash, p_options) {
         set_emoji(); $('#status').html('')
         return
       }
-      var scorestr = '&nbsp;&nbsp;' + translate('B') + '+'
+      var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
       if (score < 0) {
-        scorestr = '&nbsp;&nbsp;' + translate('W') + '+'
+        scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
       }
       scorestr += Math.abs(score)
-      var tstr = translate('P(B wins)') + ': ' + p.toFixed(2) + '<br>'
+      var tstr = tr('P(B wins)') + ': ' + p.toFixed(2) + '<br>'
       if (typeof(cur.score) !== 'undefined') {
         tstr += scorestr
       }
@@ -927,18 +927,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     return user.data[key]
   } // user()
   user.data = {}
-
-  // Translate a text into current language.
-  //-------------------------------------------
-  function translate(text) {
-    if (!(user.data)) { return text }
-    if (!(translate.table)) { return text }
-    var tab = translate.table[user.data['lang']]
-    if (!tab) { return text }
-    if (!tab[text]) { return text }
-    return tab[text]
-  } // translate()
-  translate.table = {}
 
   // Reload game from DB
   //--------------------------
