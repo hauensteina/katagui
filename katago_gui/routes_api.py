@@ -279,6 +279,7 @@ def update_game():
     # Tell all the watchers about the change.
     # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py
     redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game', 'game_hash':game_hash}))
+    app.logger.info( '>>>>>>>>>>>>>>>>> update game ' + game_hash)
 
     return jsonify( {'result': 'ok' })
 
