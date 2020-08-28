@@ -118,7 +118,7 @@
                      style='font-size:11pt'>
                 {{ tr('New Game') }}
               </label>
-              {% if current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
+              {% if True or current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
                 &nbsp;
                 <label id='btn_watch' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Watch')}}</label>
               {% endif %}
