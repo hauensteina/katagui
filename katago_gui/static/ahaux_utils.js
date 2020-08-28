@@ -276,7 +276,12 @@ class AhauxUtils
 	       }
 	     }
 	     this.hit_endpoint.waiting = false
-             completion( resp)
+	     if ('error' in resp) {
+	       console.log( 'ERROR: hit_endpoint(): ' + url + ' ' + resp.error)
+	     }
+	     else {
+               completion( resp)
+	     }
 	     return 0
 	   })
 	 }).catch(
