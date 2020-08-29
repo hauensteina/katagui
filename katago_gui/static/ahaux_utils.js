@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2020-08-28'
-const VERSION = '3.0.3'
+const DDATE = '2020-08-29'
+const VERSION = '3.0.4'
 
 //=====================
 class AhauxUtils
@@ -480,13 +480,14 @@ class ServerData {
 				})
   }
   translate( text) {
-    var lang
-    if (!(this.userdata)) { lang = 'eng' } else { lang = this.userdata['lang'] }
-    if (!(this.transtable)) { return text }
-    var tab = this.transtable[lang]
-    if (!tab) { tab = tab['eng'] }
-    if (!tab) { return text }
-    if (!tab[text]) { return text }
-    return tab[text]
+    try {
+      var lang = this.userdata['lang']
+      if (!lang) { lang = 'eng' }
+      var tab = this.transtable[lang]
+      return tab[text]
+    }
+    catch( err) {
+      return text
+    }
   }
 } // class ServerData
