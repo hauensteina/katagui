@@ -363,7 +363,9 @@ function main( JGO, axutil, p_options) {
       }
       if (at_end) {
         grec.truncate()
-        grec.dbsave() // save and notify observers
+	if (settings( 'game_hash')) { // we are in an active game
+          grec.dbsave() // save and notify observers
+	}
       }
       show_movenum()
     })
@@ -765,6 +767,7 @@ function main( JGO, axutil, p_options) {
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move( n) {
+    if (n == 0) { end_game() }
     n = Math.max( n, 2 * g_handi - 1)
     score_position.active = false
     best_btn_callback.active = false

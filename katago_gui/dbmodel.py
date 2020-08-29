@@ -9,7 +9,7 @@
 
 import json
 import uuid
-from katago_gui import db
+from katago_gui import db, app
 from pdb import set_trace as BP
 
 class Game:
@@ -17,6 +17,7 @@ class Game:
     def __init__( self, game_hash=None):
         self.valid = True
         self.data = {}
+        //if not game_hash: app.logger.info('>>>>>>>>>> Game without game_hash')
         self.id = game_hash if game_hash else uuid.uuid4().hex[:16]
         rows = db.find( 't_game', 'game_hash', self.id)
         if not rows:
