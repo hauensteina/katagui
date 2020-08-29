@@ -225,11 +225,8 @@ function watch( JGO, axutil, game_hash, p_options) {
       var moves = rec.join('')
       probs = probs.join(',')
       if (moves.length == 0) { return }
-      var meta = set_load_sgf_handler.loaded_game
-      if (!meta) {
-        meta = {}
-        meta.komi = grec.komi
-      }
+      var meta = {}
+      meta.komi = grec.komi
       var url = '/save-sgf?q=' + Math.random() +
             '&moves=' + encodeURIComponent(moves) +
             '&probs=' + encodeURIComponent(probs) +
