@@ -26,9 +26,14 @@
 {% endblock css %}
 
 {% block content %}
+  {% if current_user.data['username'].strip().lower() in ['acm','ahn'] %}
+    <div id='debug' style='font-size:10pt'>
+      debug
+    </div>
+  {% endif %}
 
-  <!-- look at watch.js:resize_board() for layout and scaling -->
-  <table id='tab_outer' style='width:100%;table-layout:fixed' class=''>
+             <!-- look at watch.js:resize_board() for layout and scaling -->
+             <table id='tab_outer' style='width:100%;table-layout:fixed' class=''>
     <tr id='tabrow' class='' style='vertical-align:top;'>
       <!-- left -->
       <td id='tdleft' class='' style='padding:0 10px 0 10px; width:300px'>

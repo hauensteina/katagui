@@ -898,6 +898,7 @@ function main( JGO, axutil, p_options) {
       var score = parseFloat( score)
       grec.update( p, score)
       if (settings( 'game_hash')) { // we are in an active game
+	console.log( 'saving ' + grec.pos() )
         grec.dbsave() // save and notify observers
       }
     }

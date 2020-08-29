@@ -941,6 +941,8 @@ function watch( JGO, axutil, game_hash, p_options) {
 				  (resp) => {
 				    grec.from_dict( resp)
 				    replay_moves( grec.pos())
+				    var lastmove = grec.curmove()
+				    $('#debug').html( JSON.stringify(lastmove) + '<br>var:' + grec.var_active() )
 				    const update_emo = true; show_prob( update_emo)
 				  })
     }
