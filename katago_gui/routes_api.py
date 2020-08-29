@@ -273,6 +273,10 @@ def update_game():
     """ Update a game in the database """
     data = request.json
     game_hash = current_user.data['game_hash']
+    if not game_hash:
+        msg = 'error: user %s is not in a game.' % current_user.data['username']
+        app.logger.info( '>>>> ' + msg)
+        return jsonify( {'result': msg})
     game = dbmodel.Game( game_hash)
     game.update_db( data)
 
