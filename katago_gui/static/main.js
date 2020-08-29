@@ -270,6 +270,9 @@ function main( JGO, axutil, p_options) {
       selfplay('off')
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation( 'clear')
+      if (settings( 'game_hash')) { // we are in an active game
+        grec.dbsave() // save and notify observers
+      }
     })
 
     $('#btn_watch').click( () => { location.href = 'watch_select_game' })
