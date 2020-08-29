@@ -484,7 +484,9 @@ class ServerData {
       var lang = this.userdata['lang']
       if (!lang) { lang = 'eng' }
       var tab = this.transtable[lang]
-      return tab[text]
+      var res = tab[text]
+      if (!res) { return text }
+      return res
     }
     catch( err) {
       return text
