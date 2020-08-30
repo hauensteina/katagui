@@ -100,18 +100,19 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //---------------------------
   function resize_board() {
-    var dimsb = $('#board')[0].getBoundingClientRect()
     var dimsleft = $('#tdleft')[0].getBoundingClientRect()
-    var dimsright = $('#tdleft')[0].getBoundingClientRect()
+    var dimsright = $('#tdright')[0].getBoundingClientRect()
     var bwidth = $(window).width() - dimsleft.width - dimsright.width
-    var scale = bwidth / 550
+    var bheight = $(window).height() * 0.8
+    var scale = Math.min( bwidth, bheight) / 550
     if (scale < 0.7) scale = 0.7
     var tstr = 'scale(' + scale + ')'
     $('#board').css({
       'transform-origin':'center center',
       'transform': tstr
     })
-    dimsb = $('#board')[0].getBoundingClientRect()
+
+    var dimsb = $('#board')[0].getBoundingClientRect()
     var dimstd = $('#tdboard')[0].getBoundingClientRect()
     var dimsinfo = $('#game_info')[0].getBoundingClientRect()
     var dx = dimstd.left - dimsb.left + 10
@@ -121,11 +122,11 @@ function watch( JGO, axutil, game_hash, p_options) {
       'transform-origin':'center center',
       'transform': tstr
     })
-    $('#tdboard').width( dimsb.width + 'px')
     dimsb = $('#board')[0].getBoundingClientRect()
     $('#chat_output').css( 'height', dimsb.height)
-    $('#divinfo').css( 'top', dimsb.bottom)
+    $('#divinfo').css( 'top', dimsb.bottom) // bottom line
     $('#divinfo').css( 'width', dimsb.width)
+    $('#game_info').css( 'width', dimsb.width + 30) // top line
     $('#divinfo').css( 'left', dimsb.left + 10)
 
   } // resize_board()
@@ -187,9 +188,9 @@ function watch( JGO, axutil, game_hash, p_options) {
   function set_btn_handlers() {
     var_button_state( 'off')
 
-    $('#img_bot, #descr_bot').click( () => {
-      fast_or_strong('toggle')
-    })
+    // $('#img_bot, #descr_bot').click( () => {
+    //   fast_or_strong('toggle')
+    // })
 
     $('#btn_tgl_live').click( () => {
       toggle_live_button( 'toggle')
@@ -361,13 +362,11 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
     if (action == 'on') {
       $btn.addClass('ahaux_on')
-      //$btn.css('color', 'black')
       $btn.css('background-color', '#e00000')
-      $btn.html('Live')
+      $btn.html( tr('Live'))
     }
     else if (action == 'off') {
       $btn.removeClass('ahaux_on')
-      //$btn.css('color', 'black')
       $btn.css('background-color', 'green')
       $btn.html('Refresh')
     }
@@ -516,6 +515,15 @@ function watch( JGO, axutil, game_hash, p_options) {
     show_movenum()
     show_prob()
     $('#debug').html( JSON.stringify(grec.curmove()) + '<br>var:' + grec.var_active() )
+    if ( grec.curmove().agent == 'kata10') {
+      fast_or_strong('guest')
+    } else if ( grec.curmove().agent == 'kata20') {
+      fast_or_strong('fast')
+    } else if ( grec.curmove().agent == 'kata40') {
+      fast_or_strong('strong')
+    } else {
+      fast_or_strong('human')
+    }
   } // goto_move()
 
   //----------------------------
@@ -523,6 +531,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (!grec.len()) { return }
     var totmoves = grec.len()
     var n = grec.pos()
+    var var_or_main = 'var'
+
     $('#movenum').html( `${n} / ${totmoves}`)
   } // show_movenum()
 
@@ -618,9 +628,9 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   // Get the best move
   //----------------------------------------------------------
-  function get_best_move( completion) {
+  function get_best_move( completion) { //@@@
     $('#status').html( tr('KataGo is thinking ...'))
-    axutil.hit_endpoint( fast_or_strong().ep + BOT,
+    axutil.hit_endpoint( '/select-move/' + BOT,
 			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
 			 (data) => {
 			   if (completion) { completion(data) }
@@ -868,28 +878,31 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (typeof val == 'undefined') { // getter
       if ($('#descr_bot').html().indexOf('40b') >= 0) {
         return fast_or_strong('strong')
-      } else {
+      } else if ($('#descr_bot').html().indexOf('20b') >= 0) {
         return fast_or_strong('fast')
+      } else if ($('#descr_bot').html().indexOf('10b') >= 0) {
+        return fast_or_strong('guest')
+      } else if ($('#descr_bot').html().indexOf('Human') >= 0) {
+        return fast_or_strong('human')
       }
     } // if getter
     // setter
-    if (val == 'toggle') {
-      if ($('#descr_bot').html().indexOf('40b') >= 0) {
-        return fast_or_strong('fast')
-      } else {
-        return fast_or_strong('strong')
-      }
-    }
-    else if (val == 'strong' || val == 'fast') {
-      if (val == 'strong') {
-        $('#descr_bot').html( `KataGo 40b 1000<br>${DDATE}`)
-        $('#img_bot').attr('src', 'static/kata-red.png')
-        return {'val':'strong', 'ep':'/select-move-x/' }
-      } else if (val == 'fast') {
-        $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
-        $('#img_bot').attr('src', 'static/kata.png')
-        return {'val':'fast', 'ep':'/select-move/' }
-      }
+    if (val == 'strong') {
+      $('#descr_bot').html( `KataGo 40b 1000`)
+      $('#img_bot').attr('src', 'static/kata-red.png')
+      return {'val':'strong', 'ep':'/select-move-x/' }
+    } else if (val == 'fast') {
+      $('#descr_bot').html( `KataGo 20b &nbsp; 256`)
+      $('#img_bot').attr('src', 'static/kata.png')
+      return {'val':'fast', 'ep':'/select-move/' }
+    } else if (val == 'guest') {
+      $('#descr_bot').html( `KataGo 10b &nbsp; 256`)
+      $('#img_bot').attr('src', 'static/kata.png')
+      return {'val':'guest', 'ep':'/select-move-guest/' }
+    } else if (val == 'human') {
+      $('#descr_bot').html( `Human`)
+      $('#img_bot').attr('src', 'static/kata-gray.png')
+      return {'val':'human', 'ep':'' }
     }
     return 0
   } // fast_or_strong()
@@ -961,8 +974,6 @@ function watch( JGO, axutil, game_hash, p_options) {
   })
 
   settings()
-  toggle_live_button( 'on')
-  fast_or_strong( 'fast')
 
   // Update some things once a second
   //-------------------------------------
@@ -984,6 +995,8 @@ function watch( JGO, axutil, game_hash, p_options) {
       set_btn_handlers()
       document.onkeydown = check_key
       goto_move( grec.pos())
+      toggle_live_button( 'on')
+      //fast_or_strong( 'fast')
     })
     once_per_sec()
     if (settings( 'chat_hash') == game_hash) { // restore chat if same game
@@ -997,6 +1010,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     setup_jgo()
   }) // new ServerData
 
-  function tr( text) { return serverData.translate( text) }
+  function tr( text) { if (serverData) { return serverData.translate( text) } return text }
 
 } // function watch()

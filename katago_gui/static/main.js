@@ -1267,5 +1267,5 @@ function main( JGO, axutil, p_options) {
     get_handicap()
     once_per_sec()
   })
-  function tr( text) { return serverData.translate( text) }
+  function tr( text) { if (serverData) { return serverData.translate( text) } return text }
 } // function main()

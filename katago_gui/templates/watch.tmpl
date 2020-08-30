@@ -32,8 +32,8 @@
     </div>
   {% endif %}
 
-             <!-- look at watch.js:resize_board() for layout and scaling -->
-             <table id='tab_outer' style='width:100%;table-layout:fixed' class=''>
+  <!-- look at watch.js:resize_board() for layout and scaling -->
+  <table id='tab_outer' style='table-layout:fixed' class=''>
     <tr id='tabrow' class='' style='vertical-align:top;'>
       <!-- left -->
       <td id='tdleft' class='' style='padding:0 10px 0 10px; width:300px'>
@@ -51,7 +51,7 @@
             <td style ='padding-top:10px'>
               <!-- Chat input -->
               <form id='chat_input_form'>
-                <input id='chat_input_text' type='text' placeholder='Type here'
+                <input id='chat_input_text' type='text' placeholder={{tr('Type here')}}
                        style='font-size:11pt;background-color:white;width:100%;padding-left:20px' autofocus />
                 <input type="submit" style="display:none"/> <!-- submit on enter -->
               </form>
@@ -61,14 +61,14 @@
         <br>
       </td>
       <!-- middle (board)-->
-      <td id='tdboard' class='' style='padding:0 0 0 0'>
-        <div class='row'>
-          <div id='game_info' class='col-12 text-center' style='font-size:12pt'> </div>
+      <td id='tdboard' class='' style='padding:0 0 0 0; width:1px'>
+        <div>
+          <div id='game_info' class='center' style='font-size:11pt'> </div>
         </div>
-        <div id='board' class='' style='display:inline-block;width=500px'>
+        <div id='board' class='' style='display:inline-block;padding:0 0 0 0'>
         </div>
         <!-- Text under board -->
-        <div id='divinfo' class='row justify-content-center' style='position:absolute'>
+        <div id='divinfo' style='position:absolute'>
           <table class='center' width='100%'>
             <tr>
               <td id='movenum' align='center' style='font-size:11pt' width='30%'> &nbsp;</td>
@@ -78,8 +78,9 @@
           </table>
         </div>
       </td>
+      <!-- <td class='red-border'>xxxxxxx</td> -->
       <!-- right (remote control-->
-      <td id='tdright' class='' style='width:270px;padding:0 0 0 -10'>
+      <td id='tdright' class='' style='width:300px;padding:0 0 0 0'>
         <div class='container' > <!-- top margin -->
           <div class='row' style='height:3px'>
             <div class='col-12'>

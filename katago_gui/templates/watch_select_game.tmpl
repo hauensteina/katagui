@@ -7,7 +7,7 @@
 {% block content %}
   <div id='watchdiv' class='center' tabindex='0'>
     <style> .gametable td { padding:0px 20px 0px 20px } </style>
-    <h2 class=center> Games Today </h2>
+    <h2 class=center>{{ tr('Games Today') }}  </h2>
     <table class='center gametable'>
       <tr><td colspan='3'>
         {% with messages = get_flashed_messages( with_categories=true) %}
@@ -34,7 +34,7 @@
           <td> {{ game.t_idle }} </td>
           <td> {{ '\u2713' if game.live else '\u2717' }} </td>
           <td> {{ game.n_obs }} </td>
-          <td> <a href='{{ game.link }}'>Observe</a> </td>
+          <td> <a href='{{ game.link }}'>{{tr('Observe')}}</a> </td>
         </tr>
         {% endfor %}
     </table>

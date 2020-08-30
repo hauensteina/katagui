@@ -183,6 +183,18 @@ _kor = {
     ,'B':'흑'
     ,'Result':'결과'
     ,'Date':'날짜'
+    # Watching games
+    ,'Games Today':'오늘 대국'
+    ,'User':'사용자'
+    ,'Moves':'수'
+    ,'Idle':'대기중'
+    ,'Live':'라이브'
+    ,'Observers':'관전자'
+    ,'Observe':'관전'
+    ,'Link':'링크'
+    ,'Watch':'보기'
+    ,'Refresh':'재시작'
+    ,'Type here':'이곳에 입력'
 }
 
 _langdict = { 'eng':_eng, 'kor':_kor }
