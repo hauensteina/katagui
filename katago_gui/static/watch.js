@@ -515,6 +515,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     replay_moves( n)
     show_movenum()
     show_prob()
+    $('#debug').html( JSON.stringify(grec.curmove()) + '<br>var:' + grec.var_active() )
   } // goto_move()
 
   //----------------------------
@@ -940,9 +941,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
 				  (resp) => {
 				    grec.from_dict( resp)
-				    replay_moves( grec.pos())
-				    var lastmove = grec.curmove()
-				    $('#debug').html( JSON.stringify(lastmove) + '<br>var:' + grec.var_active() )
+				    goto_move( grec.pos())
 				    const update_emo = true; show_prob( update_emo)
 				  })
     }

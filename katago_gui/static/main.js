@@ -359,7 +359,7 @@ function main( JGO, axutil, p_options) {
       selfplay('off')
       axutil.hit_endpoint('cancel')
       var at_end = (grec.pos() == grec.len())
-      if (grec.pos() > 2 && grec.curmove().agent == 'bot' && grec.prevmove().agent == 'human') {
+      if (grec.pos() > 2 && grec.curmove().agent.indexOf('kata') >= 0 && grec.prevmove().agent == 'human') {
 	goto_move( grec.pos() - 2 )
       } else {
 	goto_move( grec.pos() - 1)
@@ -485,7 +485,7 @@ function main( JGO, axutil, p_options) {
 			       if (!selfplay('ison')) return;
 			       var botCoord = string2jcoord( data.bot_move)
 			       maybe_start_var()
-			       grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'bot'})
+			       grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':fast_or_strong().name} )
 		               replay_moves( grec.pos())
 			       const show_emoji = false
 		               const playing = true
@@ -658,8 +658,7 @@ function main( JGO, axutil, p_options) {
       maybe_start_var()
       //var botCoord = string2jcoord( data.bot_move)
     }
-    grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':'bot' } )
-    //show_move( turn(), botCoord, 0.0, 'bot')
+    grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':fast_or_strong().name } )
     replay_moves( grec.pos())
     show_movenum()
     const show_emoji = false
@@ -894,9 +893,9 @@ function main( JGO, axutil, p_options) {
   //-------------------------------------------------------------------
   function get_prob_callback( winprob, score, update_emo, playing) {
     if (grec.pos()) {
-      var p = parseFloat( winprob)
-      var score = parseFloat( score)
-      grec.update( p, score)
+      var p = Math.round( parseFloat( winprob) * 100) / 100
+      var s = Math.round( parseFloat( score) * 100) / 100
+      grec.update( p, s)
       if (settings( 'game_hash')) { // we are in an active game
 	console.log( 'saving ' + grec.pos() )
         grec.dbsave() // save and notify observers
@@ -1178,9 +1177,9 @@ function main( JGO, axutil, p_options) {
   // Get or set guest, fast, strong mode
   //---------------------------------------
   function fast_or_strong( val) {
-    const STRONG = {'val':'strong', 'ep':'/select-move-x/' }
-    const FAST =  {'val':'fast', 'ep':'/select-move/' }
-    const GUEST = {'val':'guest', 'ep':'/select-move-guest/' }
+    const STRONG = {'val':'strong', 'ep':'/select-move-x/', 'name':'kata40' }
+    const FAST =  {'val':'fast', 'ep':'/select-move/', 'name':'kata20'  }
+    const GUEST = {'val':'guest', 'ep':'/select-move-guest/', 'name':'kata10'  }
     if (typeof val == 'undefined') { // getter
       if ($('#btn_tgl_strong').hasClass('active')) {
         return fast_or_strong('strong')
