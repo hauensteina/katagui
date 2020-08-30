@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2020-08-29'
-const VERSION = '3.0.4'
+const DDATE = '2020-08-30'
+const VERSION = '3.0.5'
 
 //=====================
 class AhauxUtils

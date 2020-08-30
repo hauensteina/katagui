@@ -514,7 +514,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     replay_moves( n)
     show_movenum()
     show_prob()
-    $('#debug').html( JSON.stringify(grec.curmove()) + '<br>var:' + grec.var_active() )
+    $('#debug').html( JSON.stringify(grec.curmove()) + '<br>var:' + grec.var_active() + ' move ' + n )
     if ( grec.curmove().agent == 'kata10') {
       fast_or_strong('guest')
     } else if ( grec.curmove().agent == 'kata20') {
@@ -918,7 +918,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   //--------------------------
   function reload_game() {
     grec.dbload( game_hash, ()=>{
-      replay_moves( grec.pos())
+      goto_move( grec.pos())
     })
   } // reload_game()
 
@@ -996,9 +996,15 @@ function watch( JGO, axutil, game_hash, p_options) {
       document.onkeydown = check_key
       goto_move( grec.pos())
       toggle_live_button( 'on')
+      if (!p_options.live) {
+	// If game over, show the longer of record and var_record
+	if (grec.var_record.length > grec.record.length) {
+	  grec.exit_var()
+	}
+      }
+      once_per_sec()
       //fast_or_strong( 'fast')
     })
-    once_per_sec()
     if (settings( 'chat_hash') == game_hash) { // restore chat if same game
       $('#chat_output').html( localStorage.getItem( 'chat') )
     }
