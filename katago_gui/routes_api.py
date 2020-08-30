@@ -135,7 +135,11 @@ def score( bot_name):
 #---------------------------------------------------------
 def select_move( bot_name):
     """ Forward select-move to the katago server """
-    current_user.record_activity()
+    try:
+        current_user.record_activity()
+    except:
+        return jsonify( {'result': 'error: no current user' })
+
     endpoint = 'select-move/' + bot_name
     args = request.json
 
@@ -149,12 +153,17 @@ def select_move( bot_name):
         return jsonify( res)
     except:
         print( 'select move error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
 
 @app.route('/select-move-guest/<bot_name>', methods=['POST'])
 #----------------------------------------------------------------
 def select_move_guest( bot_name):
     """ Forward select-move to the katago server """
-    current_user.record_activity()
+    try:
+        current_user.record_activity()
+    except:
+        return jsonify( {'result': 'error: no current user' })
+
     endpoint = 'select-move/' + bot_name
     args = request.json
 
@@ -168,12 +177,17 @@ def select_move_guest( bot_name):
         return jsonify( res)
     except:
         print( 'select move guest error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
 
 @app.route('/select-move-x/<bot_name>', methods=['POST'])
 #-----------------------------------------------------------
 def select_move_x( bot_name):
     """ Forward select-move to the katago server """
-    current_user.record_activity()
+    try:
+        current_user.record_activity()
+    except:
+        return jsonify( {'result': 'error: no current user' })
+
     endpoint = 'select-move/' + bot_name
     args = request.json
 
@@ -187,6 +201,7 @@ def select_move_x( bot_name):
         return jsonify( res)
     except:
         print( 'select move x error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
 
 @app.route('/sgf2list', methods=['POST'])
 #-------------------------------------------
