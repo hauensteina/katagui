@@ -97,7 +97,7 @@ class WatcherSockets:
             self.sockets_by_hash[game_hash] = []
             print('new game hash ' + game_hash)
         self.sockets_by_hash[game_hash].append( websocket)
-        print( str(self.sockets_by_hash))
+        #print( str(self.sockets_by_hash))
 
     #----------------------------------
     def send( self, websocket, data):
