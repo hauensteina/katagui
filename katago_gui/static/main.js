@@ -936,10 +936,10 @@ function main( JGO, axutil, p_options) {
       var score = cur.score
       // 0.8 -> 1.0; 1.3 -> 1.5 etc
       score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-      if (p == 0) {
-        set_emoji(); $('#status').html('')
-        return
-      }
+      //if (p == 0) {
+      //  set_emoji(); $('#status').html('')
+      //  return
+      //}
       if (playing && !settings('show_prob')) {
         $('#status').html('')
       } else {

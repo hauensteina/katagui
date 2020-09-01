@@ -110,8 +110,10 @@ class AhauxUtils
   } // toggle_button()
 
 
-  isMobile() { return typeof window.orientation !== "undefined" }
-  isDesktop() { return typeof window.orientation == "undefined" }
+  isMobile() { return typeof window.orientation !== 'undefined' }
+  isDesktop() { return typeof window.orientation == 'undefined' }
+  //isMobile() { return window.innerHeight / window.innerWidth > 1.2 }
+  //isDesktop() { return window.innerHeight / window.innerWidth <= 1.2 }
 
   //----------------------------
   //--- D3 graphics routines ---
