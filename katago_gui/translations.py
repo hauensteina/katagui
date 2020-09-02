@@ -92,7 +92,7 @@ _kor = {
     ,'Logout':'로그아웃'
     ,'Login':'로그인'
     ,'Register':'등록'
-    ,'About':'About'
+    ,'About':''
     # Buttons
     ,'Play':'플레이'
     ,'New Game':'새로운 게임'
