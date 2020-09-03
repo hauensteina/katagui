@@ -39,12 +39,12 @@
     <script src="static/reconnecting-websocket.min.js"></script>
 
     <!-- Our own stuff -->
-    <script type='text/javascript' src='static/ahaux_utils.js?v=305a'></script>
+    <script type='text/javascript' src='static/ahaux_utils.js?v=306'></script>
     <script type='text/javascript'> const axutil = new AhauxUtils( d3, $) </script>
     <script type='text/javascript' src='static/jgoboard-latest.js'></script>
 
     <!-- Watch entry point -->
-    <script type='text/javascript' src='static/watch.js?v=305a'></script>
+    <script type='text/javascript' src='static/watch.js?v=306'></script>
 
     <!-- Bootstrap CSS -->
     <link rel='stylesheet'
@@ -64,8 +64,8 @@
       <tr style='background-color:green'>
         <td width='20px'>&nbsp;</td>
         <td  align='left'>
-          <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
-            KataGui <span id='version' style='font-size:9pt'>0.0.0</span></a>
+          <a class='hlink font-l' href="{{ url_for('index') }}">
+            KataGui <span id='version' class='font-s'>0.0.0</span></a>
         </td>
         <td width='20px' class=''></td>
       </tr>
@@ -74,7 +74,7 @@
         {% if logged_in() %}
           <td colspan='2' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
         {% else %}
-          <td colspan='2' class='font-m' align='right'>{{tr('Guest')}}</td>
+          <td colspan='2' class='font-m' align='right'>{{tr('Guest')}} &nbsp;</td>
         {% endif %}
         <td width='20px' class=''></td>
       </tr>
@@ -89,8 +89,8 @@
      var mfont = '12pt'
      var sfont = '9pt'
      if (axutil.isMobile()) {
-       lfont = '35pt'
-       mfont = '30pt'
+       lfont = '36pt'
+       mfont = '20pt'
        sfont = '20pt'
        $('#homelogo').width('300px')
        $('.flag').height('60px')

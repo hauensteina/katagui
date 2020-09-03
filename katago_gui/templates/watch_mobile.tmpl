@@ -1,0 +1,212 @@
+{% extends 'layout_watch.tmpl' %}
+
+{% block pre %}
+  <script type='text/javascript'>
+   /* Filename: templates/watch_mobile.tmpl
+    * Author: AHN
+    * Creation Date: Sep, 2020
+    * A board to watch other peoples' games on a phone.
+    */
+  </script>
+
+{% endblock pre %}
+
+{% block css %}
+  <script type="text/javascript">
+   if (axutil.isDesktop()) { document.location.href = '/index' }
+  </script>
+  <style>
+   /* Disable hover color change on buttons */
+   .btn:hover { background-color:#CCCCCC;  color:#343A40; }
+
+   /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
+   /*----------------------------------------------------------------------*/
+   /* The switch - the box around the slider */
+   .switch {
+     position: relative;
+     display: inline-block;
+     width: 90px;
+     height: 48px;
+   }
+
+   /* Hide default HTML checkbox */
+   .switch input {
+     opacity: 0;
+     width: 0;
+     height: 0;
+   }
+
+   /* The slider */
+   .slider {
+     position: absolute;
+     cursor: pointer;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background-color: #aaaaaa;
+     -webkit-transition: .1s;
+     transition: .1s;
+   }
+
+   .slider:before {
+     position: absolute;
+     content: "";
+     height: 40px;
+     width: 40px;
+     left: 2px;
+     bottom: 3px;
+     background-color: white;
+     -webkit-transition: .1s;
+     transition: .1s;
+   }
+
+   input:checked + .slider {
+     background-color: #2196F3;
+   }
+
+   input:focus + .slider {
+     box-shadow: 0 0 1px #2196F3;
+   }
+
+   input:checked + .slider:before {
+     -webkit-transform: translateX(44px);
+     -ms-transform: translateX(44px);
+     transform: translateX(44px);
+   }
+
+   /* Rounded sliders */
+   .slider.round {
+     border-radius: 20px;
+   }
+
+   .slider.round:before {
+     border-radius: 50%;
+   }
+
+
+  </style>
+{% endblock css %}
+
+{% block content %}
+  <table class='center'>
+    <tr><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td></tr>
+    <!-- <tr><td>
+         <div class='container-fluid'>
+         <div class='row'>
+         <div class='col-4'>
+         <img id='img_bot' src='static/kata.png' style='height:200px' class='touch-allow'>
+         <div id='descr_bot' style='font-size:20pt' class='touch-allow'>
+         KataGo 20 blocks<br>2020-05-30
+         </div>
+         <br>
+         </div>
+         </div>
+         </div>
+         </td></tr> -->
+    <tr><td id='descr_bot' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+    <tr><td id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
+
+    <tr><td id='board'> </td></tr>
+    <!-- Status and Emoji -->
+    <!-- <tr><td> &nbsp; </td></tr> -->
+    <tr style='transform:translate(0,-10px)'><td>
+      <div class='container-fluid'>
+        <div class='row center'>
+          <div id='movenum' class='col-3' style='font-size:26pt;margin:auto'> &nbsp; </div>
+          <div id='status' class='col-6' style='font-size:26pt;margin:auto'> &nbsp; </div>
+          <div id='emo' class='col-3' style='font-size:60pt;margin:auto'> &nbsp; </div>
+        </div>
+      </div>
+    </td></tr>
+    <!-- Buttons -->
+    <!-- <tr><td> &nbsp; </td></tr> -->
+    <!-- Live Button -->
+    <!-- <tr style='transform:translate(0,-20px)'><td>
+         <div>
+         {% if live == '1' %}
+         <label id='btn_tgl_live' class='btn btn-outline-dark ahaux_on' style='font-size:40pt;'>{{tr('Live')}}</label>
+         {% endif %}
+         </div>
+         </td></tr> -->
+    <!-- Live Best Prev Next -->
+    <tr><td>
+      <div>
+        <table class='center'><tr>
+          {% if live == '1' %}
+            <td>
+              <label id='btn_tgl_live' class='btn btn-outline-dark ahaux_on' style='font-size:40pt;'>{{tr('Live')}}</label>
+              &nbsp;&nbsp;
+            </td>
+          {% endif %}
+          </td> <td>
+              <label id='btn_best' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Best')}}</label>
+              &nbsp;&nbsp;
+            </td><td>
+            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Prev')}}</label>
+            &nbsp;&nbsp;
+          </td><td>
+            <label id='btn_next' class='btn btn-outline-dark' style='font-size:40pt'>{{tr('Next')}}</label>
+          </td>
+        </tr></table>
+      </div>
+    </td></tr>
+    <!-- Nav Buttons -->
+    <tr><td>
+      <div>
+        <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>{{tr('Back to Main Line')}}</label>
+        &nbsp;
+        <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Score')}}</label>
+      </div>
+    </td></tr>
+    <!-- More Nav Buttons -->
+    <tr><td> &nbsp; </td></tr>
+    <tr><td>
+      <div>
+        <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('First')}}</label>
+        <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Back 10')}}</label>
+        <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Fwd 10')}}</label>
+        <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Last')}}</label>
+      </div>
+    </td></tr>
+    <!-- Save sgf -->
+    <tr><td> &nbsp; </td></tr>
+    <tr><td>
+      <div>
+        <table class='center'><tr>
+          <td>
+            <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Save Sgf')}}</label>
+          </td>
+        </tr> </table>
+      </div>
+    </td></tr>
+  </table>
+
+  <!-- General purpose modal popup (alert box) -->
+  <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
+    <div class='modal-dialog' role='document'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 id='alertbox_title' class='modal-title' style='font-size:24pt'>Very Important Message</h5>
+        </div>
+        <div class='modal-body'  style='font-size:24pt'>
+          <span id='alertbox_message'> </span>
+        </div>
+        <div class='modal-footer'>
+          <button style='font-size:24pt' type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block js %}
+  <!-- Entry Point -->
+  <script type='text/javascript' src='static/large/board.js'></script>
+  <script type='text/javascript'>
+   $(function () {
+     watch( JGO, axutil, '{{ game_hash }}', {mobile:true, live:{{ live }} } )
+   })
+  </script>
+{% endblock js %}

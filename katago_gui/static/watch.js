@@ -100,6 +100,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //---------------------------
   function resize_board() {
+    if (p_options.mobile) { return }
     var dimsleft = $('#tdleft')[0].getBoundingClientRect()
     var dimsright = $('#tdright')[0].getBoundingClientRect()
     var bwidth = $(window).width() - dimsleft.width - dimsright.width

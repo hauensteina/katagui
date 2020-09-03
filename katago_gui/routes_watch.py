@@ -22,11 +22,11 @@ from katago_gui.translations import translate as tr
 
 
 @app.route('/watch_select_game')
-#---------------------------------
+@app.route('/watch_select_game_mobile')
+#---------------------------------------
 def watch_select_game():
     """ Show the screen to choose the game to watch """
     rows = db.slurp( 'v_games_24hours')
-
     games = []
     for row in rows:
         g = {}
@@ -38,13 +38,16 @@ def watch_select_game():
         g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
         g['nmoves'] = json.loads( row['game_record'])['n_visible']
         g['n_obs'] = row['n_obs']
-        g['link'] = url_for( 'watch_game',game_hash=row['game_hash'], live=row['live'])
+        if 'mobile' in request.url_rule.rule:
+            g['link'] = url_for( 'watch_game_mobile',game_hash=row['game_hash'], live=row['live'])
+        else:
+            g['link'] = url_for( 'watch_game',game_hash=row['game_hash'], live=row['live'])
         if g['live'] or g['nmoves'] > 20:
             games.append( g)
     return render_template( 'watch_select_game.tmpl', games=games)
 
 @app.route('/watch_game')
-#--------------------------------------------------
+#-----------------------------------------------------
 def watch_game():
     """ User clicks on the game he wants to watch """
     gh = request.args['game_hash']
@@ -52,6 +55,16 @@ def watch_game():
     # Remember which game we are watching
     db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
     return render_template( 'watch.tmpl', game_hash=gh, live=live)
+
+@app.route('/watch_game_mobile')
+#-----------------------------------------------------
+def watch_game_mobile():
+    """ User clicks on the game he wants to watch """
+    gh = request.args['game_hash']
+    live = request.args['live']
+    # Remember which game we are watching
+    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
+    return render_template( 'watch_mobile.tmpl', game_hash=gh, live=live)
 
 @app.route('/clear_watch_game', methods=['POST'])
 #--------------------------------------------------

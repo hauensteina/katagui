@@ -275,7 +275,12 @@ function main( JGO, axutil, p_options) {
       }
     })
 
-    $('#btn_watch').click( () => { location.href = 'watch_select_game' })
+    $('#btn_watch').click( () => {
+      if (p_options.mobile) {
+	location.href = 'watch_select_game_mobile'
+      } else {
+	location.href = 'watch_select_game' }
+    })
 
     $('#btn_play').click( () => {
       selfplay('off')
