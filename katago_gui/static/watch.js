@@ -364,11 +364,13 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (action == 'on') {
       $btn.addClass('ahaux_on')
       $btn.css('background-color', '#e00000')
+      $btn.css('color', 'black')
       $btn.html( tr('Live'))
     }
     else if (action == 'off') {
       $btn.removeClass('ahaux_on')
-      $btn.css('background-color', 'green')
+      $btn.css('background-color', 'rgb(40, 167, 69)')
+      $btn.css('color', 'black')
       $btn.html('Refresh')
     }
     else if (action == 'toggle') {
