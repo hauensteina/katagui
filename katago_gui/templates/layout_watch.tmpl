@@ -72,7 +72,7 @@
       <tr><td colspan='3' style='height:5px'></td></tr>
       <tr>
         {% if logged_in() %}
-          <td colspan='2' class='font-m' align='right'>{{ current_user.data["username"] }}</td>
+          <td colspan='2' class='font-m' align='right'>{{ current_user.data["username"] }} &nbsp;</td>
         {% else %}
           <td colspan='2' class='font-m' align='right'>{{tr('Guest')}} &nbsp;</td>
         {% endif %}
