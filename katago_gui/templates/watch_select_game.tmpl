@@ -1,4 +1,4 @@
-{% extends 'layout_watch.tmpl' %}
+{% extends 'layout_noheader.tmpl' %}
 
 {% block css %}
   <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -7,6 +7,7 @@
 {% block content %}
   <div id='watchdiv' class='center' tabindex='0'>
     <style> .gametable td { padding:0px 20px 0px 20px } </style>
+    <br>
     <h2 class=center>{{ tr('Games Today') }}  </h2>
     <table class='center gametable'>
       <tr><td colspan='3'>
@@ -17,8 +18,6 @@
                 {{ message }}
               </div>
             {% endfor %}
-          {% else %}
-            <br><br>
           {% endif %}
         {% endwith %}
       </td></tr>
