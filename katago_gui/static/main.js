@@ -961,6 +961,7 @@ function main( JGO, axutil, p_options) {
     }
   } // show_prob()
 
+  const HAPPY_POINT_LOSS_MAX = 2.0
   //--------------------------
   function update_emoji() {
     var cur = grec.curmove()
@@ -982,7 +983,7 @@ function main( JGO, axutil, p_options) {
       var delta_p = pp - p
       var delta_score = pscore - score
       if (p < 0.05 && delta_p < 0.06) { set_emoji() } // empty
-      else if (p > 0.95 && delta_score < 3) { set_emoji(0.0, 0) } // happy
+      else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
       else if (pp == 0) { set_emoji() } // empty
       else { set_emoji( delta_p, delta_score) }
     }
@@ -1008,7 +1009,7 @@ function main( JGO, axutil, p_options) {
       if (delta_prob < PROB_BINS[prob_idx]) break;
     }
     // Get angry if we lose points
-    const SCORE_BINS = [2, 4, 8]
+    const SCORE_BINS = [HAPPY_POINT_LOSS_MAX, 4, 8]
     var score_idx
     for (score_idx=0; score_idx < SCORE_BINS.length; score_idx++) {
       if (delta_score < SCORE_BINS[score_idx]) break;
