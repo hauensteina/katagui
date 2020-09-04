@@ -301,9 +301,9 @@ function watch( JGO, axutil, game_hash, p_options) {
       var idletime = new Date( idle_msecs).toISOString().substr(11, 8)
       var idlestr = ''
       if (p_options.live == 1 && toggle_live_button() == 'on') {
-	idlestr = `<td align='left' width='110px'>${tr('Idle')}:${idletime} </td>`
+	idlestr = `<td align='left' width='30%'>${tr('Idle')}:${idletime} </td>`
       }
-      var tstr = `<table class='center'><tr>
+      var tstr = `<table width='80%' class='center'><tr>
                  <td>${tr('User')}:${user}&nbsp;</td>
                  <td>${tr('Komi')}:${komi}&nbsp;</td>
                  <td>${tr('Handicap')}:${handicap}&nbsp;</td>
