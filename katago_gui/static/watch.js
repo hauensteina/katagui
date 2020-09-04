@@ -905,7 +905,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     } else if (val == 'human') {
       $('#descr_bot').html( `Human`)
       $('#img_bot').attr('src', 'static/kata-gray.png')
-      return {'val':'human', 'ep':'' }
+      return {'val':'human', 'ep':'/select-move/' }
     }
     return 0
   } // fast_or_strong()
