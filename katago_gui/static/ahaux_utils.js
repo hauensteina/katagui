@@ -5,7 +5,7 @@
 
 'use strict'
 
-const DDATE = '2020-09-06'
+const DDATE = '2020-09-07'
 const VERSION = '3.0.6'
 
 //=====================
