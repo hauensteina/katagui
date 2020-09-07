@@ -203,6 +203,20 @@ def select_move_x( bot_name):
         print( 'select move x error: %s' % res)
         return jsonify( {'result': 'error: forward failed' })
 
+@app.route('/server_ip', methods=['GET'])
+#---------------------------------------------
+def server_ip():
+    """ Get IP of caller (the katago server) and store in DB """
+    try:
+        if request.args.get('pwd') != '3515862':
+            return jsonify( {'result': 'ERROR' })
+        ip = request.remote_addr
+        db.set_parm( 'server_ip', ip)
+        db.set_parm( 'server_ip_updated', str(datetime.now()))
+        return jsonify( {'result': 'ok' })
+    except:
+        return jsonify( {'result': 'EXCEPTION' })
+
 @app.route('/sgf2list', methods=['POST'])
 #-------------------------------------------
 def sgf2list():
