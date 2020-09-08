@@ -36,8 +36,9 @@ def get_sgf_tag( sgfstr, tag):
     return res
 
 #---------------------
-def get_server_ip():
-    res = db.get_parm( 'server_ip')
+def get_server_url():
+    ip = db.get_parm( 'server_ip')
+    res = 'http://' + ip + '/'
     return res
 
 # Forward fast request to katago server
