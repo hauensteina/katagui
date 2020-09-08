@@ -301,13 +301,9 @@ function main( JGO, axutil, p_options) {
       else { bot_active('off') }
     })
 
+
     $('#btn_best').click( () => {
-      selfplay('off')
-      if (score_position.active) return
-      if (axutil.hit_endpoint('waiting')) {
-        g_best_btn_buffer = true; return
-      }
-      best_btn_callback()
+      btn_best()
     })
 
     $('#btn_save').click( () => {
@@ -585,6 +581,15 @@ function main( JGO, axutil, p_options) {
   btn_next.waiting = false
   btn_next.buffered = false
 
+  function btn_best() {
+    selfplay('off')
+    if (score_position.active) return
+    if (axutil.hit_endpoint('waiting')) {
+      g_best_btn_buffer = true; return
+    }
+    best_btn_callback()
+  } // btn_best()
+
   // Key actions
   //------------------------
   function check_key(e) {
@@ -595,6 +600,8 @@ function main( JGO, axutil, p_options) {
       return
     }
     else if (e.keyCode == '38') { // up arrow
+      e.preventDefault()
+      btn_best()
     }
     else if (e.keyCode == '40') { // down arrow
     }
