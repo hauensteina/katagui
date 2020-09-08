@@ -210,7 +210,10 @@ def server_ip():
     try:
         if request.args.get('pwd') != '3515862':
             return jsonify( {'result': 'ERROR' })
-        ip = request.remote_addr
+        if request.headers.getlist("X-Forwarded-For"):
+            ip = request.headers.getlist("X-Forwarded-For")[0]
+        else:
+            ip = request.remote_addr
         db.set_parm( 'server_ip', ip)
         db.set_parm( 'server_ip_updated', str(datetime.now()))
         return jsonify( {'result': 'ok' })

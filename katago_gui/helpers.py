@@ -15,7 +15,7 @@ from flask import request, url_for
 from flask_login import current_user, login_user
 from flask_mail import Message
 
-from katago_gui import app, auth, mail
+from katago_gui import app, auth, mail, db
 from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X, KATAGO_SERVER_GUEST
 from katago_gui.go_utils import point_from_coords
 from katago_gui.translations import translate as tr
@@ -33,6 +33,11 @@ def get_sgf_tag( sgfstr, tag):
     tstr = sgfstr.decode('utf8')
     res = re.sub(rexp, r'\1', tstr ,flags=re.DOTALL)
     if res == tstr: return '' # tag not found
+    return res
+
+#---------------------
+def get_server_ip():
+    res = db.get_parm( 'server_ip')
     return res
 
 # Forward fast request to katago server
