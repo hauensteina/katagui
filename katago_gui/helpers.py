@@ -16,7 +16,7 @@ from flask_login import current_user, login_user
 from flask_mail import Message
 
 from katago_gui import app, auth, mail, db
-from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X, KATAGO_SERVER_GUEST
+#from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X, KATAGO_SERVER_GUEST
 from katago_gui.go_utils import point_from_coords
 from katago_gui.translations import translate as tr
 
@@ -35,16 +35,11 @@ def get_sgf_tag( sgfstr, tag):
     if res == tstr: return '' # tag not found
     return res
 
-#---------------------
-def get_server_url():
-    ip = db.get_parm( 'server_ip')
-    res = 'http://' + ip + '/'
-    return res
-
 # Forward fast request to katago server
 #----------------------------------------
 def fwd_to_katago( endpoint, args):
-    url = KATAGO_SERVER + endpoint
+    ip = db.get_parm( 'server_ip')
+    url = 'http://' + ip + ':2819/' + endpoint
     resp = requests.post( url, json=args)
     try:
         res = resp.json()
@@ -56,7 +51,8 @@ def fwd_to_katago( endpoint, args):
 # Forward strong request to katago server
 #------------------------------------------
 def fwd_to_katago_x( endpoint, args):
-    url = KATAGO_SERVER_X + endpoint
+    ip = db.get_parm( 'server_ip')
+    url = 'http://' + ip + ':2820/' + endpoint
     resp = requests.post( url, json=args)
     try:
         res = resp.json()
@@ -68,7 +64,8 @@ def fwd_to_katago_x( endpoint, args):
 # Forward guest request to katago server
 #------------------------------------------
 def fwd_to_katago_guest( endpoint, args):
-    url = KATAGO_SERVER_GUEST + endpoint
+    ip = db.get_parm( 'server_ip')
+    url = 'http://' + ip + ':2821/' + endpoint
     resp = requests.post( url, json=args)
     try:
         res = resp.json()

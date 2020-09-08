@@ -206,7 +206,12 @@ def select_move_x( bot_name):
 @app.route('/server_ip', methods=['GET'])
 #---------------------------------------------
 def server_ip():
-    """ Get IP of caller (the katago server) and store in DB """
+    """
+    Get the caller IP (the katago server) and store it in the DB.
+    A service on the katago server (marfa) hits this every minute.
+    No more need for dyndns and noip and apache on the katago server.
+    The IP is used in the fwd_to_katago_* endpoints called from heroku.
+    """
     try:
         if request.args.get('pwd') != '3515862':
             return jsonify( {'result': 'ERROR' })
