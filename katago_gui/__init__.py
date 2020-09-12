@@ -9,7 +9,7 @@
 
 from pdb import set_trace as BP
 
-import os
+import os,random
 import logging
 import redis
 import gevent
@@ -29,6 +29,10 @@ sockets = Sockets(app)
 def logged_in():
     return current_user.is_authenticated and not current_user.data['username'].startswith('guest_')
 
+#-------------
+def rrand():
+    return str(random.uniform(0,1))
+
 # Make some functions available in the jinja templates.
 # Black Magic.
 @app.context_processor
@@ -36,6 +40,7 @@ def inject_template_funcs():
     return {'tr':translate # {{ tr('Play') }} now puts the result of translate('Play') into the template
             ,'donation_blurb':donation_blurb
             ,'logged_in':logged_in
+            ,'rrand':rrand
             }
 
 app.config.update(
