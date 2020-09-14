@@ -138,15 +138,18 @@ def select_move( bot_name):
     try:
         current_user.record_activity()
     except:
-        return jsonify( {'result': 'error: no current user' })
+        pass
 
     endpoint = 'select-move/' + bot_name
     args = request.json
 
-    if 'selfplay' in args:
-        current_user.count_selfplay_move()
-    else:
-        current_user.count_move()
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
 
     res = fwd_to_katago( endpoint, args)
     try:
@@ -162,15 +165,18 @@ def select_move_guest( bot_name):
     try:
         current_user.record_activity()
     except:
-        return jsonify( {'result': 'error: no current user' })
+        pass
 
     endpoint = 'select-move/' + bot_name
     args = request.json
 
-    if 'selfplay' in args:
-        current_user.count_selfplay_move()
-    else:
-        current_user.count_move()
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
 
     res = fwd_to_katago_guest( endpoint, args)
     try:
@@ -186,15 +192,18 @@ def select_move_x( bot_name):
     try:
         current_user.record_activity()
     except:
-        return jsonify( {'result': 'error: no current user' })
+        pass
 
     endpoint = 'select-move/' + bot_name
     args = request.json
 
-    if 'selfplay' in args:
-        current_user.count_selfplay_move()
-    else:
-        current_user.count_move()
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
 
     res = fwd_to_katago_x( endpoint, args)
     try:
