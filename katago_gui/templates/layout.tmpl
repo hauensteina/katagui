@@ -70,15 +70,15 @@
         <tr><td colspan='2'>
     {% else %}
           <!-- <h1 style='color:red'> KATAGO IS DOWN. NO ELECTRICITY IN SAN MATEO, CA, USA. </h1> -->
-          <table class='center' style='width:100%'>
+          <table class='center' style='width:100%' style='background-color:green'>
             <!-- Page Header -->
             <tr style='background-color:green'>
-              <td width='20px'></td>
-              <td id='homelogo' align='left' width='200px'>
+              <td width='20px'>&nbsp</td>
+              <td id='homelogo' align='left' width='200px' style='background-color:green'>
                 <a class='hlink font-l' href="{{ url_for('index') }}">
                   KataGui <span id='version' class='font-s'>0.0.0</span></a>
               </td>
-              <td align='right'>
+              <td align='right' style='background-color:green'>
                 {% if logged_in() %}
                   <a class='hlink font-m' href="{{ url_for('account') }}">{{tr('Account')}}</a>&nbsp;&nbsp;&nbsp;
                   <a class='hlink font-m' href="{{ url_for('logout') }}">{{tr('Logout')}}</a>&nbsp;&nbsp;&nbsp;
@@ -90,7 +90,7 @@
                 {% endif %}
                 <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>{{tr('About')}}</a>
               </td>
-              <td width='20px' class=''></td>
+              <td width='20px' class=''>&nbsp;</td>
             </tr>
             <tr><td colspan='4' style='height:5px'></td></tr>
             <tr>
