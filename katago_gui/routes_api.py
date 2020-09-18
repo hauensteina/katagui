@@ -42,13 +42,6 @@ def create_game():
     current_user.update_db()
     return jsonify( {'game_hash': game.id })
 
-@app.route('/english', methods=['GET'])
-#-------------------------------------------
-def english():
-    """ Switch user language to English """
-    current_user.data['lang'] = 'eng'
-    current_user.update_db()
-    return redirect(url_for('index'))
 
 @app.route('/get_translation_table', methods=['POST'])
 #---------------------------------------------------------
@@ -64,6 +57,17 @@ def get_user_data():
     data = current_user.data
     return jsonify( data)
 
+@app.route('/english', methods=['GET'])
+#-------------------------------------------
+def english():
+    """ Switch user language to English """
+    try:
+        current_user.data['lang'] = 'eng'
+        current_user.update_db()
+    except:
+        app.logger.info( 'ERROR: Exception while switching to English')
+    return redirect( url_for('index'))
+
 @app.route('/korean', methods=['GET'])
 #----------------------------------------
 def korean():
@@ -73,7 +77,7 @@ def korean():
         current_user.update_db()
     except:
         app.logger.info( 'ERROR: Exception while switching to Korean')
-    return redirect(url_for('index'))
+    return redirect( url_for('index'))
 
 @app.route('/load_game', methods=['POST'])
 #----------------------------------------------
