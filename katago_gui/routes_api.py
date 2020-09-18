@@ -68,8 +68,11 @@ def get_user_data():
 #----------------------------------------
 def korean():
     """ Switch user language to Korean """
-    current_user.data['lang'] = 'kor'
-    current_user.update_db()
+    try:
+        current_user.data['lang'] = 'kor'
+        current_user.update_db()
+    except:
+        app.logger.info( 'ERROR: Exception while switching to Korean')
     return redirect(url_for('index'))
 
 @app.route('/load_game', methods=['POST'])
