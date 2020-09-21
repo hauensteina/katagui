@@ -122,10 +122,11 @@ function main( JGO, axutil, p_options) {
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
     goto_move( grec.len())
     set_emoji()
+    var greclen = grec.len()
     const playing = true
     get_prob_genmove(
       (data) => {
-        if (bot_active()) { bot_move_callback( data) }
+        if (bot_active() && (greclen == grec.len())) { bot_move_callback( data) }
       },
       settings('show_emoji'), playing )
   } // board_click_callback()
@@ -625,8 +626,13 @@ function main( JGO, axutil, p_options) {
   //-----------------------------
   function get_katago_move() {
     $('#status').html( tr('KataGo is thinking ...'))
+    var greclen = grec.len()
     axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
-						     'config':{'komi':g_komi } }, bot_move_callback)
+						     'config':{'komi':g_komi } },
+			 (data) => {
+			   if (greclen == grec.len()) { // user did not click in the meantime
+			     bot_move_callback(data) }
+			 })
   } // get_katago_move()
 
   //--------------------------------
