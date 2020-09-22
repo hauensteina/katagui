@@ -69,7 +69,7 @@ def watch_game_mobile():
 @app.route('/clear_watch_game', methods=['POST'])
 #--------------------------------------------------
 def clear_watch_game():
-    """ CLear watched game before unload """
+    """ Clear watched game before unload """
     db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
     return jsonify( {'result': 'ok' })
 

@@ -335,11 +335,11 @@ def update_game():
 
     # Tell all the watchers about the change.
     # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py
-    redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game', 'game_hash':game_hash}))
     nmoves = 0
     try:
         gr = json.loads(data['game_record'])
         nmoves = gr['n_visible']
+        redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game', 'game_hash':game_hash, 'nmoves':nmoves}))
     except:
         pass
     color = 'B' if nmoves % 2 else 'W'

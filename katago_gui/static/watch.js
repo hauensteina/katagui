@@ -138,38 +138,38 @@ function watch( JGO, axutil, game_hash, p_options) {
     // Add mouse event listeners for the board
     //------------------------------------------
     g_jsetup.create('board',
-		    function(canvas) {
-		      //----------------------------
-		      canvas.addListener( 'click', function(coord, ev) { board_click_callback( coord) } );
+                    function(canvas) {
+                      //----------------------------
+                      canvas.addListener( 'click', function(coord, ev) { board_click_callback( coord) } );
 
-		      //------------------------------
-		      canvas.addListener( 'mousemove',
-					  function( coord, ev) {
-					    var jboard = g_jrecord.jboard
-					    if (coord.i == -1 || coord.j == -1) { return }
-					    if (coord == hover.coord) { return }
-					    hover( coord, turn())
-					    if (score_position.active) { draw_estimate( score_position.probs) }
-					    else if (best_btn_callback.active) { show_best_moves() }
-					  }
-					) // mousemove
+                      //------------------------------
+                      canvas.addListener( 'mousemove',
+                                          function( coord, ev) {
+                                            var jboard = g_jrecord.jboard
+                                            if (coord.i == -1 || coord.j == -1) { return }
+                                            if (coord == hover.coord) { return }
+                                            hover( coord, turn())
+                                            if (score_position.active) { draw_estimate( score_position.probs) }
+                                            else if (best_btn_callback.active) { show_best_moves() }
+                                          }
+                                        ) // mousemove
 
-		      //----------------------------
-		      canvas.addListener( 'mouseout',
-					  function(ev) {
-					    hover()
-					    if (score_position.active) {
-					      draw_estimate( score_position.probs)
-					    }
-					    else if (best_btn_callback.active) {
-					      show_best_moves()
-					    }
-					  }
-					) // mouseout
-		      resize_board();
-		      setTimeout( resize_board, 2000) // why, oh why do I need this?
-		      window.onresize = resize_board
-		    }) // create board
+                      //----------------------------
+                      canvas.addListener( 'mouseout',
+                                          function(ev) {
+                                            hover()
+                                            if (score_position.active) {
+                                              draw_estimate( score_position.probs)
+                                            }
+                                            else if (best_btn_callback.active) {
+                                              show_best_moves()
+                                            }
+                                          }
+                                        ) // mouseout
+                      resize_board();
+                      setTimeout( resize_board, 2000) // why, oh why do I need this?
+                      window.onresize = resize_board
+                    }) // create board
   } // setup_jgo()
 
   // Blink a translucent stone
@@ -245,8 +245,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     $('#btn_nnscore').click( () => {
       toggle_live_button( 'off')
       if (score_position.active) {
-	goto_move( grec.pos())
-	return
+        goto_move( grec.pos())
+        return
       }
       score_position()
     })
@@ -275,7 +275,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     })
     // Links should still work
     $('a').on('touchend',(e)=>{
-      console.log('a')
       e.preventDefault()
       e.target.click()})
     // Buttons should still work
@@ -301,7 +300,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       var idletime = new Date( idle_msecs).toISOString().substr(11, 8)
       var idlestr = ''
       if (p_options.live == 1 && toggle_live_button() == 'on') {
-	idlestr = `<td align='left' width='30%'>${tr('Idle')}:${idletime} </td>`
+        idlestr = `<td align='left' width='30%'>${tr('Idle')}:${idletime} </td>`
       }
       var tstr = `<table width='80%' class='center'><tr>
                  <td>${tr('User')}:${user}&nbsp;</td>
@@ -421,10 +420,10 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
     else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
       (grec.handicap < 3 && botprob < 0.01) ||
-	(grec.handicap < 2 && botprob < 0.02) ||
-	(botprob < 0.001))
-	      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
-	    )
+        (grec.handicap < 2 && botprob < 0.02) ||
+        (botprob < 0.001))
+              && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
+            )
     {
       alert( tr('KataGo resigns. You beat KataGo!'))
       $('#status').html( tr('KataGo resigns.'))
@@ -601,11 +600,11 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_prob_genmove( completion, update_emo) {
     $('#status').html( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
-			 (data) => {
-			   get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo)
-			   if (completion) { completion(data) }
-			 })
+                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
+                         (data) => {
+                           get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo)
+                           if (completion) { completion(data) }
+                         })
   } // get_prob_genmove()
 
   // Continue after prob and score came back from the server
@@ -634,11 +633,11 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_best_move( completion) { //@@@
     $('#status').html( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( '/select-move/' + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
-			 (data) => {
-			   if (completion) { completion(data) }
-			   $('#status').html( '')
-			 })
+                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
+                         (data) => {
+                           if (completion) { completion(data) }
+                           $('#status').html( '')
+                         })
   } // get_best_move()
 
   //------------------------------------------
@@ -738,17 +737,17 @@ function watch( JGO, axutil, game_hash, p_options) {
   function score_position() {
     $('#status').html( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
-			 (data) => {
-			   var winprob = parseFloat(data.diagnostics.winprob)
-			   var score = parseFloat(data.diagnostics.score)
-			   score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-			   score_position.active = true
-			   score_position.probs = data.probs
-			   draw_estimate( data.probs)
-			   get_prob_genmove( function() {}, false, false )
-			 } // (data) =>
-		       ) // hit_endpoint()
+                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
+                         (data) => {
+                           var winprob = parseFloat(data.diagnostics.winprob)
+                           var score = parseFloat(data.diagnostics.score)
+                           score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
+                           score_position.active = true
+                           score_position.probs = data.probs
+                           draw_estimate( data.probs)
+                           get_prob_genmove( function() {}, false, false )
+                         } // (data) =>
+                       ) // hit_endpoint()
   } // score_position()
   score_position.active = false
   score_position.probs = []
@@ -952,14 +951,10 @@ function watch( JGO, axutil, game_hash, p_options) {
     var data = JSON.parse(message.data)
     var action = data.action
     var game_hash = data.game_hash
+    var nmoves = data.nmoves
     if (action == 'update_game') {
-      if (toggle_live_button() == 'off') { return }
-      axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
-				  (resp) => {
-				    grec.from_dict( resp)
-				    goto_move( grec.pos())
-				    const update_emo = true; show_prob( update_emo)
-				  })
+      //console.log( '>>>>>>>>> socket update')
+      update_game( 'update_game', game_hash, nmoves)
     }
     else if (action == 'chat') {
       var msg = data.msg
@@ -968,6 +963,42 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#chat_output').scrollTop( $('#chat_output').prop('scrollHeight')) // autoscroll
     }
   } // onmessage()
+
+  //---------------------------------------------------
+  function update_game( action, game_hash, nmoves) {
+    if (toggle_live_button() == 'off') { return }
+    if (update_game.timer == '') {
+      update_game.timer = setTimeout( ()=>{ update_game( 'replay_with_delay') }, 1000)
+    }
+    if (action == 'update_game') {
+      //console.log( 'replay update game')
+      axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
+                                  (resp) => {
+                                    var gr = new GameRecord()
+                                    gr.from_dict( resp)
+				    gr.seek( nmoves)
+				    update_game.gamerecords.push( gr)
+                                    //console.log( 'game rec len ' + gr.len())
+                                  })
+    }
+    // Place new stones with delay between moves for easier watching
+    else if (action == 'replay_with_delay') {
+      clearTimeout( update_game.timer)
+      update_game.timer = setTimeout( ()=>{ update_game( 'replay_with_delay') }, 1000)
+      //console.log( 'replay_with_delay')
+      if (update_game.gamerecords.length == 0) {
+	//console.log( 'no new moves')
+	return
+      }
+      var gr = update_game.gamerecords.shift()
+      //console.log( 'placing move ' + gr.pos())
+      grec = gr.clone()
+      goto_move( grec.pos())
+      const update_emo = true; show_prob( update_emo)
+    } // replay_with_delay
+  } // update_game()
+  update_game.gamerecords = []
+  update_game.timer = ''
 
   $(window).on( 'beforeunload', () => {
     observer_socket.close()
@@ -1000,10 +1031,10 @@ function watch( JGO, axutil, game_hash, p_options) {
       goto_move( grec.pos())
       toggle_live_button( 'on')
       if (!p_options.live) {
-	// If game over, show the longer of record and var_record
-	if (grec.var_record.length > grec.record.length) {
-	  grec.exit_var()
-	}
+        // If game over, show the longer of record and var_record
+        if (grec.var_record.length > grec.record.length) {
+          grec.exit_var()
+        }
       }
       once_per_sec()
       //fast_or_strong( 'fast')

@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2020-09-21'
-const VERSION = '3.0.9'
+const DDATE = '2020-09-22'
+const VERSION = '3.1.0'
 
 //=====================
 class AhauxUtils
@@ -398,6 +398,10 @@ class GameRecord {
     copy.n_visible = this.n_visible
     copy.var_record = axutil.deepcopy( this.var_record)
     copy.var_n_visible = this.var_n_visible
+    copy.ts_latest_move = this.ts_latest_move
+    copy.handicap = this.handicap
+    copy.komi = this.komi
+    copy.username = this.username
     return copy
   }
   update( p, score) {
