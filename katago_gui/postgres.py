@@ -354,7 +354,8 @@ class Postgres:
           select viewname from pg_views where viewname = '%s'
         ''' % (tabname, tabname)
         try:
-            return self.select( exists_sql,())
+            res = self.select( exists_sql,())
+            return res
         except Exception as e:
             raise
 

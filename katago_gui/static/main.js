@@ -8,15 +8,15 @@
 'use strict'
 
 const HANDISTONES = ['',''
-		     ,['D4','Q16']
-		     ,['D4','Q16','Q4']
-		     ,['D4','Q16','Q4','D16']
-		     ,['D4','Q16','Q4','D16','K10']
-		     ,['D4','Q16','Q4','D16','D10','Q10']
-		     ,['D4','Q16','Q4','D16','D10','Q10','K10']
-		     ,['D4','Q16','Q4','D16','D10','Q10','K4','K16']
-		     ,['D4','Q16','Q4','D16','D10','Q10','K4','K16','K10']
-		    ]
+                     ,['D4','Q16']
+                     ,['D4','Q16','Q4']
+                     ,['D4','Q16','Q4','D16']
+                     ,['D4','Q16','Q4','D16','K10']
+                     ,['D4','Q16','Q4','D16','D10','Q10']
+                     ,['D4','Q16','Q4','D16','D10','Q10','K10']
+                     ,['D4','Q16','Q4','D16','D10','Q10','K4','K16']
+                     ,['D4','Q16','Q4','D16','D10','Q10','K4','K16','K10']
+                    ]
 
 
 //=======================================
@@ -79,10 +79,10 @@ function main( JGO, axutil, p_options) {
 
       // create new game in db
       axutil.hit_endpoint_simple( '/create_game',{'handicap':g_handi, 'komi':g_komi},
-				  (resp)=>{
-				    settings('game_hash', resp.game_hash)
-				    if (g_handi > 1) { botmove_if_active() }
-				  })
+                                  (resp)=>{
+                                    settings('game_hash', resp.game_hash)
+                                    if (g_handi > 1) { botmove_if_active() }
+                                  })
     })
 
     $('#cancel_new_game').click( function() { // New Game -> x
@@ -192,43 +192,43 @@ function main( JGO, axutil, p_options) {
     // Add mouse event listeners for the board
     //------------------------------------------
     g_jsetup.create('board',
-		    function(canvas) {
-		      //----------------------------
-		      canvas.addListener('click', function(coord, ev) { board_click_callback( coord) } );
+                    function(canvas) {
+                      //----------------------------
+                      canvas.addListener('click', function(coord, ev) { board_click_callback( coord) } );
 
-		      //------------------------------
-		      canvas.addListener( 'mousemove',
-					  function( coord, ev) {
-					    var jboard = g_jrecord.jboard
-					    if (coord.i == -1 || coord.j == -1)
-					      return
-					    if (coord == hover.coord)
-					      return
+                      //------------------------------
+                      canvas.addListener( 'mousemove',
+                                          function( coord, ev) {
+                                            var jboard = g_jrecord.jboard
+                                            if (coord.i == -1 || coord.j == -1)
+                                              return
+                                            if (coord == hover.coord)
+                                              return
 
-					    hover( coord, turn())
-					    if (score_position.active) {
-					      draw_estimate( score_position.probs)
-					    }
-					    else if (best_btn_callback.active) {
-					      show_best_moves()
-					    }
-					  }
-					) // mousemove
+                                            hover( coord, turn())
+                                            if (score_position.active) {
+                                              draw_estimate( score_position.probs)
+                                            }
+                                            else if (best_btn_callback.active) {
+                                              show_best_moves()
+                                            }
+                                          }
+                                        ) // mousemove
 
-		      //----------------------------
-		      canvas.addListener( 'mouseout',
-					  function(ev) {
-					    hover()
-					    if (score_position.active) {
-					      draw_estimate( score_position.probs)
-					    }
-					    else if (best_btn_callback.active) {
-					      show_best_moves()
-					    }
-					  }
-					) // mouseout
-		    } // function(canvas)
-		   ) // create board
+                      //----------------------------
+                      canvas.addListener( 'mouseout',
+                                          function(ev) {
+                                            hover()
+                                            if (score_position.active) {
+                                              draw_estimate( score_position.probs)
+                                            }
+                                            else if (best_btn_callback.active) {
+                                              show_best_moves()
+                                            }
+                                          }
+                                        ) // mouseout
+                    } // function(canvas)
+                   ) // create board
   } // setup_jgo()
 
   // Blink a translucent stone
@@ -278,9 +278,9 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_watch').click( () => {
       if (p_options.mobile) {
-	location.href = 'watch_select_game_mobile'
+        location.href = 'watch_select_game_mobile'
       } else {
-	location.href = 'watch_select_game' }
+        location.href = 'watch_select_game' }
     })
 
     $('#btn_play').click( () => {
@@ -342,8 +342,8 @@ function main( JGO, axutil, p_options) {
     $('#btn_nnscore').click( () => {
       selfplay('off')
       if (score_position.active) {
-	goto_move( grec.pos())
-	return
+        goto_move( grec.pos())
+        return
       }
       score_position()
     })
@@ -362,15 +362,15 @@ function main( JGO, axutil, p_options) {
       axutil.hit_endpoint('cancel')
       var at_end = (grec.pos() == grec.len())
       if (grec.pos() > 2 && grec.curmove().agent.indexOf('kata') >= 0 && grec.prevmove().agent == 'human') {
-	goto_move( grec.pos() - 2 )
+        goto_move( grec.pos() - 2 )
       } else {
-	goto_move( grec.pos() - 1)
+        goto_move( grec.pos() - 1)
       }
       if (at_end) {
         grec.truncate()
-	if (settings( 'game_hash')) { // we are in an active game
+        if (settings( 'game_hash')) { // we are in an active game
           grec.dbsave() // save and notify observers
-	}
+        }
       }
       show_movenum()
     })
@@ -442,8 +442,10 @@ function main( JGO, axutil, p_options) {
       else if (settings('selfplay_speed') == 'slow') { interval = 5000 }
     }
     cb_selfplay()
+
     function cb_selfplay() { // timer callback
       clearTimeout( selfplay.timer)
+      $('#status').html('')
       if (selfplay('ison')) {
         selfplay.timer = setTimeout( cb_selfplay, interval)
       }
@@ -464,6 +466,7 @@ function main( JGO, axutil, p_options) {
           selfplay.ready = true
           if (!selfplay('ison')) return;
           goto_move( grec.pos() + 1)
+          $('#status').html('')
           return
         }
         // Game ended, start from beginning
@@ -475,24 +478,26 @@ function main( JGO, axutil, p_options) {
             selfplay.ready = true
             if (!selfplay('ison')) return;
             goto_move(0)
+            $('#status').html('')
             return
           }
-	}
+        }
 
         // Continue game
         axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
-			     {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
-			     (data) => {
-			       selfplay.ready = true
-			       if (!selfplay('ison')) return;
-			       var botCoord = string2jcoord( data.bot_move)
-			       maybe_start_var()
-			       grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':fast_or_strong().name} )
-		               replay_moves( grec.pos())
-			       const show_emoji = false
-		               const playing = true
-			       get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
-			     }) // hit_endpoint()
+                             {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
+                             (data) => {
+                               selfplay.ready = true
+                               if (!selfplay('ison')) return;
+                               var botCoord = string2jcoord( data.bot_move)
+                               maybe_start_var()
+                               grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':fast_or_strong().name} )
+                               replay_moves( grec.pos())
+                               const show_emoji = false
+                               const playing = true
+                               get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
+                               $('#status').html('')
+                             }) // hit_endpoint()
       } // if ready
     } // cb_selfplay()
     return 0
@@ -521,7 +526,7 @@ function main( JGO, axutil, p_options) {
           var move_prob = { 'mv':move, 'p':0, 'agent':'' }
           grec.push( move_prob)
         }
-	replay_moves( grec.pos())
+        replay_moves( grec.pos())
         show_movenum()
         g_komi = res.komi
         get_handicap()
@@ -628,11 +633,11 @@ function main( JGO, axutil, p_options) {
     $('#status').html( tr('KataGo is thinking ...'))
     var greclen = grec.len()
     axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
-						     'config':{'komi':g_komi } },
-			 (data) => {
-			   if (greclen == grec.len()) { // user did not click in the meantime
-			     bot_move_callback(data) }
-			 })
+                                                     'config':{'komi':g_komi } },
+                         (data) => {
+                           if (greclen == grec.len()) { // user did not click in the meantime
+                             bot_move_callback(data) }
+                         })
   } // get_katago_move()
 
   //--------------------------------
@@ -663,10 +668,10 @@ function main( JGO, axutil, p_options) {
     }
     else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
       (g_handi < 3 && botprob < 0.01) ||
-	(g_handi < 2 && botprob < 0.02) ||
-	(botprob < 0.001))
-	      && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
-	    )
+        (g_handi < 2 && botprob < 0.02) ||
+        (botprob < 0.001))
+              && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
+            )
     {
       alert( tr('KataGo resigns. You beat KataGo!'))
       $('#status').html( tr('KataGo resigns.'))
@@ -900,11 +905,11 @@ function main( JGO, axutil, p_options) {
   function get_prob_genmove( completion, update_emo, playing) {
     $('#status').html( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
-			 (data) => {
-			   get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
-			   if (completion) { completion(data) }
-			 })
+                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+                         (data) => {
+                           get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
+                           if (completion) { completion(data) }
+                         })
   } // get_prob_genmove()
 
   // Continue after prob and score came back from the server
@@ -915,7 +920,7 @@ function main( JGO, axutil, p_options) {
       var s = Math.round( parseFloat( score) * 100) / 100
       grec.update( p, s)
       if (settings( 'game_hash')) { // we are in an active game
-	console.log( 'saving ' + grec.pos() )
+        console.log( 'saving ' + grec.pos() )
         grec.dbsave() // save and notify observers
       }
     }
@@ -939,11 +944,11 @@ function main( JGO, axutil, p_options) {
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
-			 (data) => {
-			   if (completion) { completion(data) }
-			   $('#status').html( '')
-			 })
+                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+                         (data) => {
+                           if (completion) { completion(data) }
+                           $('#status').html( '')
+                         })
   } // get_best_move()
 
   //------------------------------------------
@@ -1047,18 +1052,18 @@ function main( JGO, axutil, p_options) {
   function score_position() {
     $('#status').html( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
-			 {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
-			  'config':{'komi':g_komi }, 'tt':Math.random() },
-			 (data) => {
-			   var winprob = parseFloat(data.diagnostics.winprob)
-			   var score = parseFloat(data.diagnostics.score)
-			   score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-			   score_position.active = true
-			   score_position.probs = data.probs
-			   draw_estimate( data.probs)
-			   get_prob_genmove( function() {}, false, false )
-			 } // (data) =>
-		       ) // hit_endpoint()
+                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
+                          'config':{'komi':g_komi }, 'tt':Math.random() },
+                         (data) => {
+                           var winprob = parseFloat(data.diagnostics.winprob)
+                           var score = parseFloat(data.diagnostics.score)
+                           score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
+                           score_position.active = true
+                           score_position.probs = data.probs
+                           draw_estimate( data.probs)
+                           get_prob_genmove( function() {}, false, false )
+                         } // (data) =>
+                       ) // hit_endpoint()
   } // score_position()
   score_position.active = false
   score_position.probs = []
