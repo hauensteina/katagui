@@ -34,14 +34,17 @@ from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_
 #-----------------------------------------------
 def create_game():
     """ Create a new game in the database """
-    data = request.json
-    data.update( {'username':current_user.data['username']})
-    game = dbmodel.Game()
-    game.update_db( data)
-    current_user.data['game_hash'] = game.id
-    current_user.update_db()
-    return jsonify( {'game_hash': game.id })
-
+    try:
+        data = request.json
+        data.update( {'username':current_user.data['username']})
+        game = dbmodel.Game()
+        game.update_db( data)
+        current_user.data['game_hash'] = game.id
+        current_user.update_db()
+        return jsonify( {'game_hash': game.id })
+    except:
+        app.logger.info( 'ERROR: Exception in create_game()')
+        return redirect( url_for('index'))
 
 @app.route('/get_translation_table', methods=['POST'])
 #---------------------------------------------------------
@@ -54,8 +57,12 @@ def get_translation_table():
 #------------------------------------------------
 def get_user_data():
     """ Get current user data """
-    data = current_user.data
-    return jsonify( data)
+    try:
+        data = current_user.data
+        return jsonify( data)
+    except:
+        app.logger.info( 'ERROR: Exception in get_user_data()')
+        return redirect( url_for('index'))
 
 @app.route('/english', methods=['GET'])
 #-------------------------------------------
@@ -91,8 +98,11 @@ def load_game():
 @app.route('/logout')
 #-------------------------
 def logout():
-    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
-    logout_user()
+    try:
+        db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
+        logout_user()
+    except:
+        app.logger.info( 'ERROR: Exception in logout()')
     return redirect(url_for('index'))
 
 @app.route('/save-sgf', methods=['GET'])
@@ -324,36 +334,44 @@ def slog():
 #----------------------------------------------
 def update_game():
     """ Update a game in the database """
-    data = request.json
-    game_hash = current_user.data['game_hash']
-    if not game_hash:
-        msg = 'error: user %s is not in a game.' % current_user.data['username']
-        app.logger.info( '>>>> ' + msg)
-        return jsonify( {'result': msg})
-    game = dbmodel.Game( game_hash)
-    game.update_db( data)
-
-    # Tell all the watchers about the change.
-    # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py
-    nmoves = 0
     try:
-        gr = json.loads(data['game_record'])
-        nmoves = gr['n_visible']
-        redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game', 'game_hash':game_hash, 'nmoves':nmoves}))
-    except:
-        pass
-    color = 'B' if nmoves % 2 else 'W'
-    app.logger.info( '>>>>>>>>>>>>>>>>> update game %s %s %d' % (str(game_hash), color, nmoves))
+        data = request.json
+        game_hash = current_user.data['game_hash']
+        if not game_hash:
+            msg = 'error: user %s is not in a game.' % current_user.data['username']
+            app.logger.info( '>>>> ' + msg)
+            return jsonify( {'result': msg})
+        game = dbmodel.Game( game_hash)
+        game.update_db( data)
 
-    return jsonify( {'result': 'ok' })
+        # Tell all the watchers about the change.
+        # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py
+        nmoves = 0
+        try:
+            gr = json.loads(data['game_record'])
+            nmoves = gr['n_visible']
+            redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game', 'game_hash':game_hash, 'nmoves':nmoves}))
+        except:
+            pass
+        color = 'B' if nmoves % 2 else 'W'
+        app.logger.info( '>>>>>>>>>>>>>>>>> update game %s %s %d' % (str(game_hash), color, nmoves))
+        return jsonify( {'result': 'ok' })
+    except:
+        app.logger.info( 'ERROR: Exception in update_game()')
+        return jsonify( {'result': 'error: update_game() failed' })
+
 
 @app.route('/chat', methods=['POST'])
 #----------------------------------------------
 def chat():
     """ Send a chat message to all other observers """
-    game_hash = request.json['game_hash']
-    msg = request.json['msg']
-    username = current_user.data['username']
-    d = {'action':'chat', 'game_hash':game_hash, 'msg':msg, 'username':username}
-    redis.publish( REDIS_CHAN, json.dumps( d))
-    return jsonify( {'result': 'ok' })
+    try:
+        game_hash = request.json['game_hash']
+        msg = request.json['msg']
+        username = current_user.data['username']
+        d = {'action':'chat', 'game_hash':game_hash, 'msg':msg, 'username':username}
+        redis.publish( REDIS_CHAN, json.dumps( d))
+        return jsonify( {'result': 'ok' })
+    except:
+        app.logger.info( 'ERROR: Exception in chat()')
+        return jsonify( {'result': 'error: chat() failed' })
