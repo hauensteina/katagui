@@ -146,6 +146,7 @@ _kor = {
     ,'Sign Up':'등록'
     # Misc
     ,'Settings':'셋팅'
+    ,'Show best 10 (A-J)':'베스트 10 보이기 (A-J)'
     ,'Show emoji during play':'플레이 중 이모지 보이기'
     ,'Show probability during play':'플레이 중 착수 가능성 퍼센티지 보이기'
     ,'Save':'저장'
