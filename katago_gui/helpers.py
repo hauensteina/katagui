@@ -40,6 +40,8 @@ def get_sgf_tag( sgfstr, tag):
 def fwd_to_katago( endpoint, args):
     ip = db.get_parm( 'server_ip')
     url = 'http://' + ip + ':2819/' + endpoint
+    #ip = '192.168.0.190'
+    #url = 'http://' + ip + ':2718/' + endpoint
     resp = requests.post( url, json=args)
     try:
         res = resp.json()
@@ -53,6 +55,8 @@ def fwd_to_katago( endpoint, args):
 def fwd_to_katago_x( endpoint, args):
     ip = db.get_parm( 'server_ip')
     url = 'http://' + ip + ':2820/' + endpoint
+    #ip = '192.168.0.190'
+    #url = 'http://' + ip + ':2718/' + endpoint
     resp = requests.post( url, json=args)
     try:
         res = resp.json()

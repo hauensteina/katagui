@@ -148,13 +148,14 @@ function main( JGO, axutil, p_options) {
     data = show_best_moves.data
     var botCoord = string2jcoord( data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
+    debugger
     var node = g_jrecord.createNode( true)
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
     var mmax = 0
     // Mark candidates with letters if psv is close enough to max
     for (const [idx,m] of best.entries()) {
       if (mmax == 0) { mmax = m.psv }
-      if (m.psv < mmax / 4.0) continue
+      if (!settings('show_best_ten') && m.psv < mmax / 4.0) continue
       var botCoord = string2jcoord( m.move)
       if (botCoord != 'pass' && botCoord != 'resign') {
         var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
