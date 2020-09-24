@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = '2020-09-24'
-const VERSION = '3.2.1'
+const VERSION = '3.2.2'
 
 //=====================
 class AhauxUtils
@@ -448,7 +448,7 @@ class GameRecord {
     this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
   }
   dbsave() { // update game in db; notify observers via redis
-    axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps()}, (resp)=>{})
+    axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps(), 'client_timestamp':Date.now()}, (resp)=>{})
   }
   dbload( game_hash, completion) { // load game from db
     axutil.hit_endpoint_simple( '/load_game',{'game_hash':game_hash},

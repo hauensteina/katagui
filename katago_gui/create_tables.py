@@ -38,6 +38,7 @@ def create_t_game(db):
     ,komi real
     ,ts_started timestamptz
     ,ts_latest_move timestamptz
+    ,client_timestamp bigint
     ,game_record text
     ) '''
     db.run( sql)
