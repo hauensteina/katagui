@@ -50,28 +50,40 @@ def watch_select_game():
 #-----------------------------------------------------
 def watch_game():
     """ User clicks on the game he wants to watch """
-    gh = request.args['game_hash']
-    live = request.args['live']
-    # Remember which game we are watching
-    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
-    return render_template( 'watch.tmpl', game_hash=gh, live=live)
+    try:
+        gh = request.args['game_hash']
+        live = request.args['live']
+        # Remember which game we are watching
+        db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
+        return render_template( 'watch.tmpl', game_hash=gh, live=live)
+    except:
+        app.logger.info( 'ERROR: Exception in watch_game()')
+        return redirect( url_for('index'))
 
 @app.route('/watch_game_mobile')
 #-----------------------------------------------------
 def watch_game_mobile():
     """ User clicks on the game he wants to watch """
-    gh = request.args['game_hash']
-    live = request.args['live']
-    # Remember which game we are watching
-    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
-    return render_template( 'watch_mobile.tmpl', game_hash=gh, live=live)
+    try:
+        gh = request.args['game_hash']
+        live = request.args['live']
+        # Remember which game we are watching
+        db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
+        return render_template( 'watch_mobile.tmpl', game_hash=gh, live=live)
+    except:
+        app.logger.info( 'ERROR: Exception in watch_game_mobile()')
+        return redirect( url_for('index'))
 
 @app.route('/clear_watch_game', methods=['POST'])
 #--------------------------------------------------
 def clear_watch_game():
     """ Clear watched game before unload """
-    db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
-    return jsonify( {'result': 'ok' })
+    try:
+        db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':''})
+        return jsonify( {'result': 'ok' })
+    except:
+        app.logger.info( 'ERROR: Exception in clear_watch_game()')
+        return jsonify( {'result': 'error: exception in clear_watch_game()' })
 
 @sockets.route('/register_socket/<game_hash>')
 #-----------------------------------------------
