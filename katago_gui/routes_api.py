@@ -342,8 +342,7 @@ def update_game():
             app.logger.info( '>>>> ' + msg)
             return jsonify( {'result': msg})
         game = dbmodel.Game( game_hash)
-        if game.update_db( data) == 'outdated':
-            return jsonify( {'result': 'outdated' })
+        game.update_db( data)
 
         # Tell all the watchers about the change.
         # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py
@@ -351,7 +350,11 @@ def update_game():
         try:
             gr = json.loads(data['game_record'])
             nmoves = gr['n_visible']
-            redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game', 'game_hash':game_hash, 'nmoves':nmoves}))
+            redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game',
+                                                    'game_hash':game_hash,
+                                                    'nmoves':nmoves,
+                                                    'client_timestamp':data.get( 'client_timestamp', 0) }))
+
         except:
             pass
         color = 'B' if nmoves % 2 else 'W'

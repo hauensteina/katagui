@@ -951,10 +951,8 @@ function watch( JGO, axutil, game_hash, p_options) {
     var data = JSON.parse(message.data)
     var action = data.action
     var game_hash = data.game_hash
-    var nmoves = data.nmoves
     if (action == 'update_game') {
-      //console.log( '>>>>>>>>> socket update')
-      update_game( 'update_game', game_hash, nmoves)
+      update_game( 'update_game', game_hash, data.nmoves, data.client_timestamp)
     }
     else if (action == 'chat') {
       var msg = data.msg
@@ -964,8 +962,13 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
   } // onmessage()
 
-  //---------------------------------------------------
-  function update_game( action, game_hash, nmoves) {
+  //---------------------------------------------------------------------
+  function update_game( action, game_hash, nmoves, client_timestamp) {
+    if (client_timestamp < update_game.timestamp) {
+      console.log( 'update_game(): outdated update message, ignored')
+      return
+    }
+    update_game.timestamp = client_timestamp
     if (toggle_live_button() == 'off') { return }
     if (update_game.timer == '') {
       update_game.timer = setTimeout( ()=>{ update_game( 'replay_with_delay') }, 1000)
@@ -999,6 +1002,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   } // update_game()
   update_game.gamerecords = []
   update_game.timer = ''
+  update_game.timestamp = 0
 
   $(window).on( 'beforeunload', () => {
     observer_socket.close()
