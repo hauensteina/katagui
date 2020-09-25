@@ -470,7 +470,7 @@ function main( JGO, axutil, p_options) {
           $('#status').html('')
           return
         }
-        // Game ended, start from beginning
+        // If game ended, start from beginning
         if (grec.curmove()) {
           if ((grec.curmove().p < 0.05 // W wins
                || (grec.curmove().p > 0.95 && grec.pos() > 180 && grec.curmove().score > 10.0) // it's late and B wins by a lot
@@ -478,11 +478,14 @@ function main( JGO, axutil, p_options) {
           {
             selfplay.ready = true
             if (!selfplay('ison')) return;
+            grec.update( 0,0)
             goto_move(0)
             $('#status').html('')
             return
           }
         }
+        // Set prob and score to 0 because they lag by one move and cause inconsistent emoji
+        grec.update( 0,0)
 
         // Continue game
         axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
@@ -492,7 +495,7 @@ function main( JGO, axutil, p_options) {
                                if (!selfplay('ison')) return;
                                var botCoord = string2jcoord( data.bot_move)
                                maybe_start_var()
-                               grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':fast_or_strong().name} )
+                               grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'kata20'} )
                                replay_moves( grec.pos())
                                const show_emoji = false
                                const playing = true
@@ -588,6 +591,7 @@ function main( JGO, axutil, p_options) {
   btn_next.waiting = false
   btn_next.buffered = false
 
+  //----------------------
   function btn_best() {
     selfplay('off')
     if (score_position.active) return
@@ -960,10 +964,6 @@ function main( JGO, axutil, p_options) {
       var score = cur.score
       // 0.8 -> 1.0; 1.3 -> 1.5 etc
       score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-      //if (p == 0) {
-      //  set_emoji(); $('#status').html('')
-      //  return
-      //}
       if (playing && !settings('show_prob')) {
         $('#status').html('')
       } else {
@@ -976,6 +976,7 @@ function main( JGO, axutil, p_options) {
         if (typeof(cur.score) !== 'undefined') {
           tstr += scorestr
         }
+        if (p == 0 && score == 0) { tstr = '' }
         $('#status').html(tstr)
       }
       // Show emoji
@@ -986,7 +987,7 @@ function main( JGO, axutil, p_options) {
   } // show_prob()
 
   const HAPPY_POINT_LOSS_MAX = 2.0
-  //--------------------------
+  //--------------------------------
   function update_emoji() {
     var cur = grec.curmove()
     var prev = grec.prevmove()
