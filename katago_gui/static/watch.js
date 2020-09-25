@@ -964,45 +964,55 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //---------------------------------------------------------------------
   function update_game( action, game_hash, nmoves, client_timestamp) {
-    if (client_timestamp < update_game.timestamp) {
-      console.log( 'update_game(): outdated update message, ignored')
-      return
-    }
-    update_game.timestamp = client_timestamp
     if (toggle_live_button() == 'off') { return }
     if (update_game.timer == '') {
       update_game.timer = setTimeout( ()=>{ update_game( 'replay_with_delay') }, 1000)
     }
     if (action == 'update_game') {
-      //console.log( 'replay update game')
+      if (client_timestamp < update_game.timestamp) {
+        console.log( 'update_game(): outdated update message, ignored')
+        return
+      }
+      update_game.timestamp = client_timestamp
+      if (nmoves - update_game.pos > 3) {
+          //console.log('reset forwards')
+          update_game.pos = nmoves - 1
+      }
+      else if (update_game.pos > nmoves - 1) {
+        //console.log('reset backwards')
+        update_game.pos = nmoves - 1
+      }
+
+
       axutil.hit_endpoint_simple( '/load_game', {'game_hash':game_hash}, // get the game
                                   (resp) => {
                                     var gr = new GameRecord()
                                     gr.from_dict( resp)
-				    gr.seek( nmoves)
-				    update_game.gamerecords.push( gr)
-                                    //console.log( 'game rec len ' + gr.len())
+                                    //console.log( 'diff:' + (nmoves - update_game.pos) + ' mc:' + (update_game.pos+1) + ' nm:' + nmoves)
+                                    for (var i = update_game.pos+1; i <= nmoves; i++) {
+				      gr.seek( i)
+				      update_game.gamerecords.push( gr.clone())
+                                    }
                                   })
     }
     // Place new stones with delay between moves for easier watching
     else if (action == 'replay_with_delay') {
       clearTimeout( update_game.timer)
       update_game.timer = setTimeout( ()=>{ update_game( 'replay_with_delay') }, 1000)
-      //console.log( 'replay_with_delay')
       if (update_game.gamerecords.length == 0) {
-	//console.log( 'no new moves')
 	return
       }
       var gr = update_game.gamerecords.shift()
-      //console.log( 'placing move ' + gr.pos())
       grec = gr.clone()
       goto_move( grec.pos())
+      update_game.pos = grec.pos()
       const update_emo = true; show_prob( update_emo)
     } // replay_with_delay
   } // update_game()
   update_game.gamerecords = []
   update_game.timer = ''
   update_game.timestamp = 0
+  update_game.pos = 0
 
   $(window).on( 'beforeunload', () => {
     observer_socket.close()
