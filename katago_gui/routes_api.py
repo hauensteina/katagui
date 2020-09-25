@@ -342,7 +342,8 @@ def update_game():
             app.logger.info( '>>>> ' + msg)
             return jsonify( {'result': msg})
         game = dbmodel.Game( game_hash)
-        game.update_db( data)
+        if game.update_db( data) == 'outdated':
+            return jsonify( {'result': 'outdated' })
 
         # Tell all the watchers about the change.
         # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py

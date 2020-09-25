@@ -29,9 +29,10 @@ class Game:
 
     def update_db( self, data):
         """ Create or update game in DB """
+        print( ('old new %s %s' % (self.data.get('client_timestamp',0), data.get('client_timestamp',0))))
         if int(self.data.get('client_timestamp',0) or 0) > int(data.get('client_timestamp',0) or 0):
             app.logger.info( 'Game::update_db(): outdated message')
-            return
+            return 'outdated'
         self.data = data
         self.data['game_hash'] = self.id
         rows = db.find( 't_game', 'game_hash',  self.id)
@@ -39,11 +40,11 @@ class Game:
             db.insert( 't_game', (data,))
             db.tstamp( 't_game', 'game_hash', self.id, 'ts_started')
             self.valid = True
-            return
+            return 'inserted'
         db.update_row( 't_game', 'game_hash', self.id, data)
         db.tstamp( 't_game', 'game_hash', self.id, 'ts_latest_move')
         self.valid = True
-        return
+        return 'updated'
 
     def read_db( self):
         """ Read our data from the db """
