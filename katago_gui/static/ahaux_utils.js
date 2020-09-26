@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2020-09-25'
-const VERSION = '3.2.6'
+const DDATE = '2020-09-26'
+const VERSION = '3.2.7'
 
 //=====================
 class AhauxUtils
@@ -439,13 +439,26 @@ class GameRecord {
   nextmove() { return this.record[ this.n_visible] }
   prefix(n) { return this.record.slice(0,n) }
   dumps() { return JSON.stringify( {
-    'record':this.record, 'n_visible':this.n_visible,
-    'var_record':this.var_record, 'var_n_visible':this.var_n_visible })
-	  }
+    'record':this.record,
+    'n_visible':this.n_visible,
+    'var_record':this.var_record,
+    'var_n_visible':this.var_n_visible,
+    'ts_latest_move':this.ts_latest_move,
+    'handicap' : this.handicap,
+    'komi': this.komi,
+    'username': this.username
+  })}
+
   loads(json) {
     var tt = JSON.parse( json)
-    this.record = tt.record; this.n_visible = tt.n_visible
-    this.var_record = tt.var_record; this.var_n_visible = tt.var_n_visible
+    this.record = tt.record
+    this.n_visible = tt.n_visible
+    this.var_record = tt.var_record
+    this.var_n_visible = tt.var_n_visible
+    this.ts_latest_move = tt.ts_latest_move
+    this.handicap = tt.handicap
+    this.komi = tt.komi
+    this.username = tt.username
   }
   dbsave() { // update game in db; notify observers via redis
     axutil.hit_endpoint_simple( '/update_game',{'game_record':this.dumps(), 'client_timestamp':Date.now()}, (resp)=>{})
@@ -457,7 +470,7 @@ class GameRecord {
 				  completion()
 				})
   } // dbload()
-  from_dict( d) { // load game from dictionary
+  from_dict( d) { // load game from db dictionary
     this.record = d.game_record.record
     this.n_visible = d.game_record.n_visible
     this.var_record = d.game_record.var_record

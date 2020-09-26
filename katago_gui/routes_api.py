@@ -348,15 +348,19 @@ def update_game():
         # This will wake up the other dynos and hit their WatcherSockets.send() in routes_watch.py
         nmoves = 0
         try:
-            gr = json.loads(data['game_record'])
+            gr = game.data['game_record']
             nmoves = gr['n_visible']
-            redis.publish( REDIS_CHAN, json.dumps( {'action':'update_game',
-                                                    'game_hash':game_hash,
-                                                    'nmoves':nmoves,
-                                                    'client_timestamp':data.get( 'client_timestamp', 0) }))
-
+            # Get a flask response and extract the json.
+            # This deals with dates, which json.dumps does not.
+            jsonstr = jsonify( {'action':'update_game',
+                                'game_hash':game_hash,
+                                'game_data':game.data,
+                                'nmoves':nmoves,
+                                'client_timestamp':data.get( 'client_timestamp', 0) }).data
+            redis.publish( REDIS_CHAN, jsonstr)
         except:
-            pass
+            app.logger.info( 'EXCEPTION in update_game(), ignored')
+
         color = 'B' if nmoves % 2 else 'W'
         app.logger.info( '>>>>>>>>>>>>>>>>> update game %s %s %d' % (str(game_hash), color, nmoves))
         return jsonify( {'result': 'ok' })

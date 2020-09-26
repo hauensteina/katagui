@@ -29,7 +29,7 @@ class Game:
 
     def update_db( self, data):
         """ Create or update game in DB """
-        self.data = data
+        self.data.update( data)
         self.data['game_hash'] = self.id
         rows = db.find( 't_game', 'game_hash',  self.id)
         if not rows:
@@ -39,6 +39,8 @@ class Game:
             return 'inserted'
         db.update_row( 't_game', 'game_hash', self.id, data)
         db.tstamp( 't_game', 'game_hash', self.id, 'ts_latest_move')
+        if self.data['game_record']: # Convert json string to a python object
+            self.data['game_record'] = json.loads( self.data['game_record'])
         self.valid = True
         return 'updated'
 
