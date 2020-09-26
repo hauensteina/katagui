@@ -968,13 +968,47 @@ function watch( JGO, axutil, game_hash, p_options) {
   function update_game( action, game_hash, nmoves, client_timestamp, gr) {
     console.log( 'action: ' + action)
     if (toggle_live_button() == 'off') { return }
-    console.log( 'update game nmoves ' + nmoves + ' pos ' + update_game.pos)
-    grec = gr.clone()
-    console.log( 'replay movea ' + grec.pos())
-    goto_move( grec.pos())
-    console.log( 'replay moveb ' + grec.pos())
-    const update_emo = true; show_prob( update_emo)
+    if (action == 'update_game') {
+      console.log( 'update game nmoves ' + nmoves + ' pos ' + update_game.pos)
+      if (client_timestamp < update_game.timestamp) {
+        console.log( 'update_game(): outdated update message, ignored')
+        return
+      }
+      update_game.timestamp = client_timestamp
+      if (nmoves - update_game.pos > 5) {
+        console.log('reset forwards')
+        update_game.pos = nmoves - 1
+        update_game.gamerecords = []
+      }
+      else if (update_game.pos > nmoves - 1) {
+        console.log('reset backwards')
+        update_game.pos = nmoves - 1
+        update_game.gamerecords = []
+      }
+
+      for (var i = update_game.pos+1; i <= nmoves; i++) {
+	gr.seek( i)
+	update_game.gamerecords.push( gr.clone())
+        console.log( 'pushing move ' + gr.pos())
+      }
+      update_game.pos = nmoves
+    }
+    // Place new stones with delay between moves for easier watching
+    else if (action == 'replay_with_delay') {
+      if (update_game.gamerecords.length == 0) {
+	return
+      }
+      var gre = update_game.gamerecords.shift()
+      grec = gre.clone()
+      goto_move( grec.pos())
+      console.log( 'replay move ' + grec.pos())
+      const update_emo = true; show_prob( update_emo)
+    } // replay_with_delay
   } // update_game()
+  update_game.gamerecords = []
+  update_game.timer = setInterval( ()=>{ update_game( 'replay_with_delay') }, 1000)
+  update_game.timestamp = 0
+  update_game.pos = 0
 
   $(window).on( 'beforeunload', () => {
     observer_socket.close()
