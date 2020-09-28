@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2020-09-26'
-const VERSION = '3.2.7'
+const DDATE = '2020-09-27'
+const VERSION = '3.2.8'
 
 //=====================
 class AhauxUtils
@@ -405,8 +405,10 @@ class GameRecord {
     return copy
   }
   update( p, score) {
-    this.record[ this.n_visible-1].score = score
-    this.record[ this.n_visible-1].p = p
+    if (this.n_visible > 0) {
+      this.record[ this.n_visible-1].score = score
+      this.record[ this.n_visible-1].p = p
+    }
   }
   push( mv) {
     this.record.push( mv); this.n_visible = this.record.length

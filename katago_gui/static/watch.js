@@ -629,9 +629,9 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   // Get the best move
   //----------------------------------------------------------
-  function get_best_move( completion) { //@@@
+  function get_best_move( completion) {
     $('#status').html( tr('KataGo is thinking ...'))
-    axutil.hit_endpoint( '/select-move/' + BOT,
+    axutil.hit_endpoint( '/select-move-x/' + BOT,
                          {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
                          (data) => {
                            if (completion) { completion(data) }

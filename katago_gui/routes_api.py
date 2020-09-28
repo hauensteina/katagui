@@ -145,7 +145,7 @@ def score( bot_name):
     """ Forward score to the katago server """
     endpoint = 'score/' + bot_name
     args = request.json
-    res = fwd_to_katago( endpoint, args)
+    res = fwd_to_katago_x( endpoint, args)
     return jsonify( res)
 
 @app.route('/select-move/<bot_name>', methods=['POST'])
