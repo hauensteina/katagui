@@ -512,6 +512,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     best_btn_callback.active = false
     var totmoves = grec.len()
     if (n < 1) { goto_first_move(); set_emoji(); return }
+    if (n > totmoves) { n = totmoves }
     replay_moves( n)
     show_movenum()
     show_prob()
