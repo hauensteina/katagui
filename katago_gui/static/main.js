@@ -26,7 +26,6 @@ function main( JGO, axutil, p_options) {
 
   const BOT = 'katago_gtp_bot'
   const BOARD_SIZE = 19
-  const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 
   var g_jrecord = new JGO.Record(BOARD_SIZE)
   var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
@@ -118,7 +117,7 @@ function main( JGO, axutil, p_options) {
 
     // Add the new move
     maybe_start_var()
-    var mstr = jcoord2string( coord)
+    var mstr = axutil.jcoord2string( coord)
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
     goto_move( grec.len())
     set_emoji()
@@ -146,9 +145,8 @@ function main( JGO, axutil, p_options) {
   function show_best_moves( data) {
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
-    var botCoord = string2jcoord( data.bot_move)
+    var botCoord = axutil.string2jcoord( data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
-    debugger
     var node = g_jrecord.createNode( true)
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
     var mmax = 0
@@ -156,10 +154,10 @@ function main( JGO, axutil, p_options) {
     for (const [idx,m] of best.entries()) {
       if (mmax == 0) { mmax = m.psv }
       if (!settings('show_best_ten') && m.psv < mmax / 4.0) continue
-      var botCoord = string2jcoord( m.move)
-      if (botCoord != 'pass' && botCoord != 'resign') {
+      var botCoord1 = axutil.string2jcoord( m.move)
+      if (botCoord1 != 'pass' && botCoord1 != 'resign') {
         var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
-        node.setMark( botCoord, letter)
+        node.setMark( botCoord1, letter)
       }
     } // for
   } // show_best_moves()
@@ -232,18 +230,6 @@ function main( JGO, axutil, p_options) {
                    ) // create board
   } // setup_jgo()
 
-  // Blink a translucent stone
-  //------------------------------------------
-  function blink( coord, color, ms, times) {
-    if (times == 0) { return }
-    var ttimes = times-1
-    hover( coord, color, {force:true})
-    setTimeout( () => {
-      hover()
-      setTimeout( () => { blink( coord, color, ms, ttimes) }, ms )
-    }, ms)
-  } // blink()
-
   // Set button callbacks
   //------------------------------
   function set_btn_handlers() {
@@ -310,9 +296,9 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_save').click( () => {
       selfplay('off')
-      var rec = moves_only( grec.all_moves())
-      var probs = probs_only( grec.all_moves())
-      var scores = scores_only( grec.all_moves())
+      var rec = axutil.moves_only( grec.all_moves())
+      var probs = axutil.probs_only( grec.all_moves())
+      var scores = axutil.scores_only( grec.all_moves())
       for (var i=0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
       for (var i=0; i < scores.length; i++) { scores[i] = scores[i]?scores[i].toFixed(1):'0.0' }
       // Kludge to manage passes
@@ -489,11 +475,11 @@ function main( JGO, axutil, p_options) {
 
         // Continue game
         axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
-                             {'board_size': BOARD_SIZE, 'moves': moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
+                             {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi':g_komi }, 'selfplay':1 },
                              (data) => {
                                selfplay.ready = true
                                if (!selfplay('ison')) return;
-                               var botCoord = string2jcoord( data.bot_move)
+                               var botCoord = axutil.string2jcoord( data.bot_move)
                                maybe_start_var()
                                grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'kata20'} )
                                replay_moves( grec.pos())
@@ -637,7 +623,7 @@ function main( JGO, axutil, p_options) {
   function get_katago_move() {
     $('#status').html( tr('KataGo is thinking ...'))
     var greclen = grec.len()
-    axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
+    axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()),
                                                      'config':{'komi':g_komi } },
                          (data) => {
                            if (greclen == grec.len()) { // user did not click in the meantime
@@ -684,7 +670,6 @@ function main( JGO, axutil, p_options) {
     }
     else {
       maybe_start_var()
-      //var botCoord = string2jcoord( data.bot_move)
     }
     grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':fast_or_strong().name } )
     replay_moves( grec.pos())
@@ -787,7 +772,7 @@ function main( JGO, axutil, p_options) {
     goto_first_move()
     for (const [idx, move_prob] of grec.prefix(n).entries()) {
       var move_string = move_prob.mv
-      var coord = string2jcoord( move_string)
+      var coord = axutil.string2jcoord( move_string)
       show_move( turn(idx), coord)
     }
     grec.seek(n)
@@ -910,7 +895,7 @@ function main( JGO, axutil, p_options) {
   function get_prob_genmove( completion, update_emo, playing) {
     $('#status').html( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+                         {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': g_komi } },
                          (data) => {
                            get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
                            if (completion) { completion(data) }
@@ -949,7 +934,7 @@ function main( JGO, axutil, p_options) {
   function get_best_move( completion, update_emo, playing) {
     $('#status').html( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': g_komi } },
+                         {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': g_komi } },
                          (data) => {
                            if (completion) { completion(data) }
                            $('#status').html( '')
@@ -1054,7 +1039,7 @@ function main( JGO, axutil, p_options) {
   function score_position() {
     $('#status').html( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
-                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()),
+                         {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()),
                           'config':{'komi':g_komi }, 'tt':Math.random() },
                          (data) => {
                            var winprob = parseFloat(data.diagnostics.winprob)
@@ -1077,7 +1062,7 @@ function main( JGO, axutil, p_options) {
     for (const [idx, prob] of probs.entries()) {
       var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
       var col = (idx % BOARD_SIZE) + 1
-      var coord = rc2jcoord( row, col)
+      var coord = axutil.rc2jcoord( row, col)
       if (prob < 0) { // white
         node.setMark( coord, 'WP:' + Math.trunc(Math.abs(prob)*100))
       } // for
@@ -1087,81 +1072,9 @@ function main( JGO, axutil, p_options) {
     } // for
   } // draw_estimate()
 
-  //===============
-  // Converters
-  //===============
-
-  // Record has tuples (mv,p,score,agent). Turn into a list of score.
-  //------------------------------------------------------------------
-  function scores_only( record) {
-    var res = []
-    for (var move_prob of record) {
-      res.push( move_prob.score)
-    }
-    return res
-  } // scores_only()
-
-  // Record has tuples (mv,p,agent). Turn into a list of mv.
-  //----------------------------------------------------------
-  function moves_only( record) {
-    var res = []
-    for (var move_prob of record) {
-      res.push( move_prob.mv)
-    }
-    return res
-  } // moves_only()
-
-  // Record has tuples (mv,p,agent). Turn into a list of p.
-  //----------------------------------------------------------
-  function probs_only( record) {
-    var res = []
-    for (var move_prob of record) {
-      res.push( move_prob.p)
-    }
-    return res
-  } // probs_only()
-
-  //--------------------------------------
-  function jcoord2string( jgo_coord) {
-    if (jgo_coord == 'pass' || jgo_coord == 'resign') { return jgo_coord }
-    var row = (BOARD_SIZE - 1) - jgo_coord.j
-    var col = jgo_coord.i
-    return COLNAMES[col] + ((row + 1).toString())
-  } // jcoord2string()
-
-  //--------------------------------------
-  function string2jcoord( move_string) {
-    if (move_string == 'pass' || move_string == 'resign') { return move_string }
-    var colStr = move_string.substring(0, 1)
-    var rowStr = move_string.substring(1)
-    var col = COLNAMES.indexOf(colStr)
-    var row = BOARD_SIZE - parseInt(rowStr, 10)
-    return new JGO.Coordinate(col, row)
-  } // string2jcoord()
-
-  // Turn a server (row, col) into a JGO coordinate
-  //--------------------------------------------------
-  function rc2jcoord( row, col) {
-    return new JGO.Coordinate( col - 1, BOARD_SIZE - row)
-  } // rc2jcoord()
-
-  // Turn a jgo coord into a linear array index
-  //----------------------------------------------
-  function jcoord2idx( jcoord) {
-    if (jcoord == 'pass' || jcoord == 'resign') { return -1 }
-    var idx = (BOARD_SIZE - jcoord.j - 1) * BOARD_SIZE + jcoord.i
-    return idx
-  } // jcoord2idx()
-
   //=======
   // Misc
   //=======
-
-  // Uppercase first letter
-  //----------------------------
-  function upperFirst( str) {
-    return str[0].toUpperCase() + str.slice(1)
-  }
 
   // Show a translucent hover stone
   //---------------------------------
@@ -1191,14 +1104,6 @@ function main( JGO, axutil, p_options) {
     }
   } // hover()
   hover.coord = null
-
-  // Set attr via jQuery if it was different
-  //--------------------------------------------
-  function set_attr( elt, attr, val) {
-    if ($(elt).attr(attr) != val) {
-      $(elt).attr(attr,val)
-    }
-  } // set_attr()
 
   // Get or set guest, fast, strong mode
   //---------------------------------------
@@ -1236,14 +1141,14 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_strong').addClass('active')
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
-          set_attr( '#img_bot', 'src', 'static/kata-red.png')
+          axutil.set_attr( '#img_bot', 'src', 'static/kata-red.png')
           return STRONG
         } else if (val == 'fast') {
           $('#descr_bot').html( `KataGo 20b &nbsp; 256<br>${DDATE}`)
           $('#btn_tgl_fast').addClass('active')
           $('#btn_tgl_strong').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
-          set_attr( '#img_bot', 'src', 'static/kata.png')
+          axutil.set_attr( '#img_bot', 'src', 'static/kata.png')
           return FAST
         }
       } // if logged in
@@ -1258,7 +1163,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
-      set_attr( '#img_bot', 'src', 'static/kata.png')
+      axutil.set_attr( '#img_bot', 'src', 'static/kata.png')
       return GUEST
     }
     return 0

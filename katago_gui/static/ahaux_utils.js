@@ -5,8 +5,11 @@
 
 'use strict'
 
-const DDATE = '2020-09-28'
-const VERSION = '3.2.9'
+const DDATE = '2020-10-01'
+const VERSION = '3.3.0'
+
+const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+const BOARD_SIZE = 19
 
 //=====================
 class AhauxUtils
@@ -79,165 +82,84 @@ class AhauxUtils
     return 0
   } // settings()
 
-  // Get or set toggle button state.
-  // Example: toggle_button( '#btn_tgl_live', 'on')
-  //------------------------------------------------
-  toggle_button( btn, action) {
-    if (!action) {
-      if ($(btn).hasClass('disabled')) {
-        return 'off'
-      }
-      else {
-        return 'on'
-      }
+  // Set attr via jQuery if it was different
+  //--------------------------------------------
+  set_attr( elt, attr, val) {
+    if ($(elt).attr(attr) != val) {
+      $(elt).attr(attr,val)
     }
-    if (action == 'on') {
-      $(btn).removeClass('disabled')
-      $(btn).addClass('btn-success')
-      $(btn).css('color', 'black')
-      $(btn).css('background-color', '')
-    }
-    else if (action == 'off') {
-      $(btn).addClass('disabled')
-      $(btn).removeClass('btn-success')
-      $(btn).css('color', 'black')
-    }
-    else if (action == 'toggle') {
-      if (this.toggle_button( btn) == 'on') { return this.toggle_button( btn, 'off') }
-      return this.toggle_button( btn, 'on')
-    }
-    return 0
-  } // toggle_button()
-
+  } // set_attr()
 
   isMobile() { return typeof window.orientation !== 'undefined' }
   isDesktop() { return typeof window.orientation == 'undefined' }
   //isMobile() { return window.innerHeight / window.innerWidth > 1.2 }
   //isDesktop() { return window.innerHeight / window.innerWidth <= 1.2 }
 
-  //----------------------------
-  //--- D3 graphics routines ---
-  //----------------------------
+ //===============
+  // Converters
+  //===============
 
-  // Simple line chart using d3.
-  // container is a string like '#some_div_id'.
-  // data looks like [[x_0,y_0], ... ] .
-  // xlim and ylim are pairs like [x_min,x_max] .
+  // Record has tuples (mv,p,score,agent). Turn into a list of score.
+  //------------------------------------------------------------------
+  scores_only( record) {
+    var res = []
+    for (var move_prob of record) {
+      res.push( move_prob.score)
+    }
+    return res
+  } // scores_only()
+
+  // Record has tuples (mv,p,agent). Turn into a list of mv.
+  //----------------------------------------------------------
+  moves_only( record) {
+    var res = []
+    for (var move_prob of record) {
+      res.push( move_prob.mv)
+    }
+    return res
+  } // moves_only()
+
+  // Record has tuples (mv,p,agent). Turn into a list of p.
+  //----------------------------------------------------------
+  probs_only( record) {
+    var res = []
+    for (var move_prob of record) {
+      res.push( move_prob.p)
+    }
+    return res
+  } // probs_only()
+
+  //--------------------------------------
+  jcoord2string( jgo_coord) {
+    if (jgo_coord == 'pass' || jgo_coord == 'resign') { return jgo_coord }
+    var row = (BOARD_SIZE - 1) - jgo_coord.j
+    var col = jgo_coord.i
+    return COLNAMES[col] + ((row + 1).toString())
+  } // jcoord2string()
+
+  //--------------------------------------
+  string2jcoord( move_string) {
+    if (move_string == 'pass' || move_string == 'resign') { return move_string }
+    var colStr = move_string.substring(0, 1)
+    var rowStr = move_string.substring(1)
+    var col = COLNAMES.indexOf(colStr)
+    var row = BOARD_SIZE - parseInt(rowStr, 10)
+    return new JGO.Coordinate(col, row)
+  } // string2jcoord()
+
+  // Turn a server (row, col) into a JGO coordinate
+  //--------------------------------------------------
+  rc2jcoord( row, col) {
+    return new JGO.Coordinate( col - 1, BOARD_SIZE - row)
+  } // rc2jcoord()
+
+  // Turn a jgo coord into a linear array index
   //----------------------------------------------
-  plot_line( container, data, xlim, ylim, color) {
-    color = color || 'steelblue'
-    var [d3,$] = [this.d3, this.$]
-    var C = d3.select( container)
-    $(container).html('')
-    var w  = $(container).width()
-    var h = $(container).height()
-
-    var margin = {top: 50, right: 50, bottom: 50, left: 50}
-    ,width = w - margin.left - margin.right
-    ,height = h - margin.top - margin.bottom
-
-    var scale_x = d3.scaleLinear()
-	  .domain([xlim[0], xlim[1]]) // input
-	  .range([0, width]) // output
-
-    var scale_y = d3.scaleLinear()
-	  .domain([ylim[0], ylim[1]]) // input
-	  .range([height, 0]) // output
-
-    var line = d3.line()
-	  .x(function(d, i) {
-            return scale_x( d[0]) }) // set the x values for the line generator
-	  .y(function(d, i) {
-            return scale_y( d[1]) }) // set the y values for the line generator
-
-    // Add the SVG to the container, with margins
-    var svg = C.append('svg')
-	  .attr('width', width + margin.left + margin.right)
-	  .attr('height', height + margin.top + margin.bottom)
-	  .append('g')
-	  .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-
-    // Add x axis
-    svg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(scale_x)) // run axisBottom on the g thingy
-
-    // Add y axis
-    svg.append('g')
-      .attr('class', 'y axis')
-      .call(d3.axisLeft(scale_y)) // run axisLeft on the g thingy
-
-    // Draw the line
-    svg.append('path')
-      .datum(data) // Binds data to the line
-      .attr('style', 'fill:none;stroke:' + color + ';stroke-width:3')
-      .attr('d', line) // Call the line generator
-
-  } // plot_line()
-
-  // Barchart.
-  // container is a string like '#some_div_id'.
-  // data looks like [[x_0,y_0], ... ] .
-  // ylim is a positive float.
-  //----------------------------------------------
-  barchart( container, data, ylim, color) {
-    color = color || 'steelblue'
-    var [d3,$] = [this.d3, this.$]
-    var C = d3.select( container)
-    $(container).html('')
-    var w  = $(container).width()
-    var h = $(container).height()
-
-    var margin = {top: 20, right: 20, bottom: 70, left: 40}
-    ,width = w - margin.left - margin.right
-    ,height = h - margin.top - margin.bottom
-
-    var svg = C.append("svg")
-	  .attr("width", width + margin.left + margin.right)
-	  .attr("height", height + margin.top + margin.bottom)
-	  .append("g")
-	  .attr("transform",
-		"translate(" + margin.left + "," + margin.top + ")");
-
-    var scale_x = d3.scaleBand()
-	  .domain( data.map( function(d) { return d[0] }))
-	  .rangeRound( [0, width])
-	  .padding( 0.05)
-
-    var scale_y = d3.scaleLinear()
-	  .domain( [0, ylim])
-	  .range( [height, 0])
-
-    var xAxis = d3.axisBottom(scale_x)
-	  .tickFormat( d3.format( '.3f'))
-
-    var yAxis = d3.axisLeft(scale_y)
-
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", "-.55em")
-      .attr("transform", "rotate(-90)" );
-
-    svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-
-    svg.selectAll("bar")
-      .data(data)
-      .enter().append("rect")
-      .style("fill", color)
-      .attr("x", function(d) { return scale_x( d[0]) })
-      .attr("width", scale_x.bandwidth())
-      .attr("y", function(d) { return scale_y( d[1]) })
-      .attr("height", function(d) { return height - scale_y( d[1]) })
-
-  } // barchart()
+  jcoord2idx( jcoord) {
+    if (jcoord == 'pass' || jcoord == 'resign') { return -1 }
+    var idx = (BOARD_SIZE - jcoord.j - 1) * BOARD_SIZE + jcoord.i
+    return idx
+  } // jcoord2idx()
 
   //-----------------
   //--- API stuff ---

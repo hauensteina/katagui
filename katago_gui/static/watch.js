@@ -19,7 +19,6 @@ function watch( JGO, axutil, game_hash, p_options) {
   var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
   var g_ko = null // ko coordinate
   var g_last_move = null // last move coordinate
-  //var g_play_btn_buffer = false // buffer one play btn click
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
 
@@ -57,7 +56,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
     // Add the new move in a variation
     handle_variation( 'save')
-    var mstr = jcoord2string( coord)
+    var mstr = axutil.jcoord2string( coord)
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
     goto_move( grec.len())
     set_emoji()
@@ -80,7 +79,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function show_best_moves( data) {
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
-    var botCoord = string2jcoord( data.bot_move)
+    var botCoord = axutil.string2jcoord( data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
     var node = g_jrecord.createNode( true)
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
@@ -89,10 +88,10 @@ function watch( JGO, axutil, game_hash, p_options) {
     for (const [idx,m] of best.entries()) {
       if (mmax == 0) { mmax = m.psv }
       if (m.psv < mmax / 4.0) continue
-      var botCoord = string2jcoord( m.move)
-      if (botCoord != 'pass' && botCoord != 'resign') {
+      var botCoord1 = axutil.string2jcoord( m.move)
+      if (botCoord1 != 'pass' && botCoord1 != 'resign') {
         var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
-        node.setMark( botCoord, letter)
+        node.setMark( botCoord1, letter)
       }
     } // for
   } // show_best_moves()
@@ -172,26 +171,10 @@ function watch( JGO, axutil, game_hash, p_options) {
                     }) // create board
   } // setup_jgo()
 
-  // Blink a translucent stone
-  //------------------------------------------
-  function blink( coord, color, ms, times) {
-    if (times == 0) { return }
-    var ttimes = times-1
-    hover( coord, color, {force:true})
-    setTimeout( () => {
-      hover()
-      setTimeout( () => { blink( coord, color, ms, ttimes) }, ms )
-    }, ms)
-  } // blink()
-
   // Set button callbacks
   //------------------------------
   function set_btn_handlers() {
     var_button_state( 'off')
-
-    // $('#img_bot, #descr_bot').click( () => {
-    //   fast_or_strong('toggle')
-    // })
 
     $('#btn_tgl_live').click( () => {
       toggle_live_button( 'toggle')
@@ -215,9 +198,9 @@ function watch( JGO, axutil, game_hash, p_options) {
 
     $('#btn_save').click( () => {
       toggle_live_button( 'off')
-      var rec = moves_only( grec.all_moves())
-      var probs = probs_only( grec.all_moves())
-      var scores = scores_only( grec.all_moves())
+      var rec = axutil.moves_only( grec.all_moves())
+      var probs = axutil.probs_only( grec.all_moves())
+      var scores = axutil.scores_only( grec.all_moves())
       for (var i=0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
       for (var i=0; i < scores.length; i++) { scores[i] = scores[i]?scores[i].toFixed(1):'0.0' }
       // Kludge to manage passes
@@ -431,7 +414,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
     else {
       maybe_start_var()
-      //var botCoord = string2jcoord( data.bot_move)
     }
     grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':'bot' } )
     //show_move( turn(), botCoord, 0.0, 'bot')
@@ -497,7 +479,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     goto_first_move()
     for (const [idx, move_prob] of grec.prefix(n).entries()) {
       var move_string = move_prob.mv
-      var coord = string2jcoord( move_string)
+      var coord = axutil.string2jcoord( move_string)
       show_move( turn(idx), coord)
     }
     grec.seek(n)
@@ -600,7 +582,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_prob_genmove( completion, update_emo) {
     $('#status').html( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
-                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
+                         {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': grec.komi } },
                          (data) => {
                            get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, update_emo)
                            if (completion) { completion(data) }
@@ -633,7 +615,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function get_best_move( completion) {
     $('#status').html( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( '/select-move-x/' + BOT,
-                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi': grec.komi } },
+                         {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': grec.komi } },
                          (data) => {
                            if (completion) { completion(data) }
                            $('#status').html( '')
@@ -670,6 +652,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
   } // show_prob()
 
+  const HAPPY_POINT_LOSS_MAX = 2.0
   //--------------------------
   function update_emoji() {
     var cur = grec.curmove()
@@ -691,7 +674,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       var delta_p = pp - p
       var delta_score = pscore - score
       if (p < 0.05 && delta_p < 0.06) { set_emoji() } // empty
-      else if (p > 0.95 && delta_score < 3) { set_emoji(0.0, 0) } // happy
+      else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
       else if (pp == 0) { set_emoji() } // empty
       else { set_emoji( delta_p, delta_score) }
     }
@@ -717,7 +700,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       if (delta_prob < PROB_BINS[prob_idx]) break;
     }
     // Get angry if we lose points
-    const SCORE_BINS = [2, 4, 8]
+    const SCORE_BINS = [HAPPY_POINT_LOSS_MAX, 4, 8]
     var score_idx
     for (score_idx=0; score_idx < SCORE_BINS.length; score_idx++) {
       if (delta_score < SCORE_BINS[score_idx]) break;
@@ -737,7 +720,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   function score_position() {
     $('#status').html( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
-                         {'board_size': BOARD_SIZE, 'moves': moves_only(grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
+                         {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
                          (data) => {
                            var winprob = parseFloat(data.diagnostics.winprob)
                            var score = parseFloat(data.diagnostics.score)
@@ -759,7 +742,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     for (const [idx, prob] of probs.entries()) {
       var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
       var col = (idx % BOARD_SIZE) + 1
-      var coord = rc2jcoord( row, col)
+      var coord = axutil.rc2jcoord( row, col)
       if (prob < 0) { // white
         node.setMark( coord, 'WP:' + Math.trunc(Math.abs(prob)*100))
       } // for
@@ -769,81 +752,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     } // for
   } // draw_estimate()
 
-  //===============
-  // Converters
-  //===============
-
-  // Record has tuples (mv,p,score,agent). Turn into a list of score.
-  //------------------------------------------------------------------
-  function scores_only( record) {
-    var res = []
-    for (var move_prob of record) {
-      res.push( move_prob.score)
-    }
-    return res
-  } // scores_only()
-
-  // Record has tuples (mv,p,agent). Turn into a list of mv.
-  //----------------------------------------------------------
-  function moves_only( record) {
-    var res = []
-    for (var move_prob of record) {
-      res.push( move_prob.mv)
-    }
-    return res
-  } // moves_only()
-
-  // Record has tuples (mv,p,agent). Turn into a list of p.
-  //----------------------------------------------------------
-  function probs_only( record) {
-    var res = []
-    for (var move_prob of record) {
-      res.push( move_prob.p)
-    }
-    return res
-  } // probs_only()
-
-  //--------------------------------------
-  function jcoord2string( jgo_coord) {
-    if (jgo_coord == 'pass' || jgo_coord == 'resign') { return jgo_coord }
-    var row = (BOARD_SIZE - 1) - jgo_coord.j
-    var col = jgo_coord.i
-    return COLNAMES[col] + ((row + 1).toString())
-  } // jcoord2string()
-
-  //--------------------------------------
-  function string2jcoord( move_string) {
-    if (move_string == 'pass' || move_string == 'resign') { return move_string }
-    var colStr = move_string.substring(0, 1)
-    var rowStr = move_string.substring(1)
-    var col = COLNAMES.indexOf(colStr)
-    var row = BOARD_SIZE - parseInt(rowStr, 10)
-    return new JGO.Coordinate(col, row)
-  } // string2jcoord()
-
-  // Turn a server (row, col) into a JGO coordinate
-  //--------------------------------------------------
-  function rc2jcoord( row, col) {
-    return new JGO.Coordinate( col - 1, BOARD_SIZE - row)
-  } // rc2jcoord()
-
-  // Turn a jgo coord into a linear array index
-  //----------------------------------------------
-  function jcoord2idx( jcoord) {
-    if (jcoord == 'pass' || jcoord == 'resign') { return -1 }
-    var idx = (BOARD_SIZE - jcoord.j - 1) * BOARD_SIZE + jcoord.i
-    return idx
-  } // jcoord2idx()
-
   //=======
   // Misc
   //=======
-
-  // Uppercase first letter
-  //----------------------------
-  function upperFirst( str) {
-    return str[0].toUpperCase() + str.slice(1)
-  }
 
   // Show a translucent hover stone
   //---------------------------------
@@ -908,13 +819,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
     return 0
   } // fast_or_strong()
-
-  // Get a field from the user data, or fetch the user from the back end
-  //-------------------------------------------------------------------------
-  function user(key) {
-    return user.data[key]
-  } // user()
-  user.data = {}
 
   // Reload game from DB
   //--------------------------
