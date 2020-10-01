@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = '2020-10-01'
-const VERSION = '3.3.0'
+const VERSION = '3.3.1'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -35,16 +35,12 @@ class AhauxUtils
     return res
   } // compversions()
 
-  // We need d3 and jquery
+  // We need jquery
   //-------------------------
-  constructor( d3, $) {
-    if (this.compversions( d3.version, '5.9.2') < 0) {
-      console.log( 'WARNING: AhauxUtils: d3 version ' + d3.version + ' is below 5.9.2. Things might break.')
-    }
+  constructor( $) {
     if (this.compversions( $.prototype.jquery, '3.4.0') < 0) {
       console.log( 'WARNING: AhauxUtils: jquery version ' + $.prototype.jquery + ' is below 3.4.0. Things might break.')
     }
-    this.d3 = d3
     this.$ = $
 
     this.hit_endpoint('init')
