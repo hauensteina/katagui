@@ -722,9 +722,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     axutil.hit_endpoint( '/score/' + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
                          (data) => {
-                           var winprob = parseFloat(data.diagnostics.winprob)
-                           var score = parseFloat(data.diagnostics.score)
-                           score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
                            score_position.active = true
                            score_position.probs = data.probs
                            draw_estimate( data.probs)
