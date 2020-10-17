@@ -1,4 +1,4 @@
-from gotypes import Player, Point
+from katago_gui.gotypes import Player, Point
 
 __all__ = ['HASH_CODE', 'EMPTY_BOARD']
 

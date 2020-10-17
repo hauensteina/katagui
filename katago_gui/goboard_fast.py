@@ -2,10 +2,10 @@
 from pdb import set_trace as BP
 
 import copy
-from gotypes import Player, Point
-from scoring import compute_game_result
-import zobrist
-from go_utils import MoveAge
+from katago_gui.gotypes import Player, Point
+from katago_gui.scoring import compute_game_result
+import katago_gui.zobrist as zobrist
+from katago_gui.go_utils import MoveAge
 
 __all__ = [
     'Board',
