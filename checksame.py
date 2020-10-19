@@ -17,13 +17,12 @@ from datetime import datetime
 #import argparse
 from katago_gui.sgf import Sgf_game
 import katago_gui.goboard_fast as goboard
-from katago_gui.go_utils import point_from_coords
+from katago_gui.go_utils import point_from_coords, game_zobrist, board_transform
 from katago_gui.gotypes import Player,Point
 from katago_gui.zobrist import HASH_CODE, EMPTY_BOARD
 from katago_gui.helpers import moves2sgf
 
-BOARD_SIZE = 19
-ZOBRIST_MOVES = 40
+from katago_gui import BOARD_SIZE, ZOBRIST_MOVES
 
 #---------------------------
 def usage(printmsg=False):
@@ -64,40 +63,40 @@ def main():
     rotsgf = moves2sgf( moves1)
     with open( 'checksame1.sgf', 'w') as x: x.write( rotsgf)
 
-    zob1 = zobrist( moves1)
-    zob2 = zobrist( moves2)
+    zob1 = game_zobrist( moves1)
+    zob2 = game_zobrist( moves2)
     if zob1 == zob2:
         print( 'same')
     else:
         print( 'different')
 
-#------------------------------------------------------
-def zobrist( moves, zobrist_moves = ZOBRIST_MOVES):
-    zobrist = 0
-    for transform_key in ['0','lr','td','ri','le','letd','ritd','lrtd']:
-        game_state = goboard.GameState.new_game( BOARD_SIZE)
-        for idx,move in enumerate(moves):
-            if move == 'pass':
-                next_move = goboard.Move.pass_turn()
-            elif move == 'resign':
-                next_move = goboard.Move.resign()
-            else:
-                move = transform( move, transform_key)
-                next_move = goboard.Move.play( Point( move[0]+1, move[1]+1))
-            game_state = game_state.apply_move( next_move)
-        zobrist = max( game_state.board.zobrist_hash(), zobrist)
-    return zobrist
+# #------------------------------------------------------
+# def zobrist( moves, zobrist_moves = ZOBRIST_MOVES):
+#     zobrist = 0
+#     for transform_key in ['0','lr','td','ri','le','letd','ritd','lrtd']:
+#         game_state = goboard.GameState.new_game( BOARD_SIZE)
+#         for idx,move in enumerate(moves):
+#             if move == 'pass':
+#                 next_move = goboard.Move.pass_turn()
+#             elif move == 'resign':
+#                 next_move = goboard.Move.resign()
+#             else:
+#                 move = transform( move, transform_key)
+#                 next_move = goboard.Move.play( Point( move[0]+1, move[1]+1))
+#             game_state = game_state.apply_move( next_move)
+#         zobrist = max( game_state.board.zobrist_hash(), zobrist)
+#     return zobrist
 
 #--------------------------------------
 def rotmoves( moves, transform_key):
     res = []
     for idx,move in enumerate( moves):
-        res.append( transform( move, transform_key))
+        res.append( board_transform( move, transform_key))
     return res
 
-#------------------------------------------------------------
+#--------------------------------------------------------------------------
 def getmoves( sgfstr):
-    'Turn an sgf string into a list of moves like [(2,3), ...]'
+    'Turn an sgf string into a list of moves like [(3,3), "pass",  ...]'
     sgf = Sgf_game.from_string( sgfstr)
     moves = []
     for idx,item in enumerate(sgf.main_sequence_iter()):
@@ -109,25 +108,6 @@ def getmoves( sgfstr):
             moves.append( move)
     return moves
 
-#--------------------------------------
-def transform( move, transform_key):
-    if not transform_key: return move
-    if transform_key == '0': return move
-    if move == 'pass': return move
-    if len( transform_key) == 4:
-        return transform( transform( move, transform_key[:2]), transform_key[2:])
-    (r,c) = move
-    if transform_key == 'lr':
-        return (r, 18 - c)
-    elif transform_key == 'td':
-        return (18 - r, c)
-    elif transform_key == 'le':
-        return (c, 18 - r)
-    elif transform_key == 'ri':
-        return (18 - c, r)
-    else:
-        print( 'ERROR: unknown transform %s' % transform_key)
-        exit(1)
 
 'Convert a list of moves like [(2,3), ...] to sgf'
 #---------------------------------------------------

@@ -22,6 +22,9 @@ from flask_sockets import Sockets
 from katago_gui.postgres import Postgres
 from katago_gui.translations import translate, donation_blurb
 
+ZOBRIST_MOVES = 40
+BOARD_SIZE = 19
+
 app = Flask( __name__)
 sockets = Sockets(app)
 

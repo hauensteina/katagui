@@ -28,23 +28,29 @@ def watch_select_game():
     """ Show the screen to choose the game to watch """
     rows = db.slurp( 'v_games_24hours')
     games = []
-    for row in rows:
-        g = {}
-        g['username'] = row['username']
-        g['handicap'] = row['handicap']
-        g['komi'] = row['komi']
-        g['live'] = row['live']
-        # Format seconds to hhmmss
-        g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
-        g['nmoves'] = json.loads( row['game_record'])['n_visible']
-        g['n_obs'] = row['n_obs']
-        if 'mobile' in request.url_rule.rule:
-            g['link'] = url_for( 'watch_game_mobile',game_hash=row['game_hash'], live=row['live'])
-        else:
-            g['link'] = url_for( 'watch_game',game_hash=row['game_hash'], live=row['live'])
-        if g['live'] or g['nmoves'] > 20:
-            games.append( g)
-    return render_template( 'watch_select_game.tmpl', games=games)
+    try:
+        for row in rows:
+            g = {}
+            g['username'] = row['username']
+            g['handicap'] = row['handicap']
+            g['komi'] = row['komi']
+            g['live'] = row['live']
+            # Format seconds to hhmmss
+            g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
+            g['nmoves'] = json.loads( row['game_record'])['n_visible']
+            g['n_obs'] = row['n_obs']
+            if 'mobile' in request.url_rule.rule:
+                g['link'] = url_for( 'watch_game_mobile',game_hash=row['game_hash'], live=row['live'])
+            else:
+                g['link'] = url_for( 'watch_game',game_hash=row['game_hash'], live=row['live'])
+            if g['live'] or g['nmoves'] > 20:
+                games.append( g)
+    except Exception as e:
+        BP()
+        tt=42
+
+    res = render_template( 'watch_select_game.tmpl', games=games)
+    return res
 
 @app.route('/watch_game')
 #-----------------------------------------------------
