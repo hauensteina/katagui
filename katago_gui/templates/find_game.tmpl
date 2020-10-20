@@ -1,4 +1,4 @@
-{% extends 'layout_noheader.tmpl' %}
+{% extends 'layout_watch.tmpl' %}
 
 {% block css %}
   <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -38,7 +38,7 @@
          Game Not Found
       {% endif %}
       <br><br>
-      <a href='/find_game'>Try Again</a>
+      <a href='/find_game'>{{tr('Try Again')}}</a>
     {% endif %}
   </div>
 {% endblock content %}

@@ -196,6 +196,13 @@ _kor = {
     ,'Watch':'보기'
     ,'Refresh':'재시작'
     ,'Type here':'이곳에 입력'
+    # Search Game
+    ,'Search':'검색'
+    ,'Find a Game Played on KataGui':'KataGui에서 기보 찾기'
+    ,'Started':'시작'
+    ,'Ended':'종료'
+    ,'Try Again':'다시 시도'
+    ,'Game Not Found':'기보를 찾을 수 없음'
 }
 
 _langdict = { 'eng':_eng, 'kor':_kor }
