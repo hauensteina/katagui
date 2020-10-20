@@ -41,7 +41,8 @@ def create_t_game(db):
     ,client_timestamp bigint
     ,game_record text
     ,zobrist text
-    ,ts_zobrist timestamptz\
+    ,ts_zobrist timestamptz
+    ,ip_addr text
     ) '''
     db.run( sql)
 

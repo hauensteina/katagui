@@ -38,6 +38,14 @@ def create_game():
         data = request.json
         data.update( {'username':current_user.data['username']})
         game = dbmodel.Game()
+
+        # Store user IP with the game
+        if request.headers.getlist("X-Forwarded-For"):
+            ip = request.headers.getlist("X-Forwarded-For")[0]
+        else:
+            ip = request.remote_addr
+        data.update( {'ip_addr':ip} )
+
         game.update_db( data)
         current_user.data['game_hash'] = game.id
         current_user.update_db()
