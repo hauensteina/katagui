@@ -19,6 +19,8 @@ from flask_login import current_user
 from katago_gui import app, logged_in
 from katago_gui import auth, db, sockets, redis, REDIS_CHAN
 from katago_gui.translations import translate as tr
+from katago_gui import go_utils
+from katago_gui import ZOBRIST_MOVES
 
 
 @app.route('/watch_select_game')
@@ -46,10 +48,59 @@ def watch_select_game():
             if g['live'] or g['nmoves'] > 20:
                 games.append( g)
     except Exception as e:
-        BP()
-        tt=42
+        print( 'ERROR: Exception in watch_select_game(): %s' % str(e))
 
     res = render_template( 'watch_select_game.tmpl', games=games)
+    return res
+
+# a9429eb8b90e4794
+@app.route('/find_game', methods=['GET'])
+#--------------------------------------------------------------------------------
+def find_game():
+    """ Upload Sgf to find (GET) or find the game and show matches (POST) """
+
+    # Pick sgf file we are trying to find
+    if not 'action' in request.args:
+        return render_template( 'find_game.tmpl', action='choose_file')
+
+    # With the moves from the sgf, find the game in the DB, display link
+    try:
+        rc0s = []
+        # Convert to 0 based 0-18 (row,col) pairs
+        moves = json.loads(request.args['moves'])
+        for move in moves:
+            coord = move
+            if coord in ('pass','resign'):
+                rc0s.append( coord)
+                continue
+            point = go_utils.point_from_coords( coord)
+            rc0 = (point.row - 1, point.col - 1)
+            rc0s.append( rc0)
+        zobrist = go_utils.game_zobrist( rc0s, ZOBRIST_MOVES)
+        rows = db.find( 't_game', 'zobrist', str(zobrist))
+
+        games = []
+        for row in rows:
+            g = {}
+            g['username'] = row['username']
+            #g['handicap'] = row['handicap']
+            #g['komi'] = row['komi']
+            g['ts_started'] = row['ts_started'].strftime("%Y-%m-%d %H:%M")
+            g['ts_latest_move'] = row['ts_latest_move'].strftime("%Y-%m-%d %H:%M")
+            #g['live'] = row['live']
+            # Format seconds to hhmmss
+            #g['t_idle'] = re.sub( r'[.].*', '' , str( timedelta( seconds=row['idle_secs'])))
+            #g['nmoves'] = json.loads( row['game_record'])['n_visible']
+            #g['n_obs'] = row['n_obs']
+            if 'mobile' in request.url_rule.rule:
+                g['link'] = url_for( 'watch_game_mobile',game_hash=row['game_hash'],live=0)
+            else:
+                g['link'] = url_for( 'watch_game',game_hash=row['game_hash'],live=0)
+            games.append( g)
+    except Exception as e:
+        print( 'ERROR: Exception in find_game(): %s' % str(e))
+
+    res = render_template( 'find_game.tmpl', action='show_games', games=games)
     return res
 
 @app.route('/watch_game')
@@ -62,8 +113,8 @@ def watch_game():
         # Remember which game we are watching
         db.update_row( 't_user', 'email', current_user.id, {'watch_game_hash':gh})
         return render_template( 'watch.tmpl', game_hash=gh, live=live)
-    except:
-        app.logger.info( 'ERROR: Exception in watch_game()')
+    except Exception as e:
+        app.logger.info( 'ERROR: Exception in watch_game(): %s' % str(e))
         return redirect( url_for('index'))
 
 @app.route('/watch_game_mobile')

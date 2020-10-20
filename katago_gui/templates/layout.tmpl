@@ -87,6 +87,7 @@
                   <a class='hlink font-m' href="{{ url_for('register') }}">{{tr('Register')}}</a>&nbsp;&nbsp;&nbsp;
                   <script> axutil.settings( 'logged_in',false) </script>
                 {% endif %}
+                <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("find_game") }}'>{{tr('Search')}}</a>&nbsp;&nbsp;&nbsp;
                 <a class='hlink font-m' style='font-size:25pt;' href='{{ url_for("about") }}'>{{tr('About')}}</a>
               </td>
               <td width='20px' class=''>&nbsp;</td>

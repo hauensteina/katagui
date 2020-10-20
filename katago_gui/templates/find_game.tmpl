@@ -1,0 +1,72 @@
+{% extends 'layout_noheader.tmpl' %}
+
+{% block css %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+{% endblock %}
+
+{% block content %}
+  <div id='find_game_div' class='center' tabindex='0'>
+    <br>
+    <h2 class=center>{{ tr('Find a Game Played on the Server') }}  </h2>
+    <br>
+    {% if action == 'choose_file' %}
+      <form method='post' enctype='multipart/form-data'>
+        <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
+          {{tr('Load Sgf')}}  <input type='file' id='find-sgf' style='display:none'>
+        </label>
+      </form>
+    {% else %}
+      <style> .gametable td { padding:0px 20px 0px 20px } </style>
+      {% if games %}
+        <table class='center gametable'>
+          <tr>
+            <th>{{tr('User')}}</th>
+            <th>{{tr('Started')}}</th>
+            <th>{{tr('Ended')}}</th>
+            <th>{{tr('Link')}}</th>
+          </tr>
+          {% for game in games %}
+            <tr>
+              <td align='left' style='padding:0px 10px 0px 10px'> {{ game.username }} </td>
+              <td> {{ game.ts_started }} </td>
+              <td> {{ game.ts_latest_move }} </td>
+              <td> <a href='{{ game.link }}'>{{tr('Observe')}}</a> </td>
+            </tr>
+          {% endfor %}
+        </table>
+      {% else %}
+         Game Not Found
+      {% endif %}
+      <br><br>
+      <a href='/find_game'>Try Again</a>
+    {% endif %}
+  </div>
+{% endblock content %}
+
+{% block js %}
+  <script>
+   $(function () {
+     $('#find-sgf').on('change', function() {
+       var input = $(this)
+       var myfile = input.get(0).files[0]
+       var numFiles = input.get(0).files ? input.get(0).files.length : 1
+       var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
+       //handle_variation( 'clear')
+       // Call API to get the moves.
+       axutil.upload_file( '/sgf2list', myfile, (response) => {
+         var res = response.result
+         var moves = JSON.stringify( res.moves)
+         var url = '/find_game?q=' + Math.random() +
+           '&action=' + encodeURIComponent('find') +
+           '&moves=' + encodeURIComponent(moves)
+
+         $('#find-sgf').val('') // reset to make sure it triggers again
+         window.location.href = url
+
+
+       })
+     }) // $('find-sgf')
+
+   })
+  </script>
+{% endblock js %}
