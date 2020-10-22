@@ -85,6 +85,7 @@ def game_zobrist( moves, zobrist_moves = 40):
     for transform_key in ['0','lr','td','ri','le','letd','ritd','lrtd']:
         game_state = goboard.GameState.new_game( BOARD_SIZE)
         for idx,move in enumerate(moves):
+            if idx >= zobrist_moves: break
             if move == 'pass':
                 next_move = goboard.Move.pass_turn()
             elif move == 'resign':
@@ -93,5 +94,6 @@ def game_zobrist( moves, zobrist_moves = 40):
                 move = board_transform( move, transform_key)
                 next_move = goboard.Move.play( gotypes.Point( move[0]+1, move[1]+1))
             game_state = game_state.apply_move( next_move)
+        print( game_state.board.zobrist_hash())
         zobrist = max( game_state.board.zobrist_hash(), zobrist)
     return zobrist

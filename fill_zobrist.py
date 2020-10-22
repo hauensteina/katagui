@@ -47,6 +47,8 @@ def main():
 
     while(1):
         rows = db.select( 'select * from v_games_no_zobrist limit 10')
+        #rows = db.select( "select * from t_game where game_hash = 'a7161d79bb484e77'")
+        #BP()
         if len(rows) == 0: break
         n += len(rows)
         print( 'Updating zobrist hashes %d/%d' % (n,total))
