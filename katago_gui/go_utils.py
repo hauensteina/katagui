@@ -94,6 +94,6 @@ def game_zobrist( moves, zobrist_moves = 40):
                 move = board_transform( move, transform_key)
                 next_move = goboard.Move.play( gotypes.Point( move[0]+1, move[1]+1))
             game_state = game_state.apply_move( next_move)
-        print( game_state.board.zobrist_hash())
+        #print( game_state.board.zobrist_hash())
         zobrist = max( game_state.board.zobrist_hash(), zobrist)
     return zobrist
