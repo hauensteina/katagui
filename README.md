@@ -91,7 +91,7 @@ Now that Postgres and Redis exist, we need to make sure we locally know how to a
 
 `$ heroku config > .env`
 
-The format of that output is not quitr what we need. Edit `.env` to look like this:
+The format of that output is not quite what we need. Edit `.env` to look like this:
 
 ```
 $ vi .env
