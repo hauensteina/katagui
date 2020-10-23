@@ -53,6 +53,7 @@ app.config.update(
 
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
+DEMO_KATAGO_SERVER = 'https://my-katago-server.herokuapp.com'
 # 20b 256 playouts
 #KATAGO_SERVER = 'http://www.ahaux.com/katago_server/'
 # 40b 1024 playouts
@@ -60,11 +61,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 # 10b 256 playouts
 #KATAGO_SERVER_GUEST = 'http://www.ahaux.com/katago_server_guest/'
 
-if 'HEROKU_FLAG' in os.environ: # prod on heroku
-    db_url = os.environ['DATABASE_URL']
-else: # local
-    db_url = os.environ['KATAGUI_DB_URL']
-
+db_url = os.environ['DATABASE_URL']
 db = Postgres( db_url)
 
 bcrypt = Bcrypt( app) # Our password hasher
