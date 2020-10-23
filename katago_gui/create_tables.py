@@ -48,7 +48,7 @@ def create_t_game(db):
 
 def create_v_games_24hours(db):
     if db.table_exists( 'v_games_24hours'): return
-    sql = '''
+    sql = """
     create view v_games_24hours as
     with obs_by_game as (
       select
@@ -77,7 +77,6 @@ def create_v_games_24hours(db):
        g.username is not null
        and g.game_record is not NULL
        and not g.game_record = ''
-       -- and g.username not like 'guest%'
        and g.ts_latest_move is not null
        and extract( epoch from now() - g.ts_latest_move) < 3600 * 24
     )
@@ -86,12 +85,12 @@ def create_v_games_24hours(db):
     case when active > 0 and not old > 0 then 1 else 0 end as live
     from games
     order by idle_secs
-    '''
+    """
     db.run( sql)
 
 def create_v_games_no_zobrist(db):
     if db.table_exists( 'v_games_no_zobrist'): return
-    sql = '''
+    sql = """
     create view v_games_no_zobrist as
     with games  as (
     select
@@ -107,5 +106,5 @@ def create_v_games_no_zobrist(db):
     *
     from games
     where age <= -300
-    '''
+    """
     db.run(sql)

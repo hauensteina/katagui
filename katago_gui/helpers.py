@@ -7,6 +7,7 @@
 # Various utility functions
 #
 
+from pdb import set_trace as BP
 import os, sys, re, uuid
 import requests
 from datetime import datetime
@@ -16,7 +17,7 @@ from flask_login import current_user, login_user
 from flask_mail import Message
 
 from katago_gui import app, auth, mail, db
-#from katago_gui import KATAGO_SERVER, KATAGO_SERVER_X, KATAGO_SERVER_GUEST
+from katago_gui import DEMO_KATAGO_SERVER
 from katago_gui.go_utils import point_from_coords
 from katago_gui.translations import translate as tr
 
@@ -38,8 +39,11 @@ def get_sgf_tag( sgfstr, tag):
 # Forward fast request to katago server
 #----------------------------------------
 def fwd_to_katago( endpoint, args):
-    ip = db.get_parm( 'server_ip')
-    url = 'http://' + ip + ':2819/' + endpoint
+    try:
+        ip = db.get_parm( 'server_ip')
+        url = 'http://' + ip + ':2819/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
     #ip = '192.168.0.190'
     #url = 'http://' + ip + ':2718/' + endpoint
     resp = requests.post( url, json=args)
@@ -53,8 +57,11 @@ def fwd_to_katago( endpoint, args):
 # Forward strong request to katago server
 #------------------------------------------
 def fwd_to_katago_x( endpoint, args):
-    ip = db.get_parm( 'server_ip')
-    url = 'http://' + ip + ':2820/' + endpoint
+    try:
+        ip = db.get_parm( 'server_ip')
+        url = 'http://' + ip + ':2820/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
     #ip = '192.168.0.190'
     #url = 'http://' + ip + ':2718/' + endpoint
     resp = requests.post( url, json=args)
@@ -68,8 +75,12 @@ def fwd_to_katago_x( endpoint, args):
 # Forward guest request to katago server
 #------------------------------------------
 def fwd_to_katago_guest( endpoint, args):
-    ip = db.get_parm( 'server_ip')
-    url = 'http://' + ip + ':2821/' + endpoint
+    try:
+        ip = db.get_parm( 'server_ip')
+        url = 'http://' + ip + ':2821/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
+
     resp = requests.post( url, json=args)
     try:
         res = resp.json()
