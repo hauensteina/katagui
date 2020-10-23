@@ -23,7 +23,7 @@ You will need a back end server running KataGo. There is a basic one at https://
 How to get KataGui to run on Heroku
 --------------------------------------
 
-Heroku is a platform which allows you to easily deploy a web app in a serverless, scaleable way.
+Heroku is a platform which allows you to easily deploy a web app in a serverless, scalable way.
 And best of all, if you do not have a lot of traffic, it is totally free.
 
 The instructions below work on a Mac or in a Linux environment. If you are on Windows, it is probably easiest to just get yourself a [Ubuntu VM ](https://brb.nci.nih.gov/seqtools/installUbuntu.html).
@@ -47,7 +47,7 @@ $ git init
 $ heroku apps:create my-katagui
 ```
 
-You probably want to change the name `my-katagui` to something less generic to
+You have to change the name `my-katagui` to something less generic to
 avoid name collisions.
 
 To get the code from github, let's add a second remote repo `github` to pull from:
