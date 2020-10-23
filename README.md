@@ -114,7 +114,7 @@ $ pip install -r requirements.txt
 Let's give it a spin locally:
 
 ```
-$ source .env; ./venv/bin/gunicorn -k flask_sockets.worker heroku_app:app -w 1 -b 0.0.0.0:8000 --reload --timeout 1000 `
+$ source .env; ./venv/bin/gunicorn -k flask_sockets.worker heroku_app:app -w 1 -b 0.0.0.0:8000 --reload --timeout 1000 
 [2020-10-23 14:40:23 -0700] [90807] [INFO] Starting gunicorn 19.9.0
 [2020-10-23 14:40:23 -0700] [90807] [INFO] Listening at: http://0.0.0.0:8000 (90807)
 [2020-10-23 14:40:23 -0700] [90807] [INFO] Using worker: flask_sockets.worker
