@@ -11,7 +11,7 @@ What exactly does this do
 
 KataGui has all the basic features of a complete Go Server, similar to OGS or some such, with the notable difference that you don't play other people. It is meant to help you study using KataGo, without the need for expensive hardware. You can watch other people and study and chat with them, or search for games via Sgf upload to catch people who use KataGui to cheat on another server.
 
-The design goal is simplicity and ease of use on a mobile device. Power without features.
+The design goal is simplicity and ease of use on mobile devices. We want power without features.
 
 You can use it from any device that has a web browser. Personally, I mostly use it from a tablet, which feels a lot like an intelligent Go board if you are using KataGui.
 
