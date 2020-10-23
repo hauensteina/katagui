@@ -74,6 +74,7 @@ Activate the venv:
 `$ source ./venv/bin/activate`
 
 Install the postgres addon:
+
 `$ heroku addons:create heroku-postgresql:hobby-dev`
 
 Postgres is a relational database, which means it uses SQL as query language.
@@ -81,6 +82,7 @@ KataGui uses it to store users, logins, games, etc.
 It is initially empty. Tables will automatically be created on app startup.
 
 Install the Redis To Go addon:
+
 `$ heroku addons:create redistogo:nano`
 
 We use Redis channels to push messages to game observers when the game position changes.
