@@ -25,7 +25,7 @@ def donation_blurb( mobile):
     Return html asking people for money.
     Used in Jinja templates.
     '''
-    DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10+100+20+19+29+21+20+20+31+20+20+10+120+25+25+100+10+20+5+5
+    DONATED = 55+26+15+5+21+10+50+10+20+21+5+10+21+30+5+5+25+10+100+20+19+29+21+20+20+31+20+20+10+120+25+25+100+10+20+5+5+36
     LIMIT = 2000
     frac = DONATED / LIMIT
     pct = round( 100 * frac)
