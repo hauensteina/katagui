@@ -147,7 +147,7 @@ Point your browser at `https://my-katagui.herokuapp.com`.
 Most things will work, except anything requiring email, like registering non-guest accounts.
 If you have a working SMTP account somewhere other than gmail (they will block login attempts by flask_mail),
 you can set the environment variables KATAGUI_EMAIL_USER and KATAGUI_EMAIL_PASS in the my-katagui Heroku project
-to make user registration should work, too.
+to make user registration work, too.
 
 If you got here, congratulations. Drop me a note at hauensteina@gmail.com.
 
