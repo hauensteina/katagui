@@ -5,30 +5,21 @@
 {% endblock %}
 
 {% block content %}
-  <div id='watchdiv' class='center' tabindex='0'>
+  <!-- <div id='watchdiv' class='center' tabindex='0'> -->
+  <div id='watchdiv' class='center' style="position:relative; width:100%; max-width:1200px; min-width:600px; margin-left:auto; margin-right:auto">
     <style> .gametable td { padding:0px 20px 0px 20px } </style>
     <br>
     <h2 class=center>{{ tr('Games Today') }}  </h2>
     <table class='center gametable'>
-      <tr><td colspan='3'>
-        {% with messages = get_flashed_messages( with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class='alert alert-{{ category }}'>
-                {{ message }}
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-      </td></tr>
-
-      <tr><th>{{tr('User')}}</th><th>{{tr('Handicap')}}</th><th>{{tr('Komi')}}</th><th>{{tr('Moves')}}</th>
+      <tr><th>{{tr('User')}}</th><th>{{tr('Handicap')}}</th>
+        <!-- <th>{{tr('Komi')}}</th> -->
+        <th>{{tr('Moves')}}</th>
         <th>{{tr('Idle')}}</th><th>{{tr('Live')}}</th><th>{{tr('Observers')}}</th><th>{{tr('Link')}}</th></tr>
       {% for game in games %}
         <tr>
           <td align='left' style='padding:0px 10px 0px 10px'> {{ game.username }} </td>
           <td> {{ game.handicap }} </td>
-          <td> {{ game.komi }} </td>
+          <!-- <td> {{ game.komi }} </td> -->
           <td> {{ game.nmoves }} </td>
           <td> {{ game.t_idle }} </td>
           <td> {{ '\u2713' if game.live else '\u2717' }} </td>
