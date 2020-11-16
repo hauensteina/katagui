@@ -65,8 +65,10 @@ def get_translation_table():
     return _langdict
 
 _eng = {
+    # Buttons
+    'Play':'AI Play'
     # Donation
-    'donation_blurb': "To keep KataGo up and running, we need a dedicated server. A total of #AMOUNT dollars will do it. Only #REST to go! You know you want this. If you donate over 20 dollars, I'll buy you a beer when you visit me in California."
+    ,'donation_blurb': "To keep KataGo up and running, we need a dedicated server. A total of #AMOUNT dollars will do it. Only #REST to go! You know you want this. If you donate over 20 dollars, I'll buy you a beer when you visit me in California."
     ,'donation_status':'Status (updated daily):'
     # Registration dance
     ,'visit_link_activate':'To activate your Katagui account, visit the following link:'
@@ -98,9 +100,8 @@ _kor = {
     ,'Register':'등록'
     ,'About':'어바웃'
     # Buttons
-    ,'Play':'플레이'
     ,'New Game':'새로운 게임'
-    ,'Play':'플레이'
+    ,'Play':'AI 플레이'
     ,'Best':'베스트'
     ,'Undo':'무르기'
     ,'Pass':'패스'
