@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = '2020-11-16'
-const VERSION = '3.4.4'
+const VERSION = '3.4.5'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
