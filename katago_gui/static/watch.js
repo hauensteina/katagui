@@ -283,12 +283,12 @@ function watch( JGO, axutil, game_hash, p_options) {
       var idletime = new Date( idle_msecs).toISOString().substr(11, 8)
       var idlestr = ''
       if (p_options.live == 1 && toggle_live_button() == 'on') {
-        idlestr = `<td align='left' width='30%'>${tr('Idle')}:${idletime} </td>`
+        idlestr = `<td align='left' width='30%'>${tr('Idle')}: ${idletime} </td>`
       }
       var tstr = `<table width='80%' class='center'><tr>
-                 <td>${tr('User')}:${user}&nbsp;</td>
-                 <td>${tr('Komi')}:${komi}&nbsp;</td>
-                 <td>${tr('Handicap')}:${handicap}&nbsp;</td>
+                 <td>${tr('User')}: ${user}&nbsp;</td>
+                 <td>${tr('Komi')}: ${komi}&nbsp;</td>
+                 <td>${tr('Handicap')}: ${handicap}&nbsp;</td>
                  ${idlestr}
                  </tr></table>`
       $('#game_info').html( tstr)
@@ -353,7 +353,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       $btn.removeClass('ahaux_on')
       $btn.css('background-color', 'rgb(40, 167, 69)')
       $btn.css('color', 'black')
-      $btn.html('Refresh')
+      $btn.html( tr('Refresh'))
     }
     else if (action == 'toggle') {
       if (toggle_live_button() == 'on') { return toggle_live_button( 'off') }

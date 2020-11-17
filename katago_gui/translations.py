@@ -89,6 +89,8 @@ _eng = {
     ,'account_updated':'Your account has been updated.'
     ,'invalid_token':'That is an invalid or expired token.'
     ,'dollars':'dollars'
+    # Watching
+    ,'Refresh':'Back to the Game'
 }
 
 _kor = {
@@ -312,7 +314,8 @@ _chinese = {
     ,'Observe':'进入'
     ,'Link':'链接'
     ,'Watch':'观战'
-    ,'Refresh':'刷新'
+    ,'Refresh':'回到棋局'
+    #,'Refresh':'刷新'
     ,'Type here':'在此输入...'
     # Search Game
     ,'Search':'搜索'
