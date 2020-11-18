@@ -31,9 +31,9 @@ def check_https():
 #--------------------------------
 def get_sgf_tag( sgfstr, tag):
     rexp = r'.*' + tag + r'\[([^\[]*)\].*'
-    tstr = sgfstr.decode('utf8')
-    res = re.sub(rexp, r'\1', tstr ,flags=re.DOTALL)
-    if res == tstr: return '' # tag not found
+    #tstr = sgfstr.decode('utf8')
+    res = re.sub(rexp, r'\1', tag ,flags=re.DOTALL)
+    if res == tag: return '' # tag not found
     return res
 
 # Forward fast request to katago server

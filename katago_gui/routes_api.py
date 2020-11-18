@@ -275,7 +275,8 @@ def server_ip():
 def sgf2list():
     """ Convert sgf main var to coordinate list of moves """
     f = request.files['file']
-    sgfstr = f.read()
+    sgfstr = f.read().decode('utf-8')
+    sgfstr = re.sub( 'CoPyright', 'CP', sgfstr) # IGS anomaly
     RE = get_sgf_tag( sgfstr, 'RE')
     if len(RE) > 10: RE = ''
     DT = get_sgf_tag( sgfstr, 'DT')
