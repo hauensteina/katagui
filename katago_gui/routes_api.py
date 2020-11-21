@@ -105,6 +105,17 @@ def chinese():
         app.logger.info( 'ERROR: Exception while switching to Chinese')
     return redirect( url_for('index'))
 
+@app.route('/japanese', methods=['GET'])
+#----------------------------------------
+def japanese():
+    """ Switch user language to Japanese """
+    try:
+        current_user.data['lang'] = 'japanese'
+        current_user.update_db()
+    except:
+        app.logger.info( 'ERROR: Exception while switching to Japanese')
+    return redirect( url_for('index'))
+
 @app.route('/load_game', methods=['POST'])
 #----------------------------------------------
 def load_game():

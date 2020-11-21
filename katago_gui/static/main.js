@@ -818,7 +818,7 @@ function main( JGO, axutil, p_options) {
       goto_move( grec.pos())
       update_emoji(); bot_active('off')
       var_button_state('off')
-      $('#status').html( 'Variation deleted')
+      $('#status').html( '')
     }
   } // handle_variation()
 

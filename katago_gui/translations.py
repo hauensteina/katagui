@@ -18,6 +18,7 @@ def translate( txt, lang=None):
         res = tab.get( txt, txt)
     except:
         res = txt
+    if not res: res = txt
     return res
 
 def donation_blurb( mobile):
@@ -117,7 +118,6 @@ _kor = {
     ,'Save Sgf':'Sgf 파일 저장'
     ,'Load Sgf':'Sgf 파일 업로드'
     ,'Back to Main Line':'메인으로 돌아가기'
-    ,'Auto Play':'자동 플레이'
     ,'Self Play':'셀프 플레이'
     ,'Self Play Speed:':'셀프 플레이 속도:'
     ,'Fast':'빠른'
@@ -218,7 +218,6 @@ _chinese = {
     ,'Register':'注册'
     ,'About':'关于KataGui'
     # Buttons
-    ,'Play':'落子'
     ,'New Game':'新对局'
     ,'Play':'AI落子'
     ,'Best':'最佳推荐'
@@ -234,7 +233,6 @@ _chinese = {
     ,'Save Sgf':'保存SGF'
     ,'Load Sgf':'载入'
     ,'Back to Main Line':'返回主分支'
-    ,'Auto Play':'自动落子'
     ,'Self Play':'自动落子'
     ,'Self Play Speed:':'自动落子速度:'
     ,'Fast':'快'
@@ -263,7 +261,6 @@ _chinese = {
     ,'Username':'用户名'
     ,'First Name':'名字'
     ,'Last Name':'姓氏'
-    ,'Email':'电子邮箱'
     ,'Sign Up':'注册新帐号'
     # Misc
     ,'Settings':'设置'
@@ -326,4 +323,118 @@ _chinese = {
     ,'Game Not Found':'找不到对局'
 }
 
-_langdict = { 'eng':_eng, 'kor':_kor, 'chinese':_chinese }
+_japanese = {
+# Top Bar
+    'Account':''
+    ,'Account Info':''
+    ,'Logout':''
+    ,'Login':'ログイン'
+    ,'Register':''
+    ,'About':''
+    # Buttons
+    ,'New Game':'新規対局'
+    ,'Play':'AI'
+    ,'Best':'最善手'
+    ,'Undo':'取り消し'
+    ,'Pass':'パス'
+    ,'Score':'形勢'
+    ,'Back 10':'10手戻る'
+    ,'Prev':'1手戻る'
+    ,'Next':'次の手'
+    ,'Fwd 10':'10手進む'
+    ,'First':'初手'
+    ,'Last':'最終手'
+    ,'Save Sgf':'SGFで保存'
+    ,'Load Sgf':'SGFを読込み'
+    ,'Back to Main Line':'本戦図に戻る'
+    ,'Self Play':'自動'
+    ,'Self Play Speed:':''
+    ,'Fast':''
+    ,'Medium':''
+    ,'Slow':''
+    # Starting a Game
+    ,'Handicap':'置き石'
+    ,'Komi':'コミ'
+    ,'Guest (10 blocks)':'ゲスト (10 blocks)'
+    ,'Fast (20 blocks)':''
+    ,'Strong (40 blocks)':''
+    # Login and Registration
+    ,'Guest':'ゲスト'
+    ,'Please Log In':''
+    ,'Email':'Eメール'
+    ,'Password':'パスワード'
+    ,'Request Password Reset':''
+    ,'Password':''
+    ,'Confirm Password':''
+    ,'Remember Me':'記憶する'
+    ,'Forgot Password?':'パスワードを忘れましたか？'
+    ,'Need An Account?':'アカウントを作りますか？'
+    ,'Sign Up Now.':'すぐ加入する'
+    ,'Already Have An Account?':'もうアカウントをお持ちの場合'
+    ,'Sign In.': 'サインインする'
+    ,'Username':''
+    ,'First Name':''
+    ,'Last Name':''
+    ,'Sign Up':''
+    # Misc
+    ,'Settings':'設定'
+    ,'Show best 10 (A-J)':''
+    ,'Show emoji during play':''
+    ,'Show probability during play':''
+    ,'Save':''
+    ,'P(B wins)':'P(黒の勝ち)'
+    ,'KataGo resigns. You beat Katago!':''
+    ,'KataGo resigns.':''
+    ,'KataGo passes. Click on the Score button.':''
+    ,'KataGo is thinking ...':''
+    ,'KataGo is counting ...':''
+    ,'dollars':''
+    # Donation
+    ,'donation_blurb': 'KataGoを維持運営して行くには、専用のサーバーが必要です。それに掛かる費用は2000ドルです。あと38％不足しています。寄付をお願いします。20ドル以上、ご協力いただけた方には、カリフォルニアにおいでの際に、ビールを一杯ごちそうします。'
+    ,'donation_status':'現状（毎日更新）：'
+    ,'Top Three Donors':'寄付金トップ3'
+    # Registration dance
+    ,'visit_link_activate':''
+    ,'register_ignore':''
+    ,'visit_link_password':''
+    ,'password_ignore':''
+    ,'not_verified':''
+    ,'login_failed':''
+    ,'account_exists':''
+    ,'guest_invalid':''
+    ,'name_taken':''
+    ,'err_create_user':''
+    ,'email_sent':''
+    ,'email_verified':''
+    ,'email_not_exists':''
+    ,'reset_email_sent':''
+    ,'password_updated':''
+    ,'account_updated':''
+    ,'invalid_token':''
+    ,'W':''
+    ,'B':''
+    ,'Result':''
+    ,'Date':''
+    # Watching games
+    ,'Games Today':''
+    ,'User':'ユーザー'
+    ,'Moves':''
+    ,'Idle':'秒読み'
+    ,'Live':'中継'
+    ,'Observers':''
+    ,'Observe':''
+    ,'Link':''
+    ,'Watch':'観戦する'
+    # Back to the Game
+    ,'Refresh':'対局に戻る'
+    ,'Type here':'入力'
+    # Search Game
+    ,'Search':'検索する'
+    ,'Find a Game Played on KataGui':'KataGuiで対局したゲームを見つける'
+    ,'Started':''
+    ,'Ended':''
+    ,'Try Again':''
+    ,'Game Not Found':''
+}
+
+_langdict = { 'eng':_eng, 'kor':_kor, 'chinese':_chinese, 'japanese':_japanese }

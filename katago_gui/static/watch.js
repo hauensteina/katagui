@@ -536,7 +536,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       goto_move( grec.pos())
       update_emoji();
       var_button_state('off')
-      $('#status').html( 'Variation deleted')
+      $('#status').html( '')
     }
   } // handle_variation()
 
