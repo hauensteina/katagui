@@ -35,7 +35,7 @@ function main( JGO, axutil, p_options) {
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
 
-  var g_komi = 7.5
+  var g_komi = 6.5
   var g_handi = 0
 
   //================
@@ -51,10 +51,11 @@ function main( JGO, axutil, p_options) {
     $('#komi_m205').click( function() { $('#komi_menu').html('-20.5') })
     $('#komi_m105').click( function() { $('#komi_menu').html('-10.5') })
     $('#komi_05').click( function()  { $('#komi_menu').html('0.5') })
+    $('#komi_65').click( function()  { $('#komi_menu').html('6.5') })
     $('#komi_75').click( function()  { $('#komi_menu').html('7.5') })
 
     $('#handi_menu').html(g_handi)
-    $('#handi_0').click( function() { $('#handi_menu').html('0'); $('#komi_menu').html('7.5') })
+    $('#handi_0').click( function() { $('#handi_menu').html('0'); $('#komi_menu').html('6.5') })
     $('#handi_1').click( function() { $('#handi_menu').html('1'); $('#komi_menu').html('0.5') })
     $('#handi_2').click( function() { $('#handi_menu').html('2'); $('#komi_menu').html('0.5') })
     $('#handi_3').click( function() { $('#handi_menu').html('3'); $('#komi_menu').html('0.5') })
