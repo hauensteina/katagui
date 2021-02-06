@@ -594,7 +594,7 @@ class Sgf_game:
 
         """
         if not isinstance(s, six.binary_type):
-            s = s.encode('ascii')
+            s = s.encode('utf8')
         coarse_game = sgf_grammar.parse_sgf_game(s)
         return cls.from_coarse_game_tree(coarse_game, override_encoding)
 
