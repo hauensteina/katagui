@@ -454,14 +454,23 @@ function main( JGO, axutil, p_options) {
           selfplay.ready = true
           if (!selfplay('ison')) return;
           goto_move( grec.pos() + 1)
-          $('#status').html('')
+          if (grec.curmove().p == 0) {
+            get_prob_genmove( (data) => { if (!settings('show_prob')) { $('#status').html('') }
+                                          if (settings('show_emoji')) { update_emoji() }
+                                        } )
+          }
+          else {
+            if (!settings('show_prob')) { $('#status').html('') }
+            if (settings('show_emoji')) { update_emoji() }
+          }
+          //$('#status').html('')
           return
         }
         // If game ended, start from beginning
         if (grec.curmove()) {
-          if ((grec.curmove().p < 0.05 // W wins
-               || (grec.curmove().p > 0.95 && grec.pos() > 180 && grec.curmove().score > 10.0) // it's late and B wins by a lot
-               || set_load_sgf_handler.loaded_game)) // we're at the end of a loaded game
+          if ((grec.curmove().p < 0.05) // W wins
+              || (grec.curmove().p > 0.95) // B wins
+               || set_load_sgf_handler.loaded_game) // we're at the end of a loaded game
           {
             selfplay.ready = true
             if (!selfplay('ison')) return;
@@ -471,8 +480,6 @@ function main( JGO, axutil, p_options) {
             return
           }
         }
-        // Set prob and score to 0 because they lag by one move and cause inconsistent emoji
-        grec.update( 0,0)
 
         // Continue game
         axutil.hit_endpoint( fast_or_strong('fast').ep + BOT,
