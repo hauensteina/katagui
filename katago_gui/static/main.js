@@ -491,10 +491,9 @@ function main( JGO, axutil, p_options) {
                                maybe_start_var()
                                grec.push( {'mv':data.bot_move, 'p':0, 'score':0, 'agent':'kata20'} )
                                replay_moves( grec.pos())
-                               const show_emoji = false
                                const playing = true
-                               get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
-                               $('#status').html('')
+                               get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, settings('show_emoji'), playing)
+                               //$('#status').html('')
                              }) // hit_endpoint()
       } // if ready
     } // cb_selfplay()
