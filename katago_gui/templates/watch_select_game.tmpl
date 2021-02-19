@@ -11,10 +11,16 @@
     <br>
     <h2 class=center>{{ tr('Games Today') }}  </h2>
     <table class='center gametable'>
-      <tr><th>{{tr('User')}}</th><th>{{tr('Handicap')}}</th>
+      <tr>
+        <th>{{tr('User')}}</th>
+        <th>{{tr('Handicap')}}</th>
         <!-- <th>{{tr('Komi')}}</th> -->
         <th>{{tr('Moves')}}</th>
-        <th>{{tr('Idle')}}</th><th>{{tr('Live')}}</th><th>{{tr('Observers')}}</th><th>{{tr('Link')}}</th></tr>
+        <th>{{tr('Idle')}}</th>
+        <th>{{tr('Live')}}</th>
+        <!-- <th>{{tr('Observers')}}</th> -->
+        <th>{{tr('Link')}}</th>
+      </tr>
       {% for game in games %}
         <tr>
           <td align='left' style='padding:0px 10px 0px 10px'> {{ game.username }} </td>
@@ -23,7 +29,7 @@
           <td> {{ game.nmoves }} </td>
           <td> {{ game.t_idle }} </td>
           <td> {{ '\u2713' if game.live else '\u2717' }} </td>
-          <td> {{ game.n_obs }} </td>
+          <!-- <td> {{ game.n_obs }} </td> -->
           <td> <a href='{{ game.link }}'>{{tr('Observe')}}</a> </td>
         </tr>
         {% endfor %}

@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2021-02-13'
-const VERSION = '3.5.1'
+const DDATE = '2021-02-19'
+const VERSION = '3.5.2'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
