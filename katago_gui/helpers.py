@@ -32,7 +32,7 @@ def check_https():
 def get_sgf_tag( sgfstr, tag):
     rexp = r'.*' + tag + r'\[([^\[]*)\].*'
     #tstr = sgfstr.decode('utf8')
-    res = re.sub(rexp, r'\1', tag ,flags=re.DOTALL)
+    res = re.sub(rexp, r'\1', sgfstr ,flags=re.DOTALL)
     if res == tag: return '' # tag not found
     return res
 
