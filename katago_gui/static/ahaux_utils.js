@@ -5,8 +5,8 @@
 
 'use strict'
 
-const DDATE = '2021-03-27'
-const VERSION = '3.5.3'
+const DDATE = '2021-03-30'
+const VERSION = '3.6.0'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -37,11 +37,12 @@ class AhauxUtils
 
   // We need jquery
   //-------------------------
-  constructor( $) {
+  constructor( $, d3) {
     if (this.compversions( $.prototype.jquery, '3.4.0') < 0) {
       console.log( 'WARNING: AhauxUtils: jquery version ' + $.prototype.jquery + ' is below 3.4.0. Things might break.')
     }
     this.$ = $
+    this.d3 = d3
 
     this.hit_endpoint('init')
 
@@ -304,6 +305,82 @@ class AhauxUtils
 	   }
 	 )
   } // slog()
+
+  // Barchart.
+  // container is a string like '#some_div_id'.
+  // data looks like [[x_0,y_0], ... ] .
+  // ylim is a positive float.
+  //---------------------------------------------------
+  barchart( container, data, ylim, font, color) {
+    color = color || 'steelblue'
+    var [d3,$] = [this.d3, this.$]
+    var C = d3.select( container)
+    $(container).html('')
+    var w  = $(container).width()
+    var h = $(container).height()
+
+    //var margin = {top: 20, right: 20, bottom: 70, left: 40}
+    // TODO: @@@ Margin needs to be a percentage of w and h
+    var margin = {top: h*0.05, right: w*0.05, bottom: h*0.3, left: w*0.07}
+    var width = w - margin.left - margin.right
+    var height = h - margin.top - margin.bottom
+
+    var svg = C.append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+    var scale_x = d3.scaleBand()
+      .domain( data.map( function(d) { return d[0] }))
+      .rangeRound( [0, width])
+      .padding( 0.05)
+
+    var scale_y = d3.scaleLinear()
+      .domain( [0, ylim])
+      .range( [height, 0])
+
+    var xAxis = d3.axisBottom(scale_x)
+    //.tickFormat( d3.format( '.3f'))
+    	.ticks(10)
+	.tickFormat(function (d) {
+	  return String.fromCharCode( 65 + d )
+	})
+
+    //var yAxis = d3.axisLeft(scale_y)
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .selectAll("text")
+      // .style("text-anchor", "end")
+      .style("font", font)
+      // .attr("dx", "-.8em")
+      // .attr("dy", "-.55em")
+      // .attr("transform", "rotate(-90)" );
+
+    // Show y axis label
+    svg.append("text")
+      .style("font", font)
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - 0.6*height)
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+    //.text( ylim.toFixed(2))
+      .text("PSV")
+
+    svg.selectAll("bar")
+      .data(data)
+      .enter().append("rect")
+      .style("fill", color)
+      .attr("x", function(d) { return scale_x( d[0]) })
+      .attr("width", scale_x.bandwidth())
+      .attr("y", function(d) { return scale_y( d[1]) })
+      .attr("height", function(d) { return height - scale_y( d[1]) })
+  } // barchart()
 } // class AhauxUtils
 
 // Keep track of the game record, visible moves, variation.

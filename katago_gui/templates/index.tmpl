@@ -88,7 +88,7 @@
   <table class='center'>
     <tr>
       <td width='500px'>                      <!--left-->
-        <div class='container'>
+        <div id='left_div' class='container'>
           <br>
           <table class='center'>
             <tr><td id='donating'>
@@ -142,7 +142,9 @@
             <table class='center' width='100%'>
               <tr>
                 <td id='movenum' align='center' style='font-size:13pt' width='30%'> &nbsp;</td>
-                <td id='status' align='center' style='font-size:13pt' width='40%'> &nbsp;</td>
+                <td id='status' align='center'
+                    style='font-size:13pt;border:0px solid #00ff00; '
+                    width='40%'> &nbsp;</td>
                 <td id='emo' align='center' style='font-size:30pt' width='30%' height='60px'> &nbsp;</td>
               </tr>
             </table>
@@ -332,6 +334,7 @@
         </div>
       </div>
     </div>
+    <br>
 {% endblock content %}
 
 {% block js %}

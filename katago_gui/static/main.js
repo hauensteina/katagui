@@ -152,7 +152,9 @@ function main( JGO, axutil, p_options) {
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
     var mmax = 0
     // Mark candidates with letters if psv is close enough to max
+    var bardata = []
     for (const [idx,m] of best.entries()) {
+      bardata.push( [idx,m.psv])
       if (mmax == 0) { mmax = m.psv }
       if (!settings('show_best_ten') && m.psv < mmax / 4.0) continue
       var botCoord1 = axutil.string2jcoord( m.move)
@@ -161,6 +163,11 @@ function main( JGO, axutil, p_options) {
         node.setMark( botCoord1, letter)
       }
     } // for
+    var mmax = Math.max( ... bardata.map( function(d) { return d[1] }))
+    console.log(mmax)
+    var font = '10px sans-serif'
+    if (p_options.mobile) { font = '20px sans-serif' }
+    axutil.barchart( '#status', bardata, 1.2 * mmax, font)
   } // show_best_moves()
   show_best_moves.data = {}
 
@@ -944,7 +951,7 @@ function main( JGO, axutil, p_options) {
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': g_komi } },
                          (data) => {
                            if (completion) { completion(data) }
-                           $('#status').html( '')
+                           //$('#status').html( '')
                          })
   } // get_best_move()
 
