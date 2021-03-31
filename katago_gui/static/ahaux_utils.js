@@ -5,7 +5,7 @@
 
 'use strict'
 
-const DDATE = '2021-03-31'
+const DDATE = ''
 const VERSION = '3.6.1'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
