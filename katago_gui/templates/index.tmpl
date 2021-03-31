@@ -90,27 +90,27 @@
       <td width='500px'>                      <!--left-->
         <div id='left_div' class='container'>
           <br>
-          <table class='center'>
-            <tr><td id='donating'>
-              {{ donation_blurb(mobile=false) }}
-            </td></tr>
-            <tr><td align='center'>
-              <br>
-              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick" />
-                <input type="hidden" name="hosted_button_id" value="T322ZZH9TKMMN" />
-                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
-                       title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-              </form>
-            </td></tr>
-          </table>
-          <table class='center'>
-            <tr><td colspan='2' style='font-weight:bold'>{{tr('Top Three Donors')}}</td></tr>
-            <tr><td align='left'>Satoshi Banya</td> <td align='right'> &nbsp; 130 </td>  </tr>
-            <tr><td align='left'>Devin Fraze</td> <td align='right'> &nbsp; 120 </td>  </tr>
-            <tr><td align='left'>Larry Russ</td> <td align='right'> &nbsp; 111 </td>  </tr>
-          </table>
+          <!-- <table class='center'>
+               <tr><td id='donating'>
+               {{ donation_blurb(mobile=false) }}
+               </td></tr>
+               <tr><td align='center'>
+               <br>
+               <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+               <input type="hidden" name="cmd" value="_s-xclick" />
+               <input type="hidden" name="hosted_button_id" value="T322ZZH9TKMMN" />
+               <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
+               title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+               <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+               </form>
+               </td></tr>
+               </table> -->
+          <!-- <table class='center'>
+               <tr><td colspan='2' style='font-weight:bold'>{{tr('Top Three Donors')}}</td></tr>
+               <tr><td align='left'>Satoshi Banya</td> <td align='right'> &nbsp; 130 </td>  </tr>
+               <tr><td align='left'>Devin Fraze</td> <td align='right'> &nbsp; 120 </td>  </tr>
+               <tr><td align='left'>Larry Russ</td> <td align='right'> &nbsp; 111 </td>  </tr>
+               </table> -->
           <br>
           <div class='row'>
             <div class='col-12 text-center'>
@@ -155,7 +155,7 @@
       </td>
       <td style='vertical-align:top' width='300px'>                      <!--right-->
         <div class='container' >
-          <div class='row' style='font-size:20pt;height:300px'>
+          <div class='row' style='font-size:20pt;height:0px'> <!-- Change to move logo down -->
             <div class='col-12'>
               &nbsp;
             </div>
@@ -188,7 +188,7 @@
                 </label>
               </td><td style='margin:0'>&nbsp;</td>
               </tr>
-              <tr style='transform:translate(0,-8px)'>
+              <tr style='transform:translate(0,-6px)'>
                 <td style='padding:0;margin:0'>
                   <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>{{ tr('Play') }}</label>&nbsp;
                 </td>
