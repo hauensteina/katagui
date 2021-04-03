@@ -85,7 +85,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
     var mmax = 0
     // Mark candidates with letters if psv is close enough to max
+    var bardata = []
     for (const [idx,m] of best.entries()) {
+      bardata.push( [idx,m.psv])
       if (mmax == 0) { mmax = m.psv }
       if (m.psv < mmax / 4.0) continue
       var botCoord1 = axutil.string2jcoord( m.move)
@@ -94,6 +96,14 @@ function watch( JGO, axutil, game_hash, p_options) {
         node.setMark( botCoord1, letter)
       }
     } // for
+    var maxi = Math.max( ... bardata.map( function(d) { return d[1] }))
+    console.log(maxi)
+    var font = '10px sans-serif'
+    if (p_options.mobile) { font = '20px sans-serif' }
+    $('#status').css('height', '140px');
+    $('#status').css('line-height', '140px');
+    axutil.barchart( '#status', bardata, 1.2 * maxi, font)
+     //$('#status').html( 'barchart')
   } // show_best_moves()
   show_best_moves.data = {}
 
@@ -618,12 +628,14 @@ function watch( JGO, axutil, game_hash, p_options) {
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': grec.komi } },
                          (data) => {
                            if (completion) { completion(data) }
-                           $('#status').html( '')
+                           //$('#status').html( '')
                          })
   } // get_best_move()
 
   //------------------------------------------
   function show_prob( update_emo) {
+    $('#status').css('height', '');
+    $('#status').css('line-height', '');
     var cur = grec.curmove()
     if (cur) {
       var p = cur.p
@@ -842,8 +854,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   //=======================
 
   // Support TLS-specific URLs, when appropriate.
-  var ws_scheme = "ws://"
-  if (window.location.protocol == "https:") { ws_scheme = "wss://" }
+  var ws_scheme = 'ws://'
+  if (window.location.protocol == 'https:') { ws_scheme = 'wss://' }
   var observer_socket = new ReconnectingWebSocket( ws_scheme + location.host + '/register_socket/' + game_hash)
 
   // Websocket callback to react to server push messages.
