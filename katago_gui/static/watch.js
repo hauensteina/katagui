@@ -100,8 +100,10 @@ function watch( JGO, axutil, game_hash, p_options) {
     console.log(maxi)
     var font = '10px sans-serif'
     if (p_options.mobile) { font = '20px sans-serif' }
-    $('#status').css('height', '140px');
-    $('#status').css('line-height', '140px');
+    //$('#status').css('height', '140px');
+    //var lh = $('#status').css('height')
+    //debugger
+    //$('#status').css('line-height', lh);
     axutil.barchart( '#status', bardata, 1.2 * maxi, font)
      //$('#status').html( 'barchart')
   } // show_best_moves()
@@ -634,8 +636,8 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //------------------------------------------
   function show_prob( update_emo) {
-    $('#status').css('height', '');
-    $('#status').css('line-height', '');
+    //$('#status').css('height', '140px');
+    //$('#status').css('line-height', '');
     var cur = grec.curmove()
     if (cur) {
       var p = cur.p
@@ -651,7 +653,7 @@ function watch( JGO, axutil, game_hash, p_options) {
         scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
       }
       scorestr += Math.abs(score)
-      var tstr = tr('P(B wins)') + ': ' + p.toFixed(2) + '<br>'
+      var tstr = tr('P(B wins)') + ': ' + p.toFixed(2) + '&nbsp;'
       if (typeof(cur.score) !== 'undefined') {
         tstr += scorestr
       }
