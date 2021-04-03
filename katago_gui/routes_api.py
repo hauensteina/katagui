@@ -291,6 +291,7 @@ def sgf2list():
     RE = get_sgf_tag( sgfstr, 'RE')
     if len(RE) > 10: RE = ''
     DT = get_sgf_tag( sgfstr, 'DT')
+    if len(DT) > 15: DT = ''
     sgf = Sgf_game.from_string( sgfstr)
     player_white = sgf.get_player_name('w')
     player_black = sgf.get_player_name('b')
