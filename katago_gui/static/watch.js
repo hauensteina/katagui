@@ -89,7 +89,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     for (const [idx,m] of best.entries()) {
       bardata.push( [idx,m.psv])
       if (mmax == 0) { mmax = m.psv }
-      if (m.psv < mmax / 4.0) continue
+      if (!settings('show_best_ten') && m.psv < 0.05 * mmax) continue
       var botCoord1 = axutil.string2jcoord( m.move)
       if (botCoord1 != 'pass' && botCoord1 != 'resign') {
         var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
@@ -100,12 +100,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     console.log(maxi)
     var font = '10px sans-serif'
     if (p_options.mobile) { font = '20px sans-serif' }
-    //$('#status').css('height', '140px');
-    //var lh = $('#status').css('height')
-    //debugger
-    //$('#status').css('line-height', lh);
     axutil.barchart( '#status', bardata, 1.2 * maxi, font)
-     //$('#status').html( 'barchart')
   } // show_best_moves()
   show_best_moves.data = {}
 
