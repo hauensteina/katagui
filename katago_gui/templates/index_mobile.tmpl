@@ -299,13 +299,11 @@
           <br>
           <div align='left'>
             <table width='80%'>
-              {% if current_user.data['username'].strip().lower().startswith('guest') %}
-                <tr align='center' height='90px'>
-                  <td>
-                    <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Guest (10 blocks)')}}</label>
-                  </td>
-                </tr>
-              {% endif %}
+              <tr align='center' height='90px'>
+                <td>
+                  <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Guest (10 blocks)')}}</label>
+                </td>
+              </tr>
               <tr align='center' height='90px'>
                 <td>
                   <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Fast (20 blocks)')}}</label>
