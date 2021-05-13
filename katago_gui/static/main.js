@@ -1128,11 +1128,7 @@ function main( JGO, axutil, p_options) {
       } else if ($('#btn_tgl_fast').hasClass('active')) {
         return fast_or_strong('fast')
       } else {
-        if (!settings('logged_in')) {
-          return fast_or_strong('guest')
-        } else { // logged in, use 20b
-          return fast_or_strong('fast')
-        }
+        return fast_or_strong('guest')
       }
     } // if getter
     // setter
@@ -1140,9 +1136,11 @@ function main( JGO, axutil, p_options) {
       if (!settings('logged_in')) {
         return fast_or_strong( 'guest')
       } else if ($('#btn_tgl_strong').hasClass('active')) {
-        return fast_or_strong('fast')
-      } else {
+        return fast_or_strong('guest')
+      } else if ($('#btn_tgl_fast').hasClass('active')) {
         return fast_or_strong('strong')
+      } else { // guest goes to fast
+        return fast_or_strong('fast')
       }
     }
     else if (val == 'strong' || val == 'fast') {
@@ -1174,7 +1172,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
-      axutil.set_attr( '#img_bot', 'src', 'static/kata.png')
+      axutil.set_attr( '#img_bot', 'src', 'static/kata-gray.png')
       return GUEST
     }
     return 0
