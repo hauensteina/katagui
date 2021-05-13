@@ -885,9 +885,14 @@ function main( JGO, axutil, p_options) {
 
   //--------------------------
   function load_state() {
-    fast_or_strong('guest')
     if (localStorage.getItem('fast_or_strong') == 'strong') {
       fast_or_strong('strong')
+    }
+    else if (localStorage.getItem('fast_or_strong') == 'fast') {
+      fast_or_strong('fast')
+    }
+    else {
+      fast_or_strong('guest')
     }
     if (localStorage.getItem('game_record') === null) { return }
     if (localStorage.getItem('game_record') === 'null') { return }
@@ -898,7 +903,7 @@ function main( JGO, axutil, p_options) {
     if (localStorage.getItem('bot_active') == 'false') { bot_active('off') } else { bot_active('on') }
     $('#lb_komi').html( tr('Komi') + ': ' + g_komi)
     goto_move( grec.pos())
-  }
+  } // load_state()
 
   //======================
   // Winning probability
@@ -1125,7 +1130,7 @@ function main( JGO, axutil, p_options) {
     if (typeof val == 'undefined') { // getter
       if ($('#btn_tgl_strong').hasClass('active')) {
         return fast_or_strong('strong')
-      } else if ($('#btn_tgl_fast').hasClass('active')) {
+      } else if ($('#btn_tgl_fast').hasClass('active') ) {
         return fast_or_strong('fast')
       } else {
         return fast_or_strong('guest')
@@ -1168,6 +1173,7 @@ function main( JGO, axutil, p_options) {
       }
     }
     else { // val == guest
+      //debugger
       $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
@@ -1192,6 +1198,13 @@ function main( JGO, axutil, p_options) {
   }
   else {
     window.onbeforeunload = save_state
+  }
+
+  // Use 20b by default if logged in
+  //debugger
+  if (settings( 'logged_in')) {
+    fast_or_strong( 'fast')
+    save_state()
   }
 
   // Save game record once a second
