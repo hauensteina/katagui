@@ -1184,28 +1184,8 @@ function main( JGO, axutil, p_options) {
     return 0
   } // fast_or_strong()
 
-  var grec = new GameRecord()
-  settings()
-  set_btn_handlers()
-  set_dropdown_handlers()
-  reset_game()
-  setup_jgo()
-  selfplay('off')
-  document.onkeydown = check_key
-
-  if (p_options.mobile) {
-    window.onpagehide = save_state
-  }
-  else {
-    window.onbeforeunload = save_state
-  }
-
-  // Use 20b by default if logged in
-  //debugger
-  if (settings( 'logged_in')) {
-    fast_or_strong( 'fast')
-    save_state()
-  }
+  // Translation function for Jinja templates
+  function tr( text) { if (serverData) { return serverData.translate( text) } return text }
 
   // Save game record once a second
   function once_per_sec() {
@@ -1215,10 +1195,41 @@ function main( JGO, axutil, p_options) {
   }
   once_per_sec.timer = null
 
-  var serverData = new ServerData( axutil, ()=>{
-    load_state()
-    get_handicap()
-    once_per_sec()
-  })
-  function tr( text) { if (serverData) { return serverData.translate( text) } return text }
-} // function main()
+  // Global vars
+  var grec // The game record
+  var serverData // Translation table and user info (e.g. their language)
+
+  onRefresh()
+
+  // Things that happen on page load and refresh
+  //-----------------------------------------------
+  function onRefresh() {
+    grec = new GameRecord()
+    settings()
+    set_btn_handlers()
+    set_dropdown_handlers()
+    reset_game()
+    setup_jgo()
+    selfplay('off')
+    document.onkeydown = check_key
+
+    if (p_options.mobile) {
+      window.onpagehide = save_state
+    }
+    else {
+      window.onbeforeunload = save_state
+    }
+
+    // Use 20b by default if logged in
+    if (settings( 'logged_in')) {
+      fast_or_strong( 'fast')
+    }
+
+    var serverData = new ServerData( axutil, ()=>{
+      load_state()
+      get_handicap()
+      once_per_sec()
+    })
+  } // onRefresh()
+
+} // main()
