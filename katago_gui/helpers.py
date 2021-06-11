@@ -44,6 +44,7 @@ def fwd_to_katago( endpoint, args):
         url = 'http://' + ip + ':2819/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
+    # local testing
     #ip = '192.168.0.190'
     #url = 'http://' + ip + ':2718/' + endpoint
     resp = requests.post( url, json=args)
@@ -62,6 +63,7 @@ def fwd_to_katago_x( endpoint, args):
         url = 'http://' + ip + ':2820/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
+    # local testing
     #ip = '192.168.0.190'
     #url = 'http://' + ip + ':2718/' + endpoint
     resp = requests.post( url, json=args)
