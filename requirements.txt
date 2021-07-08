@@ -26,7 +26,7 @@ pycparser==2.20
 redis==3.5.3
 requests==2.25.0
 six==1.15.0
-urllib3==1.26.2
+urllib3==1.26.5
 Werkzeug==1.0.1
 WTForms==2.3.3
 zope.event==4.5.0
