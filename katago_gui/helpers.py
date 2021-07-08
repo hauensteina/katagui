@@ -96,7 +96,7 @@ def fwd_to_katago_guest( endpoint, args):
 def moves2sgf( moves, probs, scores, meta):
     meta = { k : ('' if v == 'undefined' else v) for (k,v) in meta.items() }
     sgf = '(;FF[4]SZ[19]\n'
-    sgf += 'SO[katago-one-playout.herokuapp.com]\n'
+    sgf += 'SO[katagui.baduk.club]\n'
     dtstr = meta['dt']
     if not dtstr: dtstr = datetime.now().strftime('%Y-%m-%d')
     km = meta['km']

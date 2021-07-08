@@ -38,7 +38,7 @@ def ttest():
 #-------------------------------
 def index():
     """ Main entry point """
-    if not check_https(): return redirect( 'https://katagui.herokuapp.com')
+    if not check_https(): return redirect( 'https://katagui.baduk.club')
     if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index.tmpl', home=True)
 
@@ -46,7 +46,7 @@ def index():
 #-------------------------------
 def index_mobile():
     """ Main entry point for mobile devices """
-    if not check_https(): return redirect( 'https://katagui.herokuapp.com')
+    if not check_https(): return redirect( 'https://katagui.baduk.club')
     if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index_mobile.tmpl', home=True)
 
