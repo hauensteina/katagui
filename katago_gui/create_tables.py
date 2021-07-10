@@ -6,6 +6,10 @@ def create_tables(db):
     create_t_user(db)
     create_t_game(db)
     create_v_games_24hours(db)
+    create_v_games_no_zobrist(db)
+    create_v_recent_users(db)
+    create_v_registered(db)
+    create_v_guests(db)
 
 def create_t_user(db):
     if db.table_exists( 't_user'): return
@@ -92,19 +96,56 @@ def create_v_games_no_zobrist(db):
     if db.table_exists( 'v_games_no_zobrist'): return
     sql = """
     create view v_games_no_zobrist as
-    with games  as (
-    select
-       g.game_hash game_hash
-       ,coalesce( extract ( epoch from g.ts_zobrist - g.ts_latest_move), -300) age
-    from
-       t_game g
-    where
-       game_record is not null
-       and not game_record = ''
+    WITH games AS (
+    SELECT g.game_hash,
+    COALESCE(date_part('epoch'::text, (g.ts_zobrist - g.ts_latest_move)), ('-300'::integer)::double precision) AS age
+    FROM t_game g
+    WHERE ((g.game_record IS NOT NULL) AND (NOT (g.game_record = ''::text)))
     )
-    select
-    *
-    from games
-    where age <= -300
+    SELECT games.game_hash,
+    games.age
+    FROM games
+    WHERE (games.age <= ('-300'::integer)::double precision)
+    """
+    db.run(sql)
+
+def create_v_recent_users(db):
+    if db.table_exists( 'v_recent_users'): return
+    sql = """
+    create view v_recent_users as
+    select t_user.username,
+    t_user.email,
+    (now() - t_user.ts_last_seen) AS t_idle
+    FROM t_user
+    ORDER BY (now() - t_user.ts_last_seen)
+    """
+    db.run(sql)
+
+def create_v_registered(db):
+    if db.table_exists( 'v_registered'): return
+    sql = """
+    create view v_registered as
+    SELECT t_user.username,
+    t_user.email,
+    t_user.ts_created,
+    t_user.email_verified,
+    (now() - t_user.ts_last_seen) AS t_idle
+    FROM t_user
+    WHERE (t_user.username !~~ 'guest_%'::text)
+    ORDER BY (now() - t_user.ts_last_seen)
+    """
+    db.run(sql)
+
+def create_v_guests(db):
+    if db.table_exists( 'v_guests'): return
+    sql = """
+    create view v_guests as
+    SELECT t_user.username,
+    t_user.email,
+    t_user.ts_created,
+    (now() - t_user.ts_last_seen) AS t_idle
+    FROM t_user
+    WHERE (t_user.username ~~ 'guest_%'::text)
+    ORDER BY (now() - t_user.ts_last_seen)
     """
     db.run(sql)
