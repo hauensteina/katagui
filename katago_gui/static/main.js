@@ -357,11 +357,11 @@ function main( JGO, axutil, p_options) {
       selfplay('off')
       axutil.hit_endpoint('cancel')
       var at_end = (grec.pos() == grec.len())
-      if (grec.pos() > 2 && grec.curmove().agent.indexOf('kata') >= 0 && grec.prevmove().agent == 'human') {
-        goto_move( grec.pos() - 2 )
-      } else {
-        goto_move( grec.pos() - 1)
-      }
+      //if (grec.pos() > 2 && grec.curmove().agent.indexOf('kata') >= 0 && grec.prevmove().agent == 'human') {
+      //  goto_move( grec.pos() - 2 )
+      //} else {
+      goto_move( grec.pos() - 1)
+      //}
       if (at_end) {
         grec.truncate()
         if (settings( 'game_hash')) { // we are in an active game
