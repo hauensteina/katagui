@@ -281,8 +281,9 @@ function main( JGO, axutil, p_options) {
     $('#btn_play').click( () => {
       selfplay('off')
       set_emoji()
-      bot_active( 'on')
-      botmove_if_active()
+      //bot_active( 'on')
+      //botmove_if_active()
+      get_katago_move()
     })
 
     $('#btn_tgl_selfplay').click( () => {
