@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.9.3'
+const VERSION = '3.9.4'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -58,7 +58,7 @@ class AhauxUtils
   // Store and retrieve global client-side settings
   //--------------------------------------------------------
   settings( key, value) {
-    const settings_defaults = { show_emoji:true, show_prob:true, logged_in:false, selfplay:false }
+    const settings_defaults = { show_emoji:true, show_prob:true, logged_in:false, selfplay:false, show_best_ten: false, play_a:false }
     var settings = JSON.parse( localStorage.getItem( 'settings'))
     if (!settings) {
       localStorage.setItem( 'settings', JSON.stringify( settings_defaults))

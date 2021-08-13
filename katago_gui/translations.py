@@ -207,6 +207,7 @@ _kor = {
     ,'Ended':'종료'
     ,'Try Again':'다시 시도'
     ,'Game Not Found':'기보를 찾을 수 없음'
+    ,'KataGo always plays at A':'KataGo는 항상 A에서 플레이합니다'
 }
 
 _chinese = {
@@ -321,6 +322,8 @@ _chinese = {
     ,'Ended':'已结束'
     ,'Try Again':'重试'
     ,'Game Not Found':'找不到对局'
+    ,'KataGo always plays at A':'KataGo 总是在 A 处比赛'
+
 }
 
 _japanese = {
@@ -435,6 +438,7 @@ _japanese = {
     ,'Ended':'終了しました'
     ,'Try Again':'もう一度'
     ,'Game Not Found':'対局が見つかりません'
+    ,'KataGo always plays at A':'KataGoは常にAでプレイします'
 }
 
 _langdict = { 'eng':_eng, 'kor':_kor, 'chinese':_chinese, 'japanese':_japanese }

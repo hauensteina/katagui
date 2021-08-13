@@ -135,6 +135,17 @@
           &nbsp; {{tr('Show best 10 (A-J)')}}
         </td>
       </tr>
+      <tr style='height:50px'>
+        <td>
+          <label class='switch'>
+            <input id='opt_play_a' type='checkbox'>
+            <span class='slider round'></span>
+          </label>
+        </td>
+        <td style='text-align:left;font-size:12pt'>
+          &nbsp; {{tr('KataGo always plays at A')}}
+        </td>
+      </tr>
       <tr style='height:100px'>
         <td colspan='2' align='center'>
           <label id='btn_settings_done' class='btn btn-outline-dark' style='font-size:15pt;'>{{tr('Save')}}</label>
@@ -149,6 +160,7 @@
        var settings = JSON.parse( localStorage.getItem( 'settings'))
        if ('show_emoji' in settings) { $('#opt_show_emoji').prop('checked', settings.show_emoji)}
        if ('show_prob'  in settings) { $('#opt_show_prob').prop('checked', settings.show_prob)}
+       if ('play_a'  in settings) { $('#opt_play_a').prop('checked', settings.play_a)}
        if ('show_best_ten'  in settings) { $('#opt_show_best_ten').prop('checked', settings.show_best_ten)}
        $('[id^=btn_tgl_selfplay]').removeClass('active')
        var sp_id = '#btn_tgl_selfplay_normal'
@@ -177,6 +189,7 @@
          settings.show_emoji = $('#opt_show_emoji').prop('checked')
          settings.show_prob = $('#opt_show_prob').prop('checked')
          settings.show_best_ten = $('#opt_show_best_ten').prop('checked')
+         settings.play_a = $('#opt_play_a').prop('checked')
          localStorage.setItem('settings', JSON.stringify(settings))
          history.go(-1)
        })

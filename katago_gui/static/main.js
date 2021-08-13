@@ -642,6 +642,9 @@ function main( JGO, axutil, p_options) {
                                                      'config':{'komi':g_komi } },
                          (data) => {
                            if (greclen == grec.len()) { // user did not click in the meantime
+                             if (settings( 'play_a')) {
+                               data.bot_move = data.diagnostics.best_ten[0].move
+                             }
                              bot_move_callback(data) }
                          })
   } // get_katago_move()
