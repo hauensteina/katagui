@@ -24,7 +24,8 @@ from katago_gui.go_utils import coords_from_point
 from katago_gui import app, db, redis, REDIS_CHAN
 from katago_gui import dbmodel
 import katago_gui.translations
-from katago_gui.helpers import get_sgf_tag, fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, moves2sgf, login_as_guest
+from katago_gui.helpers import get_sgf_tag, moves2sgf, login_as_guest
+from katago_gui.helpers import fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_9, fwd_to_katago_13
 
 #--------------------------------------
 # API endpoints in alphabetical order
@@ -257,6 +258,60 @@ def select_move_x( bot_name):
         return jsonify( res)
     except:
         print( 'select move x error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
+
+@app.route('/select-move-9/<bot_name>', methods=['POST'])
+#-----------------------------------------------------------
+def select_move_9( bot_name):
+    """ Forward select-move to the katago server """
+    try:
+        current_user.record_activity()
+    except:
+        pass
+
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
+
+    res = fwd_to_katago_9( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move 9 error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
+
+@app.route('/select-move-13/<bot_name>', methods=['POST'])
+#-----------------------------------------------------------
+def select_move_13( bot_name):
+    """ Forward select-move to the katago server """
+    try:
+        current_user.record_activity()
+    except:
+        pass
+
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
+
+    res = fwd_to_katago_13( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move 13 error: %s' % res)
         return jsonify( {'result': 'error: forward failed' })
 
 @app.route('/server_ip', methods=['GET'])

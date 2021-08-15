@@ -91,6 +91,40 @@ def fwd_to_katago_guest( endpoint, args):
         print( 'args %s' % str(args))
     return res
 
+# Forward 9x9 request to katago server
+#------------------------------------------
+def fwd_to_katago_9( endpoint, args):
+    try:
+        ip = db.get_parm( 'server_ip')
+        url = 'http://' + ip + ':2822/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
+
+    resp = requests.post( url, json=args)
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago_9()')
+        print( 'args %s' % str(args))
+    return res
+
+# Forward 13x13 request to katago server
+#------------------------------------------
+def fwd_to_katago_13( endpoint, args):
+    try:
+        ip = db.get_parm( 'server_ip')
+        url = 'http://' + ip + ':2823/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
+
+    resp = requests.post( url, json=args)
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago_13()')
+        print( 'args %s' % str(args))
+    return res
+
 # Convert a list of moves like ['Q16',...] to sgf
 #---------------------------------------------------
 def moves2sgf( moves, probs, scores, meta):
