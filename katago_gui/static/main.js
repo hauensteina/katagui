@@ -417,6 +417,7 @@ function main( JGO, axutil, p_options) {
     if (action == 'on') {
       $('#btn_tgl_selfplay').css('background-color','rgb(40, 167, 69)')
       fast_or_strong( 'fast')
+      selfplay.ready = true
       return $('#btn_tgl_selfplay').addClass('btn-success')
     }
     else if (action == 'off') {
