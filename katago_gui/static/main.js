@@ -481,7 +481,7 @@ function main( JGO, axutil, p_options) {
           else if (grec.pos() < 150) { return false }
           else if (g_handi < 2 && ( grec.curmove().p < 0.02 ||  grec.curmove().p > (1.0 - 0.02))) { return true }
           else if (g_handi < 3 && ( grec.curmove().p < 0.01 ||  grec.curmove().p > (1.0 - 0.01))) { return true }
-          else if (curmove.score > 10.0) {
+          else if (grec.curmove().score > 10.0) {
             if (grec.curmove().p < 0.001 ||  grec.curmove().p > (1.0 - 0.001)) { return true }
           }
           return false
