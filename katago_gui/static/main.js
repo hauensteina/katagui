@@ -475,11 +475,22 @@ function main( JGO, axutil, p_options) {
           //$('#status').html('')
           return
         }
+
+        function selfplay_game_over() {
+          if (!grec.curmove()) { return false }
+          else if (grec.pos() < 150) { return false }
+          else if (g_handi < 2 && ( grec.curmove().p < 0.02 ||  grec.curmove().p > (1.0 - 0.02))) { return true }
+          else if (g_handi < 3 && ( grec.curmove().p < 0.01 ||  grec.curmove().p > (1.0 - 0.01))) { return true }
+          else if (curmove.score > 10.0) {
+            if (grec.curmove().p < 0.001 ||  grec.curmove().p > (1.0 - 0.001)) { return true }
+          }
+          return false
+        } // selfplay_game_over()
+
         // If game ended, start from beginning
         if (grec.curmove()) {
-          if ((grec.curmove().p < 0.05) // W wins
-              || (grec.curmove().p > 0.95) // B wins
-               || set_load_sgf_handler.loaded_game) // we're at the end of a loaded game
+          if (selfplay_game_over()
+              || set_load_sgf_handler.loaded_game) // we're at the end of a loaded game
           {
             selfplay.ready = true
             if (!selfplay('ison')) return;
