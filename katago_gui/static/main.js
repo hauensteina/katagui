@@ -34,6 +34,8 @@ function main( JGO, axutil, p_options) {
   var g_play_btn_buffer = false // buffer one play btn click
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
+  // prisoner count; elt 0 unused; prisoners[1] counts the white stones who are B's prisoners;
+  var g_prisoners = [0,0,0] 
 
   var g_komi = 6.5
   var g_handi = 0
@@ -243,6 +245,17 @@ function main( JGO, axutil, p_options) {
   function set_btn_handlers() {
     set_load_sgf_handler()
     var_button_state( 'off')
+
+    $('#movenum').click( () => {
+      var e = $('#movenum')
+      if (e.html().includes('/')) { // currently showing moves
+        var html = tr('B') + `:${g_prisoners[1]} `
+        html += tr('W') + `:${g_prisoners[2]} `
+        e.html(html)
+      } else { // currently showing prisoners
+        show_movenum()
+      }
+    }) 
 
     $('#img_bot, #descr_bot').click( () => {
       selfplay('off')
@@ -743,6 +756,7 @@ function main( JGO, axutil, p_options) {
     if (play.success) {
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
+      g_prisoners[player] = node.info.captures[player]
       node.setType( coord, player) // play stone
       node.setType( play.captures, JGO.CLEAR) // clear opponent's stones
 
