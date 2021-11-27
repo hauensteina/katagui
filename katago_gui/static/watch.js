@@ -21,9 +21,8 @@ function watch( JGO, axutil, game_hash, p_options) {
   var g_last_move = null // last move coordinate
   var g_best_btn_buffer = false // buffer one best btn click
   var g_click_coord_buffer = null // buffer one board click
-
-  //var g_komi = 7.5
-  //var grec.handicap = 0
+  // prisoner count; elt 0 unused; prisoners[1] counts the white stones who are B's prisoners;
+  var g_prisoners = [0,0,0] 
 
   //================
   // UI Callbacks
@@ -445,6 +444,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (play.success) {
       var node = g_jrecord.createNode( true)
       node.info.captures[player] += play.captures.length // tally captures
+      g_prisoners[player] = node.info.captures[player]
       node.setType( coord, player) // play stone
       node.setType( play.captures, JGO.CLEAR) // clear opponent's stones
 
@@ -522,9 +522,10 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (!grec.len()) { return }
     var totmoves = grec.len()
     var n = grec.pos()
-    var var_or_main = 'var'
-
-    $('#movenum').html( `${n} / ${totmoves}`)
+    var html = `${n} / ${totmoves}<br>`
+    html += tr('B') + `:${g_prisoners[1]} `
+    html += tr('W') + `:${g_prisoners[2]} `
+    $('#movenum').html(html)
   } // show_movenum()
 
   //======================

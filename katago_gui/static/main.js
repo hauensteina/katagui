@@ -246,17 +246,6 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
-    $('#movenum').click( () => {
-      var e = $('#movenum')
-      if (e.html().includes('/')) { // currently showing moves
-        var html = tr('B') + `:${g_prisoners[1]} `
-        html += tr('W') + `:${g_prisoners[2]} `
-        e.html(html)
-      } else { // currently showing prisoners
-        show_movenum()
-      }
-    }) 
-
     $('#img_bot, #descr_bot').click( () => {
       selfplay('off')
       fast_or_strong('toggle')
@@ -843,7 +832,10 @@ function main( JGO, axutil, p_options) {
     if (!grec.len()) { return }
     var totmoves = grec.len()
     var n = grec.pos()
-    $('#movenum').html( `${n} / ${totmoves}`)
+    var html = `${n} / ${totmoves}<br>`
+    html += tr('B') + `:${g_prisoners[1]} `
+    html += tr('W') + `:${g_prisoners[2]} `
+    $('#movenum').html(html)
   } // show_movenum()
 
   //======================
