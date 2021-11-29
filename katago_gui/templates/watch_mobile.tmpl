@@ -27,14 +27,20 @@
 
     <tr><td id='board'> </td></tr>
     <!-- Status and Emoji -->
-    <!-- <tr><td> &nbsp; </td></tr> -->
-    <tr style='transform:translate(0,-10px)'><td>
-      <div class='container-fluid'>
-        <div class='row center'>
-          <div id='movenum' class='col-3' style='font-size:26pt;margin:auto'> &nbsp; </div>
-          <div id='status' class='col-6 align-middle' style='font-size:26pt;margin:auto;height:140px;line-height:140px'> &nbsp; </div>
-          <div id='emo' class='col-3' style='font-size:60pt;margin:auto'> &nbsp; </div>
-        </div>
+    <tr><td>
+      <div class='row justify-content-center'>
+        <table class='center' style='width:100%;border-collapse:collapse'>
+          <tr>
+            <td id='movenum' align='center' style='font-size:18pt' width='30%'> &nbsp;</td>
+            <td align='center' width='40%'>
+              <table width='100%'>
+                <tr><td id='bestscore' class='nomarg' align='center' style='height:30px'></td></tr>
+                <tr><td id='status' class='nomarg' align='center' style='font-size:18pt;height:100px;vertical-align:top' width='30%'>yy</td></tr>
+              </table>
+            </td>
+            <td id='emo' align='center' style='font-size:60pt' width='30%' height='60px'> &nbsp;</td>
+          </tr>
+        </table>          
       </div>
     </td></tr>
     <!-- Buttons -->

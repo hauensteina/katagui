@@ -77,7 +77,7 @@ function main( JGO, axutil, p_options) {
       $('#lb_komi').html( tr('Komi') + ': ' + g_komi)
       set_emoji();
       bot_active( 'on')
-      $('#status').html( '&nbsp;')
+      clear_status()
 
       // create new game in db
       axutil.hit_endpoint_simple( '/create_game',{'handicap':g_handi, 'komi':g_komi},
@@ -136,7 +136,7 @@ function main( JGO, axutil, p_options) {
   //-------------------------------
   function best_btn_callback() {
     selfplay('off')
-    $('#status').html( tr('KataGo is thinking ...'))
+    set_status( tr('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move( (data) => {
       show_best_moves(data)
@@ -170,8 +170,30 @@ function main( JGO, axutil, p_options) {
     var font = '10px sans-serif'
     if (p_options.mobile) { font = '20px sans-serif' }
     axutil.barchart( '#status', bardata, 1.2 * maxi, font)
+    // Also show score and winning prob
+    var scorestr = get_scorestr(data.diagnostics.winprob, data.diagnostics.score)
+    $('#bestscore').html(scorestr)
+    $('#bestscore').css({'font':'10px sans-serif'})
+    if (p_options.mobile) { $('#bestscore').css({'font':'20px sans-serif'}) }
   } // show_best_moves()
   show_best_moves.data = {}
+
+  // Make a string like 'P(B wins): 0.56  B+0.5'
+  //----------------------------------------------
+  function get_scorestr( p, score) {
+    score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
+    var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
+    if (score < 0) {
+      scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
+    }
+    scorestr += Math.abs(score)
+    var res = tr('P(B wins)') + ': ' + p.toFixed(2)
+    if (typeof(score) !== 'undefined') {
+      res += scorestr
+    }
+    if (p == 0 && score == 0) { res = '' }
+    return res
+  } // get_scorestr()
 
   // Black moves at the beginning are handicap
   //--------------------------------------------
@@ -377,7 +399,7 @@ function main( JGO, axutil, p_options) {
     $('#btn_next').click( btn_next)
     $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); bot_active('off') })
     $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); bot_active('off') })
-    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); bot_active('off'); $('#status').html( '&nbsp;') })
+    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); bot_active('off'); clear_status() })
     $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); bot_active('off') })
 
     // Prevent zoom on double tap
@@ -444,7 +466,7 @@ function main( JGO, axutil, p_options) {
 
     function cb_selfplay() { // timer callback
       clearTimeout( selfplay.timer)
-      $('#status').html('')
+      clear_status()
       if (selfplay('ison')) {
         selfplay.timer = setTimeout( cb_selfplay, interval)
       }
@@ -466,15 +488,14 @@ function main( JGO, axutil, p_options) {
           if (!selfplay('ison')) return;
           goto_move( grec.pos() + 1)
           if (grec.curmove().p == 0) {
-            get_prob_genmove( (data) => { if (!settings('show_prob')) { $('#status').html('') }
+            get_prob_genmove( (data) => { if (!settings('show_prob')) { clear_status() }
                                           if (settings('show_emoji')) { update_emoji() }
                                         } )
           }
           else {
-            if (!settings('show_prob')) { $('#status').html('') }
+            if (!settings('show_prob')) { clear_status() }
             if (settings('show_emoji')) { update_emoji() }
           }
-          //$('#status').html('')
           return
         }
 
@@ -498,7 +519,7 @@ function main( JGO, axutil, p_options) {
             if (!selfplay('ison')) return;
             grec.update( 0,0)
             goto_move(0)
-            $('#status').html('')
+            clear_status()
             return
           }
         }
@@ -515,7 +536,6 @@ function main( JGO, axutil, p_options) {
                                replay_moves( grec.pos())
                                const playing = true
                                get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, settings('show_emoji'), playing)
-                               //$('#status').html('')
                              }) // hit_endpoint()
       } // if ready
     } // cb_selfplay()
@@ -550,7 +570,7 @@ function main( JGO, axutil, p_options) {
         g_komi = res.komi
         get_handicap()
         show_game_info( res)
-        $('#status').html('')
+        clear_status()
         set_load_sgf_handler.loaded_game = res
         $('#sgf-file').val('') // reset to make sure it triggers again
       })
@@ -650,7 +670,7 @@ function main( JGO, axutil, p_options) {
 
   //-----------------------------
   function get_katago_move() {
-    $('#status').html( tr('KataGo is thinking ...'))
+    set_status( tr('KataGo is thinking ...'))
     var greclen = grec.len()
     axutil.hit_endpoint( fast_or_strong().ep + BOT, {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()),
                                                      'config':{'komi':g_komi } },
@@ -682,11 +702,11 @@ function main( JGO, axutil, p_options) {
 
     if (data.bot_move == 'pass') {
       alert( tr('KataGo passes. Click on the Score button.'))
-      $('#status').html('')
+      clear_status()
     }
     else if (data.bot_move == 'resign') {
       alert( tr('KataGo resigns.'))
-      $('#status').html( tr('KataGo resigns.'))
+      set_status( tr('KataGo resigns.'))
       return
     }
     else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
@@ -697,7 +717,7 @@ function main( JGO, axutil, p_options) {
             )
     {
       alert( tr('KataGo resigns. You beat KataGo!'))
-      $('#status').html( tr('KataGo resigns.'))
+      set_status( tr('KataGo resigns.'))
       return
     }
     else {
@@ -854,7 +874,7 @@ function main( JGO, axutil, p_options) {
       goto_move( grec.pos())
       update_emoji(); bot_active('off')
       var_button_state('off')
-      $('#status').html( '')
+      clear_status()
     }
   } // handle_variation()
 
@@ -934,7 +954,7 @@ function main( JGO, axutil, p_options) {
   // Get current winning probability from genmove
   //-------------------------------------------------------------
   function get_prob_genmove( completion, update_emo, playing) {
-    $('#status').html( tr( 'Counting ...'))
+    set_status( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': g_komi } },
                          (data) => {
@@ -973,12 +993,11 @@ function main( JGO, axutil, p_options) {
   // Get the best move
   //----------------------------------------------------------
   function get_best_move( completion, update_emo, playing) {
-    $('#status').html( tr('KataGo is thinking ...'))
+    set_status( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': g_komi } },
                          (data) => {
                            if (completion) { completion(data) }
-                           //$('#status').html( '')
                          })
   } // get_best_move()
 
@@ -991,24 +1010,15 @@ function main( JGO, axutil, p_options) {
       // 0.8 -> 1.0; 1.3 -> 1.5 etc
       score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
       if (playing && !settings('show_prob')) {
-        $('#status').html('')
+        clear_status()
       } else {
-        var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
-        if (score < 0) {
-          scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
-        }
-        scorestr += Math.abs(score)
-        var tstr = tr('P(B wins)') + ': ' + p.toFixed(2)
-        if (typeof(cur.score) !== 'undefined') {
-          tstr += scorestr
-        }
-        if (p == 0 && score == 0) { tstr = '' }
-        $('#status').html(tstr)
+        var scorestr = get_scorestr(p,score)
+        set_status(scorestr)
       }
       // Show emoji
       if (update_emo) { update_emoji() }
     } else {
-      $('#status').html('')
+      clear_status()
     }
   } // show_prob()
 
@@ -1078,7 +1088,7 @@ function main( JGO, axutil, p_options) {
   // Score the current position with katago.
   //-------------------------------------------
   function score_position() {
-    $('#status').html( 'Scoring...')
+    set_status( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()),
                           'config':{'komi':g_komi }, 'tt':Math.random() },
@@ -1114,6 +1124,18 @@ function main( JGO, axutil, p_options) {
   // Misc
   //=======
 
+  //----------------------------
+  function clear_status() {
+    $('#status').html('')
+    $('#bestscore').html('')    
+  }
+
+  //----------------------------
+  function set_status(x) {
+    clear_status()
+    $('#status').html(x)    
+  }
+  
   // Show a translucent hover stone
   //---------------------------------
   function hover( coord, col, opts) {

@@ -66,7 +66,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   //-------------------------------
   function best_btn_callback() {
     toggle_live_button( 'off')
-    $('#status').html( tr('KataGo is thinking ...'))
+    set_status( tr('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move( (data) => {
       show_best_moves(data)
@@ -100,8 +100,30 @@ function watch( JGO, axutil, game_hash, p_options) {
     var font = '10px sans-serif'
     if (p_options.mobile) { font = '20px sans-serif' }
     axutil.barchart( '#status', bardata, 1.2 * maxi, font)
+    // Also show score and winning prob
+    var scorestr = get_scorestr(data.diagnostics.winprob, data.diagnostics.score)
+    $('#bestscore').html(scorestr)
+    $('#bestscore').css({'font':'10px sans-serif'})    
+    if (p_options.mobile) { $('#bestscore').css({'font':'20px sans-serif'}) }
   } // show_best_moves()
   show_best_moves.data = {}
+
+  // Make a string like 'P(B wins): 0.56  B+0.5'
+  //----------------------------------------------
+  function get_scorestr( p, score) {
+    score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
+    var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
+    if (score < 0) {
+      scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
+    }
+    scorestr += Math.abs(score)
+    var res = tr('P(B wins)') + ': ' + p.toFixed(2)
+    if (typeof(score) !== 'undefined') {
+      res += scorestr
+    }
+    if (p == 0 && score == 0) { res = '' }
+    return res
+  } // get_scorestr()
 
   //---------------------------
   function resize_board() {
@@ -244,7 +266,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     $('#btn_next').click( btn_next)
     $('#btn_back10').click( () => { toggle_live_button( 'off'); goto_move( grec.pos() - 10); update_emoji() })
     $('#btn_fwd10').click( () => { toggle_live_button( 'off'); goto_move( grec.pos() + 10); update_emoji() })
-    $('#btn_first').click( () => { toggle_live_button( 'off'); goto_move(0); set_emoji(); $('#status').html( '&nbsp;') })
+    $('#btn_first').click( () => { toggle_live_button( 'off'); goto_move(0); set_emoji(); clear_status() })
     $('#btn_last').click( () => { toggle_live_button( 'off'); goto_move( grec.len()); update_emoji() })
 
     // Prevent zoom on double tap
@@ -400,11 +422,11 @@ function watch( JGO, axutil, game_hash, p_options) {
 
     if (data.bot_move == 'pass') {
       alert( tr('KataGo passes. Click on the Score button.'))
-      $('#status').html('')
+      clear_status()
     }
     else if (data.bot_move == 'resign') {
       alert( tr('KataGo resigns.'))
-      $('#status').html( tr('KataGo resigns.'))
+      set_status( tr('KataGo resigns.'))
       return
     }
     else if ( (var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
@@ -415,7 +437,7 @@ function watch( JGO, axutil, game_hash, p_options) {
             )
     {
       alert( tr('KataGo resigns. You beat KataGo!'))
-      $('#status').html( tr('KataGo resigns.'))
+      set_status( tr('KataGo resigns.'))
       return
     }
     else {
@@ -544,7 +566,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       goto_move( grec.pos())
       update_emoji();
       var_button_state('off')
-      $('#status').html( '')
+      clear_status()
     }
   } // handle_variation()
 
@@ -588,7 +610,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Get current winning probability from genmove
   //-------------------------------------------------------------
   function get_prob_genmove( completion, update_emo) {
-    $('#status').html( tr( 'Counting ...'))
+    set_status( tr( 'Counting ...'))
     axutil.hit_endpoint( fast_or_strong().ep + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': grec.komi } },
                          (data) => {
@@ -621,19 +643,16 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Get the best move
   //----------------------------------------------------------
   function get_best_move( completion) {
-    $('#status').html( tr('KataGo is thinking ...'))
+    set_status( tr('KataGo is thinking ...'))
     axutil.hit_endpoint( '/select-move-x/' + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi': grec.komi } },
                          (data) => {
                            if (completion) { completion(data) }
-                           //$('#status').html( '')
                          })
   } // get_best_move()
 
   //------------------------------------------
   function show_prob( update_emo) {
-    //$('#status').css('height', '140px');
-    //$('#status').css('line-height', '');
     var cur = grec.curmove()
     if (cur) {
       var p = cur.p
@@ -641,24 +660,16 @@ function watch( JGO, axutil, game_hash, p_options) {
       // 0.8 -> 1.0; 1.3 -> 1.5 etc
       score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
       if (p == 0 && score == 0) {
-        set_emoji(); $('#status').html('')
+        set_emoji(); clear_status()
         return
       }
-      var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
-      if (score < 0) {
-        scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
-      }
-      scorestr += Math.abs(score)
-      var tstr = tr('P(B wins)') + ': ' + p.toFixed(2) + '&nbsp;'
-      if (typeof(cur.score) !== 'undefined') {
-        tstr += scorestr
-      }
-      $('#status').html(tstr)
-
+      var scorestr = get_scorestr(p,score)
+      set_status(scorestr)
+      
       // Show emoji
       if (update_emo) { update_emoji() }
     } else {
-      $('#status').html('')
+      clear_status()
     }
   } // show_prob()
 
@@ -728,7 +739,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   // Score the current position with katago.
   //-------------------------------------------
   function score_position() {
-    $('#status').html( 'Scoring...')
+    set_status( 'Scoring...')
     axutil.hit_endpoint( '/score/' + BOT,
                          {'board_size': BOARD_SIZE, 'moves': axutil.moves_only( grec.board_moves()), 'config':{'komi':grec.komi }, 'tt':Math.random() },
                          (data) => {
@@ -762,6 +773,18 @@ function watch( JGO, axutil, game_hash, p_options) {
   //=======
   // Misc
   //=======
+
+  //----------------------------
+  function clear_status() {
+    $('#status').html('')
+    $('#bestscore').html('')    
+  }
+
+  //----------------------------
+  function set_status(x) {
+    clear_status()
+    $('#status').html(x)    
+  }
 
   // Show a translucent hover stone
   //---------------------------------

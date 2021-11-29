@@ -80,6 +80,16 @@
    .slider.round:before {
      border-radius: 50%;
    }
+
+   /* table, td, th {
+      border: 1px solid black;
+      } */
+   
+   .nomarg {
+     padding:0;
+     margin:0;
+   }
+
   </style>
 {% endblock css %}
 
@@ -147,17 +157,28 @@
           <div class='row justify-content-center'>
             <table class='center' width='100%'>
               <tr>
-                <td id='movenum' align='center' style='font-size:13pt' width='30%'> &nbsp;</td>
-                <td id='status' align='center'
-                    style='font-size:13pt;border:0px solid #00ff00; '
-                    width='40%'> &nbsp;</td>
-                <td id='emo' align='center' style='font-size:30pt' width='30%' height='60px'> &nbsp;</td>
+                <td align='center' width='30%'>
+                  <table width='100%'>
+                    <tr><td class='nomarg' align='center' style='height:15px'></td></tr>
+                    <tr><td id='movenum' class='nomarg' align='center' style='font-size:10pt;height:60px' width='30%'>&nbsp;</td></tr>
+                  </table>
+                </td>
+                <td align='center' width='40%'>
+                  <table width='100%'>
+                    <tr><td id='bestscore' class='nomarg' align='center' style='height:15px'></td></tr>
+                    <tr><td id='status' class='nomarg' align='center' style='font-size:13pt;height:60px' width='30%'>&nbsp;</td></tr>
+                  </table>
+                </td>
+                <td align='center' width='30%'> 
+                  <table width='100%'>
+                    <tr><td class='nomarg' align='center' style='height:15px'></td></tr>
+                    <tr><td id='emo' class='nomarg' align='center' style='font-size:30pt;height:60px' width='30%'>&nbsp;</td></tr>
+                  </table>
+                </td>
               </tr>
             </table>
           </div>
-        </div>                <!--col-12-->
-        </div>                  <!--row-->
-        </div>                    <!--container-->
+        </div>
       </td>
       <td style='vertical-align:top' width='300px'>                      <!--right-->
         <div class='container' >
