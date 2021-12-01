@@ -368,6 +368,11 @@ function main( JGO, axutil, p_options) {
       score_position()
     })
 
+    $('#btn_bot').click( () => { 
+      selfplay('off')
+      fast_or_strong('toggle')
+    })
+
     $('#btn_pass').click( () => {
       selfplay('off')
       if (score_position.active) { goto_move( grec.pos()); return }
@@ -1199,6 +1204,7 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_strong').addClass('active')
           $('#btn_tgl_fast').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
+          $('#btn_bot').html('Kata 40b')
           axutil.set_attr( '#img_bot', 'src', 'static/kata-red.png')
           return STRONG
         } else if (val == 'fast') {
@@ -1206,6 +1212,7 @@ function main( JGO, axutil, p_options) {
           $('#btn_tgl_fast').addClass('active')
           $('#btn_tgl_strong').removeClass('active')
           $('#btn_tgl_guest').removeClass('active')
+          $('#btn_bot').html('Kata 20b')
           axutil.set_attr( '#img_bot', 'src', 'static/kata.png')
           return FAST
         }
@@ -1222,6 +1229,7 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
+      $('#btn_bot').html('Kata 10b')
       axutil.set_attr( '#img_bot', 'src', 'static/kata-gray.png')
       return GUEST
     }
