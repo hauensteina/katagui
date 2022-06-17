@@ -654,7 +654,9 @@ function main( JGO, axutil, p_options) {
       e.preventDefault()
       btn_best()
     }
-    else if (e.keyCode == '40') { // down arrow
+    // Ctrl-down toggles mark-last-move
+    else if (check_key.ctrl_pressed && e.keyCode == '40') { // down arrow
+      show_move.mark_last_move = !show_move.mark_last_move
     }
     else if (e.keyCode == '37') { // left arrow
       btn_prev()
@@ -780,7 +782,9 @@ function main( JGO, axutil, p_options) {
       if (g_ko) {
         node.setMark( g_ko, JGO.MARK.NONE) // clear previous ko mark
       }
-      node.setMark( coord, JGO.MARK.CIRCLE) // mark move
+      if (show_move.mark_last_move) {
+        node.setMark( coord, JGO.MARK.CIRCLE) // mark move
+      }
       g_last_move = coord
 
       if(play.ko)
@@ -788,6 +792,7 @@ function main( JGO, axutil, p_options) {
       g_ko = play.ko
     }
   } // show_move()
+  show_move.mark_last_move = true
 
   //------------------------
   function goto_first_move() {
