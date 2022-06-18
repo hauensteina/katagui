@@ -268,6 +268,10 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
+    $('#username').click( () => {
+      show_move.mark_last_move = !show_move.mark_last_move
+    })
+
     $('#img_bot, #descr_bot').click( () => {
       selfplay('off')
       fast_or_strong('toggle')
