@@ -113,9 +113,9 @@
                 </a>
               </td>
               {% if logged_in() %}
-                <td id='username' class='font-m class-allow' align='right'>{{ current_user.data["username"] }}</td>
+                <td id='username' class='font-m touch-allow' align='right'>{{ current_user.data["username"] }}</td>
               {% else %}
-                <td id='username' class='font-m class-allow' align='right'>{{tr('Guest')}}</td>
+                <td id='username' class='font-m touch-allow' align='right'>{{tr('Guest')}}</td>
               {% endif %}
               <td width='20px'></td>
             </tr>
