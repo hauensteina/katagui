@@ -20,7 +20,7 @@ idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
-numpy==1.19.4
+numpy==1.22.0
 psycopg2==2.8.6
 pycparser==2.20
 redis==3.5.3
