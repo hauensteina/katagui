@@ -13,6 +13,7 @@ import os,random
 import logging
 import redis
 import gevent
+from urllib.parse import urlparse
 
 from flask import Flask
 from flask_bcrypt import Bcrypt
@@ -77,9 +78,11 @@ app.config['MAIL_PASSWORD'] = os.environ.get('KATAGUI_EMAIL_PASS')
 mail = Mail(app)
 
 # Redis and websockets for server push needed to watch games
-REDIS_URL = os.environ['REDISTOGO_URL']
+REDIS_URL = os.environ['REDIS_TLS_URL']
+url = urlparse(REDIS_URL)
+redis = redis.Redis( host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
+#redis = redis.from_url(REDIS_URL)
 REDIS_CHAN = 'watch'
-redis = redis.from_url(REDIS_URL)
 
 from katago_gui.create_tables import create_tables
 create_tables( db)
