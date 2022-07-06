@@ -78,7 +78,7 @@ app.config['MAIL_PASSWORD'] = os.environ.get('KATAGUI_EMAIL_PASS')
 mail = Mail(app)
 
 # Redis and websockets for server push needed to watch games
-REDIS_URL = os.environ['REDIS_TLS_URL']
+REDIS_URL = os.environ['REDIS_URL']
 url = urlparse(REDIS_URL)
 redis = redis.Redis( host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
 #redis = redis.from_url(REDIS_URL)
