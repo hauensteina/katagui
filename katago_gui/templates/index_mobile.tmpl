@@ -188,7 +188,7 @@
     <!-- <tr><td> &nbsp; </td></tr> -->
     <!-- <tr style='transform:translate(0,-20px)'><td> -->
     <tr><td>
-        <div>
+      <div>
         <table class='center'><tr>
           <td>
             <label class='switch'>
@@ -222,6 +222,12 @@
         <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Score')}}</label>
         &nbsp;
         <label id='btn_bot' class='btn btn-outline-dark' style='font-size:22pt'>Kata 10b</label>
+        &nbsp;
+        <!-- <form method='post' enctype='multipart/form-data'> -->
+          <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
+            {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
+          </label>
+        <!-- </form> -->
       </div>
     </td></tr>
     <!-- Pass and Selfplay -->
@@ -243,20 +249,11 @@
         <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Last')}}</label>
       </div>
     </td></tr>
-    <!-- Input form for load sgf -->
-    <!-- <tr><td> &nbsp; </td></tr> -->
     <tr><td>
       <div>
         <table class='center'><tr>
           <td>
             <label id='btn_save' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Save Sgf')}}</label>
-          </td>
-          <td style='padding-left:5px'>
-            <form method='post' enctype='multipart/form-data'>
-              <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
-                {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
-              </label>
-            </form>
           </td>
         </tr> </table>
       </div>
