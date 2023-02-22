@@ -69,8 +69,7 @@
         </tr>
         <tr><td colspan='2'>
     {% else %}
-          <!-- <h1 style='color:red'> KATAGO IS DOWN. NO ELECTRICITY IN SAN MATEO, CA, USA. </h1> -->
-          <table class='center' style='width:100%' style='background-color:green'>
+          <table class='center' style='width:100%'>
             <!-- Page Header -->
             <tr style='background-color:green'>
               <td width='20px'>&nbsp</td>
@@ -93,12 +92,10 @@
               </td>
               <td width='20px' class=''>&nbsp;</td>
             </tr>
-          </table>
-          <table class='center' style='width:100%'>
-            <tr><td colspan='4' style='height:5px'></td></tr>
+            <tr><td colspan='4' style='height:5px;'></td></tr>
             <tr>
               <td width='20px'></td>
-              <td align='left'>
+              <td style='width:50%;' align='left'>
                 <a class='hlink' href="{{ url_for('korean') }}">
                   <img class='flag' border='0' height='30px' src='static/kor.png'>
                 </a>
