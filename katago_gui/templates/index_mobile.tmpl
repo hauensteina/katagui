@@ -97,10 +97,17 @@
 {% endblock css %}
 
 {% block content %}
-  <table class='center'>
-    <tr><td>&nbsp;</td></tr>
-    <tr><td>&nbsp;</td></tr>
-    <tr><td>
+
+  <div style='display:grid; grid-template-columns: 1fr fit-content(100%) 1fr;'>
+    <div></div>  
+    <div style='display:grid; grid-template-columns: 1fr;margin-top:50px;'>
+
+      <div class='center'>
+        <h3> Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> . </h3>
+        <br>
+        <br>
+      </div>
+
       <div class='container-fluid'>
         <div class='row'>
           <div class='col-4'>
@@ -115,79 +122,41 @@
           </div>
         </div>
       </div>
-    </td></tr>
-    <!-- <tr><td>
-         <table class='center' style='font-size:24pt;' width='800px'>
-         <tr><td id='donating'>
-         {{ donation_blurb(mobile=true) }}
-         </td></tr>
-         <tr><td>
-         <br>
-         <form action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_top' style='font-size:24pt;' >
-         <input type='hidden' name='cmd' value='_s-xclick' />
-         <input type='hidden' name='hosted_button_id' value='T322ZZH9TKMMN' />
-         <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit'
-         title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' width='300px'/>
-         <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
-         </form>
-         </td></tr>
-         </table>
-         <table class='center' style='font-size:22pt'>
-         <tr><td colspan='2' style='font-weight:bold'> {{tr('Top Three Donors')}} </td></tr>
-         <tr><td align='left'>Satoshi Banya</td> <td align='right'> &nbsp; 130 </td>  </tr>
-         <tr><td align='left'>Devin Fraze</td> <td align='right'> &nbsp; 120 </td>  </tr>
-         <tr><td align='left'>Larry Russ</td> <td align='right'> &nbsp; 111 </td>  </tr>
-         </table>
-         <br><br>
-         </td></tr> -->
-    <div class='center'>
-      <br>
-      <br>
-      <br>
-      <!-- <h3> KataGui will be down for maintenance on Mo Dec 13 and Tu Dec 14, 2021 </h3> -->
-      <h3> Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> . </h3>
-      <!-- Upgraded to KataGo v1.9.1 <br>
-           The 40b net is now kata1-b40c256-s9435250176-d2296927197, which is a recent community net. <br> -->
-    </div>
 
-    <tr><td>
-      <div class='col-12' style='font-size:30pt;margin:auto'>
-        <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-               style='font-size:40pt'>
-          {{tr('New Game')}}
-        </label> &nbsp;
-        <label id='btn_watch' class='btn btn-outline-dark' style='font-size:40pt'>
-          {{tr('Watch')}}
-        </label>
+      <div>
+        <div class='col-12' style='font-size:30pt;margin:auto'>
+          <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                 style='font-size:40pt'>
+            {{tr('New Game')}}
+          </label> &nbsp;
+          <label id='btn_watch' class='btn btn-outline-dark' style='font-size:40pt'>
+            {{tr('Watch')}}
+          </label>
+        </div>
+        <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
       </div>
-      <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
-    </td></tr>
-    <tr><td id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
-    <tr><td id='fname' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
-    <tr><td id='lb_komi' style='font-size:22pt;text-align:center'> &nbsp; </td></tr>
 
-    <tr><td id='board'> </td></tr>
-    <!-- Status and Emoji -->
-    <tr><td>
-      <div class='row justify-content-center'>
-        <table class='center' style='width:100%;border-collapse:collapse'>
-          <tr>
-            <td id='movenum' align='center' style='font-size:18pt' width='30%'> &nbsp;</td>
-            <td align='center' width='40%'>
-              <table width='100%'>
-                <tr><td id='bestscore' class='nomarg' align='center' style='height:30px'></td></tr>
-                <tr><td id='status' class='nomarg' align='center' style='font-size:18pt;height:100px;vertical-align:top' width='30%'>yy</td></tr>
-              </table>
-            </td>
-            <td id='emo' align='center' style='font-size:60pt' width='30%' height='60px'> &nbsp;</td>
-          </tr>
-        </table>          
+      <div id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </div>
+      <div id='fname' style='font-size:22pt;text-align:center'> &nbsp; </div>
+      <div id='lb_komi' style='font-size:22pt;text-align:center'> &nbsp; </div>
+
+      <div id=board> </div>
+
+      <!-- Status and Emoji -->
+      <div>
+        <div style='display:grid; grid-template-columns: 1fr 1fr 1fr;'>
+          <div id='movenum' style='font-size:18pt;margin-top:auto;margin-bottom:auto;'> &nbsp; </div>
+          <div>
+            <table width='100%'>
+              <tr><td id='bestscore' class='nomarg' align='center' style='height:30px'></td></tr>
+              <tr><td id='status' class='nomarg' align='center' style='font-size:18pt;height:100px;vertical-align:top' width='30%'>yy</td></tr>
+            </table>
+          </div>
+          <div id='emo' style='font-size:60pt' height='60px'> &nbsp; </div>
+        </div>
       </div>
-    </td></tr>
-    <!-- Play buttons -->
-    <!-- <tr><td> &nbsp; </td></tr> -->
-    <!-- <tr style='transform:translate(0,-20px)'><td> -->
-    <tr><td>
+
+      <!-- Play buttons -->
       <div>
         <table class='center'><tr>
           <td>
@@ -213,9 +182,8 @@
           </td>
         </tr></table>
       </div>
-    </td></tr>
-    <!-- Nav Buttons -->
-    <tr><td>
+
+      <!-- Nav Buttons -->
       <div>
         <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:22pt;'>{{tr('Back to Main Line')}}</label>
         &nbsp;
@@ -223,33 +191,27 @@
         &nbsp;
         <label id='btn_bot' class='btn btn-outline-dark' style='font-size:22pt'>Kata 10b</label>
         &nbsp;
-        <!-- <form method='post' enctype='multipart/form-data'> -->
         <label class='btn btn-outline-dark btn-file' style='font-size:22pt;'>
           {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
         </label>
-        <!-- </form> -->
       </div>
-    </td></tr>
-    <!-- More Nav Buttons -->
-    <!-- <tr><td> &nbsp; </td></tr> -->
-    <tr><td>
+
+      <!-- More Nav Buttons -->
       <div>
         <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('First')}}</label>
         <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Back 10')}}</label>
         <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Fwd 10')}}</label>
         <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Last')}}</label>
       </div>
-    </td></tr>
-    <!-- Pass and Selfplay -->
-    <!-- <tr><td> &nbsp; </td></tr> -->
-    <tr><td>
+
+      <!-- Pass and Selfplay -->
       <div>
         <label id='btn_pass' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Pass')}}</label>
         &nbsp;
         <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:22pt;'>{{tr('Self Play')}}</label>
       </div>
-    </td></tr>
-    <tr><td>
+
+      <!-- Save Button -->
       <div>
         <table class='center'><tr>
           <td>
@@ -257,14 +219,10 @@
           </td>
         </tr> </table>
       </div>
-    </td></tr>
-    <!-- Score Histogram -->
-    <!-- <tr><td> &nbsp; </td></tr> -->
-    <tr><td>
-      <div id='histo' class='center' style='width:750px;height:450px'>
-      </div>
-    </td></tr>
-  </table>
+      
+    </div>
+    <div></div>
+  </div>
 
   <!-- Modal dialog to pick komi and handicap -->
   <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>

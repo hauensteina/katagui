@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.9.12'
+const VERSION = '3.9.13'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -187,7 +187,7 @@ class AhauxUtils
              headers: {
                'Content-Type': 'application/json',
              },
-             body: JSON.stringify( args)
+             body: JSON.stringify( args),
 	   }
 	 ).then( (resp) => {
 	   resp.json().then( (resp) => {
@@ -223,7 +223,7 @@ class AhauxUtils
              headers: {
                'Content-Type': 'application/json',
              },
-             body: JSON.stringify( args)
+             body: JSON.stringify( args),
 	   }
 	 ).then( (resp) => {
 	   resp.json().then( (resp) => {

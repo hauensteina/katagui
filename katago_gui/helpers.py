@@ -79,6 +79,8 @@ def fwd_to_katago_x( endpoint, args):
 def fwd_to_katago_guest( endpoint, args):
     try:
         ip = db.get_parm( 'server_ip')
+        # Locally, use marfa
+        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.135'
         url = 'http://' + ip + ':2821/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
