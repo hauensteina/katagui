@@ -1252,7 +1252,7 @@ function main( JGO, axutil, p_options) {
   function once_per_sec() {
     save_state()
     clearTimeout( once_per_sec.timer)
-    once_per_sec.timer = setTimeout( once_per_sec, 1000)
+    once_per_sec.timer = setTimeout( once_per_sec, 5000)
   }
   once_per_sec.timer = null
 
