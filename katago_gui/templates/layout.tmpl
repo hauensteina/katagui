@@ -95,19 +95,19 @@
             <tr><td colspan='3' style='height:5px;'></td></tr>
             <tr>
               <td colspan='3'>
-                <div style='display:grid; grid-template-columns: 1fr 1fr;'>
+                <div style='display:grid; grid-template-columns: 2fr 1fr;'>
                   <div style='text-align:left;padding-left:20px;'>
                     <a class='hlink' href="{{ url_for('korean') }}">
-                      <img class='flag' border='0' height='30px' src='static/kor.png'>
+                      <img class='flag' border='0' src='static/kor.png'>
                     </a>
                     <a style='padding-left:20px' class='hlink' href="{{ url_for('chinese') }}">
-                      <img class='flag' border='0' height='30px' src='static/china.png'>
+                      <img class='flag' border='0'  src='static/china.png'>
                     </a>
                     <a style='padding-left:20px' class='hlink' href="{{ url_for('japanese') }}">
-                      <img class='flag' border='0' height='30px' src='static/japan.png'>
+                      <img class='flag' border='0' src='static/japan.png'>
                     </a>
                     <a style='padding-left:20px' class='hlink' href="{{ url_for('english') }}">
-                      <img class='flag' border='0' height='30px' src='static/eng.png'>
+                      <img class='flag' border='0'  src='static/eng.png'>
                     </a>
                   </div>
                   {% if logged_in() %}
@@ -141,7 +141,10 @@
              mfont = '30pt'
              sfont = '20pt'
              $('#homelogo').width('300px')
-             $('.flag').height('60px')
+             //$('.flag').height('60px')
+             $('.flag').width('5vw')
+           } else {
+             $('.flag').width('25px')
            }
            $('.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
            $('.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
