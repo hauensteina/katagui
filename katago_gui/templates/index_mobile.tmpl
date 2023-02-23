@@ -111,29 +111,31 @@
       <div class='container-fluid'>
         <div class='row'>
           <div class='col-4'>
-            <img id='img_bot' src='static/kata.png' style='height:200px' class='touch-allow'>
-            <div id='descr_bot' style='font-size:20pt' class='touch-allow'>
+            <img id='img_bot' src='static/kata.png' style='height:100px' class='touch-allow'>
+            <div id='descr_bot' style='font-size:15pt' class='touch-allow'>
               KataGo 20 blocks<br>2020-05-30
             </div>
             <div>
-              <a class='glink' href="{{ url_for('settings') }}" style='font-size:30pt;text-align:right;'>{{tr('Settings')}}</a>
+              <a class='glink' href="{{ url_for('settings') }}" 
+                 style='font-size:20pt;text-align:right;'>{{tr('Settings')}}</a>
             </div>
             <br>
           </div>
+          <div class='col-4' style='font-size:30pt;margin:auto'>
+            <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                   style='font-size:20pt'>
+              {{tr('New Game')}}
+            </label> &nbsp;
+            <label id='btn_watch' class='btn btn-outline-dark' style='font-size:20pt'>
+              {{tr('Watch')}}
+            </label>
+          </div>
+          <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div> 
         </div>
-      </div>
+        <!-- </div> -->
 
-      <div>
-        <div class='col-12' style='font-size:30pt;margin:auto'>
-          <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-                 style='font-size:40pt'>
-            {{tr('New Game')}}
-          </label> &nbsp;
-          <label id='btn_watch' class='btn btn-outline-dark' style='font-size:40pt'>
-            {{tr('Watch')}}
-          </label>
-        </div>
-        <div class='col-4' style='font-size:24pt;margin:auto'> &nbsp; </div>
+        <!-- <div> -->
+
       </div>
 
       <div id='game_info' style='font-size:22pt;text-align:center'> &nbsp; </div>
@@ -149,7 +151,8 @@
           <div>
             <table width='100%'>
               <tr><td id='bestscore' class='nomarg' align='center' style='height:30px'></td></tr>
-              <tr><td id='status' class='nomarg' align='center' style='font-size:18pt;height:100px;vertical-align:top' width='30%'>yy</td></tr>
+              <tr><td id='status' class='nomarg' align='center' 
+                      style='font-size:18pt;height:100px;vertical-align:top' width='30%'>yy</td></tr>
             </table>
           </div>
           <div id='emo' style='font-size:60pt' height='60px'> &nbsp; </div>
