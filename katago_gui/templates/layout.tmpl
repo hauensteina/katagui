@@ -69,15 +69,15 @@
         </tr>
         <tr><td colspan='2'>
     {% else %}
-          <table class='center' style='width:100%'>
-            <!-- Page Header -->
+          <table class='center' style='width:100%'> 
+              <!-- Page Header -->
             <tr style='background-color:green'>
               <td width='20px'>&nbsp</td>
-              <td id='homelogo' align='left' width='200px' style='background-color:green'>
+              <td id='homelogo' align='left' style='background-color:green'>
                 <a class='hlink font-l' href="{{ url_for('index') }}">
                   KataGui <span id='version' class='font-s'>0.0.0</span></a>
               </td>
-              <td align='right' style='background-color:green'>
+              <td align='right' style='background-color:green;'>
                 {% if logged_in() %}
                   <a class='hlink font-s' href="{{ url_for('account') }}">{{tr('Account')}}</a>&nbsp;&nbsp;&nbsp;
                   <a class='hlink font-s' href="{{ url_for('logout') }}">{{tr('Logout')}}</a>&nbsp;&nbsp;&nbsp;
@@ -87,34 +87,43 @@
                   <a class='hlink font-s' href="{{ url_for('register') }}">{{tr('Register')}}</a>&nbsp;&nbsp;&nbsp;
                   <script> axutil.settings( 'logged_in',false) </script>
                 {% endif %}
-                <a class='hlink font-s' style='font-size:25pt;' href='{{ url_for("find_game") }}'>{{tr('Search')}}</a>&nbsp;&nbsp;&nbsp;
-                <a class='hlink font-s' style='font-size:25pt;' href='{{ url_for("about") }}'>{{tr('About')}}</a>
+                <a class='hlink font-s' href='{{ url_for("find_game") }}'>{{tr('Search')}}</a>&nbsp;&nbsp;&nbsp;
+                <a class='hlink font-s' href='{{ url_for("about") }}'>{{tr('About')}}</a>
               </td>
-              <td width='20px' class=''>&nbsp;</td>
+              <td> &nbsp;&nbsp; </td> 
             </tr>
-            <tr><td colspan='4' style='height:5px;'></td></tr>
+            <tr><td colspan='3' style='height:5px;'></td></tr>
             <tr>
-              <td width='20px'></td>
-              <td style='width:50%;' align='left'>
-                <a class='hlink' href="{{ url_for('korean') }}">
-                  <img class='flag' border='0' height='30px' src='static/kor.png'>
-                </a>
-                <a style='padding-left:20px' class='hlink' href="{{ url_for('chinese') }}">
-                  <img class='flag' border='0' height='30px' src='static/china.png'>
-                </a>
-                <a style='padding-left:20px' class='hlink' href="{{ url_for('japanese') }}">
-                  <img class='flag' border='0' height='30px' src='static/japan.png'>
-                </a>
-                <a style='padding-left:20px' class='hlink' href="{{ url_for('english') }}">
-                  <img class='flag' border='0' height='30px' src='static/eng.png'>
-                </a>
+              <td colspan='3'>
+                <div style='display:grid; grid-template-columns: 1fr 1fr;'>
+                  <div style='text-align:left;padding-left:20px;'>
+                    <a class='hlink' href="{{ url_for('korean') }}">
+                      <img class='flag' border='0' height='30px' src='static/kor.png'>
+                    </a>
+                    <a style='padding-left:20px' class='hlink' href="{{ url_for('chinese') }}">
+                      <img class='flag' border='0' height='30px' src='static/china.png'>
+                    </a>
+                    <a style='padding-left:20px' class='hlink' href="{{ url_for('japanese') }}">
+                      <img class='flag' border='0' height='30px' src='static/japan.png'>
+                    </a>
+                    <a style='padding-left:20px' class='hlink' href="{{ url_for('english') }}">
+                      <img class='flag' border='0' height='30px' src='static/eng.png'>
+                    </a>
+                  </div>
+                  {% if logged_in() %}
+                    <div id='username' class='font-s touch-allow' 
+                         style='margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:0'>
+                      {{ current_user.data["username"] }} 
+                    </div>
+                  {% else %}
+                    <div id='username' class='font-s touch-allow' 
+                         style='margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:0'>
+                      {{tr('Guest')}} 
+                    </div>
+                  {% endif %}
+                </div>
               </td>
-              {% if logged_in() %}
-                <td id='username' class='font-m touch-allow' align='right'>{{ current_user.data["username"] }}</td>
-              {% else %}
-                <td id='username' class='font-m touch-allow' align='right'>{{tr('Guest')}}</td>
-              {% endif %}
-              <td width='20px'></td>
+              <td></td>
             </tr>
             <tr><td colspan='4'>
     {% endif %}
