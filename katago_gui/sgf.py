@@ -6,6 +6,7 @@ Adapted from gomill by Matthew Woodcraft, https://github.com/mattheww/gomill
 """
 
 from __future__ import absolute_import
+from pdb import set_trace as BP
 import datetime
 
 import six
@@ -572,7 +573,8 @@ class Sgf_game:
             try:
                 encoding = coarse_game.sequence[0][b'CA'][0]
             except KeyError:
-                encoding = b"ISO-8859-1"
+                #encoding = b"ISO-8859-1"
+                encoding = b"UTF-8"
         else:
             encoding = override_encoding
         game = cls.__new__(cls, size, encoding)
@@ -781,7 +783,8 @@ class Sgf_game:
         if handicap == 0:
             handicap = None
         elif handicap == 1:
-            raise ValueError
+            #raise ValueError
+            handicap = None
         return handicap
 
     def get_player_name(self, colour):
