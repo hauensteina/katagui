@@ -352,6 +352,7 @@ def sgf2list():
     player_black = sgf.get_player_name('b')
     winner = sgf.get_winner()
     komi = sgf.get_komi()
+    if komi == 375: komi = 7.5 # fox server anomaly
     fname = f.filename
 
     res = {}
