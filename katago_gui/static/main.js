@@ -166,7 +166,7 @@ function main( JGO, axutil, p_options) {
       }
     } // for
     var maxi = Math.max( ... bardata.map( function(d) { return d[1] }))
-    console.log(maxi)
+    //console.log(maxi)
     var font = '10px sans-serif'
     if (p_options.mobile) { font = '20px sans-serif' }
     axutil.barchart( '#status', bardata, 1.2 * maxi, font)
@@ -428,7 +428,7 @@ function main( JGO, axutil, p_options) {
     })
     // Links should still work
     $('a').on('touchend',(e)=>{
-      console.log('a')
+      //console.log('a')
       e.preventDefault()
       e.target.click()})
     // Buttons should still work
@@ -985,7 +985,7 @@ function main( JGO, axutil, p_options) {
       var s = Math.round( parseFloat( score) * 100) / 100
       grec.update( p, s)
       if (settings( 'game_hash')) { // we are in an active game
-        console.log( 'saving ' + grec.pos() )
+        //console.log( 'saving ' + grec.pos() )
         grec.dbsave() // save and notify observers
       }
     }
@@ -1185,8 +1185,11 @@ function main( JGO, axutil, p_options) {
     const STRONG = {'val':'strong', 'ep':'/select-move-x/', 'name':'kata40' }
     const FAST =  {'val':'fast', 'ep':'/select-move/', 'name':'kata20'  }
     const GUEST = {'val':'guest', 'ep':'/select-move-guest/', 'name':'kata10'  }
+    const ONE10 = {'val':'one10', 'ep':'/select-move-one10/', 'name':'kata_one10'  }
     if (typeof val == 'undefined') { // getter
-      if ($('#btn_tgl_strong').hasClass('active')) {
+      if ($('#username').html().indexOf('one10') >= 0) { // special user for 10b one playout 
+        return fast_or_strong('one10')
+      } else if ($('#btn_tgl_strong').hasClass('active')) {
         return fast_or_strong('strong')
       } else if ($('#btn_tgl_fast').hasClass('active') ) {
         return fast_or_strong('fast')
@@ -1231,6 +1234,15 @@ function main( JGO, axutil, p_options) {
         var tstr = '<a href="/login" class="touch-allow">' + tr('Please Log In') + '</a>'
         $('#donate_modal').html(tstr)
       }
+    }
+    else if (val == 'one10') {
+      $('#descr_bot').html( `KataGo 10b &nbsp; 16<br>${DDATE}`)
+      $('#btn_tgl_guest').addClass('active')
+      $('#btn_tgl_fast').removeClass('active')
+      $('#btn_tgl_strong').removeClass('active')
+      $('#btn_bot').html('Kata 10b')
+      axutil.set_attr( '#img_bot', 'src', 'static/kata-gray.png')
+      return ONE10
     }
     else { // val == guest
       //debugger

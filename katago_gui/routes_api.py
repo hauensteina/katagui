@@ -26,6 +26,7 @@ from katago_gui import dbmodel
 import katago_gui.translations
 from katago_gui.helpers import get_sgf_tag, moves2sgf, login_as_guest
 from katago_gui.helpers import fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_9, fwd_to_katago_13
+from katago_gui.helpers import fwd_to_katago_one10
 
 #--------------------------------------
 # API endpoints in alphabetical order
@@ -232,6 +233,34 @@ def select_move_guest( bot_name):
     except:
         print( 'select move guest error: %s' % res)
         return jsonify( {'result': 'error: forward failed' })
+
+@app.route('/select-move-one10/<bot_name>', methods=['POST'])
+#----------------------------------------------------------------
+def select_move_one10( bot_name):
+    """ Forward select-move to the katago server """
+    try:
+        current_user.record_activity()
+    except:
+        pass
+
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
+
+    res = fwd_to_katago_one10( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move one10 error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
+
 
 @app.route('/select-move-x/<bot_name>', methods=['POST'])
 #-----------------------------------------------------------

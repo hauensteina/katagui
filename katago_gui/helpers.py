@@ -93,6 +93,25 @@ def fwd_to_katago_guest( endpoint, args):
         print( 'args %s' % str(args))
     return res
 
+# Forward 10b 1 playout request to katago server
+#--------------------------------------------------
+def fwd_to_katago_one10( endpoint, args):
+    try:
+        ip = db.get_parm( 'server_ip')
+        # Locally, use marfa
+        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.135'
+        url = 'http://' + ip + ':2801/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
+
+    resp = requests.post( url, json=args)
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago_one10()')
+        print( 'args %s' % str(args))
+    return res
+
 # Forward 9x9 request to katago server
 #------------------------------------------
 def fwd_to_katago_9( endpoint, args):
