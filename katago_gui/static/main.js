@@ -322,11 +322,6 @@ function main( JGO, axutil, p_options) {
       show_move.mark_last_move = !show_move.mark_last_move
     })
 
-    function activate_mark_toggle( btn) {
-      btn.addClass('btn-success')
-      btn.css('background-color', 'green')
-    } // activate_mark_toggle()
-
     function deativate_mark_toggles() {
       $('#btn_tgl_number').removeClass('btn-success')
       $('#btn_tgl_number').css('background-color', '')
@@ -336,18 +331,25 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_triangle').css('background-color', '')
     } // deativate_mark_toggles()
 
-    $('#btn_tgl_number').click( () => {
+    function activate_mark_toggle( btn) {
+      var wasoff = 1
+      if (btn.hasClass('btn-success')) wasoff = 0
       deativate_mark_toggles()
+      if (wasoff) {
+        btn.addClass('btn-success')
+        btn.css('background-color', 'green')
+      }
+    } // activate_mark_toggle()
+
+    $('#btn_tgl_number').click( () => {
       activate_mark_toggle( $('#btn_tgl_number'))
     })
 
     $('#btn_tgl_letter').click( () => {
-      deativate_mark_toggles()
       activate_mark_toggle( $('#btn_tgl_letter'))
     })
 
     $('#btn_tgl_triangle').click( () => {
-      deativate_mark_toggles()
       activate_mark_toggle( $('#btn_tgl_triangle'))
     })
 
