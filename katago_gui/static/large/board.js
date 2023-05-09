@@ -41,7 +41,7 @@ JGO.BOARD.large = {
 
   // Mark base size and line width, color and font settings
   mark: {lineWidth: 1.5, blackColor: 'white', whiteColor: 'black',
-    clearColor: 'black', font: 'normal 24px sanf-serif'}
+    clearColor: 'black', font: 'normal 30px sans-serif'}
 };
 
 JGO.BOARD.largeWalnut = JGO.util.extend(JGO.util.extend({}, JGO.BOARD.large), {
