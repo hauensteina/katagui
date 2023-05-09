@@ -109,6 +109,11 @@ function main( JGO, axutil, p_options) {
     if (coord.j < 0 || coord.j > 18) { return }
     //SLOG(navigator.userAgent.toLowerCase())
     if (score_position.active) { goto_move( grec.pos()); return }
+
+    if ($('#btn_number').hasClass('red-border')) return  add_mark(coord, 'number')
+    if ($('#btn_letter').hasClass('red-border')) return  add_mark(coord, 'letter')
+    if ($('#btn_triangle').hasClass('red-border')) return  add_mark(coord, 'triangle')
+
     var jboard = g_jrecord.jboard
     if ((jboard.getType(coord) == JGO.BLACK) || (jboard.getType(coord) == JGO.WHITE)) { return }
     if (axutil.hit_endpoint('waiting')) {
@@ -132,6 +137,51 @@ function main( JGO, axutil, p_options) {
       },
       settings('show_emoji'), playing )
   } // board_click_callback()
+
+  // Put a mark on a stone or intersection. 
+  // Reset if coord == 'clear'.
+  // marktype is one of 'letter', 'number', 'triangle'.
+  //------------------------------------------------------
+  function add_mark(coord, marktype) {
+
+    function remove_mark( mark, coord) {
+      add_mark.coords[mark] = add_mark.coords[mark].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
+    } // remove_mark()
+
+    function get_mark(coord) {
+      var l_list = add_mark.coords['letter'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
+      if (l_list.length < add_mark.coords['letter'].length) { return 'letter' }
+      var n_list = add_mark.coords['number'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
+      if (n_list.length < add_mark.coords['number'].length) { return 'number' }
+      var t_list = add_mark.coords['triangle'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
+      if (t_list.length < add_mark.coords['triangle'].length) { return 'triangle' }
+      return ''
+    } // get_mark()
+
+    var letters = 'abcdefghiklmnopqrstuvwxyz'
+    var node = g_jrecord.createNode( true)
+
+    if (coord == 'clear') { 
+      add_mark.coords = { 'letter':[], 'number':[], 'triangle':[] } 
+    } else {
+      var mark = get_mark(coord)
+      if (mark) { remove_mark( mark, coord) }
+      else { add_mark.coords[marktype].push(coord) }
+    } 
+    
+    var idx = 0
+    add_mark.coords['number'].forEach(c => {
+      idx++; node.setMark( c, '' + idx)    
+    })
+    var lidx = -1
+    add_mark.coords['letter'].forEach(c => {
+      lidx++; node.setMark( c, letters[lidx])    
+    })
+    add_mark.coords['triangle'].forEach(c => {
+      node.setMark( c, JGO.MARK.TRIANGLE)    
+    })
+  } // add_mark()
+  add_mark.coords = { 'letter':[], 'number':[], 'triangle':[] } 
 
   //-------------------------------
   function best_btn_callback() {
@@ -270,6 +320,40 @@ function main( JGO, axutil, p_options) {
 
     $('#username').click( () => {
       show_move.mark_last_move = !show_move.mark_last_move
+    })
+
+    $('#btn_number').click( () => {
+      if (!$('#btn_number').hasClass('red-border')) {
+        $('#btn_number').addClass('red-border')
+        $('#btn_letter').removeClass('red-border')
+        $('#btn_triangle').removeClass('red-border')
+      } else {
+        $('#btn_number').removeClass('red-border')
+      }
+    })
+
+    $('#btn_letter').click( () => {
+      if (!$('#btn_letter').hasClass('red-border')) {
+        $('#btn_letter').addClass('red-border')
+        $('#btn_number').removeClass('red-border')
+        $('#btn_triangle').removeClass('red-border')
+      } else {
+        $('#btn_letter').removeClass('red-border')
+      }
+    })
+
+    $('#btn_triangle').click( () => {
+      if (!$('#btn_triangle').hasClass('red-border')) {
+        $('#btn_triangle').addClass('red-border')
+        $('#btn_letter').removeClass('red-border')
+        $('#btn_number').removeClass('red-border')
+      } else {
+        $('#btn_triangle').removeClass('red-border')
+      }
+    })
+
+    $('#btn_clear').click( () => {
+      add_mark('clear')
     })
 
     $('#img_bot, #descr_bot').click( () => {
