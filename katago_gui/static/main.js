@@ -110,9 +110,9 @@ function main( JGO, axutil, p_options) {
     //SLOG(navigator.userAgent.toLowerCase())
     if (score_position.active) { goto_move( grec.pos()); return }
 
-    if ($('#btn_number').hasClass('red-border')) return  add_mark(coord, 'number')
-    if ($('#btn_letter').hasClass('red-border')) return  add_mark(coord, 'letter')
-    if ($('#btn_triangle').hasClass('red-border')) return  add_mark(coord, 'triangle')
+    if ($('#btn_tgl_number').hasClass('btn-success')) return  add_mark(coord, 'number')
+    if ($('#btn_tgl_letter').hasClass('btn-success')) return  add_mark(coord, 'letter')
+    if ($('#btn_tgl_triangle').hasClass('btn-success')) return  add_mark(coord, 'triangle')
 
     var jboard = g_jrecord.jboard
     if ((jboard.getType(coord) == JGO.BLACK) || (jboard.getType(coord) == JGO.WHITE)) { return }
@@ -322,34 +322,33 @@ function main( JGO, axutil, p_options) {
       show_move.mark_last_move = !show_move.mark_last_move
     })
 
-    $('#btn_number').click( () => {
-      if (!$('#btn_number').hasClass('red-border')) {
-        $('#btn_number').addClass('red-border')
-        $('#btn_letter').removeClass('red-border')
-        $('#btn_triangle').removeClass('red-border')
-      } else {
-        $('#btn_number').removeClass('red-border')
-      }
+    function activate_mark_toggle( btn) {
+      btn.addClass('btn-success')
+      btn.css('background-color', 'green')
+    } // activate_mark_toggle()
+
+    function deativate_mark_toggles() {
+      $('#btn_tgl_number').removeClass('btn-success')
+      $('#btn_tgl_number').css('background-color', '')
+      $('#btn_tgl_letter').removeClass('btn-success')
+      $('#btn_tgl_letter').css('background-color', '')
+      $('#btn_tgl_triangle').removeClass('btn-success')
+      $('#btn_tgl_triangle').css('background-color', '')
+    } // deativate_mark_toggles()
+
+    $('#btn_tgl_number').click( () => {
+      deativate_mark_toggles()
+      activate_mark_toggle( $('#btn_tgl_number'))
     })
 
-    $('#btn_letter').click( () => {
-      if (!$('#btn_letter').hasClass('red-border')) {
-        $('#btn_letter').addClass('red-border')
-        $('#btn_number').removeClass('red-border')
-        $('#btn_triangle').removeClass('red-border')
-      } else {
-        $('#btn_letter').removeClass('red-border')
-      }
+    $('#btn_tgl_letter').click( () => {
+      deativate_mark_toggles()
+      activate_mark_toggle( $('#btn_tgl_letter'))
     })
 
-    $('#btn_triangle').click( () => {
-      if (!$('#btn_triangle').hasClass('red-border')) {
-        $('#btn_triangle').addClass('red-border')
-        $('#btn_letter').removeClass('red-border')
-        $('#btn_number').removeClass('red-border')
-      } else {
-        $('#btn_triangle').removeClass('red-border')
-      }
+    $('#btn_tgl_triangle').click( () => {
+      deativate_mark_toggles()
+      activate_mark_toggle( $('#btn_tgl_triangle'))
     })
 
     $('#btn_clear').click( () => {
