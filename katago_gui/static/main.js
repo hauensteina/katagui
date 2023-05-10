@@ -112,6 +112,7 @@ function main( JGO, axutil, p_options) {
 
     if ($('#btn_tgl_number').hasClass('btn-success')) return  add_mark(coord, 'number')
     if ($('#btn_tgl_letter').hasClass('btn-success')) return  add_mark(coord, 'letter')
+    if ($('#btn_tgl_x').hasClass('btn-success')) return  add_mark(coord, 'X')
     if ($('#btn_tgl_triangle').hasClass('btn-success')) return  add_mark(coord, 'triangle')
 
     var jboard = g_jrecord.jboard
@@ -155,6 +156,8 @@ function main( JGO, axutil, p_options) {
       if (n_list.length < add_mark.coords['number'].length) { return 'number' }
       var t_list = add_mark.coords['triangle'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
       if (t_list.length < add_mark.coords['triangle'].length) { return 'triangle' }
+      var t_list = add_mark.coords['X'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
+      if (t_list.length < add_mark.coords['X'].length) { return 'X' }
       return ''
     } // get_mark()
 
@@ -163,7 +166,7 @@ function main( JGO, axutil, p_options) {
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
 
     if (coord == 'clear') { 
-      add_mark.coords = { 'letter':[], 'number':[], 'triangle':[] } 
+      add_mark.coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
     } else {
       var mark = get_mark(coord)
       if (mark) { remove_mark( mark, coord) }
@@ -178,11 +181,14 @@ function main( JGO, axutil, p_options) {
     add_mark.coords['letter'].forEach(c => {
       lidx++; node.setMark( c, letters[lidx])    
     })
+    add_mark.coords['X'].forEach(c => {
+      node.setMark( c, 'X')    
+    })
     add_mark.coords['triangle'].forEach(c => {
       node.setMark( c, JGO.MARK.TRIANGLE)    
     })
   } // add_mark()
-  add_mark.coords = { 'letter':[], 'number':[], 'triangle':[] } 
+  add_mark.coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
 
   //-------------------------------
   function best_btn_callback() {
@@ -328,6 +334,8 @@ function main( JGO, axutil, p_options) {
       $('#btn_tgl_number').css('background-color', '')
       $('#btn_tgl_letter').removeClass('btn-success')
       $('#btn_tgl_letter').css('background-color', '')
+      $('#btn_tgl_x').removeClass('btn-success')
+      $('#btn_tgl_x').css('background-color', '')
       $('#btn_tgl_triangle').removeClass('btn-success')
       $('#btn_tgl_triangle').css('background-color', '')
     } // deativate_mark_toggles()
@@ -348,6 +356,10 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_tgl_letter').click( () => {
       activate_mark_toggle( $('#btn_tgl_letter'))
+    })
+
+    $('#btn_tgl_x').click( () => {
+      activate_mark_toggle( $('#btn_tgl_x'))
     })
 
     $('#btn_tgl_triangle').click( () => {
