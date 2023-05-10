@@ -160,6 +160,7 @@ function main( JGO, axutil, p_options) {
 
     var letters = 'abcdefghiklmnopqrstuvwxyz'
     var node = g_jrecord.createNode( true)
+    replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
 
     if (coord == 'clear') { 
       add_mark.coords = { 'letter':[], 'number':[], 'triangle':[] } 
