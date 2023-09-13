@@ -15,12 +15,14 @@ import gevent
 
 from flask import jsonify, request, send_file, render_template, flash, redirect, url_for
 from flask_login import current_user
+from flask_sockets import Rule
 
 from katago_gui import app, logged_in
 from katago_gui import auth, db, sockets, redis, REDIS_CHAN
 from katago_gui.translations import translate as tr
 from katago_gui import go_utils
 from katago_gui import ZOBRIST_MOVES
+
 
 
 @app.route('/watch_select_game')
@@ -142,6 +144,7 @@ def clear_watch_game():
         app.logger.info( 'ERROR: Exception in clear_watch_game()')
         return jsonify( {'result': 'error: exception in clear_watch_game()' })
 
+
 @sockets.route('/register_socket/<game_hash>')
 #-----------------------------------------------
 def register_socket( ws, game_hash):
@@ -152,6 +155,8 @@ def register_socket( ws, game_hash):
     while not ws.closed:
         # Context switch while `WatcherSockets.start` is running in the background.
         gevent.sleep(0.1)
+
+sockets.url_map.add(Rule('/register_socket/<game_hash>', endpoint=register_socket, websocket=True))
 
 #=======================
 class WatcherSockets:
