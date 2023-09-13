@@ -13,7 +13,8 @@ import os, sys, re, json
 from flask import request, render_template, flash, redirect, url_for
 from flask_login import login_user, current_user, login_required
 from flask_mail import Message
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+#from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 
 from katago_gui import app, bcrypt, mail, logged_in
 from katago_gui import auth

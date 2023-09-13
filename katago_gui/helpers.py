@@ -11,7 +11,9 @@ from pdb import set_trace as BP
 import os, sys, re, uuid
 import requests
 from datetime import datetime
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+#from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
+
 from flask import request, url_for
 from flask_login import current_user, login_user
 from flask_mail import Message
