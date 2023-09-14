@@ -168,7 +168,7 @@ def save_sgf():
     result = moves2sgf( movearr, probs, scores, meta)
     fname = uuid.uuid4().hex[:7] + '.sgf'
     fh = BytesIO( result.encode('utf8'))
-    resp = send_file( fh, as_attachment=True, attachment_filename=fname)
+    resp = send_file( fh, as_attachment=True, download_name=fname)
     return resp
 
 @app.route('/score/<bot_name>', methods=['POST'])
