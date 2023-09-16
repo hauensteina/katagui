@@ -325,9 +325,9 @@ function main( JGO, axutil, p_options) {
     set_load_sgf_handler()
     var_button_state( 'off')
 
-    $('#username').click( () => {
-      show_move.mark_last_move = !show_move.mark_last_move
-    })
+    // $('#username').click( () => {
+    //   show_move.mark_last_move = !show_move.mark_last_move
+    // })
 
     function deativate_mark_toggles() {
       $('#btn_tgl_number').removeClass('btn-success')
@@ -357,6 +357,41 @@ function main( JGO, axutil, p_options) {
     $('#btn_tgl_letter').click( () => {
       activate_mark_toggle( $('#btn_tgl_letter'))
     })
+
+    $('#btn_tgl_mark').click( () => {
+      var btn = $('#btn_tgl_mark')
+      if (btn.hasClass('btn-success')) {
+        show_move.mark_last_move = false
+        btn.removeClass('btn-success')
+        btn.css('background-color', '')
+      } else {
+        show_move.mark_last_move = true
+        btn.addClass('btn-success')
+        btn.css('background-color', 'green')  
+      } 
+      replay_moves( grec.pos())
+    }) // btn_tgl_mark
+
+    $('#btn_rot').click( () => {
+      var btn = $('#btn_rot')
+      var rot = (axutil.getRotation() + 1 ) % 8
+      axutil.setRotation( rot)
+      replay_moves( grec.pos())
+    }) // btn_rot
+
+    $('#btn_swap_colors').click( () => {
+      if (show_move.swap_colors) {
+        show_move.swap_colors = false
+        $('#btn_swap_colors').removeClass('btn-success')
+        $('#btn_swap_colors').css('background-color', '')
+        replay_moves( grec.pos())
+      } else {
+        show_move.swap_colors = true
+        $('#btn_swap_colors').addClass('btn-success')
+        $('#btn_swap_colors').css('background-color', 'green')
+        replay_moves( grec.pos())
+      }
+    }) // btn_swap_colors
 
     $('#btn_tgl_x').click( () => {
       activate_mark_toggle( $('#btn_tgl_x'))
@@ -863,12 +898,17 @@ function main( JGO, axutil, p_options) {
   // Moves
   //========
 
-  // Show a move on the board
-  //------------------------------------
+  // Show a move on the board. 
+  // player == 1 or 2 meaning black or white
+  //--------------------------------------------
   function show_move(player, coord) {
     if (coord == 'pass' || coord == 'resign') {
       g_ko = false
       return
+    }
+    if (show_move.swap_colors) {
+      if (player == 1) { player = 2 }
+      else { player = 1 }
     }
     var play = g_jrecord.jboard.playMove( coord, player, g_ko)
     if (play.success) {
@@ -895,6 +935,7 @@ function main( JGO, axutil, p_options) {
     }
   } // show_move()
   show_move.mark_last_move = true
+  show_move.swap_colors = false
 
   //------------------------
   function goto_first_move() {
@@ -1382,6 +1423,7 @@ function main( JGO, axutil, p_options) {
     reset_game()
     setup_jgo()
     selfplay('off')
+    $('#btn_tgl_mark').click()
     document.onkeydown = check_key
 
     if (p_options.mobile) {

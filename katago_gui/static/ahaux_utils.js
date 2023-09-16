@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.10.01'
+const VERSION = '3.10.02'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -14,7 +14,6 @@ const BOARD_SIZE = 19
 //=====================
 class AhauxUtils
 {
-
   // Compare two dot separated numerical version strings
   //-------------------------------------------------------
   compversions( v1, v2) {
@@ -43,6 +42,7 @@ class AhauxUtils
     }
     this.$ = $
     this.d3 = d3
+    this.rotation = 0
 
     this.hit_endpoint('init')
 
@@ -134,13 +134,53 @@ class AhauxUtils
     return COLNAMES[col] + ((row + 1).toString())
   } // jcoord2string()
 
+  //-----------------------------------------
+  setRotation( rot) { this.rotation = rot }
+
+  //---------------------------------------
+  getRotation() { return this.rotation }
+
+  // @@@ cont here add all 8 symmetries
   //--------------------------------------
   string2jcoord( move_string) {
     if (move_string == 'pass' || move_string == 'resign') { return move_string }
     var colStr = move_string.substring(0, 1)
     var rowStr = move_string.substring(1)
+    // row and col are zero based 0 to 18
     var col = COLNAMES.indexOf(colStr)
     var row = BOARD_SIZE - parseInt(rowStr, 10)
+
+    if (this.rotation == 1) { // rotate 90  degrees clockwise
+      var tmp = row
+      row = col
+      col = BOARD_SIZE - 1 - tmp
+    } 
+    else if (this.rotation == 2) { // rotate 180 degrees clockwise
+      row = BOARD_SIZE - 1 - row
+      col = BOARD_SIZE - 1 - col
+    }
+    else if (this.rotation == 3) { // rotate 270 degrees clockwise
+      var tmp = row
+      row = BOARD_SIZE - 1 - col
+      col = tmp
+    }
+    else if (this.rotation == 4) { // flip left-right 
+      col = BOARD_SIZE - 1 - col
+    }
+    else if (this.rotation == 5) { // flip left-right and rotate 90
+      var tmp = row
+      row = BOARD_SIZE - 1 - col
+      col = BOARD_SIZE - 1 - tmp
+    }
+    else if (this.rotation == 6) { // flip left-right and rotate 180
+      row = BOARD_SIZE - 1 - row
+    }
+    else if (this.rotation == 7) { // flip left-right and rotate 270
+      var tmp = row
+      row = col
+      col = tmp
+    }
+
     return new JGO.Coordinate(col, row)
   } // string2jcoord()
 
