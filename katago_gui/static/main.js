@@ -162,33 +162,44 @@ function main( JGO, axutil, p_options) {
       return ''
     } // get_mark()
 
+    function redraw_marks() {
+      var idx = 0
+      add_mark.orig_coords['number'].forEach(c => {
+        idx++; node.setMark(axutil.rot_coord(c), '' + idx)
+      })
+      var lidx = -1
+      add_mark.orig_coords['letter'].forEach(c => {
+        lidx++; node.setMark(axutil.rot_coord(c), letters[lidx])
+      })
+      add_mark.orig_coords['X'].forEach(c => {
+        node.setMark(axutil.rot_coord(c), 'X')
+      })
+      add_mark.orig_coords['triangle'].forEach(c => {
+        node.setMark(axutil.rot_coord(c), JGO.MARK.TRIANGLE)
+      })
+    } // redraw_marks()
+
     var letters = 'abcdefghiklmnopqrstuvwxyz'
     var node = g_jrecord.createNode( true)
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
 
     if (rotated_coord == 'clear') { 
       add_mark.orig_coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
-    } else {
+      redraw_marks()
+      return
+    } 
+    else if (rotated_coord == 'redraw') {
+      redraw_marks()
+      return
+    } 
+    else {
       var orig_coord = axutil.invrot_coord( rotated_coord)
       var mark = get_mark(orig_coord)
       if (mark) { remove_mark( mark, orig_coord) }
       else { add_mark.orig_coords[marktype].push(orig_coord) }
+      redraw_marks()
+      return
     } 
-    
-    var idx = 0
-    add_mark.orig_coords['number'].forEach(c => {
-      idx++; node.setMark( axutil.rot_coord(c), '' + idx)    
-    })
-    var lidx = -1
-    add_mark.orig_coords['letter'].forEach(c => {
-      lidx++; node.setMark( axutil.rot_coord(c), letters[lidx])    
-    })
-    add_mark.orig_coords['X'].forEach(c => {
-      node.setMark( axutil.rot_coord(c), 'X')    
-    })
-    add_mark.orig_coords['triangle'].forEach(c => {
-      node.setMark( axutil.rot_coord(c), JGO.MARK.TRIANGLE)    
-    })
   } // add_mark()
   add_mark.orig_coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
 
@@ -379,6 +390,7 @@ function main( JGO, axutil, p_options) {
       var rot = (axutil.getRotation() + 1 ) % 8
       axutil.setRotation( rot)
       replay_moves( grec.pos())
+      add_mark('redraw')
     }) // btn_rot
 
     $('#btn_swap_colors').click( () => {
