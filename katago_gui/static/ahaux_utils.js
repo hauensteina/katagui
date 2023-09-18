@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.10.02'
+const VERSION = '3.10.03'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -126,13 +126,37 @@ class AhauxUtils
     return res
   } // probs_only()
 
-  //--------------------------------------
-  jcoord2string( jgo_coord) {
+  //----------------------------------------------
+  jcoord2string( jgo_coord, rotate_flag=true) {
     if (jgo_coord == 'pass' || jgo_coord == 'resign') { return jgo_coord }
-    var row = (BOARD_SIZE - 1) - jgo_coord.j
-    var col = jgo_coord.i
+
+    var nj = jgo_coord.j; var ni = jgo_coord.i
+    if (rotate_flag) {
+      [nj, ni] = this.invrotate(jgo_coord.j, jgo_coord.i, this.rotation)
+    }
+    var row = (BOARD_SIZE - 1) - nj
+    var col = ni
+    console.log( 'jcoord2string: rotation:' + this.rotation)
+    console.log( 'jcoord2string: ' + row + ',' + col)
     return COLNAMES[col] + ((row + 1).toString())
   } // jcoord2string()
+
+    // Kludge to reuse existing rotation code for jcoords
+  //--------------------------------------------------------
+  rot_coord(coord) {
+    const rotate_flag = false
+    var tstr = axutil.jcoord2string(coord, rotate_flag)
+    var ncoord = axutil.string2jcoord(tstr)
+    return ncoord
+  } // rot_coord()
+
+  //--------------------------------------------------------
+  invrot_coord(coord) {
+    const rotate_flag = false
+    var tstr = axutil.jcoord2string(coord)
+    var ncoord = axutil.string2jcoord(tstr, rotate_flag)
+    return ncoord
+  } // invrot_coord()
 
   //-----------------------------------------
   setRotation( rot) { this.rotation = rot }
@@ -140,9 +164,8 @@ class AhauxUtils
   //---------------------------------------
   getRotation() { return this.rotation }
 
-  // @@@ cont here add all 8 symmetries
-  //--------------------------------------
-  string2jcoord( move_string) {
+  //---------------------------------------------------
+  string2jcoord( move_string, rotate_flag=true) {
     if (move_string == 'pass' || move_string == 'resign') { return move_string }
     var colStr = move_string.substring(0, 1)
     var rowStr = move_string.substring(1)
@@ -150,39 +173,53 @@ class AhauxUtils
     var col = COLNAMES.indexOf(colStr)
     var row = BOARD_SIZE - parseInt(rowStr, 10)
 
-    if (this.rotation == 1) { // rotate 90  degrees clockwise
-      var tmp = row
-      row = col
-      col = BOARD_SIZE - 1 - tmp
-    } 
-    else if (this.rotation == 2) { // rotate 180 degrees clockwise
-      row = BOARD_SIZE - 1 - row
-      col = BOARD_SIZE - 1 - col
+    var nrow = row; var ncol = col
+    if (rotate_flag) {
+      [nrow, ncol] = this.rotate(row, col, this.rotation)
     }
-    else if (this.rotation == 3) { // rotate 270 degrees clockwise
-      var tmp = row
-      row = BOARD_SIZE - 1 - col
-      col = tmp
-    }
-    else if (this.rotation == 4) { // flip left-right 
-      col = BOARD_SIZE - 1 - col
-    }
-    else if (this.rotation == 5) { // flip left-right and rotate 90
-      var tmp = row
-      row = BOARD_SIZE - 1 - col
-      col = BOARD_SIZE - 1 - tmp
-    }
-    else if (this.rotation == 6) { // flip left-right and rotate 180
-      row = BOARD_SIZE - 1 - row
-    }
-    else if (this.rotation == 7) { // flip left-right and rotate 270
-      var tmp = row
-      row = col
-      col = tmp
-    }
-
-    return new JGO.Coordinate(col, row)
+    return new JGO.Coordinate(ncol, nrow)
   } // string2jcoord()
+
+  //--------------------------------------
+  rotate( row, col, rot) {
+    var nrow = row
+    var ncol = col
+    if (rot == 1) { // rotate 90  degrees clockwise
+      nrow = col
+      ncol = BOARD_SIZE - 1 - row
+    } 
+    else if (rot == 2) { // rotate 180 degrees clockwise
+      nrow = BOARD_SIZE - 1 - row
+      ncol = BOARD_SIZE - 1 - col
+    }
+    else if (rot == 3) { // rotate 270 degrees clockwise
+      nrow = BOARD_SIZE - 1 - col
+      ncol = row
+    }
+    else if (rot == 4) { // flip left-right 
+      ncol = BOARD_SIZE - 1 - col
+    }
+    else if (rot == 5) { // flip left-right and rotate 90
+      nrow = BOARD_SIZE - 1 - col
+      ncol = BOARD_SIZE - 1 - row
+    }
+    else if (rot == 6) { // flip left-right and rotate 180
+      nrow = BOARD_SIZE - 1 - row
+    }
+    else if (rot == 7) { // flip left-right and rotate 270
+      nrow = col
+      ncol = row
+    }
+    var tt = 42
+    return [nrow, ncol]
+  } // rotate()
+
+  // undo rotate()
+  //-----------------------------
+  invrotate(row, col, rot) {
+    const invrot = [0, 3, 2, 1, 4, 7, 6, 5]
+    return this.rotate( row, col, invrot[rot])
+  } // invrotate()
 
   // Turn a server (row, col) into a JGO coordinate
   //--------------------------------------------------
@@ -359,8 +396,6 @@ class AhauxUtils
     var w  = $(container).width()
     var h = $(container).height()
 
-    //var margin = {top: 20, right: 20, bottom: 70, left: 40}
-    // TODO: @@@ Margin needs to be a percentage of w and h
     var margin = {top: h*0.05, right: w*0.05, bottom: h*0.3, left: w*0.07}
     var width = w - margin.left - margin.right
     var height = h - margin.top - margin.bottom

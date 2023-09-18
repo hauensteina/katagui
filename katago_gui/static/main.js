@@ -93,7 +93,7 @@ function main( JGO, axutil, p_options) {
   } // set_dropdown_handlers()
 
   // BLACK or WHITE depending on grec.pos()
-  //-------------------------------------------------
+  //------------------------------------------
   function turn( idx_) {
     var idx = idx_ || grec.pos()
     if (idx % 2) {
@@ -102,8 +102,9 @@ function main( JGO, axutil, p_options) {
     return JGO.BLACK
   } // turn()
 
-  //----------------------------------------
+  //------------------------------------------
   function board_click_callback( coord) {
+    //@@@
     selfplay('off')
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
@@ -126,7 +127,7 @@ function main( JGO, axutil, p_options) {
 
     // Add the new move
     maybe_start_var()
-    var mstr = axutil.jcoord2string( coord)
+    var mstr = axutil.jcoord2string( coord) // This rotates the move if necessary
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
     goto_move( grec.len())
     set_emoji()
@@ -143,21 +144,21 @@ function main( JGO, axutil, p_options) {
   // Reset if coord == 'clear'.
   // marktype is one of 'letter', 'number', 'triangle'.
   //------------------------------------------------------
-  function add_mark(coord, marktype) {
+  function add_mark(rotated_coord, marktype) {
 
-    function remove_mark( mark, coord) {
-      add_mark.coords[mark] = add_mark.coords[mark].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
+    function remove_mark( mark, orig_coord) {
+      add_mark.orig_coords[mark] = add_mark.orig_coords[mark].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
     } // remove_mark()
 
-    function get_mark(coord) {
-      var l_list = add_mark.coords['letter'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
-      if (l_list.length < add_mark.coords['letter'].length) { return 'letter' }
-      var n_list = add_mark.coords['number'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
-      if (n_list.length < add_mark.coords['number'].length) { return 'number' }
-      var t_list = add_mark.coords['triangle'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
-      if (t_list.length < add_mark.coords['triangle'].length) { return 'triangle' }
-      var t_list = add_mark.coords['X'].filter(c => (c.i !== coord.i) || (c.j !== coord.j))
-      if (t_list.length < add_mark.coords['X'].length) { return 'X' }
+    function get_mark(orig_coord) {
+      var l_list = add_mark.orig_coords['letter'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
+      if (l_list.length < add_mark.orig_coords['letter'].length) { return 'letter' }
+      var n_list = add_mark.orig_coords['number'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
+      if (n_list.length < add_mark.orig_coords['number'].length) { return 'number' }
+      var t_list = add_mark.orig_coords['triangle'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
+      if (t_list.length < add_mark.orig_coords['triangle'].length) { return 'triangle' }
+      var x_list = add_mark.orig_coords['X'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
+      if (x_list.length < add_mark.orig_coords['X'].length) { return 'X' }
       return ''
     } // get_mark()
 
@@ -165,30 +166,31 @@ function main( JGO, axutil, p_options) {
     var node = g_jrecord.createNode( true)
     replay_moves( grec.pos()) // remove artifacts, preserve mark on last play
 
-    if (coord == 'clear') { 
-      add_mark.coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
+    if (rotated_coord == 'clear') { 
+      add_mark.orig_coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
     } else {
-      var mark = get_mark(coord)
-      if (mark) { remove_mark( mark, coord) }
-      else { add_mark.coords[marktype].push(coord) }
+      var orig_coord = axutil.invrot_coord( rotated_coord)
+      var mark = get_mark(orig_coord)
+      if (mark) { remove_mark( mark, orig_coord) }
+      else { add_mark.orig_coords[marktype].push(orig_coord) }
     } 
     
     var idx = 0
-    add_mark.coords['number'].forEach(c => {
-      idx++; node.setMark( c, '' + idx)    
+    add_mark.orig_coords['number'].forEach(c => {
+      idx++; node.setMark( axutil.rot_coord(c), '' + idx)    
     })
     var lidx = -1
-    add_mark.coords['letter'].forEach(c => {
-      lidx++; node.setMark( c, letters[lidx])    
+    add_mark.orig_coords['letter'].forEach(c => {
+      lidx++; node.setMark( axutil.rot_coord(c), letters[lidx])    
     })
-    add_mark.coords['X'].forEach(c => {
-      node.setMark( c, 'X')    
+    add_mark.orig_coords['X'].forEach(c => {
+      node.setMark( axutil.rot_coord(c), 'X')    
     })
-    add_mark.coords['triangle'].forEach(c => {
-      node.setMark( c, JGO.MARK.TRIANGLE)    
+    add_mark.orig_coords['triangle'].forEach(c => {
+      node.setMark( axutil.rot_coord(c), JGO.MARK.TRIANGLE)    
     })
   } // add_mark()
-  add_mark.coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
+  add_mark.orig_coords = { 'letter':[], 'number':[], 'X':[], 'triangle':[] } 
 
   //-------------------------------
   function best_btn_callback() {
@@ -1263,12 +1265,15 @@ function main( JGO, axutil, p_options) {
     for (const [idx, prob] of probs.entries()) {
       var row = BOARD_SIZE - Math.trunc( idx / BOARD_SIZE)
       var col = (idx % BOARD_SIZE) + 1
+
       var coord = axutil.rc2jcoord( row, col)
+      var ncoord = axutil.rot_coord(coord) // rotate if needed
+
       if (prob < 0) { // white
-        node.setMark( coord, 'WP:' + Math.trunc(Math.abs(prob)*100))
+        node.setMark(ncoord, 'WP:' + Math.trunc(Math.abs(prob) * 100))
       } // for
       else { // black
-        node.setMark( coord, 'BP:' + Math.trunc(Math.abs(prob)*100))
+        node.setMark(ncoord, 'BP:' + Math.trunc(Math.abs(prob) * 100))
       } // for
     } // for
   } // draw_estimate()
@@ -1384,7 +1389,6 @@ function main( JGO, axutil, p_options) {
       return ONE10
     }
     else { // val == guest
-      //debugger
       $('#descr_bot').html( `KataGo 10b &nbsp; 256<br>${DDATE}`)
       $('#btn_tgl_guest').addClass('active')
       $('#btn_tgl_fast').removeClass('active')
