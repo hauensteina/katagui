@@ -141,6 +141,47 @@ class AhauxUtils
     return COLNAMES[col] + ((row + 1).toString())
   } // jcoord2string()
 
+  //--------------------------------------
+  rotate(row, col, rot) {
+    var nrow = row
+    var ncol = col
+    if (rot == 1) { // rotate 90  degrees clockwise
+      nrow = col
+      ncol = BOARD_SIZE - 1 - row
+    }
+    else if (rot == 2) { // rotate 180 degrees clockwise
+      nrow = BOARD_SIZE - 1 - row
+      ncol = BOARD_SIZE - 1 - col
+    }
+    else if (rot == 3) { // rotate 270 degrees clockwise
+      nrow = BOARD_SIZE - 1 - col
+      ncol = row
+    }
+    else if (rot == 4) { // flip left-right 
+      ncol = BOARD_SIZE - 1 - col
+    }
+    else if (rot == 5) { // flip left-right and rotate 90
+      nrow = BOARD_SIZE - 1 - col
+      ncol = BOARD_SIZE - 1 - row
+    }
+    else if (rot == 6) { // flip left-right and rotate 180
+      nrow = BOARD_SIZE - 1 - row
+    }
+    else if (rot == 7) { // flip left-right and rotate 270
+      nrow = col
+      ncol = row
+    }
+    var tt = 42
+    return [nrow, ncol]
+  } // rotate()
+
+  // undo rotate()
+  //-----------------------------
+  invrotate(row, col, rot) {
+    const invrot = [0, 3, 2, 1, 4, 5, 6, 7]
+    return this.rotate(row, col, invrot[rot])
+  } // invrotate()
+  
     // Kludge to reuse existing rotation code for jcoords
   //--------------------------------------------------------
   rot_coord(coord) {
@@ -180,46 +221,6 @@ class AhauxUtils
     return new JGO.Coordinate(ncol, nrow)
   } // string2jcoord()
 
-  //--------------------------------------
-  rotate( row, col, rot) {
-    var nrow = row
-    var ncol = col
-    if (rot == 1) { // rotate 90  degrees clockwise
-      nrow = col
-      ncol = BOARD_SIZE - 1 - row
-    } 
-    else if (rot == 2) { // rotate 180 degrees clockwise
-      nrow = BOARD_SIZE - 1 - row
-      ncol = BOARD_SIZE - 1 - col
-    }
-    else if (rot == 3) { // rotate 270 degrees clockwise
-      nrow = BOARD_SIZE - 1 - col
-      ncol = row
-    }
-    else if (rot == 4) { // flip left-right 
-      ncol = BOARD_SIZE - 1 - col
-    }
-    else if (rot == 5) { // flip left-right and rotate 90
-      nrow = BOARD_SIZE - 1 - col
-      ncol = BOARD_SIZE - 1 - row
-    }
-    else if (rot == 6) { // flip left-right and rotate 180
-      nrow = BOARD_SIZE - 1 - row
-    }
-    else if (rot == 7) { // flip left-right and rotate 270
-      nrow = col
-      ncol = row
-    }
-    var tt = 42
-    return [nrow, ncol]
-  } // rotate()
-
-  // undo rotate()
-  //-----------------------------
-  invrotate(row, col, rot) {
-    const invrot = [0, 3, 2, 1, 4, 7, 6, 5]
-    return this.rotate( row, col, invrot[rot])
-  } // invrotate()
 
   // Turn a server (row, col) into a JGO coordinate
   //--------------------------------------------------
