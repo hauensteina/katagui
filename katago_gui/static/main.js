@@ -383,6 +383,7 @@ function main( JGO, axutil, p_options) {
         btn.css('background-color', 'green')  
       } 
       replay_moves( grec.pos())
+      add_mark('redraw')
     }) // btn_tgl_mark
 
     $('#btn_rot').click( () => {
@@ -399,11 +400,13 @@ function main( JGO, axutil, p_options) {
         $('#btn_swap_colors').removeClass('btn-success')
         $('#btn_swap_colors').css('background-color', '')
         replay_moves( grec.pos())
+        add_mark('redraw')
       } else {
         show_move.swap_colors = true
         $('#btn_swap_colors').addClass('btn-success')
         $('#btn_swap_colors').css('background-color', 'green')
         replay_moves( grec.pos())
+        add_mark('redraw')
       }
     }) // btn_swap_colors
 
@@ -553,10 +556,10 @@ function main( JGO, axutil, p_options) {
 
     $('#btn_prev').click( btn_prev)
     $('#btn_next').click( btn_next)
-    $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); bot_active('off') })
-    $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); bot_active('off') })
-    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); bot_active('off'); clear_status() })
-    $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); bot_active('off') })
+    $('#btn_back10').click( () => { selfplay('off'); goto_move( grec.pos() - 10); update_emoji(); bot_active('off'); add_mark('redraw') })
+    $('#btn_fwd10').click( () => {  selfplay('off'); goto_move( grec.pos() + 10); update_emoji(); bot_active('off'); add_mark('redraw') })
+    $('#btn_first').click( () => {  selfplay('off'); goto_move(0); set_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
+    $('#btn_last').click( () => {  selfplay('off'); goto_move( grec.len()); update_emoji(); bot_active('off'); add_mark('redraw') })
 
     // Prevent zoom on double tap
     $('*').on('touchend',(e)=>{
@@ -750,6 +753,7 @@ function main( JGO, axutil, p_options) {
   function btn_prev() {
     selfplay('off');
     goto_move( grec.pos() - 1); update_emoji(); bot_active('off')
+    add_mark('redraw')
   }
 
   //-------------------------
@@ -758,6 +762,7 @@ function main( JGO, axutil, p_options) {
     if (!grec.len()) return
     if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
     goto_move( grec.pos() + 1)
+    add_mark('redraw')
     // Do not analyze handicap stones
     if (grec.pos() < 20 && grec.len() > grec.pos() && grec.nextmove().mv == 'pass') {
       goto_move( grec.pos() + 1)
