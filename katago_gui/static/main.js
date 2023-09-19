@@ -890,6 +890,7 @@ function main( JGO, axutil, p_options) {
     grec.push( { 'mv':data.bot_move, 'p':0.0, 'score':0.0, 'agent':fast_or_strong().name } )
     replay_moves( grec.pos())
     show_movenum()
+    add_mark('redraw')
     const show_emoji = false
     const playing = true
     get_prob_callback( data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
