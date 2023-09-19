@@ -130,6 +130,7 @@ function main( JGO, axutil, p_options) {
     var mstr = axutil.jcoord2string( coord) // This rotates the move if necessary
     grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
     goto_move( grec.len())
+    add_mark('redraw')
     set_emoji()
     var greclen = grec.len()
     const playing = true
