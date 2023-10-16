@@ -226,8 +226,8 @@ def send_register_email( user):
 def send_reset_email( user):
     ''' User requested a password reset. Send him an email with a reset link. '''
     expires_sec = 3600 * 24 * 7
-    s = Serializer( app.config['SECRET_KEY'], expires_sec)
-    token = s.dumps( {'user_id': user.id, 'lang':user.data.get('lang','eng') }).decode('utf-8')
+    s = Serializer( app.config['SECRET_KEY'])
+    token = s.dumps( {'user_id': user.id, 'lang':user.data.get('lang','eng') })
     msg = Message('Password Reset Request',
                   sender='noreply@ahaux.com',
                   recipients=[user.data['email']])

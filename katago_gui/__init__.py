@@ -81,7 +81,7 @@ mail = Mail(app)
 REDIS_URL = os.environ['REDIS_URL']
 url = urlparse(REDIS_URL)
 redis = redis.Redis( host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
-#redis = redis.from_url(REDIS_URL)
+#redis = redis.from_url(REDIS_URL) # when running locally
 REDIS_CHAN = 'watch'
 
 from katago_gui.create_tables import create_tables
