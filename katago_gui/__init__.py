@@ -77,11 +77,15 @@ app.config['MAIL_USERNAME'] = os.environ.get('KATAGUI_EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('KATAGUI_EMAIL_PASS')
 mail = Mail(app)
 
-# Redis and websockets for server push needed to watch games
-REDIS_URL = os.environ['REDIS_URL']
-url = urlparse(REDIS_URL)
-redis = redis.Redis( host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
-#redis = redis.from_url(REDIS_URL) # when running locally
+if os.environ.get('FLASK_ENV') == 'dev':
+    REDIS_URL='redis://localhost:6379'
+    redis = redis.from_url(REDIS_URL) # when running locally    
+else:    
+    # Redis and websockets for server push needed to watch games
+    REDIS_URL = os.environ['REDIS_URL']
+    url = urlparse(REDIS_URL)
+    redis = redis.Redis( host=url.hostname, port=url.port, username=url.username, password=url.password, ssl=True, ssl_cert_reqs=None)
+
 REDIS_CHAN = 'watch'
 
 from katago_gui.create_tables import create_tables
@@ -90,3 +94,4 @@ create_tables( db)
 from katago_gui import routes
 from katago_gui import routes_watch
 from katago_gui import routes_api
+

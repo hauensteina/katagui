@@ -208,8 +208,8 @@ def login_as_guest():
 def send_register_email( user):
     ''' User register. Send him an email to verify email address before creating account. '''
     expires_sec = 3600 * 24 * 7
-    s = Serializer( app.config['SECRET_KEY'], expires_sec)
-    token = s.dumps( {'user_id': user.id}).decode('utf-8')
+    s = Serializer( app.config['SECRET_KEY'])
+    token = s.dumps( {'user_id': user.id})
     msg = Message('Katagui Email Verification',
                   sender='hauensteina@ahaux.com',
                   recipients=[user.data['email']])
