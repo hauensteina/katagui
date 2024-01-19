@@ -412,11 +412,12 @@ function main(JGO, axutil, p_options) {
     }) // btn_swap_colors
 
     $('#btn_export_diagram').click(() => {
-      var tt = 42
       let node = g_jrecord.getCurrentNode()
-      var url = '/export_diagram?q=' + Math.random() +
-        '&stones=' + encodeURIComponent(node.jboard.stones) +
-        '&marks=' + encodeURIComponent(node.jboard.marks)
+      let marks = JSON.stringify(node.jboard.marks)
+      let stones = JSON.stringify(node.jboard.stones)
+      let url = '/export_diagram?q=' + Math.random() +
+        '&stones=' + encodeURIComponent(stones) +
+        '&marks=' + encodeURIComponent(marks)
       window.location.href = url
     }) // // btn_export_diagram
 

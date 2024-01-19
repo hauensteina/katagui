@@ -56,9 +56,9 @@ def index_mobile():
 def export_diagram():
     """ Export part of the board as a diagram """
     parms = dict(request.args)
-    jstones = 'var stones = [' + parms['stones'] + ']'
-    jmarks = 'var marks = [' + parms['marks'] + ']'
-    return render_template( 'export_diagram.tmpl', jstones=jstones, jmarks=jmarks)
+    stones = parms['stones']
+    marks = parms['marks']
+    return render_template( 'export_diagram.tmpl', stones=stones, marks=marks)
 
 @app.route('/about')
 #-------------------------------

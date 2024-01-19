@@ -1,22 +1,104 @@
 {% extends 'layout.tmpl' %}
 
 {% block css %}
-  <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <style>
-  </style>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<style>
+</style>
 {% endblock css %}
 
 {% block content %}
-  <div id='board'>
-    Hello board
-  </div>
+<div id='goBoard' style='width:60vw;height:60vw;'>
+</div>
 {% endblock content %}
 
 {% block js %}
 <script>
   'use strict'
-  $( function() {
+  // Black == 1; White == 2; Empty == 0
+  var stonesJson = '{{ stones }}'
+  // Triangle == '/'; Circle = '0' 
+  var marksJson = '{{ marks }}'
+  var stones = JSON.parse(stonesJson)
+  var marks = JSON.parse(marksJson)
+  var blackStones = []
+  var whiteStones = []
+  for (var i = 0; i < stones.length; i++) {
+    var row = stones[i]
+    for (var j = 0; j < row.length; j++) {
+      var stone = row[j]
+      if (stone == 1) {
+        blackStones.push({ x: j, y: i })
+      } else if (stone == 2) {
+        whiteStones.push({ x: j, y: i })
+      }
+    } // for 
+  } // for 
+
+  $(function () {
     console.log('export_diagram.js')
+    drawGoBoard(blackStones, whiteStones, 0, 18, 0, 18)
   })
+
+  // Function to draw the board position and hilight a specified area
+  //-------------------------------------------------------------------------------------
+  function drawGoBoard(blackStones, whiteStones, minRow, maxRow, minCol, maxCol) {
+    const boardSize = 19;
+    const tileSize = 30;
+    const boardPixelSize = boardSize * tileSize;
+    const stoneRadius = tileSize / 2 * 0.8;
+    const hoshiRadius = 3; // Radius of the handicap points
+    const highlightColor = 'lightblue';
+    const edgeLineWidth = 2;
+    const innerLineWidth = 1;
+
+    // Handicap points (hoshis) for a 19x19 board
+    const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }];
+
+    // Create canvas element
+    const canvas = document.createElement('canvas');
+    canvas.width = boardPixelSize;
+    canvas.height = boardPixelSize;
+    document.getElementById('goBoard').appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Highlight specified area
+    ctx.fillStyle = highlightColor;
+    ctx.fillRect(minCol * tileSize, minRow * tileSize, (maxCol - minCol + 1) * tileSize, (maxRow - minRow + 1) * tileSize);
+
+    // Draw the grid
+    for (let i = 0; i < boardSize; i++) {
+      ctx.beginPath();
+      ctx.lineWidth = (i === 0 || i === boardSize - 1) ? edgeLineWidth : innerLineWidth;
+      ctx.moveTo(i * tileSize, 0);
+      ctx.lineTo(i * tileSize, boardPixelSize);
+      ctx.moveTo(0, i * tileSize);
+      ctx.lineTo(boardPixelSize, i * tileSize);
+      ctx.stroke();
+    }
+
+    // Function to draw a stone
+    function drawStone(x, y, color) {
+      ctx.beginPath();
+      ctx.arc(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, stoneRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Draw handicap points (hoshis)
+    hoshis.forEach(hoshi => {
+      ctx.beginPath();
+      ctx.arc(hoshi.x * tileSize, hoshi.y * tileSize, hoshiRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'black';
+      ctx.fill();
+    });
+
+    // Draw black stones
+    blackStones.forEach(stone => drawStone(stone.x, stone.y, 'black'));
+
+    // Draw white stones
+    whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'));
+  } // drawGoBoard()
 </script>
 {% endblock js %}
