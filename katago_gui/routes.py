@@ -51,6 +51,15 @@ def index_mobile():
     if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index_mobile.tmpl', home=True)
 
+@app.route('/export_diagram')
+#-------------------------------
+def export_diagram():
+    """ Export part of the board as a diagram """
+    parms = dict(request.args)
+    jstones = 'var stones = [' + parms['stones'] + ']'
+    jmarks = 'var marks = [' + parms['marks'] + ']'
+    return render_template( 'export_diagram.tmpl', jstones=jstones, jmarks=jmarks)
+
 @app.route('/about')
 #-------------------------------
 def about():

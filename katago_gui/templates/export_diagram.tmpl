@@ -1,0 +1,22 @@
+{% extends 'layout.tmpl' %}
+
+{% block css %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <style>
+  </style>
+{% endblock css %}
+
+{% block content %}
+  <div id='board'>
+    Hello board
+  </div>
+{% endblock content %}
+
+{% block js %}
+<script>
+  'use strict'
+  $( function() {
+    console.log('export_diagram.js')
+  })
+</script>
+{% endblock js %}
