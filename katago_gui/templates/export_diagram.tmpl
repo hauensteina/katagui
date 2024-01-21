@@ -7,11 +7,13 @@
 {% endblock css %}
 
 {% block content %}
-<div id='outerDiv'
-  style='width:90vw;height:90vw;display:flex;justify-content:center;align-items:center;margin-left:auto;margin-right:auto;'>
-  <div id='goBoard' style='width:90%;height:90%;'>
-  </div>
+<div id='boardDiv'
+  style='width:90vw;height:90vw;margin-left:auto;margin-right:auto;'>
 </div>
+<div>
+  <button onclick="exportDiagram()">Export</button>
+</div>
+
 {% endblock content %}
 
 {% block js %}
@@ -23,41 +25,65 @@
   const TRIANGLE = '/'
   const CIRCLE = '0'
 
-  var stonesJson = '{{ stones }}'
-  var marksJson = '{{ marks }}'
-  var stones = JSON.parse(stonesJson)
-  var marks = JSON.parse(marksJson)
-  var blackStones = []
-  var whiteStones = []
-  for (var i = 0; i < stones.length; i++) {
-    var row = stones[i]
+  var g_stonesJson = '{{ stones }}'
+  var g_marksJson = '{{ marks }}'
+  var g_stones = JSON.parse(g_stonesJson)
+  var g_marks = JSON.parse(g_marksJson)
+  var g_blackStones = []
+  var g_whiteStones = []
+  var g_mincol = 0
+  var g_maxcol = 18
+  var g_minrow = 0
+  var g_maxrow = 18
+  var g_boardDiv = document.getElementById('boardDiv')
+  // Create canvas element
+  const outerSize = parseInt(g_boardDiv.clientWidth)
+  const g_canvas = document.createElement('canvas')
+  g_canvas.width = outerSize
+  g_canvas.height = outerSize
+  g_boardDiv.appendChild(g_canvas)
+
+  // Get black and white stones into lists
+  for (var i = 0; i < g_stones.length; i++) {
+    var row = g_stones[i]
     for (var j = 0; j < row.length; j++) {
       var stone = row[j]
       if (stone == 1) {
-        blackStones.push({ x: j, y: i })
+        g_blackStones.push({ x: j, y: i })
       } else if (stone == 2) {
-        whiteStones.push({ x: j, y: i })
+        g_whiteStones.push({ x: j, y: i })
       }
     } // for 
   } // for 
 
   $(function () {
-    console.log('export_diagram.js')
-    drawGoBoard(blackStones, whiteStones, marks, 0, 9, 0, 18)
+    drawGoBoard(g_canvas, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
   })
 
+  //--------------------------------
+  function exportDiagram() {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1500
+    canvas.height = 1500
+    drawGoBoard(canvas, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+    var dataURL = canvas.toDataURL('image/png')
+    var link = document.createElement('a')
+    link.download = 'diagram.png'
+    link.href = dataURL
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } // exportDiagram()
+
   // Function to draw the board position and hilight a specified area
-  //-------------------------------------------------------------------------------------
-  function drawGoBoard(blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol) {
+  //--------------------------------------------------------------------------------------------------------------
+  function drawGoBoard(canvas, blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol) {
     const boardSize = 19
-    const boardDiv = document.getElementById('goBoard')
-    const outerDiv = document.getElementById('outerDiv')
-    // With padding
-    //const boardPixelSize = parseInt(window.getComputedStyle(boardDiv).getPropertyValue('width'))
+    //const outerDiv = document.getElementById('outerDiv')
     // Without padding
-    const outerSize = parseInt(outerDiv.clientWidth)
-    const boardPixelSize = parseInt(boardDiv.clientWidth)
-    const marg = (outerSize - boardPixelSize) / 2
+    const outerSize = canvas.width
+    const marg = outerSize * 0.05
+    const boardPixelSize = outerSize - 2 * marg
 
     const tileSize = boardPixelSize / (boardSize - 1)
     const wSstoneRadius = tileSize * 0.45
@@ -81,12 +107,6 @@
 
     // Handicap points (hoshis) for a 19x19 board
     const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }]
-
-    // Create canvas element
-    const canvas = document.createElement('canvas')
-    canvas.width = outerSize
-    canvas.height = outerSize
-    outerDiv.appendChild(canvas)
 
     const ctx = canvas.getContext('2d')
     const markFont = fittingFont(tileSize * 0.8)
@@ -161,7 +181,7 @@
       var lineWidth = tileSize * 0.04
       var radius = tileSize * 0.25
       var color = 'black'
-      if (stones[y][x] == BLACK) {
+      if (g_stones[y][x] == BLACK) {
         color = 'white'
         lineWidth = tileSize * 0.1
       }
@@ -182,7 +202,7 @@
       var p2 = { x: -sin120 * r, y: cos120 * r }
       var lineWidth = tileSize * 0.05
       var color = 'black'
-      if (stones[y][x] == BLACK) {
+      if (g_stones[y][x] == BLACK) {
         color = 'white'
         lineWidth = tileSize * 0.1
       }
@@ -212,9 +232,9 @@
           return font
         }
 
-        fontSize--; // Increase the font size
+        fontSize--
         if (fontSize <= 1) {
-          break // Prevent an infinite loop
+          break
         }
       } // while
       return font
@@ -224,7 +244,7 @@
     function drawLetter(x, y, letter) {
       ctx.font = markFont
       ctx.fillStyle = 'black'
-      if (stones[y][x] == BLACK) {
+      if (g_stones[y][x] == BLACK) {
         ctx.fillStyle = 'white'
       }
       ctx.textAlign = 'center'
