@@ -7,9 +7,10 @@
 {% endblock css %}
 
 {% block content %}
-<div id='boardDiv'
-  style='width:90vw;height:90vw;margin-left:auto;margin-right:auto;'>
+<br>
+<div id='boardDiv' style='width:90vw;height:90vw;margin-left:auto;margin-right:auto;'>
 </div>
+<br>
 <div>
   <button onclick="exportDiagram()">Export</button>
 </div>
@@ -24,6 +25,7 @@
   const EMPTY = 0
   const TRIANGLE = '/'
   const CIRCLE = '0'
+  const BOARDSIZE = 19
 
   var g_stonesJson = '{{ stones }}'
   var g_marksJson = '{{ marks }}'
@@ -31,7 +33,7 @@
   var g_marks = JSON.parse(g_marksJson)
   var g_blackStones = []
   var g_whiteStones = []
-  var g_mincol = 0
+  var g_mincol = 9
   var g_maxcol = 18
   var g_minrow = 0
   var g_maxrow = 18
@@ -49,23 +51,31 @@
     for (var j = 0; j < row.length; j++) {
       var stone = row[j]
       if (stone == 1) {
-        g_blackStones.push({ x: j, y: i })
+        g_blackStones.push({ x: i, y: j })
       } else if (stone == 2) {
-        g_whiteStones.push({ x: j, y: i })
+        g_whiteStones.push({ x: i, y: j })
       }
     } // for 
   } // for 
 
+  //--------------------------
   $(function () {
-    drawGoBoard(g_canvas, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+    const marg = 0.05 * g_canvas.width
+    const tileSize = (g_canvas.width - 2 * marg) / (BOARDSIZE - 1) 
+    drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
   })
 
   //--------------------------------
   function exportDiagram() {
     const canvas = document.createElement('canvas')
-    canvas.width = 1500
-    canvas.height = 1500
-    drawGoBoard(canvas, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+    const width = g_maxcol - g_mincol 
+    const height = g_maxrow - g_minrow 
+    const tileSize = 100
+    const marg = tileSize
+    canvas.width = tileSize * width + 2 * marg
+    canvas.height = tileSize * height + 2 * marg
+    const trimFlag = true
+    drawGoBoard(canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol, trimFlag)
     var dataURL = canvas.toDataURL('image/png')
     var link = document.createElement('a')
     link.download = 'diagram.png'
@@ -76,34 +86,19 @@
   } // exportDiagram()
 
   // Function to draw the board position and hilight a specified area
-  //--------------------------------------------------------------------------------------------------------------
-  function drawGoBoard(canvas, blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol) {
-    const boardSize = 19
-    //const outerDiv = document.getElementById('outerDiv')
-    // Without padding
-    const outerSize = canvas.width
-    const marg = outerSize * 0.05
-    const boardPixelSize = outerSize - 2 * marg
+  //--------------------------------------------------------------------------------------------------------------------------
+  function drawGoBoard(canvas, marg, tileSize, blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol, trimFlag) {
+    const boardwidth = canvas.width - 2 * marg
+    const boardheight = canvas.height - 2 * marg
 
-    const tileSize = boardPixelSize / (boardSize - 1)
     const wSstoneRadius = tileSize * 0.45
     const bSstoneRadius = tileSize * 0.45
     const wStoneStrokeWidth = tileSize * 0.05
     const bStoneStrokeWidth = tileSize * 0.05
     const hoshiRadius = tileSize / 6 // Radius of the handicap points
-    const highlightColor = 'lightblue'
+    const bgcolor = 'white'
     const edgeLineWidth = tileSize * 0.18
     const innerLineWidth = tileSize * 0.08
-
-    //----------------------
-    function sx(col) {
-      return marg + col * tileSize
-    }
-
-    //---------------------
-    function sy(row) {
-      return marg + row * tileSize
-    }
 
     // Handicap points (hoshis) for a 19x19 board
     const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }]
@@ -111,27 +106,63 @@
     const ctx = canvas.getContext('2d')
     const markFont = fittingFont(tileSize * 0.8)
 
-    // Highlight specified area
-    ctx.fillStyle = highlightColor;
-    ctx.fillRect(sx(minCol) - tileSize / 2, sy(minRow) - tileSize / 2,
-      (maxCol - minCol + 1) * tileSize, (maxRow - minRow + 1) * tileSize)
+    ctx.fillStyle = bgcolor
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    drawLines()
+    drawHoshis()
+    blackStones.forEach(stone => drawStone(stone.x, stone.y, 'black'))
+    whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'))
+    drawMarks()
 
-    // Draw the grid
-    for (let i = 0; i < boardSize; i++) {
-      ctx.beginPath()
-      ctx.lineWidth = (i === 0 || i === boardSize - 1) ? edgeLineWidth : innerLineWidth
-      //vertical
-      ctx.moveTo(sx(i), sy(0))
-      ctx.lineTo(sx(i), sy(boardSize - 1))
-      // horizontal
-      ctx.moveTo(sx(0) - edgeLineWidth / 2, sy(i))
-      ctx.lineTo(sx(boardSize - 1) + edgeLineWidth / 2, sy(i))
-      ctx.stroke()
-    }
+    //--------------------------
+    function drawLines() {
+      // Draw verticals
+      for (let i = minCol; i <= maxCol; i++) {
+        ctx.beginPath()
+        ctx.lineWidth = (i === 0 || i === BOARDSIZE - 1) ? edgeLineWidth : innerLineWidth
+        var topExtra = 0
+        if (minRow > 0) { topExtra = 0.5 * tileSize }
+        var bottomExtra = 0
+        if (maxRow < BOARDSIZE - 1) { bottomExtra = 0.5 * tileSize }
+        ctx.moveTo(sx(i), sy(minRow) - topExtra)
+        ctx.lineTo(sx(i), sy(maxRow) + bottomExtra)
+        ctx.stroke()
+      }
+
+      // Draw horizontals
+      for (let i = minRow; i <= maxRow; i++) {
+        ctx.beginPath()
+        ctx.lineWidth = (i === 0 || i === BOARDSIZE - 1) ? edgeLineWidth : innerLineWidth
+        var leftExtra = edgeLineWidth / 2
+        if (minCol > 0) { leftExtra = 0.5 * tileSize }
+        var rightExtra = edgeLineWidth / 2
+        if (maxCol < BOARDSIZE - 1) { rightExtra = 0.5 * tileSize }
+        ctx.moveTo(sx(minCol) - leftExtra, sy(i))
+        ctx.lineTo(sx(maxCol) + rightExtra, sy(i))
+        ctx.stroke()
+      }
+    } // drawLines()
+
+    //------------------------------
+    function drawHoshis() {
+      // Draw handicap points (hoshis)
+      hoshis.forEach(hoshi => {
+        if (hoshi.x < minCol || hoshi.x > maxCol || hoshi.y < minRow || hoshi.y > maxRow) {
+          return
+        }
+        ctx.beginPath()
+        ctx.arc(sx(hoshi.x), sy(hoshi.y), hoshiRadius, 0, 2 * Math.PI)
+        ctx.fillStyle = 'black'
+        ctx.fill()
+      })
+    } // drawHoshis()
 
     // Function to draw a stone
     //-------------------------------------
     function drawStone(x, y, color) {
+      if (x < minCol || x > maxCol || y < minRow || y > maxRow) {
+        return
+      }
       var stoneRadius = (color == 'black') ? bSstoneRadius : wSstoneRadius
       if (color == 'black') {
         ctx.lineWidth = bStoneStrokeWidth
@@ -139,42 +170,33 @@
         ctx.lineWidth = wStoneStrokeWidth
       }
       ctx.beginPath()
-      ctx.arc(sx(y), sy(x), stoneRadius, 0, 2 * Math.PI)
+      ctx.arc(sx(x), sy(y), stoneRadius, 0, 2 * Math.PI)
       ctx.fillStyle = color
       ctx.fill()
       ctx.stroke()
     } // drawStone()
 
-    // Draw handicap points (hoshis)
-    hoshis.forEach(hoshi => {
-      ctx.beginPath()
-      ctx.arc(sx(hoshi.x), sy(hoshi.y), hoshiRadius, 0, 2 * Math.PI)
-      ctx.fillStyle = 'black'
-      ctx.fill()
-    });
-
-    // Draw black stones
-    blackStones.forEach(stone => drawStone(stone.x, stone.y, 'black'))
-
-    // Draw white stones
-    whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'))
-
-    // draw marks
-    for (var i = 0; i < marks.length; i++) {
-      var row = marks[i]
-      for (var j = 0; j < row.length; j++) {
-        var mark = row[j]
-        if (mark.length > 0) {
-          if (mark == '0') {
-            drawCircle(j, i)
-          } else if (mark == '/') {
-            drawTriangle(j, i)
-          } else {
-            drawLetter(j, i, mark)
+    //-----------------------
+    function drawMarks() {
+      for (var i = 0; i < marks.length; i++) {
+        var row = marks[i]
+        for (var j = 0; j < row.length; j++) {
+          if (i < minCol || i > maxCol || j < minRow || j > maxRow) {
+            continue
           }
-        }
+          var mark = row[j]
+          if (mark.length > 0) {
+            if (mark == '0') {
+              drawCircle(i, j)
+            } else if (mark == '/') {
+              drawTriangle(i, j)
+            } else {
+              drawLetter(i, j, mark)
+            }
+          }
+        } // for
       } // for
-    } // for
+    } // drawMarks()
 
     //--------------------------------------
     function drawCircle(x, y) {
@@ -188,7 +210,7 @@
       ctx.strokeStyle = color
       ctx.lineWidth = lineWidth
       ctx.beginPath()
-      ctx.arc(sx(y), sy(x), radius, 0, 2 * Math.PI)
+      ctx.arc(sx(x), sy(y), radius, 0, 2 * Math.PI)
       ctx.stroke()
     } // drawCircle()
 
@@ -202,20 +224,35 @@
       var p2 = { x: -sin120 * r, y: cos120 * r }
       var lineWidth = tileSize * 0.05
       var color = 'black'
-      if (g_stones[y][x] == BLACK) {
+      if (g_stones[x][y] == BLACK) {
         color = 'white'
         lineWidth = tileSize * 0.1
       }
       ctx.strokeStyle = color
       ctx.lineWidth = lineWidth
       ctx.beginPath()
-      ctx.moveTo(sx(y) + p0.x, sy(x) - p0.y)
-      ctx.lineTo(sx(y) + p1.x, sy(x) - p1.y)
-      ctx.lineTo(sx(y) + p2.x, sy(x) - p2.y)
-      //ctx.moveTo(sx(y)+p0.y, sy(x)+p0.x)
+      ctx.moveTo(sx(x) + p0.x, sy(y) - p0.y)
+      ctx.lineTo(sx(x) + p1.x, sy(y) - p1.y)
+      ctx.lineTo(sx(x) + p2.x, sy(y) - p2.y)
       ctx.closePath()
       ctx.stroke()
     } // drawTriangle()
+
+    //------------------------------------
+    function drawLetter(x, y, letter) {
+      if (g_stones[x][y] == EMPTY) {
+        ctx.fillStyle = bgcolor
+        ctx.fillRect(sx(x) - tileSize / 2, sy(y) - tileSize / 2, tileSize, tileSize)
+      }
+      ctx.font = markFont
+      ctx.fillStyle = 'black'
+      if (g_stones[x][y] == BLACK) {
+        ctx.fillStyle = 'white'
+      }
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(letter, sx(x), sy(y) + 1)
+    } // drawLetter()
 
     //---------------------------- 
     function fittingFont(s) {
@@ -240,18 +277,21 @@
       return font
     } // fittingFont()
 
-    //------------------------------------
-    function drawLetter(x, y, letter) {
-      ctx.font = markFont
-      ctx.fillStyle = 'black'
-      if (g_stones[y][x] == BLACK) {
-        ctx.fillStyle = 'white'
+    //----------------------
+    function sx(col) {
+      if (trimFlag) {
+        return marg + col * tileSize - minCol * tileSize
       }
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillText(letter, sx(y), sy(x))
-    } // drawLetter
+      return marg + col * tileSize 
+    }
 
+    //---------------------
+    function sy(row) {
+      if (trimFlag) {
+        return marg + row * tileSize - minRow * tileSize
+      }
+      return marg + row * tileSize
+    }
 
   } // drawGoBoard()
 
