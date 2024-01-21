@@ -7,16 +7,23 @@
 {% endblock css %}
 
 {% block content %}
-<div id='goBoard' style='width:60vw;height:60vw;'>
+<div id='outerDiv'
+  style='width:90vw;height:90vw;display:flex;justify-content:center;align-items:center;margin-left:auto;margin-right:auto;'>
+  <div id='goBoard' style='width:90%;height:90%;'>
+  </div>
 </div>
 {% endblock content %}
 
 {% block js %}
 <script>
   'use strict'
-  // Black == 1; White == 2; Empty == 0
+  const BLACK = 1
+  const WHITE = 2
+  const EMPTY = 0
+  const TRIANGLE = '/'
+  const CIRCLE = '0'
+
   var stonesJson = '{{ stones }}'
-  // Triangle == '/'; Circle = '0' 
   var marksJson = '{{ marks }}'
   var stones = JSON.parse(stonesJson)
   var marks = JSON.parse(marksJson)
@@ -36,69 +43,197 @@
 
   $(function () {
     console.log('export_diagram.js')
-    drawGoBoard(blackStones, whiteStones, 0, 18, 0, 18)
+    drawGoBoard(blackStones, whiteStones, marks, 0, 9, 0, 18)
   })
 
   // Function to draw the board position and hilight a specified area
   //-------------------------------------------------------------------------------------
-  function drawGoBoard(blackStones, whiteStones, minRow, maxRow, minCol, maxCol) {
-    const boardSize = 19;
-    const tileSize = 30;
-    const boardPixelSize = boardSize * tileSize;
-    const stoneRadius = tileSize / 2 * 0.8;
-    const hoshiRadius = 3; // Radius of the handicap points
-    const highlightColor = 'lightblue';
-    const edgeLineWidth = 2;
-    const innerLineWidth = 1;
+  function drawGoBoard(blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol) {
+    const boardSize = 19
+    const boardDiv = document.getElementById('goBoard')
+    const outerDiv = document.getElementById('outerDiv')
+    // With padding
+    //const boardPixelSize = parseInt(window.getComputedStyle(boardDiv).getPropertyValue('width'))
+    // Without padding
+    const outerSize = parseInt(outerDiv.clientWidth)
+    const boardPixelSize = parseInt(boardDiv.clientWidth)
+    const marg = (outerSize - boardPixelSize) / 2
+
+    const tileSize = boardPixelSize / (boardSize - 1)
+    const wSstoneRadius = tileSize * 0.45
+    const bSstoneRadius = tileSize * 0.45
+    const wStoneStrokeWidth = tileSize * 0.05
+    const bStoneStrokeWidth = tileSize * 0.05
+    const hoshiRadius = tileSize / 6 // Radius of the handicap points
+    const highlightColor = 'lightblue'
+    const edgeLineWidth = tileSize * 0.18
+    const innerLineWidth = tileSize * 0.08
+
+    //----------------------
+    function sx(col) {
+      return marg + col * tileSize
+    }
+
+    //---------------------
+    function sy(row) {
+      return marg + row * tileSize
+    }
 
     // Handicap points (hoshis) for a 19x19 board
-    const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }];
+    const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }]
 
     // Create canvas element
-    const canvas = document.createElement('canvas');
-    canvas.width = boardPixelSize;
-    canvas.height = boardPixelSize;
-    document.getElementById('goBoard').appendChild(canvas);
+    const canvas = document.createElement('canvas')
+    canvas.width = outerSize
+    canvas.height = outerSize
+    outerDiv.appendChild(canvas)
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')
+    const markFont = fittingFont(tileSize * 0.8)
 
     // Highlight specified area
     ctx.fillStyle = highlightColor;
-    ctx.fillRect(minCol * tileSize, minRow * tileSize, (maxCol - minCol + 1) * tileSize, (maxRow - minRow + 1) * tileSize);
+    ctx.fillRect(sx(minCol) - tileSize / 2, sy(minRow) - tileSize / 2,
+      (maxCol - minCol + 1) * tileSize, (maxRow - minRow + 1) * tileSize)
 
     // Draw the grid
     for (let i = 0; i < boardSize; i++) {
-      ctx.beginPath();
-      ctx.lineWidth = (i === 0 || i === boardSize - 1) ? edgeLineWidth : innerLineWidth;
-      ctx.moveTo(i * tileSize, 0);
-      ctx.lineTo(i * tileSize, boardPixelSize);
-      ctx.moveTo(0, i * tileSize);
-      ctx.lineTo(boardPixelSize, i * tileSize);
-      ctx.stroke();
+      ctx.beginPath()
+      ctx.lineWidth = (i === 0 || i === boardSize - 1) ? edgeLineWidth : innerLineWidth
+      //vertical
+      ctx.moveTo(sx(i), sy(0))
+      ctx.lineTo(sx(i), sy(boardSize - 1))
+      // horizontal
+      ctx.moveTo(sx(0) - edgeLineWidth / 2, sy(i))
+      ctx.lineTo(sx(boardSize - 1) + edgeLineWidth / 2, sy(i))
+      ctx.stroke()
     }
 
     // Function to draw a stone
+    //-------------------------------------
     function drawStone(x, y, color) {
-      ctx.beginPath();
-      ctx.arc(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, stoneRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = color;
-      ctx.fill();
-      ctx.stroke();
-    }
+      var stoneRadius = (color == 'black') ? bSstoneRadius : wSstoneRadius
+      if (color == 'black') {
+        ctx.lineWidth = bStoneStrokeWidth
+      } else {
+        ctx.lineWidth = wStoneStrokeWidth
+      }
+      ctx.beginPath()
+      ctx.arc(sx(y), sy(x), stoneRadius, 0, 2 * Math.PI)
+      ctx.fillStyle = color
+      ctx.fill()
+      ctx.stroke()
+    } // drawStone()
 
     // Draw handicap points (hoshis)
     hoshis.forEach(hoshi => {
-      ctx.beginPath();
-      ctx.arc(hoshi.x * tileSize, hoshi.y * tileSize, hoshiRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = 'black';
-      ctx.fill();
+      ctx.beginPath()
+      ctx.arc(sx(hoshi.x), sy(hoshi.y), hoshiRadius, 0, 2 * Math.PI)
+      ctx.fillStyle = 'black'
+      ctx.fill()
     });
 
     // Draw black stones
-    blackStones.forEach(stone => drawStone(stone.x, stone.y, 'black'));
+    blackStones.forEach(stone => drawStone(stone.x, stone.y, 'black'))
 
     // Draw white stones
-    whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'));
+    whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'))
+
+    // draw marks
+    for (var i = 0; i < marks.length; i++) {
+      var row = marks[i]
+      for (var j = 0; j < row.length; j++) {
+        var mark = row[j]
+        if (mark.length > 0) {
+          if (mark == '0') {
+            drawCircle(j, i)
+          } else if (mark == '/') {
+            drawTriangle(j, i)
+          } else {
+            drawLetter(j, i, mark)
+          }
+        }
+      } // for
+    } // for
+
+    //--------------------------------------
+    function drawCircle(x, y) {
+      var lineWidth = tileSize * 0.04
+      var radius = tileSize * 0.25
+      var color = 'black'
+      if (stones[y][x] == BLACK) {
+        color = 'white'
+        lineWidth = tileSize * 0.1
+      }
+      ctx.strokeStyle = color
+      ctx.lineWidth = lineWidth
+      ctx.beginPath()
+      ctx.arc(sx(y), sy(x), radius, 0, 2 * Math.PI)
+      ctx.stroke()
+    } // drawCircle()
+
+    //---------------------------------
+    function drawTriangle(x, y) {
+      var cos120 = -0.5
+      var sin120 = 0.86602540378
+      var r = tileSize * 0.45
+      var p0 = { x: 0, y: r }
+      var p1 = { x: sin120 * r, y: cos120 * r }
+      var p2 = { x: -sin120 * r, y: cos120 * r }
+      var lineWidth = tileSize * 0.05
+      var color = 'black'
+      if (stones[y][x] == BLACK) {
+        color = 'white'
+        lineWidth = tileSize * 0.1
+      }
+      ctx.strokeStyle = color
+      ctx.lineWidth = lineWidth
+      ctx.beginPath()
+      ctx.moveTo(sx(y) + p0.x, sy(x) - p0.y)
+      ctx.lineTo(sx(y) + p1.x, sy(x) - p1.y)
+      ctx.lineTo(sx(y) + p2.x, sy(x) - p2.y)
+      //ctx.moveTo(sx(y)+p0.y, sy(x)+p0.x)
+      ctx.closePath()
+      ctx.stroke()
+    } // drawTriangle()
+
+    //---------------------------- 
+    function fittingFont(s) {
+      var fontSize = 50 // Start with a large font size
+      var font = ''
+
+      while (true) {
+        font = fontSize + "px Arial"; // Set the font size and type
+        var textWidth = ctx.measureText('a').width
+        var textHeight = fontSize // Assume letter height is equal to font size
+
+        // Check if the letter dimensions fit within the circle's diameter
+        if (textWidth <= s && textHeight <= s) {
+          return font
+        }
+
+        fontSize--; // Increase the font size
+        if (fontSize <= 1) {
+          break // Prevent an infinite loop
+        }
+      } // while
+      return font
+    } // fittingFont()
+
+    //------------------------------------
+    function drawLetter(x, y, letter) {
+      ctx.font = markFont
+      ctx.fillStyle = 'black'
+      if (stones[y][x] == BLACK) {
+        ctx.fillStyle = 'white'
+      }
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(letter, sx(y), sy(x))
+    } // drawLetter
+
+
   } // drawGoBoard()
+
 </script>
 {% endblock js %}
