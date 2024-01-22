@@ -3,17 +3,98 @@
 {% block css %}
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <style>
+  :root {
+    --BOARDSIZE: 70vw;
+    --TBHEIGHT: 15vw;
+    --LRWIDTH: 15vw;
+    --BUTTON-GAP: 5vw;
+    --CONTROL-LONG-SIDE: 25vw;
+    --CONTROL-SHORT-SIDE: calc((var(--CONTROL-LONG-SIDE) - var(--BUTTON-GAP)) / 2.0);
+  }
+
+  .ahx-twocols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Two columns with equal width */
+  }
+
+  .ahx-tworows {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    /* Two rows with equal height */
+  }
+
+  .single-letter-button {
+    background-color: green;
+    border: none;
+    color: white;
+    padding: 0;
+    /* Removes padding */
+    margin: 0;
+    /* Removes margin */
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: 1000;
+  }
 </style>
+
 {% endblock css %}
 
 {% block content %}
 <br>
-<div id='boardDiv' style='width:90vw;height:90vw;margin-left:auto;margin-right:auto;'>
-</div>
+<!-- board with controls along edges -->
+<div
+  style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:center;'
+  class='xgreen-border'>
+  <!-- left control -->
+  <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
+    <div class='ahx-tworows xred-border'
+      style='width:var(--CONTROL-SHORT-SIDE); height:var(--CONTROL-LONG-SIDE); grid-row-gap:var(--BUTTON-GAP);'>
+      <button id=btn_bottom_up class='single-letter-button' style='display:grid;align-items:center;'>&#x2191;</button>
+      <button id=btn_bottom_down class='single-letter-button' style='display:grid;align-items:center;'>&#x2193;</button>
+    </div>
+  </div> <!-- left pane -->
+
+  <!-- center pane -->
+  <div
+    style='display:grid;grid-template-rows:var(--TBHEIGHT) var(--BOARDSIZE) var(--TBHEIGHT);justify-content:center;align-items:center;'
+    class='xgreen-border'>
+    <!-- top control -->
+    <div class='ahx-twocols xred-border'
+      style='width:var(--CONTROL-LONG-SIDE); height:var(--CONTROL-SHORT-SIDE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
+      <button id=btn_left_left class='single-letter-button' style='display:grid;align-items:center;'>&#x2190;</button>
+      <button id=btn_left_right class='single-letter-button' style='display:grid;align-items:center;'>&#x2192;</button>
+    </div>
+    <!-- board -->
+    <div id='boardDiv' class=xred-border
+      style='width:var(--BOARDSIZE);height:var(--BOARDSIZE);margin-left:auto;margin-right:auto;'>
+    </div>
+    <!-- bottom control -->
+    <div class='ahx-twocols xred-border'
+      style='width:var(--CONTROL-LONG-SIDE); height:var(--CONTROL-SHORT-SIDE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
+      <button id=btn_right_left class='single-letter-button' style='display:grid;align-items:center;'>&#x2190;</button>
+      <button id=btn_right_right class='single-letter-button' style='display:grid;align-items:center;'>&#x2192;</button>
+    </div>
+  </div> <!-- center pane -->
+
+  <!-- right control -->
+  <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
+    <div class='ahx-tworows xred-border'
+      style='width:var(--CONTROL-SHORT-SIDE); height:var(--CONTROL-LONG-SIDE); grid-row-gap:var(--BUTTON-GAP);'>
+      <button id=btn_top_up class='single-letter-button' style='display:grid;align-items:center;'>&#x2191;</button>
+      <button id=btn_top_down class='single-letter-button' style='display:grid;align-items:center;'>&#x2193;</button>
+    </div>
+  </div> <!-- right pane -->
+
+</div> <!-- board with controls along edges -->
+
+
 <br>
 <div>
   <button onclick="exportDiagram()">Export</button>
 </div>
+
+<br>
 
 {% endblock content %}
 
@@ -33,7 +114,7 @@
   var g_marks = JSON.parse(g_marksJson)
   var g_blackStones = []
   var g_whiteStones = []
-  var g_mincol = 9
+  var g_mincol = 0
   var g_maxcol = 18
   var g_minrow = 0
   var g_maxrow = 18
@@ -61,15 +142,25 @@
   //--------------------------
   $(function () {
     const marg = 0.05 * g_canvas.width
-    const tileSize = (g_canvas.width - 2 * marg) / (BOARDSIZE - 1) 
+    const tileSize = (g_canvas.width - 2 * marg) / (BOARDSIZE - 1)
     drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+
+    document.getElementById('btn_bottom_up').addEventListener('click', function () {
+      g_maxrow = Math.max(g_maxrow - 1, 3)
+      drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+    })
+    document.getElementById('btn_bottom_down').addEventListener('click', function () {
+      g_maxrow = Math.min(g_maxrow + 1, 18)
+      drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+    })
   })
+
 
   //--------------------------------
   function exportDiagram() {
     const canvas = document.createElement('canvas')
-    const width = g_maxcol - g_mincol 
-    const height = g_maxrow - g_minrow 
+    const width = g_maxcol - g_mincol
+    const height = g_maxrow - g_minrow
     const tileSize = 100
     const marg = tileSize
     canvas.width = tileSize * width + 2 * marg
@@ -282,7 +373,7 @@
       if (trimFlag) {
         return marg + col * tileSize - minCol * tileSize
       }
-      return marg + col * tileSize 
+      return marg + col * tileSize
     }
 
     //---------------------
