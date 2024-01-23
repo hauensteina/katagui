@@ -246,6 +246,8 @@
     const ctx = canvas.getContext('2d')
     const markFont1 = fittingFont(tileSize * 0.3, 1)
     const markFont2 = fittingFont(tileSize * 0.6, 2)
+    const letterFont = fittingFont(tileSize * 0.4, 1)
+    const xfont = fittingFont(tileSize * 0.6, 1)
 
     ctx.fillStyle = bgcolor
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -346,7 +348,7 @@
       var lineWidth = tileSize * 0.04
       var radius = tileSize * 0.25
       var color = 'black'
-      if (g_stones[y][x] == BLACK) {
+      if (g_stones[x][y] == BLACK) {
         color = 'white'
         lineWidth = tileSize * 0.1
       }
@@ -396,7 +398,11 @@
         ctx.fillStyle = bgcolor
         ctx.fillRect(sx(x) - tileSize / 2, sy(y) - tileSize / 2, tileSize, tileSize)
       }
-      if (text.length == 1) {
+      if (text[0] == 'X') {
+        ctx.font = xfont
+      } else if (isNaN(parseInt(text[0]))) {
+        ctx.font = letterFont
+      } else if (text.length == 1) {
         ctx.font = markFont1
       } else {
         ctx.font = markFont2
@@ -407,7 +413,11 @@
       }
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      if (text.length == 1) {
+      if (text[0] == 'X') {
+        ctx.fillText(text, sx(x) - tileSize * 0.00, sy(y) + tileSize * 0.06)
+      } else if (isNaN(parseInt(text[0]))) { // a letter
+        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) - tileSize * 0.01)
+      } else if (text.length == 1) {
         ctx.fillText(text, sx(x), sy(y) + tileSize * 0.05)
       } else if (text[0] == '1') {
         ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.05)
@@ -422,7 +432,7 @@
       const txt = '6'.repeat(nletters)
       var fontSize = 100 // Start with a large font size
       var font = ''
-  
+
       while (true) {
         font = fontSize + "px Arial"; // Set the font size and type
         ctx.font = font
@@ -432,7 +442,7 @@
 
         // Check if the letter dimensions fit within the circle's diameter
         //if (textWidth <= s && textHeight <= s) {
-        if (textWidth <= s ) {
+        if (textWidth <= s) {
           return font
         }
 
