@@ -4,11 +4,11 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <style>
   :root {
-    --BOARDSIZE: 70vw;
-    --TBHEIGHT: 15vw;
-    --LRWIDTH: 15vw;
+    --BOARDSIZE: 55vw;
+    --TBHEIGHT: 22vw;
+    --LRWIDTH: 22vw;
     --BUTTON-GAP: 5vw;
-    --CONTROL-LONG-SIDE: 25vw;
+    --CONTROL-LONG-SIDE: 35vw;
     --CONTROL-SHORT-SIDE: calc((var(--CONTROL-LONG-SIDE) - var(--BUTTON-GAP)) / 2.0);
   }
 
@@ -32,7 +32,7 @@
     /* Removes padding */
     margin: 0;
     /* Removes margin */
-    font-size: 16px;
+    font-size: 24px;
     font-family: Arial, sans-serif;
     font-weight: 1000;
   }
@@ -50,8 +50,8 @@
   <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
     <div class='ahx-tworows xred-border'
       style='width:var(--CONTROL-SHORT-SIDE); height:var(--CONTROL-LONG-SIDE); grid-row-gap:var(--BUTTON-GAP);'>
-      <button id=btn_bottom_up class='single-letter-button' style='display:grid;align-items:center;'>&#x2191;</button>
-      <button id=btn_bottom_down class='single-letter-button' style='display:grid;align-items:center;'>&#x2193;</button>
+      <button id=btn_bottom_up class='single-letter-button' style='display:grid;align-items:center;border-bottom: 6px solid #000;'>&#x2191;</button>
+      <button id=btn_bottom_down class='single-letter-button' style='display:grid;align-items:center;border-bottom: 6px solid #000;'>&#x2193;</button>
     </div>
   </div> <!-- left pane -->
 
@@ -62,18 +62,18 @@
     <!-- top control -->
     <div class='ahx-twocols xred-border'
       style='width:var(--CONTROL-LONG-SIDE); height:var(--CONTROL-SHORT-SIDE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
-      <button id=btn_left_left class='single-letter-button' style='display:grid;align-items:center;'>&#x2190;</button>
-      <button id=btn_left_right class='single-letter-button' style='display:grid;align-items:center;'>&#x2192;</button>
+      <button id=btn_left_left class='single-letter-button' style='display:grid;align-items:center;border-right: 6px solid #000;'>&#x2190;</button>
+      <button id=btn_left_right class='single-letter-button' style='display:grid;align-items:center;border-right: 6px solid #000;'>&#x2192;</button>
     </div>
     <!-- board -->
     <div id='boardDiv' class=xred-border
-      style='width:var(--BOARDSIZE);height:var(--BOARDSIZE);margin-left:auto;margin-right:auto;'>
+      style='width:var(--BOARDSIZE);height:var(--BOARDSIZE);margin-left:auto;margin-right:auto;' >
     </div>
     <!-- bottom control -->
     <div class='ahx-twocols xred-border'
       style='width:var(--CONTROL-LONG-SIDE); height:var(--CONTROL-SHORT-SIDE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
-      <button id=btn_right_left class='single-letter-button' style='display:grid;align-items:center;'>&#x2190;</button>
-      <button id=btn_right_right class='single-letter-button' style='display:grid;align-items:center;'>&#x2192;</button>
+      <button id=btn_right_left class='single-letter-button' style='display:grid;align-items:center;border-left: 6px solid #000;'>&#x2190;</button>
+      <button id=btn_right_right class='single-letter-button' style='display:grid;align-items:center;border-left: 6px solid #000;'>&#x2192;</button>
     </div>
   </div> <!-- center pane -->
 
@@ -81,17 +81,20 @@
   <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
     <div class='ahx-tworows xred-border'
       style='width:var(--CONTROL-SHORT-SIDE); height:var(--CONTROL-LONG-SIDE); grid-row-gap:var(--BUTTON-GAP);'>
-      <button id=btn_top_up class='single-letter-button' style='display:grid;align-items:center;'>&#x2191;</button>
-      <button id=btn_top_down class='single-letter-button' style='display:grid;align-items:center;'>&#x2193;</button>
+      <button id=btn_top_up class='single-letter-button' style='display:grid;align-items:center;border-top: 6px solid #000;'>&#x2191;</button>
+      <button id=btn_top_down class='single-letter-button' style='display:grid;align-items:center;border-top: 6px solid #000;'>&#x2193;</button>
     </div>
   </div> <!-- right pane -->
 
 </div> <!-- board with controls along edges -->
 
-
 <br>
+<!-- Export button -->
 <div>
-  <button onclick="exportDiagram()">Export</button>
+  <button id=btn_export onclick='exportDiagram()'
+    style='font-size:24px;font-family:Arial, sans-serif;background-color:#cccccc;color:black;padding:0 2vw;margin:0;
+    border-color:black;border-width:1px;border-style:solid;border-radius: 1vw;'
+  >Export</button>
 </div>
 
 <br>
@@ -162,36 +165,42 @@
       g_minrow = Math.min(g_minrow + 1, 15)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
-    document.getElementById('btn_left_left').addEventListener('click', function () {
+    document.getElementById('btn_right_left').addEventListener('click', function () {
       g_mincol = Math.max(g_mincol - 1, 0)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
-    document.getElementById('btn_left_right').addEventListener('click', function () {
+    document.getElementById('btn_right_right').addEventListener('click', function () {
       g_mincol = Math.min(g_mincol + 1, 15)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
-    document.getElementById('btn_right_left').addEventListener('click', function () {
+    document.getElementById('btn_left_left').addEventListener('click', function () {
       g_maxcol = Math.max(g_maxcol - 1, 3)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
-    document.getElementById('btn_right_right').addEventListener('click', function () {
+    document.getElementById('btn_left_right').addEventListener('click', function () {
       g_maxcol = Math.min(g_maxcol + 1, 18)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
 
-    // Disable double click to zoom
+    // For buttons, convert touchstart to click
     $('[id^=btn_]').on('touchstart', (e) => {
       e.preventDefault()
       e.target.click()
     })
+    // For links, convert touchend to click
+    $('a').on('touchend', (e) => {
+      e.preventDefault()
+      e.target.click()
+    })
+    // Touchend does nothing
     $('*').on('touchend', (e) => {
       e.preventDefault()
     })
   })
 
-
   //--------------------------------
   function exportDiagram() {
+    debugger
     const canvas = document.createElement('canvas')
     const width = g_maxcol - g_mincol
     const height = g_maxrow - g_minrow
@@ -221,15 +230,15 @@
     const wStoneStrokeWidth = tileSize * 0.05
     const bStoneStrokeWidth = tileSize * 0.05
     const hoshiRadius = tileSize / 6 // Radius of the handicap points
-    const bgcolor = 'white'
-    const edgeLineWidth = tileSize * 0.18
+    const bgcolor = '#cc9966'
+    const edgeLineWidth = tileSize * 0.12
     const innerLineWidth = tileSize * 0.08
 
     // Handicap points (hoshis) for a 19x19 board
     const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }]
 
     const ctx = canvas.getContext('2d')
-    const markFont = fittingFont(tileSize * 0.8)
+    const markFont = fittingFont(tileSize * 0.9)
 
     ctx.fillStyle = bgcolor
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -345,15 +354,23 @@
       ctx.beginPath()
       var cos120 = -0.5
       var sin120 = 0.86602540378
-      var r = tileSize * 0.45
+      var r = tileSize * 0.40
       var p0 = { x: 0, y: r }
       var p1 = { x: sin120 * r, y: cos120 * r }
       var p2 = { x: -sin120 * r, y: cos120 * r }
-      var lineWidth = tileSize * 0.05
+      var lineWidth = tileSize * 0.07
       var color = 'black'
       if (g_stones[x][y] == BLACK) {
         color = 'white'
-        lineWidth = tileSize * 0.1
+        lineWidth = tileSize * 0.07
+      }
+      else if (g_stones[x][y] == WHITE) {
+        color = 'black'
+        lineWidth = tileSize * 0.07
+      }
+      else {
+        color = 'black'
+        lineWidth = tileSize * 0.07
       }
       ctx.strokeStyle = color
       ctx.lineWidth = lineWidth
@@ -384,7 +401,7 @@
 
     //---------------------------- 
     function fittingFont(s) {
-      var fontSize = 50 // Start with a large font size
+      var fontSize = 100 // Start with a large font size
       var font = ''
 
       while (true) {
