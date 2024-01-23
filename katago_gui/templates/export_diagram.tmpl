@@ -25,7 +25,7 @@
   }
 
   .single-letter-button {
-    background-color: green;
+    background-color: #cc9966;
     border: none;
     color: white;
     padding: 0;
@@ -219,7 +219,8 @@
     document.body.removeChild(link)
   } // exportDiagram()
 
-  // Function to draw the board position and hilight a specified area
+  // Function to draw the board position and hilight a specified area.
+  // Used both for screen and export.
   //--------------------------------------------------------------------------------------------------------------------------
   function drawGoBoard(canvas, marg, tileSize, blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol, trimFlag) {
     const boardwidth = canvas.width - 2 * marg
