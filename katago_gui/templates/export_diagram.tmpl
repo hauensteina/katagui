@@ -247,7 +247,7 @@
     const markFont1 = fittingFont(tileSize * 0.3, 1)
     const markFont2 = fittingFont(tileSize * 0.6, 2)
     const letterFont = fittingFont(tileSize * 0.4, 1)
-    const xfont = fittingFont(tileSize * 0.6, 1)
+    const xfont = fittingFont(tileSize * 0.4, 1)
 
     ctx.fillStyle = bgcolor
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -350,7 +350,7 @@
       var color = 'black'
       if (g_stones[x][y] == BLACK) {
         color = 'white'
-        lineWidth = tileSize * 0.1
+        lineWidth = tileSize * 0.06
       }
       ctx.strokeStyle = color
       ctx.lineWidth = lineWidth
@@ -371,15 +371,15 @@
       var color = 'black'
       if (g_stones[x][y] == BLACK) {
         color = 'white'
-        lineWidth = tileSize * 0.07
+        lineWidth = tileSize * 0.05
       }
       else if (g_stones[x][y] == WHITE) {
         color = 'black'
-        lineWidth = tileSize * 0.07
+        lineWidth = tileSize * 0.05
       }
       else {
         color = 'black'
-        lineWidth = tileSize * 0.07
+        lineWidth = tileSize * 0.05
       }
       ctx.strokeStyle = color
       ctx.lineWidth = lineWidth
