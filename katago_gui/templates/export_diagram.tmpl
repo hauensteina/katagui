@@ -418,11 +418,11 @@
       } else if (isNaN(parseInt(text[0]))) { // a letter
         ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) - tileSize * 0.01)
       } else if (text.length == 1) { // single digit
-        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.025)
+        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.020)
       } else if (text[0] == '1') { // two digits in the teens
-        ctx.fillText(text, sx(x) - tileSize * 0.035, sy(y) + tileSize * 0.025)
+        ctx.fillText(text, sx(x) - tileSize * 0.030, sy(y) + tileSize * 0.020)
       } else { // two digits >= 20
-        ctx.fillText(text, sx(x) - tileSize * 0.01, sy(y) + tileSize * 0.025)
+        ctx.fillText(text, sx(x) - tileSize * 0.01, sy(y) + tileSize * 0.020)
       }
     } // drawText()
 
