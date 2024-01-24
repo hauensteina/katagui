@@ -237,7 +237,7 @@
     const bStoneStrokeWidth = tileSize * 0.05
     const hoshiRadius = tileSize * 0.1
     const bgcolor = '#cc9966'
-    const edgeLineWidth = tileSize * 0.08
+    const edgeLineWidth = tileSize * 0.06
     const innerLineWidth = tileSize * 0.04
 
     // Handicap points (hoshis) for a 19x19 board
@@ -418,11 +418,11 @@
       } else if (isNaN(parseInt(text[0]))) { // a letter
         ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) - tileSize * 0.01)
       } else if (text.length == 1) { // single digit
-        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.035)
+        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.025)
       } else if (text[0] == '1') { // two digits in the teens
-        ctx.fillText(text, sx(x) - tileSize * 0.035, sy(y) + tileSize * 0.035)
+        ctx.fillText(text, sx(x) - tileSize * 0.035, sy(y) + tileSize * 0.025)
       } else { // two digits >= 20
-        ctx.fillText(text, sx(x) - tileSize * 0.01, sy(y) + tileSize * 0.035)
+        ctx.fillText(text, sx(x) - tileSize * 0.01, sy(y) + tileSize * 0.025)
       }
     } // drawText()
 
