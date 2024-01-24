@@ -151,7 +151,7 @@
   // Init page on load
   //--------------------------
   $(function () {
-    const marg = 0.05 * g_canvas.width
+    const marg = 0.04 * g_canvas.width
     const tileSize = (g_canvas.width - 2 * marg) / (BOARDSIZE - 1)
     drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
 
@@ -417,12 +417,12 @@
         ctx.fillText(text, sx(x) - tileSize * 0.00, sy(y) + tileSize * 0.06)
       } else if (isNaN(parseInt(text[0]))) { // a letter
         ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) - tileSize * 0.01)
-      } else if (text.length == 1) {
-        ctx.fillText(text, sx(x), sy(y) + tileSize * 0.05)
-      } else if (text[0] == '1') {
-        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.05)
-      } else {
-        ctx.fillText(text, sx(x) - tileSize * 0.01, sy(y) + tileSize * 0.05)
+      } else if (text.length == 1) { // single digit
+        ctx.fillText(text, sx(x) - tileSize * 0.015, sy(y) + tileSize * 0.035)
+      } else if (text[0] == '1') { // two digits in the teens
+        ctx.fillText(text, sx(x) - tileSize * 0.035, sy(y) + tileSize * 0.035)
+      } else { // two digits >= 20
+        ctx.fillText(text, sx(x) - tileSize * 0.01, sy(y) + tileSize * 0.035)
       }
     } // drawText()
 
