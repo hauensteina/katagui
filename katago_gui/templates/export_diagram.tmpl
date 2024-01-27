@@ -418,7 +418,7 @@
     function drawText(x, y, text) {
       if (text.length == 0) { return }
       const xfont = { size: '18pt', family: 'Arial, sans-serif' }
-      const letterfont = { size: '14pt', family: 'Arial, sans-serif' }
+      const letterfont = { size: '16pt', family: 'Arial, sans-serif' }
       const markFont1 = { size: '14pt', family: 'Arial, sans-serif' }
       const markFont2 = { size: '12pt', family: 'Arial, sans-serif' }
       const color = g_stones[x][y] == BLACK ? 'white' : 'black'
@@ -449,8 +449,8 @@
         elt.setAttribute("font-family", letterfont.family)
         elt.setAttribute("text-anchor", "middle") 
         elt.setAttribute("dominant-baseline", "central")
-        elt.setAttribute("x", sx(x) - tileSize * 0.015)
-        elt.setAttribute("y", sy(y) - tileSize * 0.01)
+        elt.setAttribute("x", sx(x) - tileSize * 0.00)
+        elt.setAttribute("y", sy(y) - tileSize * 0.00)
         elt.setAttribute("fill", color)
       } else if (text.length == 1) { // single digit
         elt.textContent = text[0]
