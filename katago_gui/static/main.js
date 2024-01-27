@@ -104,7 +104,6 @@ function main(JGO, axutil, p_options) {
 
   //------------------------------------------
   function board_click_callback(coord) {
-    //@@@
     selfplay('off')
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
@@ -115,6 +114,7 @@ function main(JGO, axutil, p_options) {
     if ($('#btn_tgl_letter').hasClass('btn-success')) return add_mark(coord, 'letter')
     if ($('#btn_tgl_x').hasClass('btn-success')) return add_mark(coord, 'X')
     if ($('#btn_tgl_triangle').hasClass('btn-success')) return add_mark(coord, 'triangle')
+    if ($('#btn_tgl_circle').hasClass('btn-success')) return add_mark(coord, 'circle')
 
     var jboard = g_jrecord.jboard
     if ((jboard.getType(coord) == JGO.BLACK) || (jboard.getType(coord) == JGO.WHITE)) { return }
@@ -158,6 +158,8 @@ function main(JGO, axutil, p_options) {
       if (n_list.length < add_mark.orig_coords['number'].length) { return 'number' }
       var t_list = add_mark.orig_coords['triangle'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
       if (t_list.length < add_mark.orig_coords['triangle'].length) { return 'triangle' }
+      var o_list = add_mark.orig_coords['circle'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
+      if (o_list.length < add_mark.orig_coords['circle'].length) { return 'circle' }
       var x_list = add_mark.orig_coords['X'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
       if (x_list.length < add_mark.orig_coords['X'].length) { return 'X' }
       return ''
@@ -178,6 +180,9 @@ function main(JGO, axutil, p_options) {
       add_mark.orig_coords['triangle'].forEach(c => {
         node.setMark(axutil.rot_coord(c), JGO.MARK.TRIANGLE)
       })
+      add_mark.orig_coords['circle'].forEach(c => {
+        node.setMark(axutil.rot_coord(c), JGO.MARK.CIRCLE)
+      })
     } // redraw_marks()
 
     var letters = 'abcdefghiklmnopqrstuvwxyz'
@@ -185,7 +190,7 @@ function main(JGO, axutil, p_options) {
     replay_moves(grec.pos()) // remove artifacts, preserve mark on last play
 
     if (rotated_coord == 'clear') {
-      add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [] }
+      add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [], 'circle': [] }
       redraw_marks()
       return
     }
@@ -202,7 +207,7 @@ function main(JGO, axutil, p_options) {
       return
     }
   } // add_mark()
-  add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [] }
+  add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [], 'circle': [] }
 
   //-------------------------------
   function best_btn_callback() {
@@ -352,6 +357,8 @@ function main(JGO, axutil, p_options) {
       $('#btn_tgl_x').css('background-color', '')
       $('#btn_tgl_triangle').removeClass('btn-success')
       $('#btn_tgl_triangle').css('background-color', '')
+      $('#btn_tgl_circle').removeClass('btn-success')
+      $('#btn_tgl_circle').css('background-color', '')
     } // deativate_mark_toggles()
 
     function activate_mark_toggle(btn) {
@@ -428,6 +435,10 @@ function main(JGO, axutil, p_options) {
 
     $('#btn_tgl_triangle').click(() => {
       activate_mark_toggle($('#btn_tgl_triangle'))
+    })
+
+    $('#btn_tgl_circle').click(() => {
+      activate_mark_toggle($('#btn_tgl_circle'))
     })
 
     $('#btn_clear').click(() => {
