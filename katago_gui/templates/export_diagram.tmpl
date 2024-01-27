@@ -202,7 +202,7 @@
     $('*').on('touchend', (e) => {
       e.preventDefault()
     })
-  })
+  }) //$(function ()
 
   //--------------------------------
   function exportDiagramPNG() {
@@ -255,6 +255,17 @@
     const marg = tileSize * 1.0 // Margin around the board in pixels
     const stoneRadius = tileSize * 0.45 // Radius of each Go stone
     const boardPixels = tileSize * (boardSize - 1) + 2 * marg // Size of the board in pixels
+    const wSstoneRadius = tileSize * 0.47
+    const bSstoneRadius = tileSize * 0.47
+    const wStoneStrokeWidth = tileSize * 0.03
+    const bStoneStrokeWidth = tileSize * 0.05
+    const hoshiRadius = tileSize * 0.1
+    const bgcolor = '#cc9966'
+    const edgeLineWidth = tileSize * 0.07
+    const innerLineWidth = tileSize * 0.04
+
+    // Handicap points (hoshis) for a 19x19 board
+    const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }]
 
     // Create the SVG element
     const svgNS = "http://www.w3.org/2000/svg"
@@ -266,6 +277,8 @@
     drawHoshis()
     blackStones.forEach(stone => drawStone(stone.x, stone.y, '#000000'))
     whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'))
+    drawMarks()
+
     return svg
 
     //---------------------------------------
@@ -293,106 +306,237 @@
     // Draw a stone at (x, y) on the board
     //--------------------------------------
     function drawStone(x, y, color) {
+      if (x < minCol || x > maxCol || y < minRow || y > maxRow) {
+        return
+      }
+      var stoneRadius = (color == 'black') ? bSstoneRadius : wSstoneRadius
+      var lineWidth = (color == 'black') ? bStoneStrokeWidth : wStoneStrokeWidth
       let stone = document.createElementNS(svgNS, "circle")
       stone.setAttribute("cx", sx(x))
       stone.setAttribute("cy", sy(y))
       stone.setAttribute("r", stoneRadius)
       stone.setAttribute("fill", color)
-      stone.setAttribute("stroke", "black"); // Add a black stroke
-      stone.setAttribute("stroke-width", "1"); // Set the stroke width to 1 (you can adjust this value as needed)
+      stone.setAttribute("stroke", "black")
+      stone.setAttribute("stroke-width", lineWidth)
       svg.appendChild(stone)
     } // drawStone()
+
+    //-----------------------
+    function drawMarks() {
+      for (var i = 0; i < marks.length; i++) {
+        var row = marks[i]
+        for (var j = 0; j < row.length; j++) {
+          if (i < minCol || i > maxCol || j < minRow || j > maxRow) {
+            continue
+          }
+          var mark = row[j]
+          if (mark.length > 0) {
+            if (mark == '0') {
+              drawCircle(i, j)
+            } else if (mark == '/') {
+              drawTriangle(i, j)
+            } else {
+              drawText(i, j, mark)
+            }
+          }
+        } // for
+      } // for
+    } // drawMarks()
 
     //----------------------------
     function setBackground() {
       // Create the rectangle element
-      var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+      let width = tileSize * (g_maxcol - g_mincol) + 2 * marg
+      let height = tileSize * (g_maxrow - g_minrow) + 2 * marg
       // Set attributes for the rectangle to cover the board area
-      rect.setAttribute("width", boardPixels);
-      rect.setAttribute("height", boardPixels);
-      rect.setAttribute("fill", "#cc9966"); // Set the background color
+      rect.setAttribute("width", width)
+      rect.setAttribute("height", height)
+      rect.setAttribute("fill", bgcolor)
 
       // Append the rectangle to the SVG before adding other elements
-      svg.appendChild(rect);
+      svg.appendChild(rect)
     } // setBackground()
 
     // Draw the board lines
     //-------------------------
     function drawLines() {
-      for (let i = 0; i < boardSize; i++) {
+      // Draw the vertical lines
+      for (let i = 0; i <= maxCol; i++) {
         let line = document.createElementNS(svgNS, "line")
-        line.setAttribute("x1", sx(0))
+        let lineWidth = (i === 0 || i === BOARDSIZE - 1) ? edgeLineWidth : innerLineWidth
+        var topExtra = 0
+        if (minRow > 0) { topExtra = 0.5 * tileSize }
+        var bottomExtra = 0
+        if (maxRow < BOARDSIZE - 1) { bottomExtra = 0.5 * tileSize }
+        //line = document.createElementNS(svgNS, "line")
+        line.setAttribute("x1", sx(i))
+        line.setAttribute("y1", sy(minRow) - topExtra)
+        line.setAttribute("x2", sx(i))
+        line.setAttribute("y2", sy(maxRow) + bottomExtra)
+        line.setAttribute("stroke", "#000")
+        line.setAttribute("stroke-width", lineWidth)
+        svg.appendChild(line)
+      } // for
+
+      // Draw the horizontal lines
+      for (let i = 0; i <= maxRow; i++) {
+        let line = document.createElementNS(svgNS, "line")
+        let lineWidth = (i === 0 || i === BOARDSIZE - 1) ? edgeLineWidth : innerLineWidth
+        var leftExtra = edgeLineWidth / 2
+        if (minCol > 0) { leftExtra = 0.5 * tileSize }
+        var rightExtra = edgeLineWidth / 2
+        if (maxCol < BOARDSIZE - 1) { rightExtra = 0.5 * tileSize }
+        //line = document.createElementNS(svgNS, "line")
+        line.setAttribute("x1", sx(minCol) - leftExtra)
         line.setAttribute("y1", sy(i))
-        line.setAttribute("x2", sx(boardSize - 1))
+        line.setAttribute("x2", sx(maxCol) + rightExtra)
         line.setAttribute("y2", sy(i))
         line.setAttribute("stroke", "#000")
+        line.setAttribute("stroke-width", lineWidth)
         svg.appendChild(line)
-
-        line = document.createElementNS(svgNS, "line")
-        line.setAttribute("x1", sx(i))
-        line.setAttribute("y1", sy(0))
-        line.setAttribute("x2", sx(i))
-        line.setAttribute("y2", sy(boardSize - 1))
-        line.setAttribute("stroke", "#000")
-        svg.appendChild(line)
-      }
+      } // for
     } // drawLines()
 
     //------------------------
     function drawHoshis() {
-      // Draw the hoshi points (star points)
-      const hoshiPts = [[3, 3], [3, 9], [3, 15], [9, 3], [9, 9], [9, 15], [15, 3], [15, 9], [15, 15]]
-      hoshiPts.forEach(([x, y]) => {
-        let hoshi = document.createElementNS(svgNS, "circle")
-        hoshi.setAttribute("cx", sx(x))
-        hoshi.setAttribute("cy", sy(y))
-        hoshi.setAttribute("r", 3)
-        hoshi.setAttribute("fill", "#000")
-        svg.appendChild(hoshi)
+      // Draw handicap points (hoshis)
+      hoshis.forEach(hoshi => {
+        if (hoshi.x < minCol || hoshi.x > maxCol || hoshi.y < minRow || hoshi.y > maxRow) {
+          return
+        }
+        let elt = document.createElementNS(svgNS, "circle")
+        elt.setAttribute("cx", sx(hoshi.x))
+        elt.setAttribute("cy", sy(hoshi.y))
+        elt.setAttribute("r", hoshiRadius)
+        elt.setAttribute("fill", "#000")
+        svg.appendChild(elt)
       })
     } // drawHoshis()
 
-    //----------------------
-    function drawText() {
-      // Example letters and their positions
-      const letters = [
-        { position: [3, 4], letter: 'A' },
-        { position: [10, 10], letter: 'B' },
-        // Add more as needed
-      ]
-
-      //--------------------------------------
-      function drawLetter(x, y, letter) {
-        let textElement = document.createElementNS("http://www.w3.org/2000/svg", "text")
-        textElement.setAttribute("x", sx(x))
-        textElement.setAttribute("y", sy(y))
-        textElement.setAttribute("text-anchor", "middle") // Center the text horizontally
-        textElement.setAttribute("dominant-baseline", "central") // Center the text vertically
-        textElement.setAttribute("font-size", "14px") // Set the font size
-        textElement.setAttribute("font-family", "Arial, sans-serif") // Set the font family
-        textElement.setAttribute("fill", "white")
-        textElement.textContent = letter // Set the text content
-
-        svg.appendChild(textElement)
+    //--------------------------------
+    function drawText(x, y, text) {
+      if (text.length == 0) { return }
+      const xfont = { size: '18pt', family: 'Arial, sans-serif' }
+      const letterfont = { size: '14pt', family: 'Arial, sans-serif' }
+      const markFont1 = { size: '14pt', family: 'Arial, sans-serif' }
+      const markFont2 = { size: '12pt', family: 'Arial, sans-serif' }
+      const color = g_stones[x][y] == BLACK ? 'white' : 'black'
+      // Clear the background if no stone
+      if (g_stones[x][y] == EMPTY) {
+        let rect = document.createElementNS(svgNS, "rect")
+        let shift = -tileSize * 0.02
+        rect.setAttribute("x", sx(x) - tileSize / 2 + shift)
+        rect.setAttribute("y", sy(y) - tileSize / 2 + shift)
+        rect.setAttribute("width", tileSize - 2 * shift)
+        rect.setAttribute("height", tileSize - 2 * shift)
+        rect.setAttribute("fill", bgcolor)
+        svg.appendChild(rect)
       }
-
-      // Draw each letter at its specified position
-      letters.forEach(({ position: [x, y], letter }) => drawLetter(x, y, letter))
+      var elt = document.createElementNS("http://www.w3.org/2000/svg", "text")
+      if (text[0] == 'X') {
+        elt.textContent = text[0]
+        elt.setAttribute("font-size", xfont.size)
+        elt.setAttribute("font-family", xfont.family)
+        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("dominant-baseline", "central")
+        elt.setAttribute("x", sx(x) - tileSize * 0.00)
+        elt.setAttribute("y", sy(y) + tileSize * 0.00)
+        elt.setAttribute("fill", color)
+      } else if (isNaN(parseInt(text[0]))) { // a letter
+        elt.textContent = text[0]
+        elt.setAttribute("font-size", letterfont.size)
+        elt.setAttribute("font-family", letterfont.family)
+        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("dominant-baseline", "central")
+        elt.setAttribute("x", sx(x) - tileSize * 0.015)
+        elt.setAttribute("y", sy(y) - tileSize * 0.01)
+        elt.setAttribute("fill", color)
+      } else if (text.length == 1) { // single digit
+        elt.textContent = text[0]
+        elt.setAttribute("font-size", markFont1.size)
+        elt.setAttribute("font-family", markFont1.family)
+        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("dominant-baseline", "central")
+        elt.setAttribute("x", sx(x) - tileSize * 0.015)
+        elt.setAttribute("y", sy(y) + tileSize * 0.020)
+        elt.setAttribute("fill", color)
+      } else if (text[0] == '1') { // two digits in the teens
+        elt.textContent = text
+        elt.setAttribute("font-size", markFont2.size)
+        elt.setAttribute("font-family", markFont2.family)
+        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("dominant-baseline", "central")
+        elt.setAttribute("x", sx(x) - tileSize * 0.030)
+        elt.setAttribute("y", sy(y) + tileSize * 0.00)
+        elt.setAttribute("fill", color)
+      } else { // two digits >= 20
+        elt.textContent = text
+        elt.setAttribute("font-size", markFont2.size)
+        elt.setAttribute("font-family", markFont2.family)
+        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("dominant-baseline", "central")
+        elt.setAttribute("x", sx(x) - tileSize * 0.01)
+        elt.setAttribute("y", sy(y) + tileSize * 0.00)
+        elt.setAttribute("fill", color)
+      } 
+      svg.appendChild(elt)
     } // drawText()
 
-    //------------------------
-    function drawCircle() {
-      // Draw the hoshi points (star points)
-      const hoshiPts = [[3, 3], [3, 9], [3, 15], [9, 3], [9, 9], [9, 15], [15, 3], [15, 9], [15, 15]]
-      hoshiPts.forEach(([x, y]) => {
-        let hoshi = document.createElementNS(svgNS, "circle")
-        hoshi.setAttribute("cx", sx(x))
-        hoshi.setAttribute("cy", sy(y))
-        hoshi.setAttribute("r", 3)
-        hoshi.setAttribute("fill", "#000")
-        svg.appendChild(hoshi)
-      })
+    //----------------------------
+    function drawCircle(x, y) {
+      var lineWidth = tileSize * 0.04
+      var radius = tileSize * 0.25
+      var color = 'black'
+      if (g_stones[x][y] == BLACK) {
+        color = 'white'
+        lineWidth = tileSize * 0.06
+      }
+      let elt = document.createElementNS(svgNS, "circle")
+      elt.setAttribute("cx", sx(x))
+      elt.setAttribute("cy", sy(y))
+      elt.setAttribute("r", radius)
+      elt.setAttribute("stroke", color)
+      elt.setAttribute("stroke-width", lineWidth)
+      elt.setAttribute("fill", "none")
+      svg.appendChild(elt)
     } // drawCircle()
+
+    //---------------------------------
+    function drawTriangle(x, y) {
+      var cos120 = -0.5
+      var sin120 = 0.86602540378
+      var r = tileSize * 0.40
+      var p0 = { x: sx(x) + 0, y: sy(y) - r }
+      var p1 = { x: sx(x) + sin120 * r, y: sy(y) - cos120 * r }
+      var p2 = { x: sx(x) + -sin120 * r, y: sy(y) - cos120 * r }
+      var lineWidth = tileSize * 0.07
+      var color = 'black'
+      if (g_stones[x][y] == BLACK) {
+        color = 'white'
+        lineWidth = tileSize * 0.05
+      }
+      else if (g_stones[x][y] == WHITE) {
+        color = 'black'
+        lineWidth = tileSize * 0.05
+      }
+      else {
+        color = 'black'
+        lineWidth = tileSize * 0.05
+      }
+
+      // Create the polygon element for the triangle
+      const triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
+      // Set the points attribute using the calculated vertices
+      triangle.setAttribute("points", `${p0.x},${p0.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`)
+      // Set the fill or stroke as desired
+      triangle.setAttribute("fill", "none")
+      triangle.setAttribute("stroke", color)
+      triangle.setAttribute("stroke-width", lineWidth)
+
+      // Append the triangle to the SVG element
+      svg.appendChild(triangle)
+    } // drawTriangle()
 
     //----------------------
     function sx(col) {
@@ -453,7 +597,7 @@
         ctx.moveTo(sx(i), sy(minRow) - topExtra)
         ctx.lineTo(sx(i), sy(maxRow) + bottomExtra)
         ctx.stroke()
-      }
+      } // for
 
       // Draw horizontals
       for (let i = minRow; i <= maxRow; i++) {
@@ -466,7 +610,7 @@
         ctx.moveTo(sx(minCol) - leftExtra, sy(i))
         ctx.lineTo(sx(maxCol) + rightExtra, sy(i))
         ctx.stroke()
-      }
+      } // for
     } // drawLines()
 
     //------------------------------
@@ -483,13 +627,13 @@
       })
     } // drawHoshis()
 
-    // Function to draw a stone
-    //-------------------------------------
+    //  Draw a stone at (x, y) on the board
+    //---------------------------------------
     function drawStone(x, y, color) {
-      ctx.beginPath()
       if (x < minCol || x > maxCol || y < minRow || y > maxRow) {
         return
       }
+      ctx.beginPath()
       var stoneRadius = (color == 'black') ? bSstoneRadius : wSstoneRadius
       if (color == 'black') {
         ctx.lineWidth = bStoneStrokeWidth
