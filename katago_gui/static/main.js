@@ -415,11 +415,12 @@ function main(JGO, axutil, p_options) {
       let node = g_jrecord.getCurrentNode()
       let marks = JSON.stringify(node.jboard.marks)
       let stones = JSON.stringify(node.jboard.stones)
+      
       let url = '/export_diagram?q=' + Math.random() +
         '&stones=' + encodeURIComponent(stones) +
         '&marks=' + encodeURIComponent(marks)
-      window.location.href = url
-    }) // // btn_export_diagram
+      window.location.href = url 
+    }) // btn_export_diagram
 
     $('#btn_tgl_x').click(() => {
       activate_mark_toggle($('#btn_tgl_x'))

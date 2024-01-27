@@ -99,7 +99,7 @@
 <br>
 <!-- Export button -->
 <div>
-  <button id=btn_export onclick='exportDiagram()' style='font-size:24px;font-family:Arial, sans-serif;background-color:#cccccc;color:black;padding:0 2vw;margin:0;
+  <button id=btn_export onclick='exportDiagramSVG()' style='font-size:24px;font-family:Arial, sans-serif;background-color:#cccccc;color:black;padding:0 2vw;margin:0;
     border-color:black;border-width:1px;border-style:solid;border-radius: 1vw;'>Export</button>
 </div>
 
@@ -205,7 +205,7 @@
   })
 
   //--------------------------------
-  function exportDiagram() {
+  function exportDiagramPNG() {
     const canvas = document.createElement('canvas')
     const width = g_maxcol - g_mincol
     const height = g_maxrow - g_minrow
@@ -222,7 +222,189 @@
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  } // exportDiagram()
+    URL.revokeObjectURL(url)
+  } // exportDiagramPNG()
+
+  //--------------------------------
+  function exportDiagramSVG() {
+    const svg = drawGoBoardSVG(g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
+    var serializer = new XMLSerializer()
+    var svgStr = serializer.serializeToString(svg)
+
+    // Create a Blob object
+    var blob = new Blob([svgStr], { type: 'image/svg+xml' })
+
+    // Create an Object URL for the Blob
+    var url = URL.createObjectURL(blob)
+
+    // Create a temporary anchor element and trigger a download
+    var link = document.createElement('a')
+    link.href = url
+    link.download = 'diagram.svg'
+    document.body.appendChild(link) // Append the anchor to the document
+    link.click() // Programmatically click the anchor to trigger the download
+    document.body.removeChild(link) // Remove the anchor from the document
+    URL.revokeObjectURL(url)
+  } // exportDiagramSVG()
+
+  //------------------------------------------------------------------------------------------
+  function drawGoBoardSVG(blackStones, whiteStones, marks, minRow, maxRow, minCol, maxCol) {
+    // Draw a Go board in SVG
+    const boardSize = 19 // 19x19 for a standard Go board
+    const tileSize = 30 // Size of each tile/square in pixels
+    const marg = tileSize * 1.0 // Margin around the board in pixels
+    const stoneRadius = tileSize * 0.45 // Radius of each Go stone
+    const boardPixels = tileSize * (boardSize - 1) + 2 * marg // Size of the board in pixels
+
+    // Create the SVG element
+    const svgNS = "http://www.w3.org/2000/svg"
+    let svg = document.createElementNS(svgNS, "svg")
+    svg.setAttribute("width", boardPixels)
+    svg.setAttribute("height", boardPixels)
+    setBackground()
+    drawLines()
+    drawHoshis()
+    blackStones.forEach(stone => drawStone(stone.x, stone.y, '#000000'))
+    whiteStones.forEach(stone => drawStone(stone.x, stone.y, 'white'))
+    return svg
+
+    //---------------------------------------
+    function saveSVGToFile(svg, fname) {
+      var serializer = new XMLSerializer();
+      var svgStr = serializer.serializeToString(svg);
+
+      // Create a Blob object
+      var blob = new Blob([svgStr], { type: 'image/svg+xml' });
+
+      // Create an Object URL for the Blob
+      var url = URL.createObjectURL(blob);
+
+      // Create a temporary anchor element and trigger a download
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = fname
+      document.body.appendChild(a); // Append the anchor to the document
+      a.click(); // Programmatically click the anchor to trigger the download
+      document.body.removeChild(a); // Remove the anchor from the document
+
+      URL.revokeObjectURL(url);
+    } // saveSVGToFile()    
+
+    // Draw a stone at (x, y) on the board
+    //--------------------------------------
+    function drawStone(x, y, color) {
+      let stone = document.createElementNS(svgNS, "circle")
+      stone.setAttribute("cx", sx(x))
+      stone.setAttribute("cy", sy(y))
+      stone.setAttribute("r", stoneRadius)
+      stone.setAttribute("fill", color)
+      stone.setAttribute("stroke", "black"); // Add a black stroke
+      stone.setAttribute("stroke-width", "1"); // Set the stroke width to 1 (you can adjust this value as needed)
+      svg.appendChild(stone)
+    } // drawStone()
+
+    //----------------------------
+    function setBackground() {
+      // Create the rectangle element
+      var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      // Set attributes for the rectangle to cover the board area
+      rect.setAttribute("width", boardPixels);
+      rect.setAttribute("height", boardPixels);
+      rect.setAttribute("fill", "#cc9966"); // Set the background color
+
+      // Append the rectangle to the SVG before adding other elements
+      svg.appendChild(rect);
+    } // setBackground()
+
+    // Draw the board lines
+    //-------------------------
+    function drawLines() {
+      for (let i = 0; i < boardSize; i++) {
+        let line = document.createElementNS(svgNS, "line")
+        line.setAttribute("x1", sx(0))
+        line.setAttribute("y1", sy(i))
+        line.setAttribute("x2", sx(boardSize - 1))
+        line.setAttribute("y2", sy(i))
+        line.setAttribute("stroke", "#000")
+        svg.appendChild(line)
+
+        line = document.createElementNS(svgNS, "line")
+        line.setAttribute("x1", sx(i))
+        line.setAttribute("y1", sy(0))
+        line.setAttribute("x2", sx(i))
+        line.setAttribute("y2", sy(boardSize - 1))
+        line.setAttribute("stroke", "#000")
+        svg.appendChild(line)
+      }
+    } // drawLines()
+
+    //------------------------
+    function drawHoshis() {
+      // Draw the hoshi points (star points)
+      const hoshiPts = [[3, 3], [3, 9], [3, 15], [9, 3], [9, 9], [9, 15], [15, 3], [15, 9], [15, 15]]
+      hoshiPts.forEach(([x, y]) => {
+        let hoshi = document.createElementNS(svgNS, "circle")
+        hoshi.setAttribute("cx", sx(x))
+        hoshi.setAttribute("cy", sy(y))
+        hoshi.setAttribute("r", 3)
+        hoshi.setAttribute("fill", "#000")
+        svg.appendChild(hoshi)
+      })
+    } // drawHoshis()
+
+    //----------------------
+    function drawText() {
+      // Example letters and their positions
+      const letters = [
+        { position: [3, 4], letter: 'A' },
+        { position: [10, 10], letter: 'B' },
+        // Add more as needed
+      ]
+
+      //--------------------------------------
+      function drawLetter(x, y, letter) {
+        let textElement = document.createElementNS("http://www.w3.org/2000/svg", "text")
+        textElement.setAttribute("x", sx(x))
+        textElement.setAttribute("y", sy(y))
+        textElement.setAttribute("text-anchor", "middle") // Center the text horizontally
+        textElement.setAttribute("dominant-baseline", "central") // Center the text vertically
+        textElement.setAttribute("font-size", "14px") // Set the font size
+        textElement.setAttribute("font-family", "Arial, sans-serif") // Set the font family
+        textElement.setAttribute("fill", "white")
+        textElement.textContent = letter // Set the text content
+
+        svg.appendChild(textElement)
+      }
+
+      // Draw each letter at its specified position
+      letters.forEach(({ position: [x, y], letter }) => drawLetter(x, y, letter))
+    } // drawText()
+
+    //------------------------
+    function drawCircle() {
+      // Draw the hoshi points (star points)
+      const hoshiPts = [[3, 3], [3, 9], [3, 15], [9, 3], [9, 9], [9, 15], [15, 3], [15, 9], [15, 15]]
+      hoshiPts.forEach(([x, y]) => {
+        let hoshi = document.createElementNS(svgNS, "circle")
+        hoshi.setAttribute("cx", sx(x))
+        hoshi.setAttribute("cy", sy(y))
+        hoshi.setAttribute("r", 3)
+        hoshi.setAttribute("fill", "#000")
+        svg.appendChild(hoshi)
+      })
+    } // drawCircle()
+
+    //----------------------
+    function sx(col) {
+      return marg + col * tileSize - minCol * tileSize
+    }
+
+    //---------------------
+    function sy(row) {
+      return marg + row * tileSize - minRow * tileSize
+    }
+  } // drawGoBoardSVG()
+
 
   // Function to draw the board position and hilight a specified area.
   // Used both for screen and export.
@@ -399,7 +581,7 @@
         ctx.fillStyle = bgcolor
         var shift = -tileSize * 0.02
         //ctx.fillRect(sx(x) - tileSize / 2, sy(y) - tileSize / 2, tileSize, tileSize)
-        ctx.fillRect(sx(x) - tileSize/2 + shift, sy(y) - tileSize/2 + shift, tileSize - 2*shift, tileSize - 2*shift)
+        ctx.fillRect(sx(x) - tileSize / 2 + shift, sy(y) - tileSize / 2 + shift, tileSize - 2 * shift, tileSize - 2 * shift)
       }
       if (text[0] == 'X') {
         ctx.font = xfont
