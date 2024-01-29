@@ -53,6 +53,14 @@
     <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="main.css") }}'>
     {% block css %}
     {% endblock css %}
+    <script>
+     /* Tell the server whether we are on a phone */
+     {% if not is_mobile() %}
+     if (axutil.isMobile()) { document.location.href = `/set_mobile?mobile_flag=true&url=${document.location.href}` }
+     {% else %}
+     if (!axutil.isMobile()) { document.location.href = `/set_mobile?mobile_flag=false&url=${document.location.href}` }
+     {% endif %}
+    </script>
 
   </head>
 

@@ -10,7 +10,7 @@ from pdb import set_trace as BP
 
 import os, sys, re, json
 
-from flask import request, render_template, flash, redirect, url_for
+from flask import request, render_template, flash, redirect, url_for, session
 from flask_login import login_user, current_user, login_required
 from flask_mail import Message
 #from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -191,6 +191,15 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_token.tmpl', title='Reset Password', form=form)
 
+@app.route("/set_mobile", methods=['GET','POST'])
+#---------------------------------------------------
+def set_mobile():
+    parms = get_parms()
+    url = parms['url']
+    mobile_flag = True if parms['mobile_flag'].lower() == 'true' else False
+    session['is_mobile'] = mobile_flag
+    return redirect(url)
+
 @app.route('/settings')
 #-------------------------------
 def settings():
@@ -206,3 +215,15 @@ def verify_email(token):
     user.set_email_verified()
     flash( tr( 'email_verified'), 'success')
     return redirect(url_for('flash_only'))
+
+#------------------
+def get_parms():
+    if request.method == 'POST': # Form submit
+        parms = dict(request.form)
+    else:
+        parms = dict(request.args)
+    # strip all parameters    
+    parms = { k:v.strip() for k, v in parms.items()}
+    print(f'>>>>>>>>>PARMS:{parms}')
+    return parms
+

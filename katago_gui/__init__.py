@@ -15,7 +15,7 @@ import redis
 import gevent
 from urllib.parse import urlparse
 
-from flask import Flask
+from flask import Flask, session
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, user_logged_out, user_logged_in, current_user
 from flask_mail import Mail
@@ -64,6 +64,18 @@ DEMO_KATAGO_SERVER = 'https://my-katago-server.herokuapp.com'
 
 db_url = os.environ['DATABASE_URL']
 db = Postgres( db_url)
+
+# Make some functions available in the jinja templates.
+# Black Magic.
+@app.context_processor
+def inject_template_funcs():
+    return {
+        'is_mobile':is_mobile
+    }   
+
+def is_mobile():
+    return session.get('is_mobile', False)
+
 
 bcrypt = Bcrypt( app) # Our password hasher
 login_manager = LoginManager( app)

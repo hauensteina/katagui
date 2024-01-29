@@ -1359,6 +1359,7 @@ function main(JGO, axutil, p_options) {
       hover.coord = coord
       if (col) {
         replay_moves(grec.pos()) // remove artifacts
+        add_mark('redraw')
         jboard.setType(coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
       }
     }
@@ -1366,6 +1367,7 @@ function main(JGO, axutil, p_options) {
       jboard.setType(hover.coord, JGO.CLEAR)
       hover.coord = null
       replay_moves(grec.pos()) // remove artifacts
+      add_mark('redraw')
     }
   } // hover()
   hover.coord = null

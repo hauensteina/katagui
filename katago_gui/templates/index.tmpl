@@ -1,106 +1,105 @@
 {% extends 'layout.tmpl' %}
 
 {% block pre %}
-  <script type='text/javascript'>
-   /* Filename: templates/index.tmpl
-    * Author: AHN
-    * Creation Date: Jan, 2020
-    * Desktop web interface to play against KataGo.
-    */
-  </script>
+<script type='text/javascript'>
+  /* Filename: templates/index.tmpl
+   * Author: AHN
+   * Creation Date: Jan, 2020
+   * Desktop web interface to play against KataGo.
+   */
+</script>
 {% endblock pre %}
 
 {% block css %}
-  <script type="text/javascript">
-   if (axutil.isMobile()) { document.location.href = '/index_mobile' }
-  </script>
-  <style>
-   /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
-   /*----------------------------------------------------------------------*/
+<script type="text/javascript">
+  if (axutil.isMobile()) { document.location.href = '/index_mobile' }
+</script>
+<style>
+  /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
+  /*----------------------------------------------------------------------*/
 
-   /* The switch - the box around the slider */
-   .switch {
-     position: relative;
-     display: inline-block;
-     width: 30px;
-     height: 16px;
-   }
+  /* The switch - the box around the slider */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 16px;
+  }
 
-   /* Hide default HTML checkbox */
-   .switch input {
-     opacity: 0;
-     width: 0;
-     height: 0;
-   }
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
-   /* The slider */
-   .slider {
-     position: absolute;
-     cursor: pointer;
-     top: 0;
-     left: 0;
-     right: 0;
-     bottom: 0;
-     background-color: #aaaaaa;
-     -webkit-transition: .1s;
-     transition: .1s;
-   }
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #aaaaaa;
+    -webkit-transition: .1s;
+    transition: .1s;
+  }
 
-   .slider:before {
-     position: absolute;
-     content: "";
-     height: 13px;
-     width: 13px;
-     left: 2px;
-     bottom: 2px;
-     background-color: white;
-     -webkit-transition: .1s;
-     transition: .1s;
-   }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .1s;
+    transition: .1s;
+  }
 
-   input:checked + .slider {
-     background-color: #2196F3;
-   }
+  input:checked+.slider {
+    background-color: #2196F3;
+  }
 
-   input:focus + .slider {
-     box-shadow: 0 0 1px #2196F3;
-   }
+  input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
 
-   input:checked + .slider:before {
-     -webkit-transform: translateX(13px);
-     -ms-transform: translateX(13px);
-     transform: translateX(13px);
-   }
+  input:checked+.slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+  }
 
-   /* Rounded sliders */
-   .slider.round {
-     border-radius: 9px;
-   }
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 9px;
+  }
 
-   .slider.round:before {
-     border-radius: 50%;
-   }
+  .slider.round:before {
+    border-radius: 50%;
+  }
 
-   /* table, td, th {
+  /* table, td, th {
       border: 1px solid black;
       } */
-   
-   .nomarg {
-     padding:0;
-     margin:0;
-   }
 
-  </style>
+  .nomarg {
+    padding: 0;
+    margin: 0;
+  }
+</style>
 {% endblock css %}
 
 {% block content %}
-  <br>
-  <table class='center'>
-    <tr>
-      <td width='500px'>                      <!--left-->
-        <div id='left_div' class='container'>
-          <br>
-          <!-- <table class='center'>
+<br>
+<table class='center'>
+  <tr>
+    <td width='500px'> <!--left-->
+      <div id='left_div' class='container'>
+        <br>
+        <!-- <table class='center'>
                <tr><td id='donating'>
                {{ donation_blurb(mobile=false) }}
                </td></tr>
@@ -115,261 +114,325 @@
                </form>
                </td></tr>
                </table> -->
-          <!-- <table class='center'>
+        <!-- <table class='center'>
                <tr><td colspan='2' style='font-weight:bold'>{{tr('Top Three Donors')}}</td></tr>
                <tr><td align='left'>Satoshi Banya</td> <td align='right'> &nbsp; 130 </td>  </tr>
                <tr><td align='left'>Devin Fraze</td> <td align='right'> &nbsp; 120 </td>  </tr>
                <tr><td align='left'>Larry Russ</td> <td align='right'> &nbsp; 111 </td>  </tr>
                </table> -->
-          <div class='center'>
-            <!-- KataGui will be down for maintenance on Mo Dec 13 and Tu Dec 14, 2021  -->
-            Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> .
-            <!-- Upgraded to KataGo v1.9.1 <br>
+        <div class='center'>
+          <!-- KataGui will be down for maintenance on Mo Dec 13 and Tu Dec 14, 2021  -->
+          Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> .
+          <!-- Upgraded to KataGo v1.9.1 <br>
                  The 40b net is now kata1-b40c256-s9435250176-d2296927197, which is a recent community net. <br> -->
-          </div>
+        </div>
 
-          <br>
-          <div class='row'>
-            <div class='col-12 text-center'>
-              <label id='btn_new'  class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-                     style='font-size:11pt'>
-                {{ tr('New Game') }}
-              </label>
-              {% if True or current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
-                &nbsp;
-                <label id='btn_watch' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Watch')}}</label>
-              {% endif %}
-            </div>
-          </div>
-          <div class='row'>
-            <div id='game_info' class='col-12 text-center' style='font-size:9pt'> </div>
-          </div>
-          <div class='row'>
-            <div id='fname' class='col-12 text-center' style='font-size:9pt'> </div>
-          </div>
-          <div class='row'>
-            <div class='col-12'>
-              <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
-            </div>
-          </div>
-          <div class='row'>
-            <div id='board' class='col-12 text-center'> </div>
-          </div>
-          <div class='row justify-content-center'>
-            <table class='center' width='100%'>
-              <tr>
-                <td align='center' width='30%'>
-                  <table width='100%'>
-                    <tr><td class='nomarg' align='center' style='height:15px'></td></tr>
-                    <tr><td id='movenum' class='nomarg' align='center' style='font-size:9pt;height:60px' width='30%'>&nbsp;</td></tr>
-                  </table>
-                </td>
-                <td align='center' width='40%'>
-                  <table width='100%'>
-                    <tr><td id='bestscore' class='nomarg' align='center' style='height:15px'></td></tr>
-                    <tr><td id='status' class='nomarg' align='center' style='font-size:9pt;height:60px' width='30%'>&nbsp;</td></tr>
-                  </table>
-                </td>
-                <td align='center' width='30%'> 
-                  <table width='100%'>
-                    <tr><td class='nomarg' align='center' style='height:15px'></td></tr>
-                    <tr><td id='emo' class='nomarg' align='center' style='font-size:25pt;height:60px' width='30%'>&nbsp;</td></tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
+        <br>
+        <div class='row'>
+          <div class='col-12 text-center'>
+            <label id='btn_new' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+              style='font-size:11pt'>
+              {{ tr('New Game') }}
+            </label>
+            {% if True or current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
+            &nbsp;
+            <label id='btn_watch' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Watch')}}</label>
+            {% endif %}
           </div>
         </div>
-      </td>
-      <td style='vertical-align:top' width='300px'>                      <!--right-->
-        <div class='container' >
-          <div class='row' style='font-size:20pt;height:0px'> <!-- Change to move logo down -->
-            <div class='col-12'>
-              &nbsp;
-            </div>
+        <div class='row'>
+          <div id='game_info' class='col-12 text-center' style='font-size:9pt'> </div>
+        </div>
+        <div class='row'>
+          <div id='fname' class='col-12 text-center' style='font-size:9pt'> </div>
+        </div>
+        <div class='row'>
+          <div class='col-12'>
+            <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
           </div>
-          <div class='row'>
-            <div class='col-5'>
-              <img id='img_bot' src='static/kata.png' style='height:120px'>
-            </div>
-            <div class='col-6' style='font-size:11pt'>
-              <div id='descr_bot'>
-                KataGo 20 blocks<br>2020-05-30
-              </div>
-              <br>
-              <a id='settings' class='glink' href="{{ url_for('settings') }}" style='font-size:12pt;text-align:right;'>{{tr('Settings')}}</a>
-            </div>
+        </div>
+
+        {% if current_user.data['username'] in ['acm','conny','one10'] %}
+        <div class='row justify-content-center'> <!-- Buttons to add markers -->
+          <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
+          style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
+
+          <label id='btn_tgl_letter' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>a</label>&nbsp;
+
+          <label id='btn_tgl_x' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>X</label>&nbsp;&nbsp;&nbsp;
+
+          <label id='btn_tgl_circle' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>O</label>&nbsp;
+
+          <label id='btn_tgl_triangle' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>△</label>&nbsp;
+
+          <label id='btn_clear' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>&nbsp;</label>&nbsp;&nbsp;&nbsp;
+
+          <label id='btn_rot' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>R</label>&nbsp;
+
+          <label id='btn_swap_colors' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>C</label>&nbsp;
+
+          <label id='btn_export_diagram' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
+        </div>
+        {% endif %}
+
+        <div class='row'>
+          <div id='board' class='col-12 text-center'> </div>
+        </div>
+        <div class='row justify-content-center'>
+          <table class='center' width='100%'>
+            <tr>
+              <td align='center' width='30%'>
+                <table width='100%'>
+                  <tr>
+                    <td class='nomarg' align='center' style='height:15px'></td>
+                  </tr>
+                  <tr>
+                    <td id='movenum' class='nomarg' align='center' style='font-size:9pt;height:60px' width='30%'>&nbsp;
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td align='center' width='40%'>
+                <table width='100%'>
+                  <tr>
+                    <td id='bestscore' class='nomarg' align='center' style='height:15px'></td>
+                  </tr>
+                  <tr>
+                    <td id='status' class='nomarg' align='center' style='font-size:9pt;height:60px' width='30%'>&nbsp;
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td align='center' width='30%'>
+                <table width='100%'>
+                  <tr>
+                    <td class='nomarg' align='center' style='height:15px'></td>
+                  </tr>
+                  <tr>
+                    <td id='emo' class='nomarg' align='center' style='font-size:25pt;height:60px' width='30%'>&nbsp;
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </td>
+    <td style='vertical-align:top' width='300px'> <!--right-->
+      <div class='container'>
+        <div class='row' style='font-size:20pt;height:0px'> <!-- Change to move logo down -->
+          <div class='col-12'>
+            &nbsp;
           </div>
-          <!-- Space on top of buttons -->
-          <div class='row' style='font-size:20pt;height:50px'>
-            <div class='col-12'>
-              &nbsp;
-            </div>
+        </div>
+        <div class='row'>
+          <div class='col-5'>
+            <img id='img_bot' src='static/kata.png' style='height:120px'>
           </div>
-          <div class='row justify-content-center'>
-            <!-- <div class='col-12'> -->
-            <table style='padding:0px'>
-              <tr><td style='margin:0'>
+          <div class='col-6' style='font-size:11pt'>
+            <div id='descr_bot'>
+              KataGo 20 blocks<br>2020-05-30
+            </div>
+            <br>
+            <a id='settings' class='glink' href="{{ url_for('settings') }}"
+              style='font-size:12pt;text-align:right;'>{{tr('Settings')}}</a>
+          </div>
+        </div>
+        <!-- Space on top of buttons -->
+        <div class='row' style='font-size:20pt;height:50px'>
+          <div class='col-12'>
+            &nbsp;
+          </div>
+        </div>
+        <div class='row justify-content-center'>
+          <!-- <div class='col-12'> -->
+          <table style='padding:0px'>
+            <tr>
+              <td style='margin:0'>
                 <label class='switch'>
                   <input id='opt_auto' type='checkbox'>
                   <span class='slider round'></span>
                 </label>
-              </td><td style='margin:0'>&nbsp;</td>
-              </tr>
-              <tr style='transform:translate(0,-6px)'>
-                <td style='padding:0;margin:0'>
-                  <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>{{ tr('Play') }}</label>&nbsp;
-                </td>
-                <td style='padding:0;margin:0'>
-                  <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>
-                </td>
-              </tr>
-            </table>
-            <!-- </div> -->
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Undo')}}</label>&nbsp;
-            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>&nbsp;
-            <label id='btn_bot' class='btn btn-outline-dark' style='font-size:11pt'>Kata 10b</label>
-          </div>
-          <div class='row' style='font-size:5pt'>
-            &nbsp;
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back 10')}}</label>&nbsp;
-            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
-            <label id='btn_next' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
-            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd 10')}}</label>
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
-            <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Pass')}}</label>&nbsp;
-            <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Self Play')}}</label>
-          </div>
-          <div class='row' style='font-size:5pt'>
-            &nbsp;
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
-            <form method='post' enctype='multipart/form-data'>
-              <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
-                {{tr('Load Sgf')}}  <input type='file' id='sgf-file' style='display:none'>
-              </label>
-            </form>
-          </div>
-          <!-- <div class='row justify-content-center'>
+              </td>
+              <td style='margin:0'>&nbsp;</td>
+            </tr>
+            <tr style='transform:translate(0,-6px)'>
+              <td style='padding:0;margin:0'>
+                <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>{{ tr('Play') }}</label>&nbsp;
+              </td>
+              <td style='padding:0;margin:0'>
+                <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>
+              </td>
+            </tr>
+          </table>
+          <!-- </div> -->
+        </div>
+        <div class='row justify-content-center'>
+          <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Undo')}}</label>&nbsp;
+          <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>&nbsp;
+          <label id='btn_bot' class='btn btn-outline-dark' style='font-size:11pt'>Kata 10b</label>
+        </div>
+        <div class='row' style='font-size:5pt'>
+          &nbsp;
+        </div>
+        <div class='row justify-content-center'>
+          <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back
+            10')}}</label>&nbsp;
+          <label id='btn_prev' class='btn btn-outline-dark'
+            style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
+          <label id='btn_next' class='btn btn-outline-dark'
+            style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
+          <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd
+            10')}}</label>
+        </div>
+        <div class='row justify-content-center'>
+          <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
+          <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
+        </div>
+        <div class='row justify-content-center'>
+          <label id='btn_pass' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Pass')}}</label>&nbsp;
+          <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Self Play')}}</label>
+        </div>
+        <div class='row' style='font-size:5pt'>
+          &nbsp;
+        </div>
+        <div class='row justify-content-center'>
+          <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
+          <form method='post' enctype='multipart/form-data'>
+            <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
+              {{tr('Load Sgf')}} <input type='file' id='sgf-file' style='display:none'>
+            </label>
+          </form>
+        </div>
+        <!-- <div class='row justify-content-center'>
                </div> -->
-          <div class='row' style='font-size:5pt'>
-            &nbsp;
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main Line')}}</label>
-          </div>
-        </div>                  <!--right container-->
-      </td>                     <!--right-->
-    </tr></table>
-
-  <!-- Modal dialog to pick komi and handicap -->
-    <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-      <div class='modal-dialog' role='document'>
-        <div class='modal-content'>
-          <div class='modal-header'>
-            <h5 class='modal-title' id='komi_handi_heading'>{{tr('New Game')}}</h5>
-            <button id='cancel_new_game' type='button' class='close' data-dismiss='modal' aria-label='Close'>
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>
-          <div class='modal-body'>
-            <table>
-              <tr><td>{{tr('Handicap')}}</td><td>&nbsp;&nbsp;</td><td>{{tr('Komi')}}</td></tr>
-              <tr>
-                <td>
-                  <div class='dropdown'>
-                    <button class='btn btn-secondary dropdown-toggle' type='button' id='handi_menu'
-                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                      {{tr('Handicap')}}
-                    </button>
-                    <div class='dropdown-menu' aria-labelledby='handi_menu'>
-                      <a id='handi_0' class='dropdown-item'>0</a>
-                      <a id='handi_2' class='dropdown-item'>2</a>
-                      <a id='handi_3' class='dropdown-item'>3</a>
-                      <a id='handi_4' class='dropdown-item'>4</a>
-                      <a id='handi_5' class='dropdown-item'>5</a>
-                      <a id='handi_6' class='dropdown-item'>6</a>
-                      <a id='handi_7' class='dropdown-item'>7</a>
-                      <a id='handi_8' class='dropdown-item'>8</a>
-                      <a id='handi_9' class='dropdown-item'>9</a>
-                    </div>
-                  </div>
-                </td>
-                <td>&nbsp;&nbsp;</td>
-                <td>
-                  <div class='dropdown'>
-                    <button class='btn btn-secondary dropdown-toggle' type='button' id='komi_menu'
-                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                      {{tr('Komi')}}
-                    </button>
-                    <div class='dropdown-menu' aria-labelledby='komi_menu'>
-                      <a id='komi_m505' class='dropdown-item'>-50.5</a>
-                      <a id='komi_m405' class='dropdown-item' href='#'>-40.5</a>
-                      <a id='komi_m305' class='dropdown-item' href='#'>-30.5</a>
-                      <a id='komi_m205' class='dropdown-item' href='#'>-20.5</a>
-                      <a id='komi_m105' class='dropdown-item' href='#'>-10.5</a>
-                      <a id='komi_05' class='dropdown-item' href='#'>&nbsp;0.5</a>
-                      <a id='komi_65' class='dropdown-item' href='#'>&nbsp;6.5</a>
-                      <a id='komi_75' class='dropdown-item' href='#'>&nbsp;7.5</a>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </table>
-            <br>
-            <div align='left'>
-              &nbsp;&nbsp;
-              <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Guest (10 blocks)')}}</label>
-              &nbsp;&nbsp;
-              <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Fast (20 blocks)')}}</label>
-              &nbsp;&nbsp;
-              <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Strong (40 blocks)')}}</label>
-            </div>
-            <div id='donate_modal'> </div>
-            <div id='strong_time'> </div>
-          </div>
-          <div class='modal-footer'>
-            <button id='game_start' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
-          </div>
+        <div class='row' style='font-size:5pt'>
+          &nbsp;
         </div>
+        <div class='row justify-content-center'>
+          <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
+            Line')}}</label>
+        </div>
+      </div> <!--right container-->
+    </td> <!--right-->
+  </tr>
+</table>
+
+<!-- Modal dialog to pick komi and handicap -->
+<div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel'
+  aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='komi_handi_heading'>{{tr('New Game')}}</h5>
+        <button id='cancel_new_game' type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <table>
+          <tr>
+            <td>{{tr('Handicap')}}</td>
+            <td>&nbsp;&nbsp;</td>
+            <td>{{tr('Komi')}}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class='dropdown'>
+                <button class='btn btn-secondary dropdown-toggle' type='button' id='handi_menu' data-toggle='dropdown'
+                  aria-haspopup='true' aria-expanded='false'>
+                  {{tr('Handicap')}}
+                </button>
+                <div class='dropdown-menu' aria-labelledby='handi_menu'>
+                  <a id='handi_0' class='dropdown-item'>0</a>
+                  <a id='handi_2' class='dropdown-item'>2</a>
+                  <a id='handi_3' class='dropdown-item'>3</a>
+                  <a id='handi_4' class='dropdown-item'>4</a>
+                  <a id='handi_5' class='dropdown-item'>5</a>
+                  <a id='handi_6' class='dropdown-item'>6</a>
+                  <a id='handi_7' class='dropdown-item'>7</a>
+                  <a id='handi_8' class='dropdown-item'>8</a>
+                  <a id='handi_9' class='dropdown-item'>9</a>
+                </div>
+              </div>
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+              <div class='dropdown'>
+                <button class='btn btn-secondary dropdown-toggle' type='button' id='komi_menu' data-toggle='dropdown'
+                  aria-haspopup='true' aria-expanded='false'>
+                  {{tr('Komi')}}
+                </button>
+                <div class='dropdown-menu' aria-labelledby='komi_menu'>
+                  <a id='komi_m505' class='dropdown-item'>-50.5</a>
+                  <a id='komi_m405' class='dropdown-item' href='#'>-40.5</a>
+                  <a id='komi_m305' class='dropdown-item' href='#'>-30.5</a>
+                  <a id='komi_m205' class='dropdown-item' href='#'>-20.5</a>
+                  <a id='komi_m105' class='dropdown-item' href='#'>-10.5</a>
+                  <a id='komi_05' class='dropdown-item' href='#'>&nbsp;0.5</a>
+                  <a id='komi_65' class='dropdown-item' href='#'>&nbsp;6.5</a>
+                  <a id='komi_75' class='dropdown-item' href='#'>&nbsp;7.5</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <br>
+        <div align='left'>
+          &nbsp;&nbsp;
+          <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Guest (10
+            blocks)')}}</label>
+          &nbsp;&nbsp;
+          <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Fast (20
+            blocks)')}}</label>
+          &nbsp;&nbsp;
+          <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Strong (40
+            blocks)')}}</label>
+        </div>
+        <div id='donate_modal'> </div>
+        <div id='strong_time'> </div>
+      </div>
+      <div class='modal-footer'>
+        <button id='game_start' type='button' class='btn btn-primary' data-dismiss='modal'>Go!</button>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- General purpose modal popup (alert box) -->
-    <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
-      <div class='modal-dialog' role='document'>
-        <div class='modal-content'>
-          <div class='modal-header'>
-            <h5 id='alertbox_title' class='modal-title'>Very Important Message</h5>
-          </div>
-          <div class='modal-body'>
-            <span id='alertbox_message'> </span>
-          </div>
-          <div class='modal-footer'>
-            <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
-          </div>
-        </div>
+<!-- General purpose modal popup (alert box) -->
+<div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 id='alertbox_title' class='modal-title'>Very Important Message</h5>
+      </div>
+      <div class='modal-body'>
+        <span id='alertbox_message'> </span>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
       </div>
     </div>
-    <br>
+  </div>
+</div>
+<br>
 {% endblock content %}
 
 {% block js %}
-  <!-- Entry Point -->
-  <script type='text/javascript' src='static/small/board.js'></script>
-  <script type='text/javascript'>
-   $(function () {
-     main( JGO, axutil, {mobile:false} )
-   })
-  </script>
+<!-- Entry Point -->
+<script type='text/javascript' src='static/small/board.js'></script>
+<script type='text/javascript'>
+  $(function () {
+    main(JGO, axutil, { mobile: false })
+  })
+</script>
 {% endblock js %}

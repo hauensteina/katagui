@@ -3,14 +3,31 @@
 {% block css %}
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <style>
+  {% if is_mobile() %}
+
   :root {
     --BOARDSIZE: 55vw;
+    --BUTTON-GAP: 5vw;
+    --CONTROL-SIZE: 15vw;
+    --CONTROL-SIZE2: calc((2 * var(--CONTROL-SIZE) + var(--BUTTON-GAP)));
     --TBHEIGHT: 22vw;
     --LRWIDTH: 22vw;
-    --BUTTON-GAP: 5vw;
-    --CONTROL-LONG-SIDE: 35vw;
-    --CONTROL-SHORT-SIDE: calc((var(--CONTROL-LONG-SIDE) - var(--BUTTON-GAP)) / 2.0);
   }
+
+  {% else %}
+
+  :root {
+    --BOARDSIZE: 300px;
+    --BUTTON-GAP: 10px;
+    --CONTROL-SIZE: 50px;
+    --CONTROL-SIZE2: calc((2 * var(--CONTROL-SIZE) + var(--BUTTON-GAP)));
+    --TBHEIGHT: calc( 1.5 * var(--CONTROL-SIZE));
+    --LRWIDTH: calc( 1.5 * var(--CONTROL-SIZE));
+    --LMARG: 100px;
+    --TOTWIDTH: calc( var(--LRWIDTH + var(--BOARDSIZE) + var(--LRWIDTH)));
+  }
+
+  {% endif %}
 
   .ahx-twocols {
     display: grid;
@@ -36,6 +53,24 @@
     font-family: Arial, sans-serif;
     font-weight: 1000;
   }
+
+  #btn_export {
+    font-size:24px;
+    font-family:Arial, sans-serif;
+    background-color:#cccccc;
+    color:black;
+    width:50%;
+    margin:0 auto;
+    border-color:black;
+    border-width:1px;
+    border-style:solid;
+    border-radius: 5px;  
+  }
+  
+  #btn_export:hover {
+    background-color: #666666;
+    color:white
+  }
 </style>
 
 {% endblock css %}
@@ -44,12 +79,16 @@
 <br>
 <!-- board with controls along edges -->
 <div
+{% if is_mobile() %}
   style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:center;'
-  class='xgreen-border'>
+  {% else %}
+  style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:left;margin-left:var(--LMARG);'
+  {% endif %}
+  class='xblue-border'>
   <!-- left control -->
   <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
     <div class='ahx-tworows xred-border'
-      style='width:var(--CONTROL-SHORT-SIDE); height:var(--CONTROL-LONG-SIDE); grid-row-gap:var(--BUTTON-GAP);'>
+      style='width:var(--CONTROL-SIZE); height:var(--CONTROL-SIZE2); grid-row-gap:var(--BUTTON-GAP);'>
       <button id=btn_right_left class='single-letter-button'
         style='display:grid;align-items:center;border-left: 6px solid #000;'>&#x2190;</button>
       <button id=btn_right_right class='single-letter-button'
@@ -63,7 +102,7 @@
     class='xgreen-border'>
     <!-- top control -->
     <div class='ahx-twocols xred-border'
-      style='width:var(--CONTROL-LONG-SIDE); height:var(--CONTROL-SHORT-SIDE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
+      style='width:var(--CONTROL-SIZE2); height:var(--CONTROL-SIZE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
       <button id=btn_top_up class='single-letter-button'
         style='display:grid;align-items:center;border-top: 6px solid #000;'>&#x2191;</button>
       <button id=btn_top_down class='single-letter-button'
@@ -71,11 +110,11 @@
     </div>
     <!-- board -->
     <div id='boardDiv' class=xred-border
-      style='width:var(--BOARDSIZE);height:var(--BOARDSIZE);margin-left:auto;margin-right:auto;'>
+      style='display:grid; width:var(--BOARDSIZE);height:var(--BOARDSIZE);margin-left:auto;margin-right:auto;'>
     </div>
     <!-- bottom control -->
     <div class='ahx-twocols xred-border'
-      style='width:var(--CONTROL-LONG-SIDE); height:var(--CONTROL-SHORT-SIDE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
+      style='width:var(--CONTROL-SIZE2); height:var(--CONTROL-SIZE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
       <button id=btn_bottom_up class='single-letter-button'
         style='display:grid;align-items:center;border-bottom: 6px solid #000;'>&#x2191;</button>
       <button id=btn_bottom_down class='single-letter-button'
@@ -86,7 +125,7 @@
   <!-- right control -->
   <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
     <div class='ahx-tworows xred-border'
-      style='width:var(--CONTROL-SHORT-SIDE); height:var(--CONTROL-LONG-SIDE); grid-row-gap:var(--BUTTON-GAP);'>
+      style='width:var(--CONTROL-SIZE); height:var(--CONTROL-SIZE2); grid-row-gap:var(--BUTTON-GAP);'>
       <button id=btn_left_left class='single-letter-button'
         style='display:grid;align-items:center;border-right: 6px solid #000;'>&#x2190;</button>
       <button id=btn_left_right class='single-letter-button'
@@ -98,10 +137,18 @@
 
 <br>
 <!-- Export button -->
-<div>
+{% if is_mobile() %}
+<div class='xred-border'>
   <button id=btn_export onclick='exportDiagramSVG()' style='font-size:24px;font-family:Arial, sans-serif;background-color:#cccccc;color:black;padding:0 2vw;margin:0;
     border-color:black;border-width:1px;border-style:solid;border-radius: 1vw;'>Export</button>
 </div>
+{% else %}
+<div style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:left;margin-left:var(--LMARG);'>
+  <div></div>
+  <button id=btn_export onclick='exportDiagramSVG()'>Export</button>
+  <div></div>
+</div>
+{% endif %}
 
 <br>
 
@@ -443,7 +490,7 @@
         elt.textContent = text[0]
         elt.setAttribute("font-size", xfont.size)
         elt.setAttribute("font-family", xfont.family)
-        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("text-anchor", "middle")
         elt.setAttribute("dominant-baseline", "central")
         elt.setAttribute("x", sx(x) - tileSize * 0.00)
         elt.setAttribute("y", sy(y) + tileSize * 0.00)
@@ -452,7 +499,7 @@
         elt.textContent = text[0]
         elt.setAttribute("font-size", letterfont.size)
         elt.setAttribute("font-family", letterfont.family)
-        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("text-anchor", "middle")
         elt.setAttribute("dominant-baseline", "central")
         elt.setAttribute("x", sx(x) - tileSize * 0.00)
         elt.setAttribute("y", sy(y) - tileSize * 0.00)
@@ -461,7 +508,7 @@
         elt.textContent = text[0]
         elt.setAttribute("font-size", markFont1.size)
         elt.setAttribute("font-family", markFont1.family)
-        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("text-anchor", "middle")
         elt.setAttribute("dominant-baseline", "central")
         elt.setAttribute("x", sx(x) - tileSize * 0.015)
         elt.setAttribute("y", sy(y) + tileSize * 0.020)
@@ -470,7 +517,7 @@
         elt.textContent = text
         elt.setAttribute("font-size", markFont2.size)
         elt.setAttribute("font-family", markFont2.family)
-        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("text-anchor", "middle")
         elt.setAttribute("dominant-baseline", "central")
         elt.setAttribute("x", sx(x) - tileSize * 0.030)
         elt.setAttribute("y", sy(y) + tileSize * 0.00)
@@ -479,12 +526,12 @@
         elt.textContent = text
         elt.setAttribute("font-size", markFont2.size)
         elt.setAttribute("font-family", markFont2.family)
-        elt.setAttribute("text-anchor", "middle") 
+        elt.setAttribute("text-anchor", "middle")
         elt.setAttribute("dominant-baseline", "central")
         elt.setAttribute("x", sx(x) - tileSize * 0.01)
         elt.setAttribute("y", sy(y) + tileSize * 0.00)
         elt.setAttribute("fill", color)
-      } 
+      }
       svg.appendChild(elt)
     } // drawText()
 
