@@ -141,6 +141,50 @@
     <div id='game_info' style='font-size:18pt;text-align:center'> &nbsp; </div>
     <div id='fname' style='font-size:18pt;text-align:center'> &nbsp; </div>
     <div id='lb_komi' style='font-size:18pt;text-align:center'> &nbsp; </div>
+    <!-- Buttons to add markers -->
+    {% if current_user.data['username'] in ['acm','conny','one10'] %}
+    <div>
+      <table class='center'>
+        <tr>
+          <td> <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
+              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>1</label>
+          </td>
+
+          <td> <label id='btn_tgl_letter' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>a</label>
+          </td>
+
+          <td> <label id='btn_tgl_x' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>X</label>
+          </td>
+
+          <td> <label id='btn_tgl_circle' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>O</label>
+          </td>
+
+          <td> <label id='btn_tgl_triangle' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>△</label>
+          </td>
+
+          <td> <label id='btn_clear' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>&nbsp;</label>
+          </td>
+
+          <td> <label id='btn_rot' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>R</label>
+          </td>
+
+          <td> <label id='btn_swap_colors' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>C</label>
+          </td>
+
+          <td> <label id='btn_export_diagram' class='btn btn-outline-dark'
+              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>E</label>
+          </td>
+        </tr>
+      </table>
+    </div>
+    {% endif %}
 
     <div id=board> </div>
 
@@ -218,50 +262,6 @@
       <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Last')}}</label>
     </div>
 
-    <!-- Buttons to add markers -->
-    {% if current_user.data['username'] in ['acm','conny','one10'] %}
-    <div>
-      <table class='center'>
-        <tr>
-          <td> <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
-              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>1</label>
-          </td>
-
-          <td> <label id='btn_tgl_letter' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>a</label>
-          </td>
-
-          <td> <label id='btn_tgl_x' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>X</label>
-          </td>
-
-          <td> <label id='btn_tgl_circle' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>O</label>
-          </td>
-
-          <td> <label id='btn_tgl_triangle' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>△</label>
-          </td>
-
-          <td> <label id='btn_clear' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>&nbsp;</label>
-          </td>
-
-          <td> <label id='btn_rot' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>R</label>
-          </td>
-
-          <td> <label id='btn_swap_colors' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>C</label>
-          </td>
-
-          <td> <label id='btn_export_diagram' class='btn btn-outline-dark'
-              style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>E</label>
-          </td>
-        </tr>
-      </table>
-    </div>
-    {% endif %}
 
     <!-- Pass and Selfplay -->
     <div>

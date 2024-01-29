@@ -425,14 +425,19 @@
       // Clear the background if no stone
       if (g_stones[x][y] == EMPTY) {
         let rect = document.createElementNS(svgNS, "rect")
-        let shift = -tileSize * 0.02
-        rect.setAttribute("x", sx(x) - tileSize / 2 + shift)
-        rect.setAttribute("y", sy(y) - tileSize / 2 + shift)
-        rect.setAttribute("width", tileSize - 2 * shift)
-        rect.setAttribute("height", tileSize - 2 * shift)
+        // let shift = -tileSize * 0.02
+        // rect.setAttribute("x", sx(x) - tileSize / 2 + shift)
+        // rect.setAttribute("y", sy(y) - tileSize / 2 + shift)
+        // rect.setAttribute("width", tileSize - 2 * shift)
+        // rect.setAttribute("height", tileSize - 2 * shift)
+        let marg = -tileSize * 0.015
+        rect.setAttribute("x", sx(x) - tileSize / 2 + marg)
+        rect.setAttribute("y", sy(y) - tileSize / 2 + marg)
+        rect.setAttribute("width", tileSize - 2 * marg)
+        rect.setAttribute("height", tileSize - 2 * marg)
         rect.setAttribute("fill", bgcolor)
         svg.appendChild(rect)
-      }
+      } // if EMPTY
       var elt = document.createElementNS("http://www.w3.org/2000/svg", "text")
       if (text[0] == 'X') {
         elt.textContent = text[0]
