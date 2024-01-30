@@ -202,6 +202,7 @@
     drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
 
     document.getElementById('btn_bottom_up').addEventListener('click', function () {
+      if (g_maxrow - g_minrow < 3) { return }
       g_maxrow = Math.max(g_maxrow - 1, 3)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
@@ -214,6 +215,7 @@
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
     document.getElementById('btn_top_down').addEventListener('click', function () {
+      if (g_maxrow - g_minrow < 3) { return }
       g_minrow = Math.min(g_minrow + 1, 15)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
@@ -222,10 +224,12 @@
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
     document.getElementById('btn_right_right').addEventListener('click', function () {
+      if (g_maxcol - g_mincol < 3) { return }
       g_mincol = Math.min(g_mincol + 1, 15)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
     document.getElementById('btn_left_left').addEventListener('click', function () {
+      if (g_maxcol - g_mincol < 3) { return }
       g_maxcol = Math.max(g_maxcol - 1, 3)
       drawGoBoard(g_canvas, marg, tileSize, g_blackStones, g_whiteStones, g_marks, g_minrow, g_maxrow, g_mincol, g_maxcol)
     })
