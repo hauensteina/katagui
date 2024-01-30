@@ -422,7 +422,7 @@
     //-------------------------
     function drawLines() {
       // Draw the vertical lines
-      for (let i = 0; i <= maxCol; i++) {
+      for (let i = minCol; i <= maxCol; i++) {
         let line = document.createElementNS(svgNS, "line")
         let lineWidth = (i === 0 || i === BOARDSIZE - 1) ? edgeLineWidth : innerLineWidth
         var topExtra = 0
@@ -440,7 +440,7 @@
       } // for
 
       // Draw the horizontal lines
-      for (let i = 0; i <= maxRow; i++) {
+      for (let i = minRow; i <= maxRow; i++) {
         let line = document.createElementNS(svgNS, "line")
         let lineWidth = (i === 0 || i === BOARDSIZE - 1) ? edgeLineWidth : innerLineWidth
         var leftExtra = edgeLineWidth / 2
