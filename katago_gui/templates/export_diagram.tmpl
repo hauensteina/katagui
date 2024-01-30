@@ -59,7 +59,6 @@
     font-family:Arial, sans-serif;
     background-color:#cccccc;
     color:black;
-    width:50%;
     margin:0 auto;
     border-color:black;
     border-width:1px;
@@ -145,7 +144,7 @@
 {% else %}
 <div style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:left;margin-left:var(--LMARG);'>
   <div></div>
-  <button id=btn_export onclick='exportDiagramSVG()'>Export</button>
+  <button id=btn_export style='padding:0 10px;' onclick='exportDiagramSVG()'>Export</button>
   <div></div>
 </div>
 {% endif %}
