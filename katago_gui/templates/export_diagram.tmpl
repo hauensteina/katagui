@@ -532,8 +532,13 @@
         elt.setAttribute("font-family", markFont2.family)
         elt.setAttribute("text-anchor", "middle")
         elt.setAttribute("dominant-baseline", "central")
-        elt.setAttribute("x", sx(x) - tileSize * 0.030)
-        elt.setAttribute("y", sy(y) + tileSize * 0.00)
+        if (text[1] == '1') {
+          elt.setAttribute("x", sx(x) - tileSize * 0.015)
+          elt.setAttribute("y", sy(y) + tileSize * 0.020)
+        } else {
+          elt.setAttribute("x", sx(x) - tileSize * 0.030)
+          elt.setAttribute("y", sy(y) + tileSize * 0.00)
+        }
         elt.setAttribute("fill", color)
       } else { // two digits >= 20
         elt.textContent = text
