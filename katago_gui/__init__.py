@@ -89,7 +89,7 @@ app.config['MAIL_USERNAME'] = os.environ.get('KATAGUI_EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('KATAGUI_EMAIL_PASS')
 mail = Mail(app)
 
-if os.environ.get('FLASK_ENV') == 'dev':
+if os.environ.get('FLASK_DEBUG') == '1':
     REDIS_URL='redis://localhost:6379'
     redis = redis.from_url(REDIS_URL) # when running locally    
 else:    
