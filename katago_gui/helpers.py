@@ -41,6 +41,7 @@ def get_sgf_tag( sgfstr, tag):
 # Forward fast request to katago server
 #----------------------------------------
 def fwd_to_katago( endpoint, args):
+    return
     try:
         ip = db.get_parm( 'server_ip')
         url = 'http://' + ip + ':2819/' + endpoint
@@ -62,7 +63,9 @@ def fwd_to_katago( endpoint, args):
 def fwd_to_katago_x( endpoint, args):
     try:
         ip = db.get_parm( 'server_ip')
-        url = 'http://' + ip + ':2820/' + endpoint
+        # Locally, use blackstatic
+        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.137'
+        url = 'http://' + ip + ':3820/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
     # local testing
@@ -81,9 +84,9 @@ def fwd_to_katago_x( endpoint, args):
 def fwd_to_katago_guest( endpoint, args):
     try:
         ip = db.get_parm( 'server_ip')
-        # Locally, use marfa
-        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.135'
-        url = 'http://' + ip + ':2821/' + endpoint
+        # Locally, use blackstatic
+        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.137'
+        url = 'http://' + ip + ':3821/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
 
@@ -100,9 +103,9 @@ def fwd_to_katago_guest( endpoint, args):
 def fwd_to_katago_one10( endpoint, args):
     try:
         ip = db.get_parm( 'server_ip')
-        # Locally, use marfa
-        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.135'
-        url = 'http://' + ip + ':2801/' + endpoint
+        # Locally, use blackstatic
+        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.137'
+        url = 'http://' + ip + ':3801/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
 
@@ -117,6 +120,7 @@ def fwd_to_katago_one10( endpoint, args):
 # Forward 9x9 request to katago server
 #------------------------------------------
 def fwd_to_katago_9( endpoint, args):
+    return
     try:
         ip = db.get_parm( 'server_ip')
         url = 'http://' + ip + ':2822/' + endpoint
@@ -134,6 +138,7 @@ def fwd_to_katago_9( endpoint, args):
 # Forward 13x13 request to katago server
 #------------------------------------------
 def fwd_to_katago_13( endpoint, args):
+    return
     try:
         ip = db.get_parm( 'server_ip')
         url = 'http://' + ip + ':2823/' + endpoint

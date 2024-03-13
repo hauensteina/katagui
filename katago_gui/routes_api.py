@@ -25,7 +25,8 @@ from katago_gui import app, db, redis, REDIS_CHAN
 from katago_gui import dbmodel
 import katago_gui.translations
 from katago_gui.helpers import get_sgf_tag, moves2sgf, login_as_guest
-from katago_gui.helpers import fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_9, fwd_to_katago_13
+#from katago_gui.helpers import fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_9, fwd_to_katago_13
+from katago_gui.helpers import fwd_to_katago_x, fwd_to_katago_guest 
 from katago_gui.helpers import fwd_to_katago_one10
 
 #--------------------------------------

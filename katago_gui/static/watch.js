@@ -819,7 +819,7 @@ function watch( JGO, axutil, game_hash, p_options) {
   //---------------------------------------
   function fast_or_strong( val) {
     if (typeof val == 'undefined') { // getter
-      if ($('#descr_bot').html().indexOf('40b') >= 0) {
+      if ($('#descr_bot').html().indexOf('Pro') >= 0) {
         return fast_or_strong('strong')
       } else if ($('#descr_bot').html().indexOf('20b') >= 0) {
         return fast_or_strong('fast')
@@ -831,7 +831,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     } // if getter
     // setter
     if (val == 'strong') {
-      $('#descr_bot').html( `KataGo 40b 1000`)
+      $('#descr_bot').html( `KataGo Pro 1000`)
       $('#img_bot').attr('src', 'static/kata-red.png')
       return {'val':'strong', 'ep':'/select-move-x/' }
     } else if (val == 'fast') {
