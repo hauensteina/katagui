@@ -362,8 +362,23 @@ def server_ip():
 #-------------------------------------------
 def sgf2list():
     """ Convert sgf main var to coordinate list of moves """
+
+    #-------------------------
+    def svg2sgf( tstr):
+        """ Katagui svg export embeds agf in the svg as comment. """
+        matches = re.search(r'<katagui>(.*?)<\/katagui>', tstr)
+        if matches:
+            jsonstr = matches.group(1)
+            meta = json.loads( jsonstr)
+            sgfstr = meta['sgf']
+            return sgfstr
+        else:
+            return tstr
+
     f = request.files['file']
-    sgfstr = f.read().decode('utf-8')
+    tstr = f.read().decode('utf-8')
+    sgfstr = svg2sgf( tstr)
+    
     sgfstr = re.sub( 'CoPyright', 'CP', sgfstr) # IGS anomaly
     RE = get_sgf_tag( sgfstr, 'RE')
     if len(RE) > 10: RE = ''
