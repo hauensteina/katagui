@@ -45,9 +45,13 @@ def print_board( board):
 # Convert from sgf coords to Point
 #-----------------------------------
 def point_from_coords(coords):
-    col = COLS.index(coords[0]) + 1
-    row = int(coords[1:])
-    return gotypes.Point(row=row, col=col)
+    try:
+        col = COLS.index(coords[0]) + 1
+        row = int(coords[1:])
+        return gotypes.Point(row=row, col=col)
+    except:
+        BP()
+        tt=42
 
 # Convert from Point to sgf coords
 #----------------------------------

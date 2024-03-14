@@ -107,7 +107,7 @@
     <div class='ahx-twocols xred-border'
       style='width:var(--CONTROL-SIZE2); height:var(--CONTROL-SIZE); grid-column-gap:var(--BUTTON-GAP);margin:0 auto;'>
       <button id=btn_top_down class='single-letter-button'
-      style='display:grid;align-items:center;border-top: 6px solid #000;'>&#x2193;</button>
+        style='display:grid;align-items:center;border-top: 6px solid #000;'>&#x2193;</button>
       <button id=btn_top_up class='single-letter-button'
         style='display:grid;align-items:center;border-top: 6px solid #000;'>&#x2191;</button>
     </div>
@@ -170,6 +170,7 @@
 
   var g_stonesJson = '{{ stones }}'
   var g_marksJson = '{{ marks }}'
+  var g_sgf = {{ sgf|tojson }}
   var g_stones = JSON.parse(g_stonesJson)
   var g_marks = JSON.parse(g_marksJson)
   var g_blackStones = []
@@ -286,6 +287,8 @@
     var serializer = new XMLSerializer()
     var svgStr = serializer.serializeToString(svg)
 
+    svgStr = addDateAndSgf(svgStr)
+
     // Create a Blob object
     var blob = new Blob([svgStr], { type: 'image/svg+xml' })
 
@@ -301,6 +304,14 @@
     document.body.removeChild(link) // Remove the anchor from the document
     URL.revokeObjectURL(url)
   } // exportDiagramSVG()
+
+  //--------------------------------
+  function addDateAndSgf(svgStr) {
+    var date = new Date().toISOString().slice(0, 10)
+    var meta = { "export_date": date, "sgf": g_sgf}
+    var metastr = '<!-- <katagui> ' + JSON.stringify(meta) + ' </katagui> -->\n'
+    return metastr + svgStr
+  } // addDateAndSgf()
 
   // Draw a Go board in SVG
   //------------------------------------------------------------------------------------------

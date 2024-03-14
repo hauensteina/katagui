@@ -20,7 +20,7 @@ from katago_gui import app, bcrypt, mail, logged_in
 from katago_gui import auth
 from katago_gui.translations import translate as tr
 from katago_gui.forms import LoginForm, RegistrationForm, RequestResetForm, ResetPasswordForm, UpdateAccountForm
-from katago_gui.helpers import check_https, login_as_guest, send_reset_email, send_register_email
+from katago_gui.helpers import check_https, login_as_guest, send_reset_email, send_register_email, moves2sgf, moves2arr 
 
 @app.route('/ttest')
 #-------------------------------
@@ -51,15 +51,6 @@ def index_mobile():
     if not current_user.is_authenticated: login_as_guest()
     return render_template( 'index_mobile.tmpl', home=True)
 
-@app.route('/export_diagram')
-#-------------------------------
-def export_diagram():
-    """ Export part of the board as a diagram """
-    parms = dict(request.args)
-    stones = parms['stones']
-    marks = parms['marks']
-    return render_template( 'export_diagram.tmpl', stones=stones, marks=marks)
-
 @app.route('/about')
 #-------------------------------
 def about():
@@ -83,6 +74,24 @@ def account():
         form.fname.data = current_user.data['fname']
         form.lname.data = current_user.data['lname']
     return render_template('account.tmpl', title='Account', form=form)
+
+@app.route('/export_diagram')
+#-------------------------------
+def export_diagram():
+    """ Export part of the board as a diagram """
+    parms = dict(request.args)
+    stones = parms['stones']
+    marks = parms['marks']
+    moves = parms['moves']
+    moves = moves2arr( moves)
+    pb = parms['pb']
+    pw = parms['pw']
+    km = parms['km']
+    re = parms['re']
+    dt = parms['dt']
+    meta = {'pb':pb, 'pw':pw, 'km':km, 're':re, 'dt':dt}
+    sgf = moves2sgf( moves, [], [], meta)
+    return render_template( 'export_diagram.tmpl', stones=stones, marks=marks, sgf=sgf)
 
 @app.route('/favicon.ico')
 #-------------------------------

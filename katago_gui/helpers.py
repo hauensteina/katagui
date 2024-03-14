@@ -196,6 +196,22 @@ def moves2sgf( moves, probs, scores, meta):
     sgf += ')'
     return sgf
 
+#------------------------
+def moves2arr(moves):
+    """ Q16D4 -> ['Q16','D4'] """
+    movearr = []
+    m = ''
+    for c in moves:
+        if c > '9':  # a letter
+            if m:
+                movearr.append(m)
+            m = c
+        else:
+            m += c
+    if m:
+        movearr.append(m)
+    return movearr
+
 #---------------------------
 def login_as_guest():
     """ If we are not logged in, log in as guest """
