@@ -129,7 +129,14 @@ function main(JGO, axutil, p_options) {
     maybe_start_var()
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
     grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
+    board_click_callback.illegal_move = false
     goto_move(grec.len())
+    // Silently ignore illegal ko takes
+    if (board_click_callback.illegal_move) { 
+      grec.pop()
+      goto_move(grec.len())
+      return
+    }
     add_mark('redraw')
     set_emoji()
     var greclen = grec.len()
@@ -140,6 +147,7 @@ function main(JGO, axutil, p_options) {
       },
       settings('show_emoji'), playing)
   } // board_click_callback()
+  board_click_callback.illegal_move = false
 
   // Put a mark on a stone or intersection. 
   // Reset if coord == 'clear'.
@@ -1006,6 +1014,8 @@ function main(JGO, axutil, p_options) {
       if (play.ko)
         node.setMark(play.ko, JGO.MARK.CIRCLE) // mark ko, too
       g_ko = play.ko
+    } else {
+      board_click_callback.illegal_move = true
     }
   } // show_move()
   show_move.mark_last_move = true
