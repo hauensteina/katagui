@@ -394,29 +394,37 @@ function main(JGO, axutil, p_options) {
       add_mark('redraw')
     }) // btn_tgl_mark
 
-    $('#btn_rot').click(() => {
-      var btn = $('#btn_rot')
+    $('#btn_tgl_rot').click(() => {
+      var btn = $('#btn_tgl_rot')
       var rot = (axutil.getRotation() + 1) % 8
       axutil.setRotation(rot)
       replay_moves(grec.pos())
       add_mark('redraw')
-    }) // btn_rot
+      if (rot == 0) {
+        btn.removeClass('btn-success')
+        btn.css('background-color', '')
+      } else {
+        btn.addClass('btn-success')
+        btn.css('background-color', 'green')
+      }
+    }) // btn_tgl_rot
 
-    $('#btn_swap_colors').click(() => {
+    $('#btn_tgl_swap_colors').click(() => {
+      var btn = $('#btn_tgl_swap_colors')
       if (show_move.swap_colors) {
         show_move.swap_colors = false
-        $('#btn_swap_colors').removeClass('btn-success')
-        $('#btn_swap_colors').css('background-color', '')
         replay_moves(grec.pos())
         add_mark('redraw')
+        btn.removeClass('btn-success')
+        btn.css('background-color', '')
       } else {
         show_move.swap_colors = true
-        $('#btn_swap_colors').addClass('btn-success')
-        $('#btn_swap_colors').css('background-color', 'green')
         replay_moves(grec.pos())
         add_mark('redraw')
+        btn.addClass('btn-success')
+        btn.css('background-color', 'green')
       }
-    }) // btn_swap_colors
+    }) // btn_tgl_swap_colors
 
     $('#btn_export_diagram').click(() => {
       let node = g_jrecord.getCurrentNode()
