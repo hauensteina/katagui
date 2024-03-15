@@ -1497,6 +1497,12 @@ function main(JGO, axutil, p_options) {
   function onRefresh() {
     grec = new GameRecord()
     settings()
+    if (settings('diagrams')) {
+      $('#diagram_buttons').show()
+    } else {
+      $('#diagram_buttons').hide()
+    }
+
     set_btn_handlers()
     set_dropdown_handlers()
     reset_game()
@@ -1510,11 +1516,6 @@ function main(JGO, axutil, p_options) {
     }
     else {
       window.onbeforeunload = save_state
-    }
-
-    // Use 20b by default if logged in
-    if (settings('logged_in')) {
-      fast_or_strong('fast')
     }
 
     var serverData = new ServerData(axutil, () => {

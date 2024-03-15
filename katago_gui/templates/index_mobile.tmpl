@@ -142,8 +142,7 @@
     <div id='fname' style='font-size:18pt;text-align:center'> &nbsp; </div>
     <div id='lb_komi' style='font-size:18pt;text-align:center'> &nbsp; </div>
     <!-- Buttons to add markers -->
-    {% if current_user.data['username'] in ['acm','conny','one10','devinfraze','szhong'] %}
-    <div>
+    <div id='diagram_buttons'>
       <table class='center'>
         <tr>
           <td> <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
@@ -184,7 +183,6 @@
         </tr>
       </table>
     </div>
-    {% endif %}
 
     <div id=board> </div>
 

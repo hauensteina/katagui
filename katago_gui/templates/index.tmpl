@@ -152,8 +152,7 @@
           </div>
         </div>
 
-        {% if current_user.data['username'] in ['acm','conny','one10','devinfraze','szhong'] %}
-        <div class='row justify-content-center'> <!-- Buttons to add markers -->
+        <div id='diagram_buttons' class='row justify-content-center'> <!-- Buttons to add markers -->
           <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
           style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
 
@@ -181,7 +180,6 @@
           <label id='btn_export_diagram' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
         </div>
-        {% endif %}
 
         <div class='row'>
           <div id='board' class='col-12 text-center'> </div>
