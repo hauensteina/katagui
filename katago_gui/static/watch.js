@@ -530,8 +530,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     $('#debug').html( JSON.stringify(grec.curmove()) + '<br>var:' + grec.var_active() + ' move ' + n )
     if ( grec.curmove().agent == 'kata10') {
       fast_or_strong('guest')
-    } else if ( grec.curmove().agent == 'kata20') {
-      fast_or_strong('fast')
     } else if ( grec.curmove().agent == 'kata40') {
       fast_or_strong('strong')
     } else {
@@ -821,8 +819,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (typeof val == 'undefined') { // getter
       if ($('#descr_bot').html().indexOf('Pro') >= 0) {
         return fast_or_strong('strong')
-      } else if ($('#descr_bot').html().indexOf('20b') >= 0) {
-        return fast_or_strong('fast')
       } else if ($('#descr_bot').html().indexOf('10b') >= 0) {
         return fast_or_strong('guest')
       } else if ($('#descr_bot').html().indexOf('Human') >= 0) {
@@ -834,10 +830,6 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#descr_bot').html( `KataGo Pro 1000`)
       $('#img_bot').attr('src', 'static/kata-red.png')
       return {'val':'strong', 'ep':'/select-move-x/' }
-    } else if (val == 'fast') {
-      $('#descr_bot').html( `KataGo 20b &nbsp; 256`)
-      $('#img_bot').attr('src', 'static/kata.png')
-      return {'val':'fast', 'ep':'/select-move/' }
     } else if (val == 'guest') {
       $('#descr_bot').html( `KataGo 10b &nbsp; 256`)
       $('#img_bot').attr('src', 'static/kata.png')
@@ -845,7 +837,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     } else if (val == 'human') {
       $('#descr_bot').html( `Human`)
       $('#img_bot').attr('src', 'static/kata-gray.png')
-      return {'val':'human', 'ep':'/select-move/' }
+      return {'val':'human', 'ep':'/select-move-x/' }
     }
     return 0
   } // fast_or_strong()
