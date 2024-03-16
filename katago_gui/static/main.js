@@ -1085,7 +1085,7 @@ function main(JGO, axutil, p_options) {
 
   //----------------------------
   function show_movenum() {
-    if (!grec.len()) { return }
+    //if (!grec.len()) { return }
     var totmoves = grec.len()
     var n = grec.pos()
     var html = `${n} / ${totmoves}<br>`

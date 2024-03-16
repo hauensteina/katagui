@@ -379,9 +379,9 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
     else if (action == 'off') {
       $btn.removeClass('ahaux_on')
-      $btn.css('background-color', 'rgb(40, 167, 69)')
+      $btn.css('background-color', '')
       $btn.css('color', 'black')
-      $btn.html( tr('Refresh'))
+      $btn.html( tr('Live'))
     }
     else if (action == 'toggle') {
       if (toggle_live_button() == 'on') { return toggle_live_button( 'off') }
@@ -539,7 +539,7 @@ function watch( JGO, axutil, game_hash, p_options) {
 
   //----------------------------
   function show_movenum() {
-    if (!grec.len()) { return }
+    //if (!grec.len()) { return }
     var totmoves = grec.len()
     var n = grec.pos()
     var html = `${n} / ${totmoves}<br>`
