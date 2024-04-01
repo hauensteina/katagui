@@ -9,6 +9,7 @@
 
 from pdb import set_trace as BP
 import os, sys, re, uuid
+import random
 import requests
 from datetime import datetime
 #from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -61,11 +62,13 @@ def fwd_to_katago( endpoint, args):
 # Forward strong request to katago server
 #------------------------------------------
 def fwd_to_katago_x( endpoint, args):
+    ports = [3820, 3822]
+    port = random.choice(ports)
     try:
         ip = db.get_parm( 'server_ip')
         # Locally, use blackstatic
         if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.137'
-        url = 'http://' + ip + ':3820/' + endpoint
+        url = 'http://' + ip + f':{port}/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
     # local testing
@@ -82,11 +85,13 @@ def fwd_to_katago_x( endpoint, args):
 # Forward guest request to katago server
 #------------------------------------------
 def fwd_to_katago_guest( endpoint, args):
+    ports = [3821, 3823]
+    port = random.choice(ports)
     try:
         ip = db.get_parm( 'server_ip')
         # Locally, use blackstatic
         if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.137'
-        url = 'http://' + ip + ':3821/' + endpoint
+        url = 'http://' + ip + f':{port}/' + endpoint
     except:
         url = DEMO_KATAGO_SERVER + '/' + endpoint
 
