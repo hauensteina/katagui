@@ -229,7 +229,6 @@ def login_as_guest():
     user.createdb( { 'fname':'f', 'lname':'l', 'username':uname, 'email_verified':True })
     login_user( user, remember=False)
 
-
 #-------------------------------
 def send_register_email( user):
     ''' User register. Send him an email to verify email address before creating account. '''

@@ -127,6 +127,17 @@
       <tr style='height:50px'>
         <td>
           <label class='switch'>
+            <input id='opt_show_best_moves' type='checkbox'>
+            <span class='slider round'></span>
+          </label>
+        </td>
+        <td style='text-align:left;font-size:12pt'>
+          &nbsp; {{tr('Show best moves during replay')}}
+        </td>
+      </tr>
+      <tr style='height:50px'>
+        <td>
+          <label class='switch'>
             <input id='opt_show_best_ten' type='checkbox'>
             <span class='slider round'></span>
           </label>
@@ -171,6 +182,7 @@
        var settings = JSON.parse( localStorage.getItem( 'settings'))
        if ('show_emoji' in settings) { $('#opt_show_emoji').prop('checked', settings.show_emoji)}
        if ('show_prob' in settings) { $('#opt_show_prob').prop('checked', settings.show_prob)}
+       if ('show_best_moves' in settings) { $('#opt_show_best_moves').prop('checked', settings.show_best_moves)}
        if ('play_a' in settings) { $('#opt_play_a').prop('checked', settings.play_a)}
        if ('diagrams' in settings) { $('#opt_diagrams').prop('checked', settings.diagrams)}
        if ('show_best_ten'  in settings) { $('#opt_show_best_ten').prop('checked', settings.show_best_ten)}
@@ -200,6 +212,7 @@
        $('#btn_settings_done').click( () => {
          settings.show_emoji = $('#opt_show_emoji').prop('checked')
          settings.show_prob = $('#opt_show_prob').prop('checked')
+         settings.show_best_moves = $('#opt_show_best_moves').prop('checked')
          settings.show_best_ten = $('#opt_show_best_ten').prop('checked')
          settings.play_a = $('#opt_play_a').prop('checked')
          settings.diagrams = $('#opt_diagrams').prop('checked')

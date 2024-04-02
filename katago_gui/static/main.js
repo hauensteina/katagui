@@ -828,10 +828,17 @@ function main(JGO, axutil, p_options) {
       goto_move(grec.pos() + 1)
       return
     }
+    if (grec.curmove().data) {
+      if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+    }
     if (grec.curmove().p == 0) {
       btn_next.waiting = true
       get_prob_genmove((data) => {
         update_emoji()
+        if (settings('show_best_moves')) { 
+          show_best_moves(data) 
+          grec.curmove().data = data  
+        }
         bot_active('off')
         btn_next.waiting = false
         if (btn_next.buffered) {
