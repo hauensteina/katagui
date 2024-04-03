@@ -812,9 +812,14 @@ function main(JGO, axutil, p_options) {
   //-------------------------
   function btn_prev() {
     selfplay('off');
+    if (!grec.len()) return
     goto_move(grec.pos() - 1); update_emoji(); bot_active('off')
     add_mark('redraw')
-  }
+
+    if (grec.curmove().data) {
+      if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+    } 
+  } // btn_prev()
 
   //-------------------------
   function btn_next() {
@@ -830,8 +835,8 @@ function main(JGO, axutil, p_options) {
     }
     if (grec.curmove().data) {
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
-    }
-    if (!grec.curmove().data) {
+    } 
+    else {
       btn_next.waiting = true
       get_prob_genmove((data) => {
         grec.curmove().data = data  
@@ -847,7 +852,7 @@ function main(JGO, axutil, p_options) {
         }
       })
       return
-    }
+    } // else
     update_emoji()
     bot_active('off')
   } // btn_next()
