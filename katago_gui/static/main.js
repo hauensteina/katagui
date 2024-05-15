@@ -1473,11 +1473,11 @@ function main(JGO, axutil, p_options) {
     }
     else if (val == 'marfa_strong') {
       if (settings('logged_in')) {
-        $('#descr_bot').html(`Marfa 512<br>${DDATE}`)
+        $('#descr_bot').html(`Marfa<br>${DDATE}`)
         $('#btn_tgl_strong').addClass('active')
         //$('#btn_tgl_fast').removeClass('active')
         $('#btn_tgl_guest').removeClass('active')
-        $('#btn_bot').html('Marfa 512')
+        $('#btn_bot').html('Marfa')
         axutil.set_attr('#img_bot', 'src', 'static/kata-red.png')
         return MARFA_STRONG
       } // if logged in
