@@ -26,7 +26,7 @@ from katago_gui import dbmodel
 import katago_gui.translations
 from katago_gui.helpers import get_sgf_tag, moves2sgf, moves2arr
 #from katago_gui.helpers import fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_9, fwd_to_katago_13
-from katago_gui.helpers import fwd_to_katago_x, fwd_to_katago_guest 
+from katago_gui.helpers import fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_x_marfa
 from katago_gui.helpers import fwd_to_katago_one10
 
 #--------------------------------------
@@ -173,32 +173,6 @@ def score( bot_name):
     res = fwd_to_katago_x( endpoint, args)
     return jsonify( res)
 
-@app.route('/select-move/<bot_name>', methods=['POST'])
-#---------------------------------------------------------
-def select_move( bot_name):
-    """ Forward select-move to the katago server """
-    try:
-        current_user.record_activity()
-    except:
-        pass
-
-    endpoint = 'select-move/' + bot_name
-    args = request.json
-
-    try:
-        if 'selfplay' in args:
-            current_user.count_selfplay_move()
-        else:
-            current_user.count_move()
-    except:
-        pass
-
-    res = fwd_to_katago( endpoint, args)
-    try:
-        return jsonify( res)
-    except:
-        print( 'select move error: %s' % res)
-        return jsonify( {'result': 'error: forward failed' })
 
 @app.route('/select-move-guest/<bot_name>', methods=['POST'])
 #----------------------------------------------------------------
@@ -282,6 +256,34 @@ def select_move_x( bot_name):
         print( 'select move x error: %s' % res)
         return jsonify( {'result': 'error: forward failed' })
 
+@app.route('/select-move-marfa-strong/<bot_name>', methods=['POST'])
+#------------------------------------------------------------------------
+def select_move_marfa_strong( bot_name):
+    """ Forward select-move to the katago server """
+    try:
+        current_user.record_activity()
+    except:
+        pass
+
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
+
+    res = fwd_to_katago_x_marfa( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move x marfa error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
+
+
 @app.route('/select-move-9/<bot_name>', methods=['POST'])
 #-----------------------------------------------------------
 def select_move_9( bot_name):
@@ -341,7 +343,7 @@ def select_move_13( bot_name):
 def server_ip():
     """
     Get the caller IP (the katago server) and store it in the DB.
-    A service on the katago server (marfa) hits this every minute.
+    A service on the katago server (black) hits this every minute.
     No more need for dyndns and noip and apache on the katago server.
     The IP is used in the fwd_to_katago_* endpoints called from heroku.
     """

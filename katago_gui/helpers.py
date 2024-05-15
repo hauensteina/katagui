@@ -66,7 +66,7 @@ def fwd_to_katago_x( endpoint, args):
     port = random.choice(ports)
     try:
         ip = db.get_parm( 'server_ip')
-        # Locally, use blackstatic
+        # Locally, use black directly
         if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.137'
         url = 'http://' + ip + f':{port}/' + endpoint
     except:
@@ -79,6 +79,25 @@ def fwd_to_katago_x( endpoint, args):
         res = resp.json()
     except Exception as e:
         print( 'Exception in fwd_to_katago_x()')
+        print( 'args %s' % str(args))
+    return res
+
+# Forward strong request to katago server on marfa
+#-----------------------------------------------------
+def fwd_to_katago_x_marfa( endpoint, args):
+    port = 2820
+    try:
+        ip = db.get_parm( 'server_ip')
+        # Locally, use marfa directly
+        if not 'HEROKU_FLAG' in os.environ: ip = '10.0.0.135'
+        url = 'http://' + ip + f':{port}/' + endpoint
+    except:
+        url = DEMO_KATAGO_SERVER + '/' + endpoint
+    resp = requests.post( url, json=args)
+    try:
+        res = resp.json()
+    except Exception as e:
+        print( 'Exception in fwd_to_katago_x_marfa()')
         print( 'args %s' % str(args))
     return res
 

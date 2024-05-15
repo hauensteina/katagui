@@ -1423,6 +1423,7 @@ function main(JGO, axutil, p_options) {
   // Get or set guest, fast, strong mode
   //---------------------------------------
   function fast_or_strong(val) {
+    const MARFA_STRONG = { 'val': 'marfa_strong', 'ep': '/select-move-marfa-strong/', 'name': 'marfa_strong' }
     const STRONG = { 'val': 'strong', 'ep': '/select-move-x/', 'name': 'kata40' }
     //const FAST = { 'val': 'fast', 'ep': '/select-move/', 'name': 'kata20' }
     const GUEST = { 'val': 'guest', 'ep': '/select-move-guest/', 'name': 'kata10' }
@@ -1431,7 +1432,11 @@ function main(JGO, axutil, p_options) {
       if ($('#username').html().indexOf('one10') >= 0) { // special user for 10b one playout 
         return fast_or_strong('one10')
       } else if ($('#btn_tgl_strong').hasClass('active')) {
-        return fast_or_strong('strong')
+        if ($('#username').html().trim() == 'acm') {
+          return fast_or_strong('marfa_strong')
+        } else {
+          return fast_or_strong('strong')
+        }
       } else if ($('#btn_tgl_fast').hasClass('active')) {
         return fast_or_strong('fast')
       } else {
@@ -1459,6 +1464,22 @@ function main(JGO, axutil, p_options) {
         $('#btn_bot').html('Kata Pro')
         axutil.set_attr('#img_bot', 'src', 'static/kata-red.png')
         return STRONG
+      } // if logged in
+      else {
+        fast_or_strong('guest') // Strong is disabled
+        var tstr = '<a href="/login" class="touch-allow">' + tr('Please Log In') + '</a>'
+        $('#donate_modal').html(tstr)
+      }
+    }
+    else if (val == 'marfa_strong') {
+      if (settings('logged_in')) {
+        $('#descr_bot').html(`Marfa 512<br>${DDATE}`)
+        $('#btn_tgl_strong').addClass('active')
+        //$('#btn_tgl_fast').removeClass('active')
+        $('#btn_tgl_guest').removeClass('active')
+        $('#btn_bot').html('Marfa 512')
+        axutil.set_attr('#img_bot', 'src', 'static/kata-red.png')
+        return MARFA_STRONG
       } // if logged in
       else {
         fast_or_strong('guest') // Strong is disabled
