@@ -26,7 +26,7 @@ from katago_gui import dbmodel
 import katago_gui.translations
 from katago_gui.helpers import get_sgf_tag, moves2sgf, moves2arr
 #from katago_gui.helpers import fwd_to_katago, fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_9, fwd_to_katago_13
-from katago_gui.helpers import fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_x_marfa
+from katago_gui.helpers import fwd_to_katago_x, fwd_to_katago_guest, fwd_to_katago_x_marfa, fwd_to_katago_xx_marfa
 from katago_gui.helpers import fwd_to_katago_one10
 
 #--------------------------------------
@@ -281,6 +281,33 @@ def select_move_marfa_strong( bot_name):
         return jsonify( res)
     except:
         print( 'select move x marfa error: %s' % res)
+        return jsonify( {'result': 'error: forward failed' })
+
+@app.route('/select-move-marfa-xstrong/<bot_name>', methods=['POST'])
+#------------------------------------------------------------------------
+def select_move_marfa_xstrong( bot_name):
+    """ Forward select-move to the katago server """
+    try:
+        current_user.record_activity()
+    except:
+        pass
+
+    endpoint = 'select-move/' + bot_name
+    args = request.json
+
+    try:
+        if 'selfplay' in args:
+            current_user.count_selfplay_move()
+        else:
+            current_user.count_move()
+    except:
+        pass
+
+    res = fwd_to_katago_xx_marfa( endpoint, args)
+    try:
+        return jsonify( res)
+    except:
+        print( 'select move xx marfa error: %s' % res)
         return jsonify( {'result': 'error: forward failed' })
 
 

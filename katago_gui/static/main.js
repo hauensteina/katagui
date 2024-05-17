@@ -1424,6 +1424,7 @@ function main(JGO, axutil, p_options) {
   //---------------------------------------
   function fast_or_strong(val) {
     const MARFA_STRONG = { 'val': 'marfa_strong', 'ep': '/select-move-marfa-strong/', 'name': 'marfa_strong' }
+    const MARFA_XSTRONG = { 'val': 'marfa_xstrong', 'ep': '/select-move-marfa-xstrong/', 'name': 'marfa_xstrong' }
     const STRONG = { 'val': 'strong', 'ep': '/select-move-x/', 'name': 'kata40' }
     //const FAST = { 'val': 'fast', 'ep': '/select-move/', 'name': 'kata20' }
     const GUEST = { 'val': 'guest', 'ep': '/select-move-guest/', 'name': 'kata10' }
@@ -1433,16 +1434,20 @@ function main(JGO, axutil, p_options) {
         return fast_or_strong('one10')
       } else if ($('#btn_tgl_strong').hasClass('active')) {
         if ($('#username').html().trim() == 'acm') {
-          return fast_or_strong('marfa_strong')
+          return fast_or_strong('marfa_xstrong')
         } else {
           return fast_or_strong('strong')
         }
       } else if ($('#btn_tgl_fast').hasClass('active')) {
         return fast_or_strong('fast')
       } else {
-        return fast_or_strong('guest')
+        if ($('#username').html().trim() == 'acm') {
+          return fast_or_strong('marfa_strong')
+        } else {
+          return fast_or_strong('guest')
+        } 
       }
-    } // if getter
+    } // getter
     // setter
     if (val == 'toggle') {
       if (!settings('logged_in')) {
@@ -1472,20 +1477,20 @@ function main(JGO, axutil, p_options) {
       }
     }
     else if (val == 'marfa_strong') {
-      if (settings('logged_in')) {
-        $('#descr_bot').html(`Marfa<br>${DDATE}`)
-        $('#btn_tgl_strong').addClass('active')
-        //$('#btn_tgl_fast').removeClass('active')
-        $('#btn_tgl_guest').removeClass('active')
-        $('#btn_bot').html('Marfa')
-        axutil.set_attr('#img_bot', 'src', 'static/kata-red.png')
-        return MARFA_STRONG
-      } // if logged in
-      else {
-        fast_or_strong('guest') // Strong is disabled
-        var tstr = '<a href="/login" class="touch-allow">' + tr('Please Log In') + '</a>'
-        $('#donate_modal').html(tstr)
-      }
+      $('#descr_bot').html(`MarfaX<br>${DDATE}`)
+      $('#btn_tgl_fast').addClass('active')
+      //$('#btn_tgl_strong').removeClass('active')
+      $('#btn_bot').html('MarfaX')
+      axutil.set_attr('#img_bot', 'src', 'static/kata-gray.png')
+      return MARFA_STRONG
+    }
+    else if (val == 'marfa_xstrong') {
+      $('#descr_bot').html(`MarfaXX<br>${DDATE}`)
+      $('#btn_tgl_strong').addClass('active')
+      $('#btn_tgl_guest').removeClass('active')
+      $('#btn_bot').html('MarfaXX')
+      axutil.set_attr('#img_bot', 'src', 'static/kata-red.png')
+      return MARFA_XSTRONG
     }
     else if (val == 'one10') {
       $('#descr_bot').html(`KataGo 10b &nbsp; 16<br>${DDATE}`)
