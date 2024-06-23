@@ -18,15 +18,9 @@ import six
 import katago_gui.sgf_grammar as sgf_grammar
 from six.moves import range
 
-# In python 2, indexing a str gives one-character strings.
-# In python 3, indexing a bytes gives ints.
-if six.PY2:
-    _bytestring_ord = ord
-else:
-    def identity(x):
-        return x
-    _bytestring_ord = identity
-
+def identity(x):
+    return x
+_bytestring_ord = identity
 
 def normalise_charset_name(s):
     """Convert an encoding name to the form implied in the SGF spec.
@@ -590,8 +584,8 @@ _property_types_by_ident = {
     b'PW': P['simpletext'],                 # game-info     Player White
     b'RE': P['simpletext'],                 # game-info     Result
     b'RO': P['simpletext'],                 # game-info     Round
-    b'RU': P['simpletext'],                 # game-info     Rules
     b'SL': P['point_list'],                 # -             Selected
+    b'RU': P['simpletext'],                 # game-info     Rules
     b'SO': P['simpletext'],                 # game-info     Source
     b'SQ': P['point_list'],                 # -             Square
     b'ST': P['number'],                     # root          Style

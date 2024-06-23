@@ -18,7 +18,6 @@ const HANDISTONES = ['', ''
   , ['D4', 'Q16', 'Q4', 'D16', 'D10', 'Q10', 'K4', 'K16', 'K10']
 ]
 
-
 //=======================================
 function main(JGO, axutil, p_options) {
   $ = axutil.$
@@ -838,7 +837,9 @@ function main(JGO, axutil, p_options) {
     } 
     else {
       btn_next.waiting = true
+      var pos = grec.pos()
       get_prob_genmove((data) => {
+        if (pos != grec.pos()) return
         grec.curmove().data = data  
         update_emoji()
         if (settings('show_best_moves')) { 

@@ -24,7 +24,7 @@ from __future__ import absolute_import
 import re
 import string
 
-import six
+#import six
 
 from pdb import set_trace as BP
 
@@ -451,10 +451,7 @@ def compose(s1, s2):
 
 
 _newline_re = re.compile(r"\n\r|\r\n|\n|\r".encode('ascii'))
-if six.PY2:
-    _binary_maketrans = string.maketrans
-else:
-    _binary_maketrans = bytes.maketrans
+_binary_maketrans = bytes.maketrans
 _whitespace_table = _binary_maketrans(b"\t\f\v", b"   ")
 _chunk_re = re.compile(r" [^\n\\]+ | [\n\\] ".encode('ascii'), re.VERBOSE)
 
