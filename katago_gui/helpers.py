@@ -226,12 +226,17 @@ def moves2sgf( moves, probs, scores, meta):
             movestr += ';%s[tt]' % color
         else:
             #BP()
-            p = point_from_coords( move)
-            col_s = 'abcdefghijklmnopqrstuvwxy'[p.col - 1]
-            row_s = 'abcdefghijklmnopqrstuvwxy'[19 - p.row]
-            movestr += ';%s[%s%s]' % (color,col_s,row_s)
-            if idx < len(probs):
-                movestr += 'C[P:%s S:%s]' % (probs[idx], scores[idx])
+            try:
+                p = point_from_coords( move)
+                col_s = 'abcdefghijklmnopqrstuvwxy'[p.col - 1]
+                row_s = 'abcdefghijklmnopqrstuvwxy'[19 - p.row]
+                movestr += ';%s[%s%s]' % (color,col_s,row_s)
+                if idx < len(probs):
+                    movestr += 'C[P:%s S:%s]' % (probs[idx], scores[idx])
+            except:
+                print( 'Exception in moves2sgf()')
+                print( 'move %s' % move)
+                break
         color = othercol
 
     sgf += result
