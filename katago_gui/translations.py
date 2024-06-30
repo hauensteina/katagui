@@ -152,7 +152,7 @@ _kor = {
     # Misc
     ,'Settings':'셋팅'
     ,'Show best 10 (A-J)':'베스트 10 보이기 (A-J)'
-    ,'Show best moves during replay':'재생 중에 최선의 수 보이기' 
+    ,'Show best moves':'최선의 수 보여주기' 
     ,'Show emoji during play':'플레이 중 이모지 보이기'
     ,'Show probability during play':'플레이 중 착수 가능성 퍼센티지 보이기'
     ,'Enable Diagrams':'다이어그램 활성화'
@@ -272,7 +272,7 @@ _chinese = {
     ,'Show best 10 (A-J)':'显示最佳的10点 (A-J)'
     ,'Show emoji during play':'对局中显示表情'
     ,'Show probability during play':'对局中显示胜率'
-    ,'Show best moves during replay':'回放中显示最佳走法'
+    ,'Show best moves':'显示最佳棋步'
     ,'Enable Diagrams':'启用图表'  
     ,'Save':'保存'
     ,'P(B wins)':'黑方胜率'
@@ -391,7 +391,7 @@ _japanese = {
     ,'Show best 10 (A-J)':'最善手を10個まで表示する'
     ,'Show emoji during play':'対局中に形勢のイラストを表示する'
     ,'Show probability during play':'対局中に勝率を表示する'
-    ,'Show best moves during replay':"リプレイ中に最善の一手を表示する"  
+    ,'Show best moves':"最善手を表示する"  
     ,'Enable Diagrams':'ダイアグラムを有効にする'
     ,'Save':'保存する'
     ,'P(B wins)':'勝率(黒の勝ち)'
