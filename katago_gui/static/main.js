@@ -331,6 +331,9 @@ function main(JGO, axutil, p_options) {
             else if (best_btn_callback.active) {
               show_best_moves()
             }
+            else if (is_markup_active()) {
+              // do nothing
+            }
             else if (grec.curmove().data) {
               if (settings('show_best_moves')) {
                 show_best_moves(grec.curmove().data) }
@@ -348,6 +351,9 @@ function main(JGO, axutil, p_options) {
             else if (best_btn_callback.active) {
               show_best_moves()
             }
+            else if (is_markup_active()) {
+              // do nothing
+            }
             else if (grec.curmove().data) {
               if (settings('show_best_moves')) {
                 show_best_moves(grec.curmove().data) }
@@ -357,6 +363,15 @@ function main(JGO, axutil, p_options) {
       } // function(canvas)
     ) // create board
   } // setup_jgo()
+
+  //------------------------------------
+  function is_markup_active() {
+    return $('#btn_tgl_number').hasClass('btn-success')
+      || $('#btn_tgl_letter').hasClass('btn-success')
+      || $('#btn_tgl_x').hasClass('btn-success')
+      || $('#btn_tgl_triangle').hasClass('btn-success')
+      || $('#btn_tgl_circle').hasClass('btn-success')
+  } // is_markup_active()
 
   // Set button callbacks
   //------------------------------
