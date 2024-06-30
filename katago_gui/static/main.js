@@ -136,13 +136,18 @@ function main(JGO, axutil, p_options) {
       goto_move(grec.len())
       return
     }
+
     add_mark('redraw')
     set_emoji()
     var greclen = grec.len()
     const playing = true
+    var pos = grec.pos()
     get_prob_genmove(
       (data) => {
+        if (pos != grec.pos()) return
+        grec.curmove().data = data  
         if (bot_active() && (greclen == grec.len())) { bot_move_callback(data) }
+        if (settings('show_best_moves')) { show_best_moves(data) }
       },
       settings('show_emoji'), playing)
   } // board_click_callback()
@@ -326,6 +331,10 @@ function main(JGO, axutil, p_options) {
             else if (best_btn_callback.active) {
               show_best_moves()
             }
+            else if (grec.curmove().data) {
+              if (settings('show_best_moves')) {
+                show_best_moves(grec.curmove().data) }
+            }         
           }
         ) // mousemove
 
@@ -339,6 +348,10 @@ function main(JGO, axutil, p_options) {
             else if (best_btn_callback.active) {
               show_best_moves()
             }
+            else if (grec.curmove().data) {
+              if (settings('show_best_moves')) {
+                show_best_moves(grec.curmove().data) }
+            }         
           }
         ) // mouseout
       } // function(canvas)
