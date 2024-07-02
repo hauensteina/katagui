@@ -197,7 +197,7 @@ function main(JGO, axutil, p_options) {
       })
     } // redraw_marks()
 
-    var letters = 'abcdefghiklmnopqrstuvwxyz'
+    var letters = 'abcdefghijklmnopqrstuvwxyz'
     var node = g_jrecord.createNode(true)
     replay_moves(grec.pos()) // remove artifacts, preserve mark on last play
 
