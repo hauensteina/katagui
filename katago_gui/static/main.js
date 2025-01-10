@@ -771,7 +771,11 @@ function main(JGO, axutil, p_options) {
         }
 
         // Continue game
-        axutil.hit_endpoint(fast_or_strong('fast').ep + BOT,
+        var ep = fast_or_strong('fast').ep
+        if ($('#username').html() == 'acm') {
+          ep = fast_or_strong('marfa_strong').ep
+        }
+        axutil.hit_endpoint(ep + BOT,
           { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
           (data) => {
             selfplay.ready = true
