@@ -772,7 +772,7 @@ function main(JGO, axutil, p_options) {
 
         // Continue game
         var ep = fast_or_strong('fast').ep
-        if ($('#username').html() == 'acm') {
+        if ($('#username').html().trim() == 'acm') {
           ep = fast_or_strong('marfa_strong').ep
         }
         axutil.hit_endpoint(ep + BOT,
