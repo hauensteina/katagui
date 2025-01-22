@@ -702,10 +702,10 @@ function main(JGO, axutil, p_options) {
       return selfplay('off')
     }
     selfplay('on')
-    var interval = 4000
+    var interval = 6500
     if (settings('selfplay_speed')) {
-      if (settings('selfplay_speed') == 'fast') { interval = 3000 }
-      else if (settings('selfplay_speed') == 'slow') { interval = 5000 }
+      if (settings('selfplay_speed') == 'fast') { interval = 4000 }
+      else if (settings('selfplay_speed') == 'slow') { interval = 8000 }
     }
     cb_selfplay()
 
