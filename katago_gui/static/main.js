@@ -1324,10 +1324,10 @@ function main(JGO, axutil, p_options) {
       }
       var delta_p = pp - p
       //var delta_score = pscore - score
-      if (p < 0.05) { set_emoji() } // empty
+      //if (p < 0.05) { set_emoji() } // empty
       //else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
-      else if (pp == 0) { set_emoji() } // empty
-      else { set_emoji(delta_p) }
+      //else if (pp == 0) { set_emoji() } // empty
+      set_emoji(delta_p) 
     }
     else {
       set_emoji()
