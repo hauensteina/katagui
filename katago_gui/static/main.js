@@ -1198,12 +1198,12 @@ function main(JGO, axutil, p_options) {
   //--------------------------
   function save_state() {
     localStorage.setItem('fast_or_strong', fast_or_strong().val)
-    if (var_button_state() == 'off') { // don't save if in variation
+    //if (var_button_state() == 'off') { // don't save if in variation
       localStorage.setItem('game_record', grec.dumps())
       localStorage.setItem('komi', JSON.stringify(g_komi))
       localStorage.setItem('bot_active', bot_active())
       localStorage.setItem('loaded_game', JSON.stringify(set_load_sgf_handler.loaded_game))
-    }
+    //}
   } // save_state()
 
   //--------------------------
@@ -1222,6 +1222,9 @@ function main(JGO, axutil, p_options) {
     set_load_sgf_handler.loaded_game = JSON.parse(localStorage.getItem('loaded_game'))
     show_game_info(set_load_sgf_handler.loaded_game)
     grec.loads(localStorage.getItem('game_record'))
+    if (grec.var_active()) {
+      var_button_state('on')
+    }
     g_komi = JSON.parse(localStorage.getItem('komi'))
     if (localStorage.getItem('bot_active') == 'false') { bot_active('off') } else { bot_active('on') }
     $('#lb_komi').html(tr('Komi') + ': ' + g_komi)
