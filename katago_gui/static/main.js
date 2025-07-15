@@ -856,7 +856,10 @@ function main(JGO, axutil, p_options) {
   function btn_next() {
     selfplay('off');
     if (!grec.len()) return
-    if (btn_next.waiting) { btn_next.buffered = true; btn_next.waiting = false; return }
+    if (btn_next.waiting) { btn_next.buffered = true; 
+      console.log('btn_next buffered');  // wait for the previous call to finish
+      return }
+    console.log('btn_next()')
     goto_move(grec.pos() + 1)
     add_mark('redraw')
     // Do not analyze handicap stones
@@ -869,8 +872,11 @@ function main(JGO, axutil, p_options) {
     } 
     else {
       btn_next.waiting = true
+      console.log('btn_next waiting')
       var pos = grec.pos()
       get_prob_genmove((data) => {
+        btn_next.waiting = false
+        console.log('btn_next waiting cleared')
         if (pos != grec.pos()) return
         grec.curmove().data = data  
         update_emoji()
@@ -878,9 +884,9 @@ function main(JGO, axutil, p_options) {
           show_best_moves(data) 
         }
         bot_active('off')
-        btn_next.waiting = false
         if (btn_next.buffered) {
           btn_next.buffered = false
+          console.log('btn_next() 2')
           btn_next()
         }
       })
