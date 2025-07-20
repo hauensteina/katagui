@@ -136,6 +136,7 @@ function main(JGO, axutil, p_options) {
       goto_move(grec.len())
       return
     }
+    if (settings('disable_ai')) { return }
 
     add_mark('redraw')
     set_emoji()
@@ -867,6 +868,8 @@ function main(JGO, axutil, p_options) {
       goto_move(grec.pos() + 1)
       return
     }
+    if (settings('disable_ai')) { return }
+
     if (grec.curmove().data) {
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
     } 
@@ -952,9 +955,9 @@ function main(JGO, axutil, p_options) {
     },
       (data) => {
         if (greclen == grec.len()) { // user did not click in the meantime
-          if (settings('play_a')) {
-            data.bot_move = data.diagnostics.best_ten[0].move
-          }
+          // if (settings('play_a')) {
+          //   data.bot_move = data.diagnostics.best_ten[0].move
+          // }
           bot_move_callback(data)
         }
       })
@@ -1422,6 +1425,8 @@ function main(JGO, axutil, p_options) {
   //----------------------------
   function set_status(x) {
     clear_status()
+    if (settings('disable_ai')) { return }
+    if ( x.indexOf('NaN') >= 0) { return }
     $('#status').html(x)
   }
 
@@ -1575,6 +1580,21 @@ function main(JGO, axutil, p_options) {
       $('#diagram_buttons').show()
     } else {
       $('#diagram_buttons').hide()
+    }
+
+    // Disable/Enable some buttons if AI is disabled
+    var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
+    if (settings('disable_ai')) {
+      // disable opt_auto checkbox
+      $('#opt_auto').prop('disabled', true)
+      // disable ai buttons
+      ai_buttons.forEach(btn => axutil.disable_button(btn))
+      set_emoji() // clear emoji
+    } else {
+      // enable opt_auto checkbox
+      $('#opt_auto').prop('disabled', false)
+      // enable ai buttons
+      ai_buttons.forEach(btn => axutil.enable_button(btn))
     }
 
     set_btn_handlers()

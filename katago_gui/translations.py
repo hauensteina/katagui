@@ -156,6 +156,7 @@ _kor = {
     ,'Show emoji during play':'플레이 중 이모지 보이기'
     ,'Show probability during play':'플레이 중 착수 가능성 퍼센티지 보이기'
     ,'Enable Diagrams':'다이어그램 활성화'
+    ,'Disable AI':'AI 비활성화'
     ,'Save':'저장'
     ,'P(B wins)':'P(흑 기준)'
     ,'KataGo resigns. You beat Katago!':'카타고가 불계를 선언했습니다. 카타고에계 승리했습니다!'
@@ -274,6 +275,7 @@ _chinese = {
     ,'Show probability during play':'对局中显示胜率'
     ,'Show best moves':'显示最佳棋步'
     ,'Enable Diagrams':'启用图表'  
+    ,'Disable AI':'禁用AI'
     ,'Save':'保存'
     ,'P(B wins)':'黑方胜率'
     ,'KataGo resigns. You beat Katago!':'KataGo认输了。你击败了KataGo！'
@@ -393,6 +395,7 @@ _japanese = {
     ,'Show probability during play':'対局中に勝率を表示する'
     ,'Show best moves':"最善手を表示する"  
     ,'Enable Diagrams':'ダイアグラムを有効にする'
+    ,'Disable AI':'AIを無効にする'
     ,'Save':'保存する'
     ,'P(B wins)':'勝率(黒の勝ち)'
     ,'KataGo resigns. You beat Katago!':'KataGoが投了しました。貴方の勝ちです'
