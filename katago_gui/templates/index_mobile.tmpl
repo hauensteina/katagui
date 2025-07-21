@@ -141,10 +141,24 @@
     <div id='game_info' style='font-size:18pt;text-align:center'> &nbsp; </div>
     <div id='fname' style='font-size:18pt;text-align:center'> &nbsp; </div>
     <div id='lb_komi' style='font-size:18pt;text-align:center'> &nbsp; </div>
-    <!-- Buttons to add markers -->
+
+    <!-- Diagram editing buttons -->
     <div id='diagram_buttons'>
       <table class='center'>
         <tr>
+          <!-- Add stones -->
+          <td> <label id='btn_add_black' class='btn btn-outline-dark touch-allow'
+              style='font-size:20pt;margin-left:1rem;padding:0.7rem 1.5rem;'>⚫</label>
+          </td>
+
+          <td> <label id='btn_add_white' class='btn btn-outline-dark'
+              style='font-size:20pt;margin-left:1rem;padding:0.7rem 1.5rem;'>⚪</label>
+          </td>
+        </tr>
+        </table>
+      <table class='center'>
+        <tr>
+          <!-- Letters and numbers -->
           <td> <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
               style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>1</label>
           </td>
@@ -153,6 +167,7 @@
               style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>a</label>
           </td>
 
+          <!-- Markers -->
           <td> <label id='btn_tgl_x' class='btn btn-outline-dark'
               style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>X</label>
           </td>
@@ -165,18 +180,22 @@
               style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>△</label>
           </td>
 
+          <!-- Clear markers -->
           <td> <label id='btn_clear' class='btn btn-outline-dark'
               style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>&nbsp;</label>
           </td>
 
+          <!-- Rotate -->
           <td> <label id='btn_tgl_rot' class='btn btn-outline-dark'
               style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>R</label>
           </td>
 
+          <!-- Swap colors -->
           <td> <label id='btn_tgl_swap_colors' class='btn btn-outline-dark'
               style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>C</label>
           </td>
 
+          <!-- Export diagram -->
           <td> <label id='btn_export_diagram' class='btn btn-outline-dark'
               style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>E</label>
           </td>
