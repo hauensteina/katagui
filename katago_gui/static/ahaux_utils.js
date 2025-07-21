@@ -539,6 +539,25 @@ class GameRecord {
     }
   } // last_move_color()
 
+  move_idx_from_coord(coord) {
+    // coord is a JGO.Coordinate
+    // return the move number of the first move that matches this coord
+    for (var i = 0; i < this.record.length; i++) {
+      if (this.record[i].mv == 'pass' || this.record[i].mv == 'resign') { continue }
+      var jcoord = axutil.string2jcoord(this.record[i].mv, false)
+      if (jcoord.i == coord.i && jcoord.j == coord.j) {
+        return i 
+      }
+    }
+    return -1 // not found
+  } // move_idx_from_coord()
+
+  move_at_coord(coord) {
+    var idx = this.move_idx_from_coord(coord)
+    if (idx == -1) { return undefined }
+    return this.record[idx]
+  }
+
   force_white_turn() {
     if (this.last_move_color() != JGO.BLACK) {
       if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {

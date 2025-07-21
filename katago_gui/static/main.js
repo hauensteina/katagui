@@ -106,7 +106,6 @@ function main(JGO, axutil, p_options) {
     selfplay('off')
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
-    //SLOG(navigator.userAgent.toLowerCase())
     if (score_position.active) { goto_move(grec.pos()); return }
 
     if ($('#btn_add_black').hasClass('btn-success')) return add_stone(JGO.BLACK, coord)
@@ -156,17 +155,26 @@ function main(JGO, axutil, p_options) {
   } // board_click_callback()
   board_click_callback.illegal_move = false
 
-
   //-----------------------------------
   function add_stone(color, coord) {
     if (coord.i < 0 || coord.i > 18) return // invalid coord
     var jboard = g_jrecord.jboard
     maybe_start_var()
 
-    if (turn() != color) {
-      grec.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
-      goto_move(grec.len())
+    // If the coord is already occupied, remove the stone by replacing it with a pass.
+    if (jboard.getType(coord) == JGO.BLACK || jboard.getType(coord) == JGO.WHITE) {
+      var move = grec.move_at_coord(coord)
+      if (!move) { return }
+      move.mv = 'pass'
+      replay_moves(grec.pos()) 
+      if (color == JGO.BLACK) grec.force_black_turn()
+      else if (color == JGO.WHITE) grec.force_white_turn() 
+      return
     }
+
+    if (color == JGO.BLACK) grec.force_black_turn()
+    else if (color == JGO.WHITE) grec.force_white_turn() 
+
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
     grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
     board_click_callback.illegal_move = false
