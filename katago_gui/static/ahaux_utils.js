@@ -528,6 +528,37 @@ class GameRecord {
   prevmove() { return this.record[this.n_visible - 2] }
   nextmove() { return this.record[this.n_visible] }
   prefix(n) { return this.record.slice(0, n) }
+  last_move() { return this.record[this.record.length - 1] }
+
+  last_move_color() {
+    if (this.record.length == 0) { return JGO.EMPTY }
+    if (this.record.length % 2 == 0) { 
+      return JGO.WHITE
+    } else {
+      return JGO.BLACK
+    }
+  } // last_move_color()
+
+  force_white_turn() {
+    if (this.last_move_color() != JGO.BLACK) {
+      if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {
+        this.pop() // remove last pass
+      } else {
+        this.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+      }
+    }
+  } // force_white_turn()
+
+  force_black_turn() {
+    if (this.last_move_color() != JGO.WHITE) {
+      if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {
+        this.pop() // remove last pass
+      } else {
+        this.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+      }
+    }
+  } // force_black_turn()
+
   dumps() {
     return JSON.stringify({
       'record': this.record,

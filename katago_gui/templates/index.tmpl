@@ -152,13 +152,23 @@
           </div>
         </div>
 
-        <div id='diagram_buttons' class='row justify-content-center'> <!-- Buttons to add markers -->
+        <!-- Diagram editing buttons -->
+        <div id='diagram_buttons' class='row justify-content-center'> 
+          <!-- Add stones -->
+          <label id='btn_add_black' class='btn btn-outline-dark touch-allow'
+          style='font-size:8pt;white-space:nowrap'>⚫</label>&nbsp;
+
+          <label id='btn_add_white' class='btn btn-outline-dark'
+          style='font-size:8pt;white-space:nowrap'>⚪</label>&nbsp;&nbsp;&nbsp;
+
+          <!-- Letters and numbers -->
           <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
           style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
 
           <label id='btn_tgl_letter' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>a</label>&nbsp;&nbsp;&nbsp;
 
+          <!-- Markers -->
           <label id='btn_tgl_x' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>X</label>&nbsp;
 
@@ -167,16 +177,20 @@
 
           <label id='btn_tgl_triangle' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>△</label>&nbsp;&nbsp;&nbsp;
-
+          
+          <!-- Clear markers -->
           <label id='btn_clear' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>&nbsp;</label>&nbsp;&nbsp;&nbsp;
-
+          
+          <!-- Rotate -->
           <label id='btn_tgl_rot' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>R</label>&nbsp;
 
+          <!-- Swap colors -->
           <label id='btn_tgl_swap_colors' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>C</label>&nbsp;&nbsp;&nbsp;
 
+          <!-- Export diagram -->
           <label id='btn_export_diagram' class='btn btn-outline-dark'
           style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
         </div>

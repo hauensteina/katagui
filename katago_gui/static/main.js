@@ -109,6 +109,8 @@ function main(JGO, axutil, p_options) {
     //SLOG(navigator.userAgent.toLowerCase())
     if (score_position.active) { goto_move(grec.pos()); return }
 
+    if ($('#btn_add_black').hasClass('btn-success')) return add_stone(JGO.BLACK, coord)
+    if ($('#btn_add_white').hasClass('btn-success')) return add_stone(JGO.WHITE, coord)
     if ($('#btn_tgl_number').hasClass('btn-success')) return add_mark(coord, 'number')
     if ($('#btn_tgl_letter').hasClass('btn-success')) return add_mark(coord, 'letter')
     if ($('#btn_tgl_x').hasClass('btn-success')) return add_mark(coord, 'X')
@@ -130,7 +132,7 @@ function main(JGO, axutil, p_options) {
     grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
     board_click_callback.illegal_move = false
     goto_move(grec.len())
-    // Silently ignore illegal ko takes
+    // Silently ignore illegal moves
     if (board_click_callback.illegal_move) { 
       grec.pop()
       goto_move(grec.len())
@@ -153,6 +155,33 @@ function main(JGO, axutil, p_options) {
       settings('show_emoji'), playing)
   } // board_click_callback()
   board_click_callback.illegal_move = false
+
+
+  //-----------------------------------
+  function add_stone(color, coord) {
+    if (coord.i < 0 || coord.i > 18) return // invalid coord
+    var jboard = g_jrecord.jboard
+    maybe_start_var()
+
+    if (turn() != color) {
+      grec.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+      goto_move(grec.len())
+    }
+    var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
+    grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
+    board_click_callback.illegal_move = false
+    goto_move(grec.len())
+    // Silently ignore illegal moves
+    if (board_click_callback.illegal_move) { 
+      grec.pop()
+      goto_move(grec.len())
+      return
+    }
+    // Add a pass to get the right hover color
+    grec.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+    goto_move(grec.len())
+
+  } // add_stone()
 
   // Put a mark on a stone or intersection. 
   // Reset if coord == 'clear'.
@@ -406,6 +435,44 @@ function main(JGO, axutil, p_options) {
         btn.css('background-color', 'green')
       }
     } // activate_mark_toggle()
+
+    $('#btn_add_black').click(() => {
+      var bbtn = $('#btn_add_black')
+      var wbtn = $('#btn_add_white')
+      var wasoff = 1
+      if (bbtn.hasClass('btn-success')) wasoff = 0
+      if (wasoff) {
+        bbtn.addClass('btn-success')
+        bbtn.css('background-color', 'green')
+        wbtn.removeClass('btn-success')
+        wbtn.css('background-color', '')  
+        maybe_start_var()
+        grec.force_black_turn()
+        replay_moves(grec.pos())
+      } else {
+        bbtn.removeClass('btn-success')
+        bbtn.css('background-color', '')
+      }
+    }) // btn_add_black.click()
+
+    $('#btn_add_white').click(() => {
+      var bbtn = $('#btn_add_black')
+      var wbtn = $('#btn_add_white')
+      var wasoff = 1
+      if (wbtn.hasClass('btn-success')) wasoff = 0
+      if (wasoff) {
+        wbtn.addClass('btn-success')
+        wbtn.css('background-color', 'green')
+        bbtn.removeClass('btn-success')
+        bbtn.css('background-color', '')
+        maybe_start_var()
+        grec.force_white_turn()
+        replay_moves(grec.pos())
+      } else {
+        wbtn.removeClass('btn-success')
+        wbtn.css('background-color', '')
+      }
+    }) // btn_add_white.click()
 
     $('#btn_tgl_number').click(() => {
       activate_mark_toggle($('#btn_tgl_number'))
