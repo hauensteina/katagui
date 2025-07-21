@@ -108,8 +108,8 @@ function main(JGO, axutil, p_options) {
     if (coord.j < 0 || coord.j > 18) { return }
     if (score_position.active) { goto_move(grec.pos()); return }
 
-    if ($('#btn_add_black').hasClass('btn-success')) return add_stone(JGO.BLACK, coord)
-    if ($('#btn_add_white').hasClass('btn-success')) return add_stone(JGO.WHITE, coord)
+    if ($('#btn_tgl_add_black').hasClass('btn-success')) return add_stone(JGO.BLACK, coord)
+    if ($('#btn_tgl_add_white').hasClass('btn-success')) return add_stone(JGO.WHITE, coord)
     if ($('#btn_tgl_number').hasClass('btn-success')) return add_mark(coord, 'number')
     if ($('#btn_tgl_letter').hasClass('btn-success')) return add_mark(coord, 'letter')
     if ($('#btn_tgl_x').hasClass('btn-success')) return add_mark(coord, 'X')
@@ -166,6 +166,7 @@ function main(JGO, axutil, p_options) {
       var move = grec.move_at_coord(coord)
       if (!move) { return }
       move.mv = 'pass'
+      grec.remove_pass_pairs()
       replay_moves(grec.pos()) 
       if (color == JGO.BLACK) grec.force_black_turn()
       else if (color == JGO.WHITE) grec.force_white_turn() 
@@ -444,9 +445,9 @@ function main(JGO, axutil, p_options) {
       }
     } // activate_mark_toggle()
 
-    $('#btn_add_black').click(() => {
-      var bbtn = $('#btn_add_black')
-      var wbtn = $('#btn_add_white')
+    $('#btn_tgl_add_black').click(() => {
+      var bbtn = $('#btn_tgl_add_black')
+      var wbtn = $('#btn_tgl_add_white')
       var wasoff = 1
       if (bbtn.hasClass('btn-success')) wasoff = 0
       if (wasoff) {
@@ -463,9 +464,9 @@ function main(JGO, axutil, p_options) {
       }
     }) // btn_add_black.click()
 
-    $('#btn_add_white').click(() => {
-      var bbtn = $('#btn_add_black')
-      var wbtn = $('#btn_add_white')
+    $('#btn_tgl_add_white').click(() => {
+      var bbtn = $('#btn_tgl_add_black')
+      var wbtn = $('#btn_tgl_add_white')
       var wasoff = 1
       if (wbtn.hasClass('btn-success')) wasoff = 0
       if (wasoff) {

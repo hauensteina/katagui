@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.7'
+const VERSION = '3.12.8'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -551,6 +551,27 @@ class GameRecord {
     }
     return -1 // not found
   } // move_idx_from_coord()
+
+  remove_pass_pairs() {
+    // remove any adjacent pair of passes
+    // e.g. [pass, pass] -> []
+    //      [pass, pass, b1, pass] -> [b1]
+    var new_record = []
+    for (var i = 0; i < this.record.length; i++) {
+      if (this.record[i].mv == 'pass') {
+        if (i < this.record.length - 1 && this.record[i + 1].mv == 'pass') {
+          // skip this pass
+          i++ // skip next pass
+        } else {
+          new_record.push(this.record[i])
+        }
+      } else {
+        new_record.push(this.record[i])
+      }
+    }
+    this.record = new_record
+    this.n_visible = this.record.length
+  } // remove_pass_pairs()
 
   move_at_coord(coord) {
     var idx = this.move_idx_from_coord(coord)
