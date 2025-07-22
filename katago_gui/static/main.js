@@ -1372,6 +1372,7 @@ function main(JGO, axutil, p_options) {
 
   //------------------------------------------
   function show_prob(update_emo, playing) {
+    if (!settings('show_prob')) { clear_status(); return }
     var cur = grec.curmove()
     if (cur) {
       var p = cur.p
@@ -1395,6 +1396,7 @@ function main(JGO, axutil, p_options) {
   //--------------------------------
   function update_emoji() {
     if (settings('disable_ai')) { set_emoji(); return }
+    if (!settings('show_emoji')) { set_emoji(); return }
     var cur = grec.curmove()
     var prev = grec.prevmove()
     if (!cur) { return }
