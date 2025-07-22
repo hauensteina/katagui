@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.8'
+const VERSION = '3.12.9'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -186,7 +186,6 @@ class AhauxUtils {
       nrow = col
       ncol = row
     }
-    var tt = 42
     return [nrow, ncol]
   } // rotate()
 
@@ -539,6 +538,12 @@ class GameRecord {
     }
   } // last_move_color()
 
+  move_at_coord(coord) {
+    var idx = this.move_idx_from_coord(coord)
+    if (idx == -1) { return undefined }
+    return this.record[idx]
+  }
+
   move_idx_from_coord(coord) {
     // coord is a JGO.Coordinate
     // return the move number of the first move that matches this coord
@@ -572,12 +577,6 @@ class GameRecord {
     this.record = new_record
     this.n_visible = this.record.length
   } // remove_pass_pairs()
-
-  move_at_coord(coord) {
-    var idx = this.move_idx_from_coord(coord)
-    if (idx == -1) { return undefined }
-    return this.record[idx]
-  }
 
   force_white_turn() {
     if (this.last_move_color() != JGO.BLACK) {

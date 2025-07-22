@@ -1394,6 +1394,7 @@ function main(JGO, axutil, p_options) {
   const HAPPY_POINT_LOSS_MAX = 2.0
   //--------------------------------
   function update_emoji() {
+    if (settings('disable_ai')) { set_emoji(); return }
     var cur = grec.curmove()
     var prev = grec.prevmove()
     if (!cur) { return }
