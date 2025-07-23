@@ -771,6 +771,7 @@ function main(JGO, axutil, p_options) {
       return $('#btn_tgl_selfplay').addClass('btn-success')
     }
     else if (action == 'off') {
+      clearTimeout(selfplay.timer)
       $('#btn_tgl_selfplay').css('background-color', '')
       return $('#btn_tgl_selfplay').removeClass('btn-success')
     }
@@ -801,23 +802,26 @@ function main(JGO, axutil, p_options) {
         selfplay.timer = setTimeout(cb_selfplay, interval)
       }
       if (document.visibilityState != 'visible') return
-      set_emoji()
+      //set_emoji()
       if (!selfplay.ready) return
       selfplay.ready = false
 
-      // Looping on existing game
-      if (grec.pos() < grec.len()) {
+      // Replaying existing game
+      if (set_load_sgf_handler.loaded_game) {
         if (!selfplay('ison')) return;
         if (grec.curmove() && grec.curmove().p == 0) {
           get_prob_genmove((data) => {
-            //debugger
             selfplay.ready = true
             grec.curmove().data = data
             goto_move(grec.pos())
-            grec.step()
-            //debugger
             if (!settings('show_prob')) { clear_status() }
             if (settings('show_emoji')) { update_emoji() }
+            if (grec.pos() >= grec.len()) {
+              axutil.popup('Game replay complete.')
+              selfplay('off')
+              return
+            }
+            grec.step()
           })
         }
         else {
@@ -842,8 +846,7 @@ function main(JGO, axutil, p_options) {
 
       // If game ended, start from beginning
       if (grec.curmove() && grec.curmove().data) {
-        if (selfplay_game_over()
-          || set_load_sgf_handler.loaded_game) // we're at the end of a loaded game
+        if (selfplay_game_over())
         {
           selfplay.ready = true
           if (!selfplay('ison')) return;
@@ -960,6 +963,7 @@ function main(JGO, axutil, p_options) {
     else {
       btn_next.waiting = true
       console.log('btn_next waiting')
+      set_status(tr('KataGo is thinking ...'))
       var pos = grec.pos()
       get_prob_genmove((data) => {
         btn_next.waiting = false

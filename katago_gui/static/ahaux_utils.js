@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.11'
+const VERSION = '3.12.12'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -104,6 +104,12 @@ class AhauxUtils {
     btn.classList.remove('disabled');            // Remove Bootstrap visual cue
     btn.style.pointerEvents = 'auto';             // Re-enables clicks
     btn.style.opacity = '1';                      // Optional: restore visual brightness
+  }
+
+  //--------------------
+  popup(msg) {
+    $('#alertbox_message').html(msg)
+    $('#alertbox').modal('show')
   }
 
 
