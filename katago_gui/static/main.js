@@ -132,7 +132,7 @@ function main(JGO, axutil, p_options) {
     board_click_callback.illegal_move = false
     goto_move(grec.len())
     // Silently ignore illegal moves
-    if (board_click_callback.illegal_move) { 
+    if (board_click_callback.illegal_move) {
       grec.pop()
       goto_move(grec.len())
       return
@@ -147,7 +147,7 @@ function main(JGO, axutil, p_options) {
     get_prob_genmove(
       (data) => {
         if (pos != grec.pos()) return
-        grec.curmove().data = data  
+        grec.curmove().data = data
         if (bot_active() && (greclen == grec.len())) { bot_move_callback(data) }
         if (settings('show_best_moves')) { show_best_moves(data) }
       },
@@ -167,21 +167,21 @@ function main(JGO, axutil, p_options) {
       if (!move) { return }
       move.mv = 'pass'
       grec.remove_pass_pairs()
-      replay_moves(grec.pos()) 
+      replay_moves(grec.pos())
       if (color == JGO.BLACK) grec.force_black_turn()
-      else if (color == JGO.WHITE) grec.force_white_turn() 
+      else if (color == JGO.WHITE) grec.force_white_turn()
       return
     }
 
     if (color == JGO.BLACK) grec.force_black_turn()
-    else if (color == JGO.WHITE) grec.force_white_turn() 
+    else if (color == JGO.WHITE) grec.force_white_turn()
 
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
     grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
     board_click_callback.illegal_move = false
     goto_move(grec.len())
     // Silently ignore illegal moves
-    if (board_click_callback.illegal_move) { 
+    if (board_click_callback.illegal_move) {
       grec.pop()
       goto_move(grec.len())
       return
@@ -273,6 +273,8 @@ function main(JGO, axutil, p_options) {
 
   //----------------------------------
   function show_best_moves(data) {
+    if (!settings('show_best_moves')) { return }
+    if (settings('disable_ai')) { return }
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
     var botCoord = axutil.string2jcoord(data.bot_move)
@@ -375,8 +377,9 @@ function main(JGO, axutil, p_options) {
             }
             else if (grec.curmove().data) {
               if (settings('show_best_moves')) {
-                show_best_moves(grec.curmove().data) }
-            }         
+                show_best_moves(grec.curmove().data)
+              }
+            }
           }
         ) // mousemove
 
@@ -395,8 +398,9 @@ function main(JGO, axutil, p_options) {
             }
             else if (grec.curmove().data) {
               if (settings('show_best_moves')) {
-                show_best_moves(grec.curmove().data) }
-            }         
+                show_best_moves(grec.curmove().data)
+              }
+            }
           }
         ) // mouseout
       } // function(canvas)
@@ -454,7 +458,7 @@ function main(JGO, axutil, p_options) {
         bbtn.addClass('btn-success')
         bbtn.css('background-color', 'green')
         wbtn.removeClass('btn-success')
-        wbtn.css('background-color', '')  
+        wbtn.css('background-color', '')
         maybe_start_var()
         grec.force_black_turn()
         replay_moves(grec.pos())
@@ -926,16 +930,18 @@ function main(JGO, axutil, p_options) {
 
     if (grec.curmove().data) {
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
-    } 
+    }
   } // btn_prev()
 
   //-------------------------
   function btn_next() {
     selfplay('off');
     if (!grec.len()) return
-    if (btn_next.waiting) { btn_next.buffered = true; 
+    if (btn_next.waiting) {
+      btn_next.buffered = true;
       console.log('btn_next buffered');  // wait for the previous call to finish
-      return }
+      return
+    }
     console.log('btn_next()')
     goto_move(grec.pos() + 1)
     add_mark('redraw')
@@ -948,7 +954,7 @@ function main(JGO, axutil, p_options) {
 
     if (grec.curmove().data) {
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
-    } 
+    }
     else {
       btn_next.waiting = true
       console.log('btn_next waiting')
@@ -957,10 +963,10 @@ function main(JGO, axutil, p_options) {
         btn_next.waiting = false
         console.log('btn_next waiting cleared')
         if (pos != grec.pos()) return
-        grec.curmove().data = data  
+        grec.curmove().data = data
         update_emoji()
-        if (settings('show_best_moves')) { 
-          show_best_moves(data) 
+        if (settings('show_best_moves')) {
+          show_best_moves(data)
         }
         bot_active('off')
         if (btn_next.buffered) {
@@ -987,35 +993,6 @@ function main(JGO, axutil, p_options) {
     best_btn_callback()
   } // btn_best()
 
-  // Key actions
-  //------------------------
-  function check_key(e) {
-    e = e || window.event;
-    //console.log(e.keyCode)
-    if (e.keyCode == '17') { // ctrl
-      check_key.ctrl_pressed = true
-      return
-    }
-    else if (e.keyCode == '38') { // up arrow
-      e.preventDefault()
-      btn_best()
-    }
-    // Ctrl-down toggles mark-last-move
-    else if (check_key.ctrl_pressed && e.keyCode == '40') { // down arrow
-      show_move.mark_last_move = !show_move.mark_last_move
-    }
-    else if (e.keyCode == '37') { // left arrow
-      btn_prev()
-    }
-    else if (e.keyCode == '39') { // right arrow
-      btn_next()
-    }
-    else if (e.keyCode == '32') { // space bar
-      selfplay('toggle')
-    }
-    check_key.ctrl_pressed = false
-  } // check_key()
-  check_key.ctrl_pressed = false
 
   //===================
   // Bot Interaction
@@ -1284,10 +1261,10 @@ function main(JGO, axutil, p_options) {
   function save_state() {
     localStorage.setItem('fast_or_strong', fast_or_strong().val)
     //if (var_button_state() == 'off') { // don't save if in variation
-      localStorage.setItem('game_record', grec.dumps())
-      localStorage.setItem('komi', JSON.stringify(g_komi))
-      localStorage.setItem('bot_active', bot_active())
-      localStorage.setItem('loaded_game', JSON.stringify(set_load_sgf_handler.loaded_game))
+    localStorage.setItem('game_record', grec.dumps())
+    localStorage.setItem('komi', JSON.stringify(g_komi))
+    localStorage.setItem('bot_active', bot_active())
+    localStorage.setItem('loaded_game', JSON.stringify(set_load_sgf_handler.loaded_game))
     //}
   } // save_state()
 
@@ -1418,7 +1395,7 @@ function main(JGO, axutil, p_options) {
       //if (p < 0.05) { set_emoji() } // empty
       //else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
       //else if (pp == 0) { set_emoji() } // empty
-      set_emoji(delta_p) 
+      set_emoji(delta_p)
     }
     else {
       set_emoji()
@@ -1505,7 +1482,7 @@ function main(JGO, axutil, p_options) {
   function set_status(x) {
     clear_status()
     if (settings('disable_ai')) { return }
-    if ( x.indexOf('NaN') >= 0) { return }
+    if (x.indexOf('NaN') >= 0) { return }
     $('#status').html(x)
   }
 
@@ -1565,7 +1542,7 @@ function main(JGO, axutil, p_options) {
           return fast_or_strong('marfa_strong')
         } else {
           return fast_or_strong('guest')
-        } 
+        }
       }
     } // getter
     // setter
@@ -1661,20 +1638,7 @@ function main(JGO, axutil, p_options) {
       $('#diagram_buttons').hide()
     }
 
-    // Disable/Enable some buttons if AI is disabled
-    var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
-    if (settings('disable_ai')) {
-      // disable opt_auto checkbox
-      $('#opt_auto').prop('disabled', true)
-      // disable ai buttons
-      ai_buttons.forEach(btn => axutil.disable_button(btn))
-      set_emoji() // clear emoji
-    } else {
-      // enable opt_auto checkbox
-      $('#opt_auto').prop('disabled', false)
-      // enable ai buttons
-      ai_buttons.forEach(btn => axutil.enable_button(btn))
-    }
+    disable_ai_buttons
 
     set_btn_handlers()
     set_dropdown_handlers()
@@ -1682,7 +1646,9 @@ function main(JGO, axutil, p_options) {
     setup_jgo()
     selfplay('off')
     $('#btn_tgl_mark').click()
-    document.onkeydown = check_key
+
+    //    document.onkeydown = check_key
+    document.addEventListener('keydown', check_key)
 
     if (p_options.mobile) {
       window.onpagehide = save_state
@@ -1697,5 +1663,87 @@ function main(JGO, axutil, p_options) {
       once_per_sec()
     })
   } // onRefresh()
+
+  //---------------------------------------
+  function disable_ai_buttons() {
+    // Disable/Enable some buttons if AI is disabled
+    var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
+    if (settings('disable_ai')) {
+      // disable opt_auto checkbox
+      $('#opt_auto').prop('disabled', true)
+      // disable ai buttons
+      ai_buttons.forEach(btn => axutil.disable_button(btn))
+      set_emoji() // clear emoji
+    } else {
+      // enable opt_auto checkbox
+      $('#opt_auto').prop('disabled', false)
+      // enable ai buttons
+      ai_buttons.forEach(btn => axutil.enable_button(btn))
+    }
+  } // disable_ai_buttons()
+
+  // Key actions
+  //------------------------
+  function check_key(e) {
+    if (!e.ctrlKey && e.key == 'ArrowUp') {
+      e.preventDefault()
+      btn_best()
+    }
+    else if (!e.ctrlKey && e.key == 'ArrowRight') {
+      e.preventDefault()
+      btn_next()
+    }
+    else if (!e.ctrlKey && e.key == 'ArrowLeft') {
+      e.preventDefault()
+      btn_prev()
+    }
+    // Ctrl-down toggles mark-last-move
+    else if (e.ctrlKey && e.key == 'ArrowDown') {
+      show_move.mark_last_move = !show_move.mark_last_move
+    }
+    else if (!e.ctrlKey && e.key == ' ') { // space bar
+      selfplay('toggle')
+    }
+    // Shortcuts for the settings
+    else if (e.ctrlKey && e.key == 'e') { // e for emoji
+      settings('show_emoji', !settings('show_emoji'))
+      update_emoji()
+    } // emoji
+    else if (e.ctrlKey && e.key == 'p') { // p for probability
+      settings('show_prob', !settings('show_prob'))
+      show_prob()
+    } // probability
+    else if (e.ctrlKey && e.key == 'b') { // b for best moves
+      settings('show_best_moves', !settings('show_best_moves'))
+      if (settings('show_best_moves')) {
+        show_best_moves(grec.curmove().data)
+      } else {
+        settings('show_best_ten', false)
+        $('#status').html('')
+      }
+    } // best moves
+    else if (e.ctrlKey && e.key == 't') { // t for ten best moves
+      settings('show_best_ten', !settings('show_best_ten'))
+      if (settings('show_best_ten')) {
+        settings('show_best_moves', true)
+      } else {
+        $('#status').html('')
+      }
+      show_best_moves(grec.curmove().data)
+    } // ten best moves
+    else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
+      settings('disable_ai', !settings('disable_ai'))
+      disable_ai_buttons()
+    } // disable ai
+    else if (e.ctrlKey && e.key == 'd') { // d for diagrams
+      settings('diagrams', !settings('diagrams'))
+      if (settings('diagrams')) {
+        $('#diagram_buttons').show()
+      } else {
+        $('#diagram_buttons').hide()
+      }
+    } // diagrams
+    
+  } // check_key()
 
 } // main()
