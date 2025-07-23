@@ -375,7 +375,7 @@ function main(JGO, axutil, p_options) {
             else if (is_markup_active()) {
               // do nothing
             }
-            else if (grec.curmove().data) {
+            else if (grec.curmove() && grec.curmove().data) {
               if (settings('show_best_moves')) {
                 show_best_moves(grec.curmove().data)
               }
@@ -396,7 +396,7 @@ function main(JGO, axutil, p_options) {
             else if (is_markup_active()) {
               // do nothing
             }
-            else if (grec.curmove().data) {
+            else if (grec.curmove() && grec.curmove().data) {
               if (settings('show_best_moves')) {
                 show_best_moves(grec.curmove().data)
               }
@@ -788,87 +788,89 @@ function main(JGO, axutil, p_options) {
       if (settings('selfplay_speed') == 'fast') { interval = 4000 }
       else if (settings('selfplay_speed') == 'slow') { interval = 8000 }
     }
+    // acm user analyzes as fast as possible
+    if ($('#username').html().trim() == 'acm' && settings('selfplay_speed') == 'fast') {
+      interval = 10
+    }
     cb_selfplay()
 
     function cb_selfplay() { // timer callback
       clearTimeout(selfplay.timer)
-      clear_status()
+      //clear_status()
       if (selfplay('ison')) {
         selfplay.timer = setTimeout(cb_selfplay, interval)
       }
       if (document.visibilityState != 'visible') return
-      if (!settings('logged_in')) {
-        selfplay('off')
-        $('#alertbox_title').html('')
-        $('#alertbox_message').html(tr('Please Log In'))
-        $('#alertbox').modal('show')
-        return
-      }
       set_emoji()
-      if (selfplay.ready) {
-        selfplay.ready = false
+      if (!selfplay.ready) return
+      selfplay.ready = false
 
-        // Looping on existing game
-        if (grec.pos() < grec.len()) {
-          selfplay.ready = true
-          if (!selfplay('ison')) return;
-          goto_move(grec.pos() + 1)
-          if (grec.curmove().p == 0) {
-            get_prob_genmove((data) => {
-              if (!settings('show_prob')) { clear_status() }
-              if (settings('show_emoji')) { update_emoji() }
-            })
-          }
-          else {
+      // Looping on existing game
+      if (grec.pos() < grec.len()) {
+        if (!selfplay('ison')) return;
+        if (grec.curmove() && grec.curmove().p == 0) {
+          get_prob_genmove((data) => {
+            //debugger
+            selfplay.ready = true
+            grec.curmove().data = data
+            goto_move(grec.pos())
+            grec.step()
+            //debugger
             if (!settings('show_prob')) { clear_status() }
             if (settings('show_emoji')) { update_emoji() }
-          }
+          })
+        }
+        else {
+          selfplay.ready = true
+          goto_move(grec.pos() + 1)
+          if (!settings('show_prob')) { clear_status() }
+          if (settings('show_emoji')) { update_emoji() }
+        }
+        return
+      }
+
+      function selfplay_game_over() {
+        if (!grec.curmove()) { return false }
+        else if (grec.pos() < 150) { return false }
+        else if (g_handi < 2 && (grec.curmove().p < 0.02 || grec.curmove().p > (1.0 - 0.02))) { return true }
+        else if (g_handi < 3 && (grec.curmove().p < 0.01 || grec.curmove().p > (1.0 - 0.01))) { return true }
+        else if (grec.curmove().score > 10.0) {
+          if (grec.curmove().p < 0.001 || grec.curmove().p > (1.0 - 0.001)) { return true }
+        }
+        return false
+      } // selfplay_game_over()
+
+      // If game ended, start from beginning
+      if (grec.curmove() && grec.curmove().data) {
+        if (selfplay_game_over()
+          || set_load_sgf_handler.loaded_game) // we're at the end of a loaded game
+        {
+          selfplay.ready = true
+          if (!selfplay('ison')) return;
+          grec.update(0, 0)
+          goto_move(0)
+          clear_status()
           return
         }
+      }
 
-        function selfplay_game_over() {
-          if (!grec.curmove()) { return false }
-          else if (grec.pos() < 150) { return false }
-          else if (g_handi < 2 && (grec.curmove().p < 0.02 || grec.curmove().p > (1.0 - 0.02))) { return true }
-          else if (g_handi < 3 && (grec.curmove().p < 0.01 || grec.curmove().p > (1.0 - 0.01))) { return true }
-          else if (grec.curmove().score > 10.0) {
-            if (grec.curmove().p < 0.001 || grec.curmove().p > (1.0 - 0.001)) { return true }
-          }
-          return false
-        } // selfplay_game_over()
-
-        // If game ended, start from beginning
-        if (grec.curmove()) {
-          if (selfplay_game_over()
-            || set_load_sgf_handler.loaded_game) // we're at the end of a loaded game
-          {
-            selfplay.ready = true
-            if (!selfplay('ison')) return;
-            grec.update(0, 0)
-            goto_move(0)
-            clear_status()
-            return
-          }
-        }
-
-        // Continue game
-        var ep = fast_or_strong('fast').ep
-        if ($('#username').html().trim() == 'acm') {
-          ep = fast_or_strong('marfa_strong').ep
-        }
-        axutil.hit_endpoint(ep + BOT,
-          { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
-          (data) => {
-            selfplay.ready = true
-            if (!selfplay('ison')) return;
-            var botCoord = axutil.string2jcoord(data.bot_move)
-            maybe_start_var()
-            grec.push({ 'mv': data.bot_move, 'p': 0, 'score': 0, 'agent': 'kata20' })
-            replay_moves(grec.pos())
-            const playing = true
-            get_prob_callback(data.diagnostics.winprob, data.diagnostics.score, settings('show_emoji'), playing)
-          }) // hit_endpoint()
-      } // if ready
+      // Continue game
+      var ep = fast_or_strong('fast').ep
+      if ($('#username').html().trim() == 'acm') {
+        ep = fast_or_strong('marfa_strong').ep
+      }
+      axutil.hit_endpoint(ep + BOT,
+        { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
+        (data) => {
+          selfplay.ready = true
+          if (!selfplay('ison')) return;
+          var botCoord = axutil.string2jcoord(data.bot_move)
+          maybe_start_var()
+          grec.push({ 'mv': data.bot_move, 'p': 0, 'score': 0, 'agent': 'kata20' })
+          replay_moves(grec.pos())
+          const playing = true
+          get_prob_callback(data.diagnostics.winprob, data.diagnostics.score, settings('show_emoji'), playing)
+        }) // hit_endpoint()
     } // cb_selfplay()
     return 0
   } // selfplay()
@@ -928,7 +930,7 @@ function main(JGO, axutil, p_options) {
     goto_move(grec.pos() - 1); update_emoji(); bot_active('off')
     add_mark('redraw')
 
-    if (grec.curmove().data) {
+    if (grec.curmove() && grec.curmove().data) {
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
     }
   } // btn_prev()
@@ -952,7 +954,7 @@ function main(JGO, axutil, p_options) {
     }
     if (settings('disable_ai')) { return }
 
-    if (grec.curmove().data) {
+    if (grec.curmove() && grec.curmove().data) {
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
     }
     else {
@@ -1300,7 +1302,7 @@ function main(JGO, axutil, p_options) {
   // Get current winning probability from genmove
   //-------------------------------------------------------------
   function get_prob_genmove(completion, update_emo, playing) {
-    set_status(tr('Counting ...'))
+    //set_status(tr('Counting ...'))
     axutil.hit_endpoint(fast_or_strong().ep + BOT,
       { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi } },
       (data) => {
@@ -1330,7 +1332,7 @@ function main(JGO, axutil, p_options) {
       botmove_if_active()
       g_play_btn_buffer = false
     }
-    else if (g_best_btn_buffer) { // Buffered play button click
+    else if (g_best_btn_buffer) { // Buffered best button click
       best_btn_callback()
       g_best_btn_buffer = false
     }
@@ -1480,9 +1482,8 @@ function main(JGO, axutil, p_options) {
 
   //----------------------------
   function set_status(x) {
-    clear_status()
-    if (settings('disable_ai')) { return }
-    if (x.indexOf('NaN') >= 0) { return }
+    if (settings('disable_ai')) { clear_status(); return }
+    if (x.indexOf('NaN') >= 0) { clear_status(); return }
     $('#status').html(x)
   }
 
@@ -1638,7 +1639,8 @@ function main(JGO, axutil, p_options) {
       $('#diagram_buttons').hide()
     }
 
-    disable_ai_buttons
+
+    disable_ai_buttons()
 
     set_btn_handlers()
     set_dropdown_handlers()
@@ -1662,11 +1664,14 @@ function main(JGO, axutil, p_options) {
       get_handicap()
       once_per_sec()
     })
+    if (!settings('logged_in')) {
+      axutil.disable_button('btn_tgl_selfplay')
+    }
   } // onRefresh()
 
   //---------------------------------------
   function disable_ai_buttons() {
-    // Disable/Enable some buttons if AI is disabled
+    // Disable/Enable some buttons if AI is disabled or not
     var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
     if (settings('disable_ai')) {
       // disable opt_auto checkbox
@@ -1743,7 +1748,7 @@ function main(JGO, axutil, p_options) {
         $('#diagram_buttons').hide()
       }
     } // diagrams
-    
+
   } // check_key()
 
 } // main()

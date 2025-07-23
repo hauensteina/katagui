@@ -528,6 +528,7 @@ class GameRecord {
   nextmove() { return this.record[this.n_visible] }
   prefix(n) { return this.record.slice(0, n) }
   last_move() { return this.record[this.record.length - 1] }
+  step() { this.n_visible++; this.n_visible = Math.min(this.n_visible, this.record.length) }
 
   last_move_color() {
     if (this.record.length == 0) { return JGO.EMPTY }
