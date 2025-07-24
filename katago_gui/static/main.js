@@ -449,6 +449,10 @@ function main(JGO, axutil, p_options) {
       }
     } // activate_mark_toggle()
 
+    $('#btn_movenum').click( () => {
+      goto_next_bad_move(0.1)
+    })
+
     $('#btn_tgl_add_black').click(() => {
       var bbtn = $('#btn_tgl_add_black')
       var wbtn = $('#btn_tgl_add_white')
@@ -1204,7 +1208,7 @@ function main(JGO, axutil, p_options) {
     var html = `${n} / ${totmoves}<br>`
     html += tr('B') + `:${g_prisoners[1]} `
     html += tr('W') + `:${g_prisoners[2]} `
-    $('#movenum').html(html)
+    $('#btn_movenum').html(html)
   } // show_movenum()
 
   //======================
