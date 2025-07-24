@@ -273,7 +273,7 @@ function main(JGO, axutil, p_options) {
 
   //----------------------------------
   function show_best_moves(data) {
-    if (!settings('show_best_moves')) { return }
+    //if (!settings('show_best_moves')) { return }
     if (settings('disable_ai')) { return }
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
