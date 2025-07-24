@@ -437,8 +437,8 @@ def sgf2list():
         for setup in sgf.get_root().get_setup_stones():
             for idx, move in enumerate( setup):
                 handicap_setup_done = True
-                if idx > 0: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0' } )
-                moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.0' })
+                if idx > 0: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00' } )
+                moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
 
     # Nodes in the main sequence
     for item in sgf.main_sequence_iter():
@@ -447,7 +447,7 @@ def sgf2list():
         if color is not None:
             if move_tuple is not None:
                 p = '0.00'
-                score = '0.0'
+                score = '0.00'
                 props = item.get_raw_property_map()
                 props = { key.decode(): props[key] for key in props.keys() }
                 if 'C' in props:
@@ -460,15 +460,15 @@ def sgf2list():
                             right = parts[1]
                             score = right.split(':')[1]
                 turn = 'w' if len(moves) % 2 else 'b'
-                if color != turn: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0'})
+                if color != turn: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
                 moves.append( {'mv':move2coords( move_tuple), 'p':p, 'score':score })
             else:
-                moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0'})
+                moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
         # Deal with handicap stones as individual nodes
         elif item.get_setup_stones()[0] and not handicap_setup_done:
             move = list( item.get_setup_stones()[0])[0]
-            if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.0'})
-            moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.0' })
+            if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+            moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
 
     probs = [mp['p'] for mp in moves]
     scores = [mp['score'] for mp in moves]

@@ -128,7 +128,7 @@ function main(JGO, axutil, p_options) {
     // Add the new move
     maybe_start_var()
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
+    grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
     board_click_callback.illegal_move = false
     goto_move(grec.len())
     // Silently ignore illegal moves
@@ -149,7 +149,7 @@ function main(JGO, axutil, p_options) {
         if (pos != grec.pos()) return
         grec.curmove().data = data
         if (bot_active() && (greclen == grec.len())) { bot_move_callback(data) }
-        if (settings('show_best_moves')) { show_best_moves(data) }
+        if (!bot_active() && settings('show_best_moves')) { show_best_moves(data) }
       },
       settings('show_emoji'), playing)
   } // board_click_callback()
@@ -177,7 +177,7 @@ function main(JGO, axutil, p_options) {
     else if (color == JGO.WHITE) grec.force_white_turn()
 
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    grec.push({ 'mv': mstr, 'p': 0.0, 'agent': 'human' })
+    grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
     board_click_callback.illegal_move = false
     goto_move(grec.len())
     // Silently ignore illegal moves
@@ -187,7 +187,7 @@ function main(JGO, axutil, p_options) {
       return
     }
     // Add a pass to get the right hover color
-    grec.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+    grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
     goto_move(grec.len())
 
   } // add_stone()
@@ -310,6 +310,7 @@ function main(JGO, axutil, p_options) {
   // Make a string like 'P(B wins): 0.56  B+0.5'
   //----------------------------------------------
   function get_scorestr(p, score) {
+    p = 1 * p // convert to number
     score = Math.trunc(Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
     var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
     if (score < 0) {
@@ -657,7 +658,7 @@ function main(JGO, axutil, p_options) {
       var probs = axutil.probs_only(grec.all_moves())
       var scores = axutil.scores_only(grec.all_moves())
       for (var i = 0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
-      for (var i = 0; i < scores.length; i++) { scores[i] = scores[i] ? scores[i].toFixed(1) : '0.0' }
+      for (var i = 0; i < scores.length; i++) { scores[i] = scores[i] ? scores[i].toFixed(1) : '0.00' }
       // Kludge to manage passes
       for (var i = 0; i < rec.length; i++) {
         if (rec[i] == 'pass') { rec[i] = 'A0' }
@@ -701,7 +702,7 @@ function main(JGO, axutil, p_options) {
       selfplay('off')
       if (score_position.active) { goto_move(grec.pos()); return }
       maybe_start_var()
-      grec.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+      grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
       goto_move(grec.len())
       botmove_if_active()
     })
@@ -813,7 +814,7 @@ function main(JGO, axutil, p_options) {
       // Replaying existing game
       if (set_load_sgf_handler.loaded_game) {
         if (!selfplay('ison')) return;
-        if (grec.curmove() && grec.curmove().p == 0) {
+        if (grec.curmove() && grec.curmove().p === '0.00') {
           get_prob_genmove((data) => {
             selfplay.ready = true
             grec.curmove().data = data
@@ -835,7 +836,7 @@ function main(JGO, axutil, p_options) {
           if (settings('show_emoji')) { update_emoji() }
         }
         return
-      }
+      } // if (loaded_game)
 
       function selfplay_game_over() {
         if (!grec.curmove()) { return false }
@@ -902,7 +903,7 @@ function main(JGO, axutil, p_options) {
         end_game()
         grec = new GameRecord()
         for (var move of moves) {
-          var move_prob = { 'mv': move, 'p': 0, 'agent': '' }
+          var move_prob = { 'mv': move, 'p': '0.00', 'score': '0.00', 'agent': '' }
           grec.push(move_prob)
         }
         replay_moves(grec.pos())
@@ -1159,9 +1160,9 @@ function main(JGO, axutil, p_options) {
     var hstones = HANDISTONES[g_handi]
     for (const [idx, s] of hstones.entries()) {
       if (idx > 0) {
-        grec.push({ 'mv': 'pass', 'p': 0, 'agent': '' })
+        grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': '' })
       }
-      grec.push({ 'mv': s, 'p': 0, 'agent': '' })
+      grec.push({ 'mv': s, 'p': 0, 'score': 0, 'agent': '' })
     }
     goto_move(grec.len())
   } // reset_game()

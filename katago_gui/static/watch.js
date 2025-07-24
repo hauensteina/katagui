@@ -56,7 +56,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     // Add the new move in a variation
     handle_variation( 'save')
     var mstr = axutil.jcoord2string( coord)
-    grec.push( {'mv':mstr, 'p':0.0, 'agent':'human'})
+    grec.push( {'mv':mstr, 'p':0.0, 'score':0, 'agent':'human'})
     goto_move( grec.len())
     set_emoji()
     const show_emoji = true
@@ -230,7 +230,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       var probs = axutil.probs_only( grec.all_moves())
       var scores = axutil.scores_only( grec.all_moves())
       for (var i=0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
-      for (var i=0; i < scores.length; i++) { scores[i] = scores[i]?scores[i].toFixed(1):'0.0' }
+      for (var i=0; i < scores.length; i++) { scores[i] = scores[i]?scores[i].toFixed(1):'0.00' }
       // Kludge to manage passes
       for (var i=0; i < rec.length; i++) {
         if (rec[i] == 'pass') { rec[i] = 'A0' }

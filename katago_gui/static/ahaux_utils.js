@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.14'
+const VERSION = '3.12.15'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -620,7 +620,7 @@ class GameRecord {
       if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {
         this.pop() // remove last pass
       } else {
-        this.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+        this.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00', 'agent': 'human' })
       }
     }
   } // force_white_turn()
@@ -630,7 +630,7 @@ class GameRecord {
       if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {
         this.pop() // remove last pass
       } else {
-        this.push({ 'mv': 'pass', 'p': 0, 'agent': 'human' })
+        this.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
       }
     }
   } // force_black_turn()
