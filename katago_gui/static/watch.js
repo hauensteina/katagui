@@ -525,7 +525,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     if (n < 1) { goto_first_move(); set_emoji(); return }
     if (n > totmoves) { n = totmoves }
     replay_moves( n)
-    show_movenum()
     show_prob()
     $('#debug').html( JSON.stringify(grec.curmove()) + '<br>var:' + grec.var_active() + ' move ' + n )
     if ( grec.curmove().agent == 'kata10') {

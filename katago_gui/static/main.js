@@ -74,7 +74,7 @@ function main(JGO, axutil, p_options) {
       g_komi = parseFloat($('#komi_menu').html())
       reset_game();
       $('#lb_komi').html(tr('Komi') + ': ' + g_komi)
-      set_emoji();
+      clear_emoji();
       bot_active('on')
       clear_status()
 
@@ -140,7 +140,7 @@ function main(JGO, axutil, p_options) {
     if (settings('disable_ai')) { return }
 
     add_mark('redraw')
-    set_emoji()
+    clear_emoji()
     var greclen = grec.len()
     const playing = true
     var pos = grec.pos()
@@ -624,7 +624,7 @@ function main(JGO, axutil, p_options) {
 
     $('#btn_play').click(() => {
       selfplay('off')
-      set_emoji()
+      clear_emoji()
       //bot_active( 'on')
       //botmove_if_active()
       get_katago_move()
@@ -724,7 +724,7 @@ function main(JGO, axutil, p_options) {
     $('#btn_next').click(btn_next)
     $('#btn_back10').click(() => { selfplay('off'); goto_move(grec.pos() - 10); update_emoji(); bot_active('off'); add_mark('redraw') })
     $('#btn_fwd10').click(() => { selfplay('off'); goto_move(grec.pos() + 10); update_emoji(); bot_active('off'); add_mark('redraw') })
-    $('#btn_first').click(() => { selfplay('off'); goto_move(0); set_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
+    $('#btn_first').click(() => { selfplay('off'); goto_move(0); clear_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); add_mark('redraw') })
 
     // Prevent zoom on double tap
@@ -894,7 +894,7 @@ function main(JGO, axutil, p_options) {
         var res = response.result
         var moves = res.moves
         $('#lb_komi').html(tr('Komi') + ': ' + res.komi)
-        set_emoji()
+        clear_emoji()
         end_game()
         grec = new GameRecord()
         for (var move of moves) {
@@ -1190,7 +1190,7 @@ function main(JGO, axutil, p_options) {
     best_btn_callback.active = false
     var totmoves = grec.len()
     if (n > totmoves) { n = totmoves }
-    if (n < 1) { goto_first_move(); set_emoji(); return }
+    if (n < 1) { goto_first_move(); clear_emoji(); return }
     replay_moves(n)
     show_movenum()
     show_prob()
@@ -1378,43 +1378,19 @@ function main(JGO, axutil, p_options) {
   const HAPPY_POINT_LOSS_MAX = 2.0
   //--------------------------------
   function update_emoji() {
-    if (settings('disable_ai')) { set_emoji(); return }
-    if (!settings('show_emoji')) { set_emoji(); return }
-    var cur = grec.curmove()
-    var prev = grec.prevmove()
-    if (!cur) { return }
-    var p = cur.p
-    //var score = cur.score
-    if (p == 0) { set_emoji(); return }
-    if (prev) {
-      if (cur.mv == 'pass') { set_emoji(); return }
-      if (prev.mv == 'pass') { set_emoji(); return }
-      if (prev.p == 0) { set_emoji(); return }
-      var pp = prev.p
-      //var pscore = prev.score
-      if ((grec.pos() - 1) % 2) { // we are white
-        p = 1.0 - p; pp = 1.0 - pp
-        //score *= -1; pscore *= -1
-      }
-      var delta_p = pp - p
-      //var delta_score = pscore - score
-      //if (p < 0.05) { set_emoji() } // empty
-      //else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
-      //else if (pp == 0) { set_emoji() } // empty
-      set_emoji(delta_p)
-    }
-    else {
-      set_emoji()
-    }
+    if (settings('disable_ai')) { clear_emoji(); return }
+    if (!settings('show_emoji')) { clear_emoji(); return }
+    var delta_p = grec.delta_prob()
+    set_emoji(delta_p)
   } // update_emoji()
+
+  //------------------------------
+  function clear_emoji() {
+      $('#emo').html('&nbsp;')
+  } // clear_emoji() 
 
   //---------------------------------
   function set_emoji(delta_prob) {
-    var emo_id = '#emo'
-    if (typeof delta_prob == 'undefined') {
-      $(emo_id).html('&nbsp;')
-      return
-    }
     const MOVE_EMOJI = ['😍', '😐', '😓', '😡']
     var emo = MOVE_EMOJI[3]
 
@@ -1427,7 +1403,7 @@ function main(JGO, axutil, p_options) {
 
     // Choose whichever is angrier
     emo = MOVE_EMOJI[prob_idx]
-    $(emo_id).html(emo)
+    $('#emo').html(emo)
   } // set_emoji()
 
   //==========
@@ -1682,7 +1658,7 @@ function main(JGO, axutil, p_options) {
       $('#opt_auto').prop('disabled', true)
       // disable ai buttons
       ai_buttons.forEach(btn => axutil.disable_button(btn))
-      set_emoji() // clear emoji
+      clear_emoji() 
     } else {
       // enable opt_auto checkbox
       $('#opt_auto').prop('disabled', false)
@@ -1690,6 +1666,14 @@ function main(JGO, axutil, p_options) {
       ai_buttons.forEach(btn => axutil.enable_button(btn))
     }
   } // disable_ai_buttons()
+
+  //------------------------
+  function goto_next_bad_move(p_thresh) {
+    grec.seek_next_bad_move(p_thresh)
+    goto_move(grec.pos())
+    update_emoji()
+    if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+  } // goto_next_bad_move()
 
   // Key actions
   //------------------------
@@ -1710,9 +1694,15 @@ function main(JGO, axutil, p_options) {
     else if (e.ctrlKey && e.key == 'ArrowDown') {
       show_move.mark_last_move = !show_move.mark_last_move
     }
+    // space toggles selfplay
     else if (!e.ctrlKey && e.key == ' ') { // space bar
       selfplay('toggle')
     }
+    // Goto next really bad move ctrl-s
+    else if (e.ctrlKey && e.key == 's') { 
+      goto_next_bad_move(0.1)
+    } // bad move
+
     // Shortcuts for the settings
     else if (e.ctrlKey && e.key == 'e') { // e for emoji
       settings('show_emoji', !settings('show_emoji'))
@@ -1729,6 +1719,7 @@ function main(JGO, axutil, p_options) {
       } else {
         settings('show_best_ten', false)
         $('#status').html('')
+        $('#bestscore').html('')
       }
     } // best moves
     else if (e.ctrlKey && e.key == 't') { // t for ten best moves

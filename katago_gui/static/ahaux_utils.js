@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.12'
+const VERSION = '3.12.13'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -535,6 +535,36 @@ class GameRecord {
   prefix(n) { return this.record.slice(0, n) }
   last_move() { return this.record[this.record.length - 1] }
   step() { this.n_visible++; this.n_visible = Math.min(this.n_visible, this.record.length) }
+
+  //------------------------------
+  delta_prob() {
+    if (!this.curmove() || !this.prevmove()) { return 0 }
+    var cur = this.curmove()
+    var prev = this.prevmove()
+    if (cur.mv == 'pass' || prev.mv == 'pass') {
+      return 0
+    }
+    var p = cur.p
+    var pp = prev.p
+    if ((this.pos() - 1) % 2) { // we are white
+      p = 1.0 - p; pp = 1.0 - pp // flip probabilities
+    }
+    var delta = pp - p
+    return delta
+  } // delta_prob()
+
+  //------------------------------
+  seek_next_bad_move(p_thresh) {
+    var oldpos = this.pos()
+    var found = false
+    for (var i = oldpos + 1; i < this.len(); i++) {
+      this.seek(i)
+      var delta_p = this.delta_prob()
+      if (delta_p >= p_thresh) {
+        return
+      }
+    } // for
+  } // seek_next_bad_move()
 
   last_move_color() {
     if (this.record.length == 0) { return JGO.EMPTY }
