@@ -144,6 +144,7 @@ function main(JGO, axutil, p_options) {
     var greclen = grec.len()
     const playing = true
     var pos = grec.pos()
+    set_status(tr('KataGo is thinking ...'))
     get_prob_genmove(
       (data) => {
         if (pos != grec.pos()) return

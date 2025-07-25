@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.17'
+const VERSION = '3.12.18'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -632,7 +632,7 @@ class GameRecord {
     if (this.last_move_color() != JGO.WHITE) {
       if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {
         this.pop() // remove last pass
-      } else {
+      } else if (this.record.length > 0) {
         this.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
       }
     }
