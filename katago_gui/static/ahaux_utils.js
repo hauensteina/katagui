@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.16'
+const VERSION = '3.12.17'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -538,14 +538,17 @@ class GameRecord {
 
   //------------------------------
   delta_prob() {
-    if (!this.curmove() || !this.prevmove()) { return 0 }
+    if (!this.curmove() || !this.prevmove()) { return null }
     var cur = this.curmove()
     var prev = this.prevmove()
     if (cur.mv == 'pass' || prev.mv == 'pass') {
-      return 0
+      return null
     }
     var p = cur.p
     var pp = prev.p
+    if (p === '0.00' || pp === '0.00') {
+      return null // no prob, no delta
+    }
     if ((this.pos() - 1) % 2) { // we are white
       p = 1.0 - p; pp = 1.0 - pp // flip probabilities
     }

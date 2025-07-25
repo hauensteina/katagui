@@ -470,6 +470,7 @@ function main(JGO, axutil, p_options) {
       } else {
         bbtn.removeClass('btn-success')
         bbtn.css('background-color', '')
+        grec.force_white_turn()
       }
     }) // btn_add_black.click()
 
@@ -489,6 +490,7 @@ function main(JGO, axutil, p_options) {
       } else {
         wbtn.removeClass('btn-success')
         wbtn.css('background-color', '')
+        grec.force_black_turn()
       }
     }) // btn_add_white.click()
 
@@ -727,10 +729,10 @@ function main(JGO, axutil, p_options) {
 
     $('#btn_prev').click(btn_prev)
     $('#btn_next').click(btn_next)
-    $('#btn_back10').click(() => { selfplay('off'); goto_move(grec.pos() - 10); update_emoji(); bot_active('off'); add_mark('redraw') })
-    $('#btn_fwd10').click(() => { selfplay('off'); goto_move(grec.pos() + 10); update_emoji(); bot_active('off'); add_mark('redraw') })
+    $('#btn_back10').click(() => { selfplay('off'); goto_move(grec.pos() - 10); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
+    $('#btn_fwd10').click(() => { selfplay('off'); goto_move(grec.pos() + 10); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
     $('#btn_first').click(() => { selfplay('off'); goto_move(0); clear_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
-    $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); add_mark('redraw') })
+    $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
 
     // Prevent zoom on double tap
     $('*').on('touchend', (e) => {
@@ -1386,6 +1388,10 @@ function main(JGO, axutil, p_options) {
     if (settings('disable_ai')) { clear_emoji(); return }
     if (!settings('show_emoji')) { clear_emoji(); return }
     var delta_p = grec.delta_prob()
+    if (delta_p == null) {
+      clear_emoji();
+      return
+    }
     set_emoji(delta_p)
   } // update_emoji()
 
@@ -1463,6 +1469,7 @@ function main(JGO, axutil, p_options) {
   function clear_status() {
     $('#status').html('')
     $('#bestscore').html('')
+    $('#emo').html('')
   }
 
   //----------------------------
@@ -1470,6 +1477,7 @@ function main(JGO, axutil, p_options) {
     if (settings('disable_ai')) { clear_status(); return }
     if (x.indexOf('NaN') >= 0) { clear_status(); return }
     $('#status').html(x)
+    $('#bestscore').html('')
   }
 
   // Show a translucent hover stone
