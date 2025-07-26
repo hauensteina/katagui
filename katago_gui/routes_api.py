@@ -438,6 +438,7 @@ def sgf2list():
             add_setup_stones(moves, item) # KifuCam sgf export
             setup_stone_flag = False
             if moves: setup_stone_flag = True
+
         color, move_tuple = item.get_move()
         point = None
         if color is not None:
@@ -461,7 +462,7 @@ def sgf2list():
             else:
                 moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
         # Deal with handicap stones as individual nodes
-        elif item.get_setup_stones()[0] and not handicap_setup_done:
+        elif item.get_setup_stones()[0] and not handicap_setup_done and not setup_stone_flag:
             move = list( item.get_setup_stones()[0])[0]
             if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
             moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
@@ -494,6 +495,10 @@ def add_setup_stones(moves, node):
     for white_move in wp:
         moves.append( {'mv':move2coords( white_move), 'p':'0.00', 'score':'0.00' })
         moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})    
+        
+     # Add first move again. Somehow KataGo scoring freaks out otherwise. What a kludge.
+    if bp:
+        moves.append( {'mv':move2coords( list(bp)[0]), 'p':'0.00', 'score':'0.00' })
 
 @app.route('/slog', methods=['POST'])
 #---------------------------------------
