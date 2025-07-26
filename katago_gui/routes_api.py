@@ -420,16 +420,8 @@ def sgf2list():
     komi = sgf.get_komi()
     if komi == 375: komi = 7.5 # fox server anomaly
     fname = f.filename
-
     res = {}
     moves = []
-
-    #------------------------
-    def move2coords( move):
-        row, col = move
-        p = Point( row + 1, col + 1)
-        coords = coords_from_point( p)
-        return coords
 
     # Deal with handicap in the root node
     handicap_setup_done = False
@@ -441,7 +433,11 @@ def sgf2list():
                 moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
 
     # Nodes in the main sequence
-    for item in sgf.main_sequence_iter():
+    for idx,item in enumerate(sgf.main_sequence_iter()):
+        if idx == 0:
+            add_setup_stones(moves, item) # KifuCam sgf export
+            setup_stone_flag = False
+            if moves: setup_stone_flag = True
         color, move_tuple = item.get_move()
         point = None
         if color is not None:
@@ -474,7 +470,30 @@ def sgf2list():
     scores = [mp['score'] for mp in moves]
     moves = [mp['mv'] for mp in moves]
     return jsonify( {'result': {'moves':moves, 'probs':probs, 'scores':scores, 'pb':player_black, 'pw':player_white,
-                                'winner':winner, 'komi':komi, 'fname':fname, 'RE':RE, 'DT':DT} } )
+                                'winner':winner, 'komi':komi, 'fname':fname, 'RE':RE, 'DT':DT, 'setup_stone_flag':setup_stone_flag} } )
+
+#------------------------
+def move2coords( move):
+    row, col = move
+    p = Point( row + 1, col + 1)
+    coords = coords_from_point( p)
+    return coords
+
+#-----------------------------------
+def add_setup_stones(moves, node):
+    """ Add setup stones to the moves list (KifuCam sgf export) """
+    bp, wp, _ = node.get_setup_stones()
+    for black_move in bp:
+        moves.append( {'mv':move2coords( black_move), 'p':'0.00', 'score':'0.00' })
+        moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+
+    # Remove last pass
+    if moves and moves[-1]['mv'] == 'pass':
+        moves.pop()
+        
+    for white_move in wp:
+        moves.append( {'mv':move2coords( white_move), 'p':'0.00', 'score':'0.00' })
+        moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})    
 
 @app.route('/slog', methods=['POST'])
 #---------------------------------------

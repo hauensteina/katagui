@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.18'
+const VERSION = '3.12.19'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -484,7 +484,9 @@ class AhauxUtils {
 // Keep track of the game record, visible moves, variation.
 //------------------------------------------------------------
 class GameRecord {
-  constructor() { this.record = []; this.n_visible = 0; this.var_record = []; this.var_n_visible = 0; }
+  constructor(setup_stone_flag = false) { 
+    this.record = []; this.n_visible = 0; this.var_record = []; this.var_n_visible = 0; this.setup_stone_flag = setup_stone_flag; 
+  }
   clone() {
     var copy = new GameRecord()
     copy.record = axutil.deepcopy(this.record)

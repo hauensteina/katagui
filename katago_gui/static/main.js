@@ -331,6 +331,7 @@ function main(JGO, axutil, p_options) {
   function get_handicap() {
     g_handi = 0
     var handi = 0
+    if (grec.setup_stone_flag) { return g_handi }
     var rec = grec.prefix(20)
     for (var i = 0; i < rec.length; i++) {
       if (i % 2) { // white
@@ -904,7 +905,7 @@ function main(JGO, axutil, p_options) {
         $('#lb_komi').html(tr('Komi') + ': ' + res.komi)
         clear_emoji()
         end_game()
-        grec = new GameRecord()
+        grec = new GameRecord(res.setup_stone_flag)
         for (var move of moves) {
           var move_prob = { 'mv': move, 'p': '0.00', 'score': '0.00', 'agent': '' }
           grec.push(move_prob)
