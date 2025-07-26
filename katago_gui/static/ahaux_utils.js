@@ -6,7 +6,7 @@
 'use strict'
 
 const DDATE = ''
-const VERSION = '3.12.19'
+const VERSION = '3.12.20'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -53,6 +53,12 @@ class AhauxUtils {
     var res = JSON.parse(JSON.stringify(x))
     return res
   } // deepcopy()
+
+  // Check if a string ends in a digit
+  //---------------------------------------------------
+  endsInDigit(str) {
+    return /\d$/.test(str);
+  } // endsInDigit()
 
   // Store and retrieve global client-side settings
   //--------------------------------------------------------
@@ -228,6 +234,7 @@ class AhauxUtils {
   //---------------------------------------------------
   string2jcoord(move_string, rotate_flag = true) {
     if (move_string == 'pass' || move_string == 'resign') { return move_string }
+    if (move_string == 'pss') return 'pass' 
     var colStr = move_string.substring(0, 1)
     var rowStr = move_string.substring(1)
     // row and col are zero based 0 to 18

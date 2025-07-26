@@ -286,6 +286,7 @@ function main(JGO, axutil, p_options) {
     // Mark candidates with letters if psv is close enough to max
     var bardata = []
     for (const [idx, m] of best.entries()) {
+      //if (!axutil.endsInDigit(m.move)) { continue } // skip non-moves
       bardata.push([idx, m.psv])
       if (mmax == 0) { mmax = m.psv }
       if (!settings('show_best_ten') && m.psv < 0.05 * mmax) continue
@@ -800,7 +801,7 @@ function main(JGO, axutil, p_options) {
     }
     // acm user analyzes as fast as possible
     if ($('#username').html().trim() == 'acm' && settings('selfplay_speed') == 'fast') {
-      interval = 10
+      interval = 20
     }
     cb_selfplay()
 
