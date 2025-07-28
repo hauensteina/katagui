@@ -424,21 +424,25 @@ def sgf2list():
     res = {}
     moves = []
 
-    # Deal with handicap in the root node
+    # Deal with handicap in the root node. This also deals with kifu cam exports.
     handicap_setup_done = False
-    if sgf.get_handicap() is not None and sgf.get_handicap() != 0:
-        for setup in sgf.get_root().get_setup_stones():
-            for idx, move in enumerate( setup):
-                handicap_setup_done = True
-                if idx > 0: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00' } )
-                moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
+    add_setup_stones(moves, sgf.get_root()) # KifuCam sgf export or handicap stones
+    if moves: handicap_setup_done = True
+
+    # #if sgf.get_handicap() is not None and sgf.get_handicap() != 0:
+    # for setup in sgf.get_root().get_setup_stones():
+    #     for idx, move in enumerate( setup):
+    #         handicap_setup_done = True
+    #         if idx > 0: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00' } )
+    #         moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
 
     # Nodes in the main sequence
     for idx,item in enumerate(sgf.main_sequence_iter()):
-        if idx == 0:
-            setup_stone_flag = False
-            add_setup_stones(moves, item) # KifuCam sgf export
-            if moves: setup_stone_flag = True
+        # if idx == 0:
+        #     BP()
+        #     setup_stone_flag = False
+        #     add_setup_stones(moves, item) # KifuCam sgf export
+        #     if moves: setup_stone_flag = True
 
         color, move_tuple = item.get_move()
         point = None
@@ -463,7 +467,7 @@ def sgf2list():
             else:
                 moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
         # Deal with handicap stones as individual nodes
-        elif item.get_setup_stones()[0] and not handicap_setup_done and not setup_stone_flag:
+        elif item.get_setup_stones()[0] and not handicap_setup_done:
             move = list( item.get_setup_stones()[0])[0]
             if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
             moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
@@ -472,7 +476,7 @@ def sgf2list():
     scores = [mp['score'] for mp in moves]
     moves = [mp['mv'] for mp in moves]
     return jsonify( {'result': {'moves':moves, 'probs':probs, 'scores':scores, 'pb':player_black, 'pw':player_white,
-                                'winner':winner, 'komi':komi, 'fname':fname, 'RE':RE, 'DT':DT, 'setup_stone_flag':setup_stone_flag} } )
+                                'winner':winner, 'komi':komi, 'fname':fname, 'RE':RE, 'DT':DT } } )
 
 #------------------------
 def move2coords( move):
