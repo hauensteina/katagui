@@ -8,6 +8,7 @@
 #
 from pdb import set_trace as BP
 
+import random
 import os, sys, re, json
 import requests
 from datetime import datetime
@@ -435,8 +436,8 @@ def sgf2list():
     # Nodes in the main sequence
     for idx,item in enumerate(sgf.main_sequence_iter()):
         if idx == 0:
-            add_setup_stones(moves, item) # KifuCam sgf export
             setup_stone_flag = False
+            add_setup_stones(moves, item) # KifuCam sgf export
             if moves: setup_stone_flag = True
 
         color, move_tuple = item.get_move()
@@ -484,21 +485,18 @@ def move2coords( move):
 def add_setup_stones(moves, node):
     """ Add setup stones to the moves list (KifuCam sgf export) """
     bp, wp, _ = node.get_setup_stones()
-    for black_move in bp:
-        moves.append( {'mv':move2coords( black_move), 'p':'0.00', 'score':'0.00' })
-        moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
-
-    # Remove last pass
-    if moves and moves[-1]['mv'] == 'pass':
-        moves.pop()
-        
-    for white_move in wp:
-        moves.append( {'mv':move2coords( white_move), 'p':'0.00', 'score':'0.00' })
-        moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})    
-        
-     # Add first move again. Somehow KataGo scoring freaks out otherwise. What a kludge.
-    if bp:
-        moves.append( {'mv':move2coords( list(bp)[0]), 'p':'0.00', 'score':'0.00' })
+    bp = list(bp); wp = list(wp)
+    random.shuffle(bp)
+    random.shuffle(wp)
+    for i in range(max(len(bp),len(wp))):
+        if i < len(bp):
+            moves.append({'mv': move2coords(bp[i]), 'p': '0.00', 'score': '0.00'})
+        else:
+            moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+        if i < len(wp):
+            moves.append({'mv': move2coords(wp[i]), 'p': '0.00', 'score': '0.00'})
+        else:
+            moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
 
 @app.route('/slog', methods=['POST'])
 #---------------------------------------
