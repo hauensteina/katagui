@@ -296,6 +296,10 @@ function main(JGO, axutil, p_options) {
         node.setMark(botCoord1, letter)
       }
     } // for
+    // restore the hover stone
+    if (hover.coord) {
+      g_jrecord.jboard.setType(hover.coord, turn() == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
+    }
     var maxi = Math.max(...bardata.map(function (d) { return d[1] }))
     //console.log(maxi)
     var font = '10px sans-serif'
@@ -313,7 +317,12 @@ function main(JGO, axutil, p_options) {
   //----------------------------------------------
   function get_scorestr(p, score) {
     p = 1 * p // convert to number
-    score = Math.trunc(Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
+
+    if (g_komi == Math.floor(g_komi)) { // whole number komi
+      score = Math.round(self.score) // 2.1 -> 2.0,  2.9 -> 3.0
+    } else { // x.5 komi
+      score = Math.sign(score) * (Math.floor(Math.abs(score)) + 0.5) // 2.1 -> 2.5 2.9 -> 2.5
+    }
     var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
     if (score < 0) {
       scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
