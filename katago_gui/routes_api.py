@@ -429,21 +429,8 @@ def sgf2list():
     add_setup_stones(moves, sgf.get_root()) # KifuCam sgf export or handicap stones
     if moves: handicap_setup_done = True
 
-    # #if sgf.get_handicap() is not None and sgf.get_handicap() != 0:
-    # for setup in sgf.get_root().get_setup_stones():
-    #     for idx, move in enumerate( setup):
-    #         handicap_setup_done = True
-    #         if idx > 0: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00' } )
-    #         moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
-
     # Nodes in the main sequence
     for idx,item in enumerate(sgf.main_sequence_iter()):
-        # if idx == 0:
-        #     BP()
-        #     setup_stone_flag = False
-        #     add_setup_stones(moves, item) # KifuCam sgf export
-        #     if moves: setup_stone_flag = True
-
         color, move_tuple = item.get_move()
         point = None
         if color is not None:
@@ -501,6 +488,10 @@ def add_setup_stones(moves, node):
             moves.append({'mv': move2coords(wp[i]), 'p': '0.00', 'score': '0.00'})
         else:
             moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+    
+    # Remove the last pass from moves        
+    while moves and moves[-1]['mv'] == 'pass':
+        moves.pop()
 
 @app.route('/slog', methods=['POST'])
 #---------------------------------------
