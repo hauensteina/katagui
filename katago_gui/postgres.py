@@ -61,7 +61,7 @@ class Postgres:
             else:
                 reconnect()
         except Exception as e:
-            traceback.print_exc(e)
+            traceback.print_exc()
             raise
 
     #------------------------------
@@ -260,7 +260,7 @@ class Postgres:
             curs.execute(query)
             rows = curs.fetchall()
         except Exception as e:
-            self.pexc(e,str(row))
+            self.pexc(e)
             rows = None
         finally:
             curs.close()
