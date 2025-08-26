@@ -43,14 +43,16 @@ class Postgres:
                 Postgres.conns[self.db_url].close()
             except:
                 pass
-            Postgres.conns[self.db_url] = None
+            # remove self.db_url from Postgres.conns
+            Postgres.conns.pop(self.db_url, None)
             self.conn = psycopg2.connect( self.db_url)
             self.conn.set_isolation_level( psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
             Postgres.conns[self.db_url] = self.conn
 
         try:
-            if self.db_url in Postgres.conns and Postgres.conns[self.db_url].status == STATUS_READY:
-                self.conn = Postgres.conns[self.db_url]
+            cconn = Postgres.conns.get(self.db_url)
+            if cconn and getattr(cconn, "status", None) == STATUS_READY:
+                self.conn = cconn
                 try:
                     curs = self.conn.cursor()
                     curs.execute( 'SELECT 1')
