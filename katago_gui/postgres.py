@@ -399,12 +399,11 @@ class Postgres:
         self.run ("DELETE FROM t_parameters WHERE name = %s", (param_name,))
 
 
-    ''' Tracing to t_log '''
-    '''-------------------'''
+    #--- Logging ---
+    #---------------
 
     #------------------------------
     def pexc( self, e, p_txt=''):
-        ''' Trace Exception to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         exname = type(e).__name__
@@ -420,7 +419,6 @@ class Postgres:
 
     #-------------------------
     def perr( self, p_msg):
-        ''' Trace Error to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = "%s %s(): %s" % (fname, func, p_msg)
@@ -428,7 +426,6 @@ class Postgres:
 
     #-----------------------
     def plog( self, p_msg):
-        ''' Trace Log msg to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = '%s %s(): %s' % (fname, func, p_msg)
@@ -436,7 +433,6 @@ class Postgres:
 
     #------------------
     def pstart( self):
-        ''' Write function start log to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = '%s %s()' % (fname, func)
@@ -444,7 +440,6 @@ class Postgres:
 
     #-----------------
     def pend( self):
-        ''' Write function end log to Postgres t_log '''
         func = parent_funcname()
         fname = parent_filename()
         msg = '%s %s()' % (fname, func)
@@ -456,9 +451,6 @@ class Postgres:
         now = str(datetime.now())
         # To screen / logfile
         print( '%s %s %s' % (now, p_level, p_msg))
-        # To t_log table
-        self.insert ('t_log',
-                   [{'level':p_level,'msg':p_msg,'dtime':now}])
 
     @classmethod
     #-------------------------
