@@ -820,7 +820,7 @@ function main(JGO, axutil, p_options) {
 
   // Timer callback for selfplay
   //---------------------------------
-  function cb_selfplay(interval) { 
+  function cb_selfplay(interval) {
     console.log(interval)
     clearTimeout(selfplay.timer)
     //clear_status()
@@ -870,34 +870,28 @@ function main(JGO, axutil, p_options) {
   //---------------------------------------------------------------
   function replay_loaded_game() {
     if (!selfplay('ison')) return;
-    if (grec.curmove() && grec.curmove().p === '0.00') {
+    grec.step()
+    if (grec.curmove() && grec.curmove().p === '0.00') { // No cached winprob, get it from katago
+      console.log('getting prob')
       get_prob_genmove((data) => {
         selfplay.ready = true
         grec.curmove().data = data
         goto_move(grec.pos())
-        if (!settings('show_prob')) { clear_status() }
-        if (settings('show_emoji')) { update_emoji() }
-        if (grec.pos() >= grec.len()) {
-          axutil.popup('Game replay complete.')
-          selfplay('off')
-          return
-        }
-        //grec.step()
-        goto_move(grec.pos() + 1)
+        update_emoji()
+        if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
       })
     }
-    else {
-      if (grec.pos() >= grec.len()) {
-        axutil.popup('Game replay complete.')
-        selfplay('off')
-        return
-      }
+    else { // Cached winprob
+      console.log('using cached prob')
       selfplay.ready = true
-      goto_move(grec.pos() + 1)
-      if (!settings('show_prob')) { clear_status() }
-      if (settings('show_emoji')) { update_emoji() }
+      goto_move(grec.pos())
+      update_emoji()
+      if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
     }
-    return
+    if (grec.pos() >= grec.len()) {
+      axutil.popup('Game replay complete.')
+      selfplay('off')
+    }
   } // replay_loaded_game()
 
   // Load Sgf button
