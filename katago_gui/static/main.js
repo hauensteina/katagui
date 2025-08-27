@@ -818,15 +818,18 @@ function main(JGO, axutil, p_options) {
   selfplay.ready = true
   selfplay.timer = null
 
+  //--------------------------------------------
+  function start_selfplay_timer(interval) {
+    if (selfplay('ison')) {
+      selfplay.timer = setTimeout(() => { cb_selfplay(interval) }, interval)
+    }
+  } // reset_selfplay_timer()
+
   // Timer callback for selfplay
   //---------------------------------
   function cb_selfplay(interval) {
     console.log(interval)
     clearTimeout(selfplay.timer)
-    //clear_status()
-    if (selfplay('ison')) {
-      selfplay.timer = setTimeout(() => { cb_selfplay(interval) }, interval)
-    }
     if (document.visibilityState != 'visible') return
     //set_emoji()
     if (!selfplay.ready) return
@@ -834,7 +837,7 @@ function main(JGO, axutil, p_options) {
 
     // Replaying existing game
     if (set_load_sgf_handler.loaded_game && var_button_state() == 'off') {
-      replay_loaded_game(); return;
+      replay_loaded_game(interval); return;
     }
 
     // If game ended, start from beginning
@@ -863,12 +866,13 @@ function main(JGO, axutil, p_options) {
         replay_moves(grec.pos())
         const playing = true
         get_prob_callback(data.diagnostics.winprob, data.diagnostics.score, settings('show_emoji'), playing)
+        start_selfplay_timer(interval)
       }) // hit_endpoint()
   } // cb_selfplay()
 
   // cb_selfplay() calls this if we're self-playing a loaded sgf
   //---------------------------------------------------------------
-  function replay_loaded_game() {
+  function replay_loaded_game(interval) {
     if (!selfplay('ison')) return;
     grec.step()
     if (grec.curmove() && grec.curmove().p === '0.00') { // No cached winprob, get it from katago
@@ -879,6 +883,7 @@ function main(JGO, axutil, p_options) {
         goto_move(grec.pos())
         update_emoji()
         if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+        start_selfplay_timer(interval)
       })
     }
     else { // Cached winprob
@@ -887,6 +892,7 @@ function main(JGO, axutil, p_options) {
       goto_move(grec.pos())
       update_emoji()
       if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+      start_selfplay_timer(interval)
     }
     if (grec.pos() >= grec.len()) {
       axutil.popup('Game replay complete.')
