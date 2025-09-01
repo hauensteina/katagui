@@ -882,7 +882,7 @@ function main(JGO, axutil, p_options) {
         cb_selfplay.saved_data = data
         grec.curmove().data = data
         if (!selfplay('ison')) return
-        if (settings('show_best_moves')) { show_best_moves(cb_selfplay.saved_data) }
+        if (settings('show_best_moves') && interval > 1000) { show_best_moves(cb_selfplay.saved_data) }
         start_selfplay_timer(interval)
       }) // hit_endpoint()
   } // cb_selfplay()
