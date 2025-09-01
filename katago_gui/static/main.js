@@ -784,6 +784,7 @@ function main(JGO, axutil, p_options) {
   //--------------------------
   function selfplay(action) {
     if (action == 'on') {
+      cb_selfplay.saved_data = null
       $('#btn_tgl_selfplay').css('background-color', 'rgb(40, 167, 69)')
       fast_or_strong('fast')
       selfplay.ready = true
@@ -840,35 +841,52 @@ function main(JGO, axutil, p_options) {
       replay_loaded_game(interval); return;
     }
 
-    // If game ended, start from beginning
+    // Game over
     if (grec.curmove() && grec.curmove().mv == 'pass') {
-      selfplay.ready = true
-      if (!selfplay('ison')) return;
-      grec.update(0, 0)
-      goto_move(0)
-      clear_status()
+      axutil.popup('Selfplay game over.')
+      selfplay('off')
       return
-    } // if game ended
+    }
 
     // Continue game
     var ep = fast_or_strong('fast').ep
     if ($('#username').html().trim() == 'acm') {
       ep = fast_or_strong('marfa_strong').ep
     }
+    // We show the previous move but also need the next one to mark best continuation moves A,B,C,...
+    if (!cb_selfplay.saved_data) {
+      console.log('cb_selfplay(): init saved data')
+      axutil.hit_endpoint(ep + BOT,
+        { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
+        (data) => {
+          cb_selfplay.saved_data = data
+          selfplay.ready = true
+          cb_selfplay(interval)
+        }
+      )
+      return
+    } // if (!cb_selfplay.saved_data) 
+
+    // Show the saved move
+    maybe_start_var()
+    grec.push({ 'mv': cb_selfplay.saved_data.bot_move, 'p': 0, 'score': 0, 'agent': 'kata20' })
+    replay_moves(grec.pos())
+    const playing = true
+    get_prob_callback(cb_selfplay.saved_data.diagnostics.winprob, cb_selfplay.saved_data.diagnostics.score, settings('show_emoji'), playing)
+
+    // Get next move and save it. Show best ten.
     axutil.hit_endpoint(ep + BOT,
       { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
       (data) => {
         selfplay.ready = true
-        if (!selfplay('ison')) return;
-        var botCoord = axutil.string2jcoord(data.bot_move)
-        maybe_start_var()
-        grec.push({ 'mv': data.bot_move, 'p': 0, 'score': 0, 'agent': 'kata20' })
-        replay_moves(grec.pos())
-        const playing = true
-        get_prob_callback(data.diagnostics.winprob, data.diagnostics.score, settings('show_emoji'), playing)
+        cb_selfplay.saved_data = data
+        grec.curmove().data = data
+        if (!selfplay('ison')) return
+        if (settings('show_best_moves')) { show_best_moves(cb_selfplay.saved_data) }
         start_selfplay_timer(interval)
       }) // hit_endpoint()
   } // cb_selfplay()
+  cb_selfplay.saved_data = null
 
   // cb_selfplay() calls this if we're self-playing a loaded sgf
   //---------------------------------------------------------------
