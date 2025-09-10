@@ -1,0 +1,232 @@
+<!-- Settings overlay -->
+
+
+<style>
+    #div_settings {
+        text-align: center;
+        background: rgba(var(--rb), 0.9);
+        border: 1px solid rgba(255, 0, 0, 1.0);
+        border-radius: 12px;
+        padding: 24px 28px;
+        max-width: 420px;
+        margin: 2rem auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
+    /*----------------------------------------------------------------------*/
+
+    /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+        /* width: 60px;
+        height: 34px; */
+        width: 40px;
+        height: 20px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #aaaaaa;
+        -webkit-transition: .1s;
+        transition: .1s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        /* height: 26px;
+        width: 26px; */
+        height: 19px;
+        width: 19px;
+        left: 2px;
+        bottom: 1px;
+        background-color: white;
+        -webkit-transition: .1s;
+        transition: .1s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        /* -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px); */
+        -webkit-transform: translateX(18px);
+        -ms-transform: translateX(18px);
+        transform: translateX(18px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 17px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+
+
+<!-- HTML -->
+<div id="div_settings" class="ahx-overlay" style="text-align:center; display:none; color:white;">
+    <table style='margin-left:50px'>
+        <tr style='height:50px'>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style='height:50px'>
+            <td colspan='2' align='left'>
+                {{tr('Self Play Speed:')}}
+            </td>
+        </tr>
+        <tr style='height:50px'>
+            <td colspan='2'>
+                <table>
+                    <tr>
+                        <td> <label id='btn_tgl_selfplay_fast' class='btn btn-outline-dark'
+                                style='font-size:12pt;'>{{tr('Fast')}}</label> </td>
+                        <td style='padding-left:10px'>
+                            <label id='btn_tgl_selfplay_normal' class='btn btn-outline-dark'
+                                style='font-size:12pt;'>{{tr('Medium')}}</label>
+                        </td>
+                        <td style='padding-left:10px'>
+                            <label id='btn_tgl_selfplay_slow' class='btn btn-outline-dark'
+                                style='font-size:12pt;'>{{tr('Slow')}}</label>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr style='height:25px'>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style='height:50px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_emoji' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:12pt'>
+                &nbsp; {{tr('Show emoji during play')}}
+            </td>
+        </tr>
+        <tr style='height:50px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_prob' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:12pt'>
+                &nbsp; {{tr('Show probability during play')}}
+            </td>
+        </tr>
+        <tr style='height:50px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_best_moves' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:12pt'>
+                &nbsp; {{tr('Show best moves')}}
+            </td>
+        </tr>
+        <tr style='height:50px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_best_ten' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:12pt'>
+                &nbsp; {{tr('Show best 10 (A-J)')}}
+            </td>
+        </tr>
+
+        <!-- <tr style='height:50px'>
+        <td>
+          <label class='switch'>
+            <input id='opt_play_a' type='checkbox'>
+            <span class='slider round'></span>
+          </label>
+        </td>
+        <td style='text-align:left;font-size:12pt'>
+          &nbsp; {{tr('KataGo always plays at A')}}
+        </td>
+      </tr> -->
+
+        <tr style='height:50px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_disable_ai' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:12pt'>
+                &nbsp; {{tr('Disable AI')}}
+            </td>
+        </tr>
+
+        <tr style='height:50px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_diagrams' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:12pt'>
+                &nbsp; {{tr('Enable Diagrams')}}
+            </td>
+        </tr>
+        <tr style='height:100px'>
+            <td colspan='2' align='center'>
+                <label id='btn_settings_done' class='btn btn-outline-dark'
+                    style='font-size:15pt;'>{{tr('Save')}}</label>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script defer>
+    'use strict';
+    /*
+        //-------------------------------
+        function ahxPopup(message) {
+            E('#div_popup_msg').innerHTML = message;
+            E('#div_popup').style.display = 'block';
+        } // ahxPopup()
+    
+        // Wire up buttons
+        (function setPopupCallbacks() {
+            const btnOk = E('#popup_ok');
+    
+            // OK
+            btnOk.addEventListener('click', () => {
+                E('#div_popup').style.display = 'none';
+            });
+        })();
+    */
+</script>

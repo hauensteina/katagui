@@ -746,6 +746,10 @@ function main(JGO, axutil, p_options) {
     $('#btn_first').click(() => { selfplay('off'); goto_move(0); clear_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
 
+    $('#lnk_settings').click(() => { 
+      $('#div_settings').css({ 'display':'block' })
+    })
+
     // Prevent zoom on double tap
     $('*').on('touchend', (e) => {
       // Exceptions

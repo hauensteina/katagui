@@ -255,7 +255,7 @@
               KataGo 20 blocks<br>2020-05-30
             </div>
             <br>
-            <a id='settings' class='glink' href="{{ url_for('settings') }}"
+            <a id='lnk_settings' class='glink'
               style='font-size:12pt;text-align:right;'>{{tr('Settings')}}</a>
           </div>
         </div>
@@ -419,6 +419,8 @@
     </div>
   </div>
 </div>
+
+{% include 'settings_overlay.tmpl' %}
 
 <!-- General purpose modal popup (alert box) -->
 <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
