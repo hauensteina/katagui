@@ -94,6 +94,7 @@
 
 {% block content %}
 <br>
+  {% include 'settings_overlay.tmpl' %}
 <table class='center'>
   <tr>
     <td width='500px'> <!--left-->
@@ -153,46 +154,44 @@
         </div>
 
         <!-- Diagram editing buttons -->
-        <div id='diagram_buttons' class='row justify-content-center'> 
+        <div id='diagram_buttons' class='row justify-content-center'>
           <!-- Add stones -->
           <label id='btn_tgl_add_black' class='btn btn-outline-dark touch-allow'
-          style='font-size:8pt;white-space:nowrap'>⚫</label>&nbsp;
+            style='font-size:8pt;white-space:nowrap'>⚫</label>&nbsp;
 
           <label id='btn_tgl_add_white' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>⚪</label>&nbsp;&nbsp;&nbsp;
+            style='font-size:8pt;white-space:nowrap'>⚪</label>&nbsp;&nbsp;&nbsp;
 
           <!-- Letters and numbers -->
           <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
-          style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
+            style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
 
           <label id='btn_tgl_letter' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>a</label>&nbsp;&nbsp;&nbsp;
+            style='font-size:8pt;white-space:nowrap'>a</label>&nbsp;&nbsp;&nbsp;
 
           <!-- Markers -->
-          <label id='btn_tgl_x' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>X</label>&nbsp;
+          <label id='btn_tgl_x' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>X</label>&nbsp;
 
           <label id='btn_tgl_circle' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>O</label>&nbsp;
+            style='font-size:8pt;white-space:nowrap'>O</label>&nbsp;
 
           <label id='btn_tgl_triangle' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>△</label>&nbsp;&nbsp;&nbsp;
-          
+            style='font-size:8pt;white-space:nowrap'>△</label>&nbsp;&nbsp;&nbsp;
+
           <!-- Clear markers -->
           <label id='btn_clear' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>&nbsp;</label>&nbsp;&nbsp;&nbsp;
-          
+            style='font-size:8pt;white-space:nowrap'>&nbsp;</label>&nbsp;&nbsp;&nbsp;
+
           <!-- Rotate -->
-          <label id='btn_tgl_rot' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>R</label>&nbsp;
+          <label id='btn_tgl_rot' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>R</label>&nbsp;
 
           <!-- Swap colors -->
           <label id='btn_tgl_swap_colors' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>C</label>&nbsp;&nbsp;&nbsp;
+            style='font-size:8pt;white-space:nowrap'>C</label>&nbsp;&nbsp;&nbsp;
 
           <!-- Export diagram -->
           <label id='btn_export_diagram' class='btn btn-outline-dark'
-          style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
+            style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
         </div>
 
         <div class='row'>
@@ -207,7 +206,8 @@
                     <td class='nomarg' align='center' style='height:15px'></td>
                   </tr>
                   <tr>
-                    <td id='btn_movenum' class='nomarg' align='center' style='font-size:9pt;height:60px;user-select:none;' width='30%'>&nbsp;
+                    <td id='btn_movenum' class='nomarg' align='center'
+                      style='font-size:9pt;height:60px;user-select:none;' width='30%'>&nbsp;
                     </td>
                   </tr>
                 </table>
@@ -255,8 +255,7 @@
               KataGo 20 blocks<br>2020-05-30
             </div>
             <br>
-            <a id='lnk_settings' class='glink'
-              style='font-size:12pt;text-align:right;'>{{tr('Settings')}}</a>
+            <a id='lnk_settings' class='glink' href='#' style='font-size:12pt;text-align:right;'>{{tr('Settings')}}</a>
           </div>
         </div>
         <!-- Space on top of buttons -->
@@ -328,18 +327,19 @@
           </form>
         </div>
         <!-- <div class='row justify-content-center'>
-               </div> -->
+        </div> -->
         <div class='row' style='font-size:5pt'>
           &nbsp;
         </div>
         <div class='row justify-content-center'>
           <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
             Line')}}</label>
-        </div>
-      </div> <!--right container-->
-    </td> <!--right-->
-  </tr>
-</table>
+          </div>
+        </div> <!--right container-->
+      </td> <!--right-->
+    </tr>
+  </table>
+  
 
 <!-- Modal dialog to pick komi and handicap -->
 <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel'
@@ -420,7 +420,6 @@
   </div>
 </div>
 
-{% include 'settings_overlay.tmpl' %}
 
 <!-- General purpose modal popup (alert box) -->
 <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
