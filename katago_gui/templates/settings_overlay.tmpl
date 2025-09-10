@@ -4,7 +4,7 @@
     #div_settings {
         text-align: center;
         background-color: #e0e0e0;
-        color:#1a1a1a;
+        color: #1a1a1a;
         border: 2px solid green;
         border-radius: 12px;
         padding: 24px 28px;
@@ -90,7 +90,7 @@
 
 <!-- HTML -->
 <div id="div_settings" class="ahx-overlay" style="display:none;">
-    <table style='margin-left:50px'>
+    <table style='margin:auto auto;'>
         <tr style='height:50px'>
             <td>&nbsp;</td>
         </tr>
@@ -210,51 +210,3 @@
 </div>
 
 
-<script>
-    'use strict'
-    const modSettings = (function () {
-        // Load settings
-        var settings = JSON.parse(localStorage.getItem('settings'))
-        if ('show_emoji' in settings) { $('#opt_show_emoji').prop('checked', settings.show_emoji) }
-        if ('show_prob' in settings) { $('#opt_show_prob').prop('checked', settings.show_prob) }
-        if ('show_best_moves' in settings) { $('#opt_show_best_moves').prop('checked', settings.show_best_moves) }
-        if ('diagrams' in settings) { $('#opt_diagrams').prop('checked', settings.diagrams) }
-        if ('disable_ai' in settings) { $('#opt_disable_ai').prop('checked', settings.disable_ai) }
-        if ('show_best_ten' in settings) { $('#opt_show_best_ten').prop('checked', settings.show_best_ten) }
-        $('[id^=btn_tgl_selfplay]').removeClass('active')
-        var sp_id = '#btn_tgl_selfplay_normal'
-        if ('selfplay_speed' in settings) { sp_id = '#btn_tgl_selfplay_' + settings.selfplay_speed }
-        $(sp_id).addClass('active')
-
-        // Self Play Speed
-        $('#btn_tgl_selfplay_slow').click(() => {
-            $('[id^=btn_tgl_selfplay]').removeClass('active')
-            $('#btn_tgl_selfplay_slow').addClass('active')
-            settings.selfplay_speed = 'slow'
-        })
-        $('#btn_tgl_selfplay_normal').click(() => {
-            $('[id^=btn_tgl_selfplay]').removeClass('active')
-            $('#btn_tgl_selfplay_normal').addClass('active')
-            settings.selfplay_speed = 'normal'
-        })
-        $('#btn_tgl_selfplay_fast').click(() => {
-            $('[id^=btn_tgl_selfplay]').removeClass('active')
-            $('#btn_tgl_selfplay_fast').addClass('active')
-            settings.selfplay_speed = 'fast'
-        })
-
-        // Save
-        $('#btn_settings_done').click(() => {
-            settings.show_emoji = $('#opt_show_emoji').prop('checked')
-            settings.show_prob = $('#opt_show_prob').prop('checked')
-            settings.show_best_moves = $('#opt_show_best_moves').prop('checked')
-            settings.show_best_ten = $('#opt_show_best_ten').prop('checked')
-            settings.disable_ai = $('#opt_disable_ai').prop('checked')
-            settings.diagrams = $('#opt_diagrams').prop('checked')
-            localStorage.setItem('settings', JSON.stringify(settings))
-            //window.location.href = '/index'
-            $('#div_settings').css({ 'display':'none' })
-        }) // click
-    }) ()
-
-</script>

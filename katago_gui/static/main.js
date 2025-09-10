@@ -18,6 +18,8 @@ const HANDISTONES = ['', ''
   , ['D4', 'Q16', 'Q4', 'D16', 'D10', 'Q10', 'K4', 'K16', 'K10']
 ]
 
+
+
 //=======================================
 function main(JGO, axutil, p_options) {
   $ = axutil.$
@@ -313,6 +315,11 @@ function main(JGO, axutil, p_options) {
   } // show_best_moves()
   show_best_moves.data = {}
 
+  //------------------------------
+  function show_best_curmoves() {
+    show_best_moves(grec.curmove().data)
+  } // show_best_curmoves()
+
   // Make a string like 'P(B wins): 0.56  B+0.5'
   //----------------------------------------------
   function get_scorestr(p, score) {
@@ -390,7 +397,7 @@ function main(JGO, axutil, p_options) {
             }
             else if (grec.curmove() && grec.curmove().data) {
               if (settings('show_best_moves')) {
-                show_best_moves(grec.curmove().data)
+                show_best_curmoves()
               }
             }
           }
@@ -411,7 +418,7 @@ function main(JGO, axutil, p_options) {
             }
             else if (grec.curmove() && grec.curmove().data) {
               if (settings('show_best_moves')) {
-                show_best_moves(grec.curmove().data)
+                show_best_curmoves()
               }
             }
           }
@@ -746,8 +753,9 @@ function main(JGO, axutil, p_options) {
     $('#btn_first').click(() => { selfplay('off'); goto_move(0); clear_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
 
-    $('#lnk_settings').click(() => { 
-      $('#div_settings').css({ 'display':'block' })
+    $('#lnk_settings').click(() => {
+      appfuncs.initSettingSliders()
+      $('#div_settings').css({ 'display': 'block' })
     })
 
     // Prevent zoom on double tap
@@ -904,7 +912,7 @@ function main(JGO, axutil, p_options) {
         grec.curmove().data = data
         goto_move(grec.pos())
         update_emoji()
-        if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+        if (settings('show_best_moves')) { show_best_curmoves() }
         start_selfplay_timer(interval)
       })
     }
@@ -913,7 +921,7 @@ function main(JGO, axutil, p_options) {
       selfplay.ready = true
       goto_move(grec.pos())
       update_emoji()
-      if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+      if (settings('show_best_moves')) { show_best_curmoves() }
       start_selfplay_timer(interval)
     }
     if (grec.pos() >= grec.len()) {
@@ -976,7 +984,7 @@ function main(JGO, axutil, p_options) {
     add_mark('redraw')
 
     if (grec.curmove() && grec.curmove().data) {
-      if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+      if (settings('show_best_moves')) { show_best_curmoves() }
     }
   } // btn_prev()
 
@@ -1000,7 +1008,7 @@ function main(JGO, axutil, p_options) {
     if (settings('disable_ai')) { return }
 
     if (grec.curmove() && grec.curmove().data) {
-      if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+      if (settings('show_best_moves')) { show_best_curmoves() }
     }
     else {
       btn_next.waiting = true
@@ -1417,7 +1425,7 @@ function main(JGO, axutil, p_options) {
     }
   } // show_prob()
 
-  const HAPPY_POINT_LOSS_MAX = 2.0
+  
   //--------------------------------
   function update_emoji() {
     if (settings('disable_ai')) { clear_emoji(); return }
@@ -1429,6 +1437,7 @@ function main(JGO, axutil, p_options) {
     }
     set_emoji(delta_p)
   } // update_emoji()
+   
 
   //------------------------------
   function clear_emoji() {
@@ -1667,8 +1676,7 @@ function main(JGO, axutil, p_options) {
       $('#diagram_buttons').hide()
     }
 
-
-    disable_ai_buttons()
+    appfuncs.toggle_ai_buttons()
 
     set_btn_handlers()
     set_dropdown_handlers()
@@ -1697,30 +1705,13 @@ function main(JGO, axutil, p_options) {
     }
   } // onRefresh()
 
-  //---------------------------------------
-  function disable_ai_buttons() {
-    // Disable/Enable some buttons if AI is disabled or not
-    var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
-    if (settings('disable_ai')) {
-      // disable opt_auto checkbox
-      $('#opt_auto').prop('disabled', true)
-      // disable ai buttons
-      ai_buttons.forEach(btn => axutil.disable_button(btn))
-      clear_emoji()
-    } else {
-      // enable opt_auto checkbox
-      $('#opt_auto').prop('disabled', false)
-      // enable ai buttons
-      ai_buttons.forEach(btn => axutil.enable_button(btn))
-    }
-  } // disable_ai_buttons()
 
   //------------------------
   function goto_next_bad_move(p_thresh) {
     grec.seek_next_bad_move(p_thresh)
     goto_move(grec.pos())
     update_emoji()
-    if (settings('show_best_moves')) { show_best_moves(grec.curmove().data) }
+    if (settings('show_best_moves')) { show_best_curmoves() }
   } // goto_next_bad_move()
 
   // Key actions
@@ -1763,7 +1754,7 @@ function main(JGO, axutil, p_options) {
     else if (e.ctrlKey && e.key == 'b') { // b for best moves
       settings('show_best_moves', !settings('show_best_moves'))
       if (settings('show_best_moves')) {
-        show_best_moves(grec.curmove().data)
+        show_best_curmoves()
       } else {
         settings('show_best_ten', false)
         $('#status').html('')
@@ -1777,11 +1768,11 @@ function main(JGO, axutil, p_options) {
       } else {
         $('#status').html('')
       }
-      show_best_moves(grec.curmove().data)
+      show_best_curmoves()
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
       settings('disable_ai', !settings('disable_ai'))
-      disable_ai_buttons()
+      appfuncs.toggle_ai_buttons()
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
       settings('diagrams', !settings('diagrams'))
@@ -1794,4 +1785,10 @@ function main(JGO, axutil, p_options) {
 
   } // check_key()
 
+  // Expose some nested functions
+  main.update_emoji = update_emoji
+  main.show_prob = show_prob
+  main.show_best_curmoves = show_best_curmoves
+
 } // main()
+

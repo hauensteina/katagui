@@ -1,167 +1,177 @@
 <!DOCTYPE HTML>
 
 {% block pre %}
-  <script type='text/javascript'>
-   /* Filename: katago-gui/layout.tmpl
-    * Author: AHN
-    * Creation Date: Jul, 2020
-    */
-  </script>
+<script type='text/javascript'>
+  /* Filename: katago-gui/layout.tmpl
+   * Author: AHN
+   * Creation Date: Jul, 2020
+   */
+</script>
 {% endblock pre %}
 
 <html lang='en'>
-  <head>
-    <!-- Required meta tags -->
-    <meta charset='utf-8'>
-    <meta name='description' content='Study With KataGo'>
-    <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence'>
-    <meta name='author' content='Andreas Hauenstein'>
 
-    <title>Study With KataGo</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<head>
+  <!-- Required meta tags -->
+  <meta charset='utf-8'>
+  <meta name='description' content='Study With KataGo'>
+  <meta name='keywords' content='Go,Igo,Goe,Baduk,Weiqi,AI,KI,Deep Learning,Neural Networks,Artificial Intelligence'>
+  <meta name='author' content='Andreas Hauenstein'>
 
-	  <!-- Global site tag (gtag.js) - Google Analytics -->
-	  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
-	  <script>
-	   window.dataLayer = window.dataLayer || [];
-	   function gtag(){dataLayer.push(arguments);}
-	   gtag('js', new Date());
+  <title>Study With KataGo</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
-	   gtag('config', 'UA-139708851-3');
-	  </script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-    <!-- Standard frameworks -->
-    <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
-    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
-    <script src='https://d3js.org/d3.v5.min.js'></script>
+    gtag('config', 'UA-139708851-3');
+  </script>
 
-    <!-- Our own stuff -->
-    <script type='text/javascript' src='static/ahaux_utils.js?rand={{ rrand() }}'></script>
-    <script type='text/javascript'> const axutil = new AhauxUtils( $, d3) </script>
-    <script type='text/javascript' src='static/jgoboard-latest.js'></script>
+  <!-- Standard frameworks -->
+  <script src='https://code.jquery.com/jquery-3.4.0.min.js'> </script>
+  <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+  <script src='https://d3js.org/d3.v5.min.js'></script>
 
-    <!-- Main entry point -->
-    <script type='text/javascript' src='static/main.js?rand={{ rrand() }}'></script>
+  <!-- Our own stuff -->
+  <script type='text/javascript' src='static/ahaux_utils.js?rand={{ rrand() }}'></script>
+  <script type='text/javascript'> const axutil = new AhauxUtils($, d3) </script>
 
-    <!-- Bootstrap CSS -->
-    <link rel='stylesheet'
-          href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
-          integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T'
-          crossorigin='anonymous'>
-    <!-- Our CSS -->
-    <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="main.css") }}'>
-    {% block css %}
-    {% endblock css %}
-    <script>
-     /* Tell the server whether we are on a phone */
-     {% if not is_mobile() %}
-     if (axutil.isMobile()) { document.location.href = `/set_mobile?mobile_flag=true&url=${document.location.href}` }
-     {% else %}
-     if (!axutil.isMobile()) { document.location.href = `/set_mobile?mobile_flag=false&url=${document.location.href}` }
-     {% endif %}
-    </script>
+  <script type='text/javascript' src='static/appfuncs.js?rand={{ rrand() }}'></script>
+  <script type='text/javascript'> const appfuncs = new AppFuncs() </script>
 
-  </head>
+  <!-- The Go board -->
+  <script type='text/javascript' src='static/jgoboard-latest.js'></script>
 
-  <body style='left:0; margin:0; padding:0;user-select:none;'>
-    {% if not home %}
-      <table class='center' style='width:100%'>
-        <!-- Page Header -->
-        <tr style='background-color:green'>
-          <td width='20px'>&nbsp;</td>
-          <td  align='left'>
-            <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
-              KataGui <span id='version' style='font-size:9pt'>0.0.0</span></a>
-          </td>
-        </tr>
-        <tr><td colspan='2'>
+  <!-- Main entry point -->
+  <script type='text/javascript' src='static/main.js?rand={{ rrand() }}'></script>
+
+  <!-- Bootstrap CSS -->
+  <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
+    integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T' crossorigin='anonymous'>
+  <!-- Our CSS -->
+  <link rel='stylesheet' type='text/css' href='{{ url_for("static", filename="main.css") }}'>
+  {% block css %}
+  {% endblock css %}
+  <script>
+    /* Tell the server whether we are on a phone */
+    {% if not is_mobile() %}
+    if (axutil.isMobile()) { document.location.href = `/set_mobile?mobile_flag=true&url=${document.location.href}` }
     {% else %}
-          <table class='center' style='width:100%'> 
-              <!-- Page Header -->
-            <tr style='background-color:green'>
-              <td width='20px'>&nbsp</td>
-              <td id='homelogo' align='left' style='background-color:green'>
-                <a class='hlink font-l' href="{{ url_for('index') }}">
-                  KataGui <span id='version' class='font-s'>0.0.0</span></a>
-              </td>
-              <td align='right' style='background-color:green;'>
-                {% if logged_in() %}
-                  <a class='hlink font-s' href="{{ url_for('account') }}">{{tr('Account')}}</a>&nbsp;&nbsp;&nbsp;
-                  <a class='hlink font-s' href="{{ url_for('logout') }}">{{tr('Logout')}}</a>&nbsp;&nbsp;&nbsp;
-                  <script> axutil.settings( 'logged_in',true) </script>
-                {% else %}
-                  <a class='hlink font-s' href="{{ url_for('login') }}">{{tr('Login')}}</a>&nbsp;&nbsp;&nbsp;
-                  <a class='hlink font-s' href="{{ url_for('register') }}">{{tr('Register')}}</a>&nbsp;&nbsp;&nbsp;
-                  <script> axutil.settings( 'logged_in',false) </script>
-                {% endif %}
-                <a class='hlink font-s' href='{{ url_for("find_game") }}'>{{tr('Search')}}</a>&nbsp;&nbsp;&nbsp;
-                <a class='hlink font-s' href='{{ url_for("about") }}'>{{tr('About')}}</a>
-              </td>
-              <td> &nbsp;&nbsp; </td> 
-            </tr>
-            <tr><td colspan='3' style='height:5px;'></td></tr>
-            <tr>
-              <td colspan='3'>
-                <div style='display:grid; grid-template-columns: 2fr 1fr;margin-top:5px;'>
-                  <div style='text-align:left;padding-left:20px;'>
-                    <a class='hlink' href="{{ url_for('korean') }}">
-                      <img class='flag' border='0' src='static/kor.png'>
-                    </a>
-                    <a style='padding-left:20px' class='hlink' href="{{ url_for('chinese') }}">
-                      <img class='flag' border='0'  src='static/china.png'>
-                    </a>
-                    <a style='padding-left:20px' class='hlink' href="{{ url_for('japanese') }}">
-                      <img class='flag' border='0' src='static/japan.png'>
-                    </a>
-                    <a style='padding-left:20px' class='hlink' href="{{ url_for('english') }}">
-                      <img class='flag' border='0'  src='static/eng.png'>
-                    </a>
-                  </div>
-                  {% if logged_in() %}
-                    <div id='username' class='font-s touch-allow' 
-                         style='margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:0'>
-                      {{ current_user.data["username"] }} 
-                    </div>
-                  {% else %}
-                    <div id='username' class='font-s touch-allow' 
-                         style='margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:0'>
-                      {{tr('Guest')}} 
-                    </div>
-                  {% endif %}
-                </div>
-              </td>
-              <td></td>
-            </tr>
-            <tr><td colspan='4'>
+    if (!axutil.isMobile()) { document.location.href = `/set_mobile?mobile_flag=false&url=${document.location.href}` }
     {% endif %}
-    {% block content %}
-    {% endblock content %}
-            </td></tr>
-          </table>
-          <script>
-           $('#version').html(VERSION)
-           var lfont = '20pt'
-           var mfont = '12pt'
-           var sfont = '9pt'
-           if (axutil.isMobile()) {
-             lfont = '35pt'
-             mfont = '30pt'
-             sfont = '20pt'
-             $('#homelogo').width('300px')
-             //$('.flag').height('60px')
-             $('.flag').width('6vw')
-           } else {
-             $('.flag').width('25px')
-           }
-           $('.font-l' ).each( function( index ) { this.style.fontSize = lfont } )
-           $('.font-m' ).each( function( index ) { this.style.fontSize = mfont } )
-           $('.font-s' ).each( function( index ) { this.style.fontSize = sfont } )
-          </script>
+  </script>
 
-          <!-- Any other js we want to add -->
-          {% block js %}
-          {% endblock js %}
+</head>
 
-  </body>
+<body style='left:0; margin:0; padding:0;user-select:none;'>
+  {% if not home %}
+  <table class='center' style='width:100%'>
+    <!-- Page Header -->
+    <tr style='background-color:green'>
+      <td width='20px'>&nbsp;</td>
+      <td align='left'>
+        <a class='hlink' style='font-size:20pt' href="{{ url_for('index') }}">
+          KataGui <span id='version' style='font-size:9pt'>0.0.0</span></a>
+      </td>
+    </tr>
+    <tr>
+      <td colspan='2'>
+        {% else %}
+        <table class='center' style='width:100%'>
+          <!-- Page Header -->
+          <tr style='background-color:green'>
+            <td width='20px'>&nbsp</td>
+            <td id='homelogo' align='left' style='background-color:green'>
+              <a class='hlink font-l' href="{{ url_for('index') }}">
+                KataGui <span id='version' class='font-s'>0.0.0</span></a>
+            </td>
+            <td align='right' style='background-color:green;'>
+              {% if logged_in() %}
+              <a class='hlink font-s' href="{{ url_for('account') }}">{{tr('Account')}}</a>&nbsp;&nbsp;&nbsp;
+              <a class='hlink font-s' href="{{ url_for('logout') }}">{{tr('Logout')}}</a>&nbsp;&nbsp;&nbsp;
+              <script> axutil.settings('logged_in', true) </script>
+              {% else %}
+              <a class='hlink font-s' href="{{ url_for('login') }}">{{tr('Login')}}</a>&nbsp;&nbsp;&nbsp;
+              <a class='hlink font-s' href="{{ url_for('register') }}">{{tr('Register')}}</a>&nbsp;&nbsp;&nbsp;
+              <script> axutil.settings('logged_in', false) </script>
+              {% endif %}
+              <a class='hlink font-s' href='{{ url_for("find_game") }}'>{{tr('Search')}}</a>&nbsp;&nbsp;&nbsp;
+              <a class='hlink font-s' href='{{ url_for("about") }}'>{{tr('About')}}</a>
+            </td>
+            <td> &nbsp;&nbsp; </td>
+          </tr>
+          <tr>
+            <td colspan='3' style='height:5px;'></td>
+          </tr>
+          <tr>
+            <td colspan='3'>
+              <div style='display:grid; grid-template-columns: 2fr 1fr;margin-top:5px;'>
+                <div style='text-align:left;padding-left:20px;'>
+                  <a class='hlink' href="{{ url_for('korean') }}">
+                    <img class='flag' border='0' src='static/kor.png'>
+                  </a>
+                  <a style='padding-left:20px' class='hlink' href="{{ url_for('chinese') }}">
+                    <img class='flag' border='0' src='static/china.png'>
+                  </a>
+                  <a style='padding-left:20px' class='hlink' href="{{ url_for('japanese') }}">
+                    <img class='flag' border='0' src='static/japan.png'>
+                  </a>
+                  <a style='padding-left:20px' class='hlink' href="{{ url_for('english') }}">
+                    <img class='flag' border='0' src='static/eng.png'>
+                  </a>
+                </div>
+                {% if logged_in() %}
+                <div id='username' class='font-s touch-allow'
+                  style='margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:0'>
+                  {{ current_user.data["username"] }}
+                </div>
+                {% else %}
+                <div id='username' class='font-s touch-allow'
+                  style='margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:0'>
+                  {{tr('Guest')}}
+                </div>
+                {% endif %}
+              </div>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan='4'>
+              {% endif %}
+              {% block content %}
+              {% endblock content %}
+            </td>
+          </tr>
+        </table>
+        <script>
+          $('#version').html(VERSION)
+          var lfont = '20pt'
+          var mfont = '12pt'
+          var sfont = '9pt'
+          if (axutil.isMobile()) {
+            lfont = '35pt'
+            mfont = '30pt'
+            sfont = '20pt'
+            $('#homelogo').width('300px')
+            //$('.flag').height('60px')
+            $('.flag').width('6vw')
+          } else {
+            $('.flag').width('25px')
+          }
+          $('.font-l').each(function (index) { this.style.fontSize = lfont })
+          $('.font-m').each(function (index) { this.style.fontSize = mfont })
+          $('.font-s').each(function (index) { this.style.fontSize = sfont })
+        </script>
+
+        <!-- Any other js we want to add -->
+        {% block js %}
+        {% endblock js %}
+
+</body>
+
 </html>
