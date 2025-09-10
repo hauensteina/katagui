@@ -1231,6 +1231,11 @@ function main(JGO, axutil, p_options) {
     show_movenum()
   } // replay_moves()
 
+  //--------------------------------
+  function replay_all_moves() {
+    replay_moves(grec.pos())
+  } // replay_all_moves()
+
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move(n) {
@@ -1756,9 +1761,11 @@ function main(JGO, axutil, p_options) {
       if (settings('show_best_moves')) {
         show_best_curmoves()
       } else {
-        settings('show_best_ten', false)
-        $('#status').html('')
-        $('#bestscore').html('')
+        //settings('show_best_ten', false)
+        //show_best_curmoves()
+        replay_all_moves()
+        //$('#status').html('')
+        //$('#bestscore').html('')
       }
     } // best moves
     else if (e.ctrlKey && e.key == 't') { // t for ten best moves
@@ -1789,6 +1796,7 @@ function main(JGO, axutil, p_options) {
   main.update_emoji = update_emoji
   main.show_prob = show_prob
   main.show_best_curmoves = show_best_curmoves
+  main.replay_all_moves = replay_all_moves 
 
 } // main()
 

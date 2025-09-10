@@ -74,10 +74,16 @@ class AppFuncs {
             } else {
                 $('#diagram_buttons').hide()
             }
+
+            if (axutil.settings('show_best_moves')) {
+                main.show_best_curmoves()
+            } else {
+                main.replay_all_moves()
+            }
+
             appfuncs.toggle_ai_buttons()
             main.update_emoji()
             main.show_prob()
-            main.show_best_curmoves()
 
             //window.location.href = '/index'
             $('#div_settings').css({ 'display': 'none' })
