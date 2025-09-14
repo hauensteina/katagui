@@ -59,7 +59,7 @@ body {
     /*left: 0;*/
     left: 50%;             /* anchor at the horizontal center */
     transform: translateX(-50%);
-    top: 200px;
+    top: 100px;
     z-index: 20;
     padding-left: 10px;
     padding-right: 10px;
