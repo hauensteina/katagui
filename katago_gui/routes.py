@@ -209,10 +209,10 @@ def set_mobile():
     session['is_mobile'] = mobile_flag
     return redirect(url)
 
-@app.route('/settings')
-#-------------------------------
-def settings():
-    return render_template( 'settings.tmpl')
+# @app.route('/settings')
+# #-------------------------------
+# def settings():
+#     return render_template( 'settings.tmpl')
 
 @app.route('/verify_email/<token>', methods=['GET', 'POST'])
 #-------------------------------------------------------------
