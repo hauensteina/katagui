@@ -97,7 +97,8 @@
 {% endblock css %}
 
 {% block content %}
-
+<br>
+{% include 'settings_overlay_mobile.tmpl' %}
 <div style='display:grid; grid-template-columns: 1fr fit-content(100%) 1fr; user-select:none;'>
   <div></div>
   <div style='display:grid; grid-template-columns: 1fr;margin-top:50px;'>
@@ -116,9 +117,12 @@
             KataGo 20 blocks<br>2020-05-30
           </div>
           <div>
-            <a class='glink' href="{{ url_for('settings') }}"
-              style='font-size:20pt;text-align:right;'>{{tr('Settings')}}</a>
-          </div>
+            <a id='lnk_settings' class='glink' href='#' style='font-size:25pt;text-align:right;'>{{tr('Settings')}}</a>
+
+            <!-- <a class='glink' href="{{ url_for('settings') }}"
+              style='font-size:20pt;text-align:right;'>{{tr('Settings')}}</a> -->
+ 
+            </div>
           <br>
         </div>
         <div class='col-6' style='font-size:30pt;margin:auto'>

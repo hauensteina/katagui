@@ -59,10 +59,8 @@ body {
     /*left: 0;*/
     left: 50%;             /* anchor at the horizontal center */
     transform: translateX(-50%);
-    /*width:500px;*/
     top: 200px;
     z-index: 20;
-    /*width: 100%;*/
     padding-left: 10px;
     padding-right: 10px;
 }

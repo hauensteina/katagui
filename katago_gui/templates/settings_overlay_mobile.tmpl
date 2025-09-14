@@ -1,0 +1,236 @@
+<!-- Settings overlay -->
+
+<style>
+    #div_settings {
+        position: fixed;
+        user-select: auto;
+        left: 50%;             /* anchor at the horizontal center */
+        transform: translateX(-50%);
+        width: max-content;
+        top: 200px;
+        z-index: 20;
+
+        text-align: center;
+        background-color: #e0e0e0;
+        color: #1a1a1a;
+        border: 2px solid green;
+        border-radius: 12px;
+        padding: 24px 50px;
+        margin: 2rem auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Stupid bootstrap makes my button gray */
+    #btn_settings_done.btn.btn-outline-dark {
+    background-color: transparent !important;
+    background-image: none !important;     /* kill gradient */
+    }
+
+    /* kill the “stuck darker” look from focus/active/hover */
+    #btn_settings_done.btn.btn-outline-dark:focus,
+    #btn_settings_done.btn.btn-outline-dark:active,
+    #btn_settings_done.btn.btn-outline-dark.active,
+    #btn_settings_done.btn.btn-outline-dark:hover {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #212529 !important;              /* Bootstrap dark */
+    border-color: #212529 !important;
+    box-shadow: none !important;            /* remove glow */
+    outline: none !important;
+    }
+
+    /* iOS tap gray */
+    #btn_settings_done { -webkit-tap-highlight-color: transparent; }
+
+
+    /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
+    /*----------------------------------------------------------------------*/
+
+    /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+    /*    width: 60px;
+        height: 34px; */
+        width: 112px;
+        height: 64px; 
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #aaaaaa;
+    /*    -webkit-transition: .1s;
+        transition: .1s; */
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+/*        height: 30px;
+        width: 30px; */
+        height: 56px;
+        width: 56px; 
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+    /*    -webkit-transition: .1s;
+        transition: .1s; */
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+/*        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px); */
+        -webkit-transform: translateX(50px);
+        -ms-transform: translateX(50px);
+        transform: translateX(50px); 
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        /*border-radius: 17px; */
+        border-radius: 31px;
+    }
+
+/*    .slider.round:before {
+        border-radius: 50%;
+    }*/
+</style>
+
+
+<!-- HTML -->
+<div id="div_settings" style="display:none;">
+    <table style='margin:auto auto;'>
+        <tr style='height:50px'>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style='height:80px;font-size:25pt;'>
+            <td colspan='2' align='left'>
+                {{tr('Self Play Speed:')}}
+            </td>
+        </tr>
+        <tr style='height:50px'>
+            <td colspan='2'>
+                <table>
+                    <tr>
+                        <td> <label id='btn_tgl_selfplay_fast' class='btn btn-outline-dark'
+                                style='font-size:25pt;'>{{tr('Fast')}}</label> </td>
+                        <td style='padding-left:10px'>
+                            <label id='btn_tgl_selfplay_normal' class='btn btn-outline-dark'
+                                style='font-size:25pt;'>{{tr('Medium')}}</label>
+                        </td>
+                        <td style='padding-left:10px'>
+                            <label id='btn_tgl_selfplay_slow' class='btn btn-outline-dark'
+                                style='font-size:25pt;'>{{tr('Slow')}}</label>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr style='height:25px'>
+            <td>&nbsp;</td>
+        </tr>
+        <tr style='height:88px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_emoji' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:25pt'>
+                &nbsp; {{tr('Show emoji during play')}} ( Ctrl-e )
+            </td>
+        </tr>
+        <tr style='height:88px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_prob' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:25pt'>
+                &nbsp; {{tr('Show probability during play')}} ( Ctrl-p )
+            </td>
+        </tr>
+        <tr style='height:88px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_best_moves' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:25pt'>
+                &nbsp; {{tr('Show best moves')}} ( Ctrl-b )
+            </td>
+        </tr>
+        <tr style='height:88px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_show_best_ten' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:25pt'>
+                &nbsp; {{tr('Show best 10 (A-J)')}} ( Ctrl-t )
+            </td>
+        </tr>
+
+        <tr style='height:88px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_disable_ai' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:25pt'>
+                &nbsp; {{tr('Disable AI')}} ( Ctrl-a )
+            </td>
+        </tr>
+
+        <tr style='height:88px'>
+            <td>
+                <label class='switch'>
+                    <input id='opt_diagrams' type='checkbox'>
+                    <span class='slider round'></span>
+                </label>
+            </td>
+            <td style='text-align:left;font-size:25pt'>
+                &nbsp; {{tr('Enable Diagrams')}} ( Ctrl-d )
+            </td>
+        </tr>
+
+        <tr style='height:160px'>
+        <td colspan='2' align='center'>
+            <button id="btn_settings_done" type="button"
+                    class="btn btn-outline-dark"
+                    style="font-size:30pt;">
+            {{tr('Save')}}
+            </button>
+        </td>
+        </tr>
+    </table>
+</div>
+
+
+
