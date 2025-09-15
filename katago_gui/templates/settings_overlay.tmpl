@@ -9,13 +9,13 @@
         border-radius: 12px;
         padding: 24px 28px;
         /*max-width: 1000px; */
-        margin: 2rem auto;
+        /*margin: 2rem auto;*/
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
-#div_settings td {
-  vertical-align: middle;
-}
+    #div_settings td {
+        vertical-align: middle;
+    }
 
 
     /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
@@ -29,8 +29,8 @@
         height: 34px; */
         width: 40px;
         height: 20px;
-        vertical-align: middle; 
-        margin-top: 0; 
+        vertical-align: middle;
+        margin-top: 0;
     }
 
     #div_settings .switch {
@@ -42,7 +42,7 @@
         opacity: 0;
         width: 0;
         height: 0;
-        vertical-align: middle; 
+        vertical-align: middle;
     }
 
     /* The slider */
@@ -112,22 +112,21 @@
             <td colspan='2'>
                 <table>
                     <tr>
-                        <td> <label id='btn_tgl_selfplay_fast' class='btn btn-outline-dark'
-                                style='font-size:12pt;'>{{tr('Fast')}}</label> </td>
-                        <td style='padding-left:25px'>
+                        <td style=' padding-bottom:10px;'>
+                            <label id='btn_tgl_selfplay_fast' class='btn btn-outline-dark'
+                                style='font-size:12pt;'>{{tr('Fast')}}</label>
+                        </td>
+                        <td style='padding-left:25px; padding-bottom:10px;'>
                             <label id='btn_tgl_selfplay_normal' class='btn btn-outline-dark'
                                 style='font-size:12pt;'>{{tr('Medium')}}</label>
                         </td>
-                        <td style='padding-left:25px'>
+                        <td style='padding-left:25px; padding-bottom:10px;'>
                             <label id='btn_tgl_selfplay_slow' class='btn btn-outline-dark'
                                 style='font-size:12pt;'>{{tr('Slow')}}</label>
                         </td>
                     </tr>
                 </table>
             </td>
-        </tr>
-        <tr style='height:25px'>
-            <td>&nbsp;</td>
         </tr>
         <tr style='height:50px'>
             <td>
@@ -209,13 +208,11 @@
                 &nbsp; {{tr('Enable Diagrams')}} ( Ctrl-d )
             </td>
         </tr>
-        <tr style='height:100px'>
+        <tr>
             <td colspan='2' align='center'>
                 <label id='btn_settings_done' class='btn btn-outline-dark'
-                    style='font-size:15pt;'>{{tr('Save')}}</label>
+                    style='font-size:15pt;margin-top:10px;'>{{tr('Save')}}</label>
             </td>
         </tr>
     </table>
 </div>
-
-
