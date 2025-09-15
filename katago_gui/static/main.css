@@ -59,10 +59,12 @@ body {
     /*left: 0;*/
     left: 50%;             /* anchor at the horizontal center */
     transform: translateX(-50%);
-    top: 100px;
+    top: 10%;
     z-index: 20;
     padding-left: 10px;
     padding-right: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .red-border { border-style:solid; border-color:red;}
