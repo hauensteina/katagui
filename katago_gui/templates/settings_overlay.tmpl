@@ -13,6 +13,11 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
+#div_settings td {
+  vertical-align: middle;
+}
+
+
     /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
     /*----------------------------------------------------------------------*/
 
@@ -24,6 +29,12 @@
         height: 34px; */
         width: 40px;
         height: 20px;
+        vertical-align: middle; 
+        margin-top: 0; 
+    }
+
+    #div_settings .switch {
+        transform: translateY(4px);
     }
 
     /* Hide default HTML checkbox */
@@ -31,6 +42,7 @@
         opacity: 0;
         width: 0;
         height: 0;
+        vertical-align: middle; 
     }
 
     /* The slider */
@@ -51,8 +63,8 @@
         content: "";
         /* height: 26px;
         width: 26px; */
-        height: 19px;
-        width: 19px;
+        height: 18px;
+        width: 18px;
         left: 2px;
         bottom: 1px;
         background-color: white;

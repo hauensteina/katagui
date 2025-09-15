@@ -4,7 +4,8 @@
     #div_settings {
         position: fixed;
         user-select: auto;
-        left: 50%;             /* anchor at the horizontal center */
+        left: 50%;
+        /* anchor at the horizontal center */
         transform: translateX(-50%);
         width: max-content;
         top: 100px;
@@ -22,8 +23,9 @@
 
     /* Stupid bootstrap makes my button gray */
     #btn_settings_done.btn.btn-outline-dark {
-    background-color: transparent !important;
-    background-image: none !important;     /* kill gradient */
+        background-color: transparent !important;
+        background-image: none !important;
+        /* kill gradient */
     }
 
     /* kill the “stuck darker” look from focus/active/hover */
@@ -31,16 +33,20 @@
     #btn_settings_done.btn.btn-outline-dark:active,
     #btn_settings_done.btn.btn-outline-dark.active,
     #btn_settings_done.btn.btn-outline-dark:hover {
-    background-color: transparent !important;
-    background-image: none !important;
-    color: #212529 !important;              /* Bootstrap dark */
-    border-color: #212529 !important;
-    box-shadow: none !important;            /* remove glow */
-    outline: none !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        color: #212529 !important;
+        /* Bootstrap dark */
+        border-color: #212529 !important;
+        box-shadow: none !important;
+        /* remove glow */
+        outline: none !important;
     }
 
     /* iOS tap gray */
-    #btn_settings_done { -webkit-tap-highlight-color: transparent; }
+    #btn_settings_done {
+        -webkit-tap-highlight-color: transparent;
+    }
 
 
     /* CSS SLIDER from https://www.w3schools.com/howto/howto_css_switch.asp */
@@ -50,10 +56,10 @@
     .switch {
         position: relative;
         display: inline-block;
-    /*    width: 60px;
+        /*    width: 60px;
         height: 34px; */
         width: 112px;
-        height: 64px; 
+        height: 64px;
     }
 
     /* Hide default HTML checkbox */
@@ -61,6 +67,10 @@
         opacity: 0;
         width: 0;
         height: 0;
+    }
+
+    #div_settings .switch {
+        transform: translateY(4px);
     }
 
     /* The slider */
@@ -72,21 +82,21 @@
         right: 0;
         bottom: 0;
         background-color: #aaaaaa;
-    /*    -webkit-transition: .1s;
+        /*    -webkit-transition: .1s;
         transition: .1s; */
     }
 
     .slider:before {
         position: absolute;
         content: "";
-/*        height: 30px;
+        /*        height: 30px;
         width: 30px; */
         height: 56px;
-        width: 56px; 
+        width: 56px;
         left: 2px;
         bottom: 2px;
         background-color: white;
-    /*    -webkit-transition: .1s;
+        /*    -webkit-transition: .1s;
         transition: .1s; */
     }
 
@@ -99,12 +109,12 @@
     }
 
     input:checked+.slider:before {
-/*        -webkit-transform: translateX(26px);
+        /*        -webkit-transform: translateX(26px);
         -ms-transform: translateX(26px);
         transform: translateX(26px); */
         -webkit-transform: translateX(50px);
         -ms-transform: translateX(50px);
-        transform: translateX(50px); 
+        transform: translateX(50px);
     }
 
     /* Rounded sliders */
@@ -113,7 +123,7 @@
         border-radius: 31px;
     }
 
-/*    .slider.round:before {
+    /*    .slider.round:before {
         border-radius: 50%;
     }*/
 </style>
@@ -221,16 +231,11 @@
         </tr>
 
         <tr style='height:160px'>
-        <td colspan='2' align='center'>
-            <button id="btn_settings_done" type="button"
-                    class="btn btn-outline-dark"
-                    style="font-size:30pt;">
-            {{tr('Save')}}
-            </button>
-        </td>
+            <td colspan='2' align='center'>
+                <button id="btn_settings_done" type="button" class="btn btn-outline-dark" style="font-size:30pt;">
+                    {{tr('Save')}}
+                </button>
+            </td>
         </tr>
     </table>
 </div>
-
-
-
