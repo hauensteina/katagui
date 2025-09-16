@@ -14,12 +14,15 @@ class AppFuncs {
         var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
         if (axutil.settings('disable_ai')) {
             // disable opt_auto checkbox
+
+            $('#opt_auto').prop('checked', false)
             $('#opt_auto').prop('disabled', true)
             // disable ai buttons
             ai_buttons.forEach(btn => axutil.disable_button(btn))
             $('#emo').html('&nbsp;')
         } else {
             // enable opt_auto checkbox
+            $('#opt_auto').prop('checked', true)
             $('#opt_auto').prop('disabled', false)
             // enable ai buttons
             ai_buttons.forEach(btn => axutil.enable_button(btn))
