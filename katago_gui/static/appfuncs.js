@@ -25,8 +25,8 @@ class AppFuncs {
             ai_buttons.forEach(btn => axutil.enable_button(btn))
         }
     } // toggle_ai_buttons()
-    
-    
+
+
     //--------------------------
     initSettingSliders() {
         // Load settings
@@ -41,7 +41,7 @@ class AppFuncs {
         var sp_id = '#btn_tgl_selfplay_normal'
         if ('selfplay_speed' in settings) { sp_id = '#btn_tgl_selfplay_' + settings.selfplay_speed }
         $(sp_id).addClass('active')
-        
+
         // Self Play Speed
         $('#btn_tgl_selfplay_slow').click(() => {
             $('[id^=btn_tgl_selfplay]').removeClass('active')
@@ -85,8 +85,8 @@ class AppFuncs {
             main.update_emoji()
             main.show_prob()
 
-            //window.location.href = '/index'
             $('#div_settings').css({ 'display': 'none' })
+
         }) // click
         return self
     } // initSettingSliders()

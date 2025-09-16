@@ -276,10 +276,12 @@ function main(JGO, axutil, p_options) {
 
   //----------------------------------
   function show_best_moves(data) {
+    window.alert(4)
     //if (!settings('show_best_moves')) { return }
     if (settings('disable_ai')) { return }
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
+    if (!data) return
     var botCoord = axutil.string2jcoord(data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
     var node = g_jrecord.createNode(true)
@@ -317,6 +319,7 @@ function main(JGO, axutil, p_options) {
 
   //------------------------------
   function show_best_curmoves() {
+    if (!grec.curmove() || !grec.curmove().data) { return }
     show_best_moves(grec.curmove().data)
   } // show_best_curmoves()
 
@@ -755,7 +758,7 @@ function main(JGO, axutil, p_options) {
 
     $('#lnk_settings').click(() => {
       appfuncs.initSettingSliders()
-      $('#div_settings').css({ 'display': 'block' })
+      $('#div_settings').css({ 'display': 'grid' })
     })
 
     // Prevent zoom on double tap
