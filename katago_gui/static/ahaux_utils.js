@@ -128,7 +128,7 @@ class AhauxUtils {
   scores_only(record) {
     var res = []
     for (var move_prob of record) {
-      res.push(move_prob.score)
+      res.push(move_prob.score * 1.0)
     }
     return res
   } // scores_only()
@@ -148,7 +148,7 @@ class AhauxUtils {
   probs_only(record) {
     var res = []
     for (var move_prob of record) {
-      res.push(move_prob.p)
+      res.push(move_prob.p * 1.0)
     }
     return res
   } // probs_only()

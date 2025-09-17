@@ -670,7 +670,6 @@ function main(JGO, axutil, p_options) {
       else { bot_active('off') }
     })
 
-
     $('#btn_best').click(() => {
       btn_best()
     })
