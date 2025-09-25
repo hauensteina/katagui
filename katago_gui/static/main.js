@@ -1745,7 +1745,8 @@ function main(JGO, axutil, p_options) {
     }
     // Goto next really bad move ctrl-s
     else if (e.ctrlKey && e.key == 's') {
-      goto_next_bad_move(0.1)
+      //goto_next_bad_move(0.1)
+      goto_next_bad_move(0.06)
     } // bad move
 
     // Shortcuts for the settings
