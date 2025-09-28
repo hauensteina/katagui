@@ -569,13 +569,14 @@ class GameRecord {
   seek_next_bad_move(p_thresh) {
     var oldpos = this.pos()
     var found = false
-    for (var i = oldpos + 1; i < this.len(); i++) {
+    for (var i = oldpos + 1; i <= this.len(); i++) {
       this.seek(i)
       var delta_p = this.delta_prob()
       if (delta_p >= p_thresh) {
         return
       }
     } // for
+    this.seek(oldpos)
   } // seek_next_bad_move()
 
   last_move_color() {

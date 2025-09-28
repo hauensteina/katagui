@@ -1711,7 +1711,6 @@ function main(JGO, axutil, p_options) {
     }
   } // onRefresh()
 
-
   //------------------------
   function goto_next_bad_move(p_thresh) {
     grec.seek_next_bad_move(p_thresh)
