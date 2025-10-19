@@ -676,34 +676,25 @@ function main(JGO, axutil, p_options) {
 
     $('#btn_save').click(() => {
       selfplay('off')
-      var rec = axutil.moves_only(grec.all_moves())
+      var moves = axutil.moves_only(grec.all_moves())
       var probs = axutil.probs_only(grec.all_moves())
       var scores = axutil.scores_only(grec.all_moves())
-      for (var i = 0; i < probs.length; i++) { probs[i] = probs[i].toFixed(2) }
+      for (var i = 0; i < probs.length; i++) { probs[i] = probs[i] ? probs[i].toFixed(2) : '0.00' }
       for (var i = 0; i < scores.length; i++) { scores[i] = scores[i] ? scores[i].toFixed(1) : '0.00' }
       // Kludge to manage passes
-      for (var i = 0; i < rec.length; i++) {
-        if (rec[i] == 'pass') { rec[i] = 'A0' }
+      for (var i = 0; i < moves.length; i++) {
+        if (moves[i] == 'pass') { moves[i] = 'A0' }
       }
-      var moves = rec.join('')
-      probs = probs.join(',')
+      //var moves = rec.join('')
+      //probs = probs.join(',')
       if (moves.length == 0) { return }
       var meta = set_load_sgf_handler.loaded_game
       if (!meta) {
         meta = {}
         meta.komi = g_komi
       }
-      var url = '/save-sgf?q=' + Math.random() +
-        '&moves=' + encodeURIComponent(moves) +
-        '&probs=' + encodeURIComponent(probs) +
-        '&scores=' + encodeURIComponent(scores) +
-        '&pb=' + encodeURIComponent(meta.pb) +
-        '&pw=' + encodeURIComponent(meta.pw) +
-        '&km=' + encodeURIComponent(meta.komi) +
-        '&re=' + encodeURIComponent(meta.RE) +
-        '&dt=' + encodeURIComponent(meta.DT)
-
-      window.location.href = url
+      var sgf = appfuncs.moves2sgf( moves, probs,scores, meta)
+      appfuncs.downloadSgf('game.sgf', sgf)
     })
 
     $('#btn_nnscore').click(() => {

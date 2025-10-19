@@ -199,6 +199,7 @@ def fwd_to_katago_13( endpoint, args):
 # Convert a list of moves like ['Q16',...] to sgf
 #---------------------------------------------------
 def moves2sgf( moves, probs, scores, meta):
+    BP()
     meta = { k : ('' if v == 'undefined' else v) for (k,v) in meta.items() }
     sgf = '(;FF[4]SZ[19]\n'
     sgf += 'SO[katagui.baduk.club]\n'
