@@ -1422,7 +1422,6 @@ function main(JGO, axutil, p_options) {
     }
   } // show_prob()
 
-  
   //--------------------------------
   function update_emoji() {
     if (settings('disable_ai')) { clear_emoji(); return }
