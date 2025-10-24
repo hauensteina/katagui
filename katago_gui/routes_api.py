@@ -395,7 +395,7 @@ def sgf2list():
 
     #-------------------------
     def svg2sgf( tstr):
-        """ Katagui svg export embeds agf in the svg as comment. """
+        """ Katagui svg export embeds sgf in the svg as comment. """
         matches = re.search(r'<katagui>(.*?)<\/katagui>', tstr)
         if matches:
             jsonstr = matches.group(1)
@@ -459,6 +459,7 @@ def sgf2list():
             if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
             moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
 
+    BP()
     probs = [mp['p'] for mp in moves]
     scores = [mp['score'] for mp in moves]
     moves = [mp['mv'] for mp in moves]

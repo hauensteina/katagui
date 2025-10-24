@@ -5,6 +5,8 @@
 * AHN Jan 2020
 */
 
+import { sgf2list, parseMainLine, movesFrom, rootProps } from './sgf.js'
+
 'use strict'
 
 const HANDISTONES = ['', ''
@@ -21,7 +23,7 @@ const HANDISTONES = ['', ''
 
 
 //=======================================
-function main(JGO, axutil, p_options) {
+export function main(JGO, axutil, p_options) {
   $ = axutil.$
   const settings = axutil.settings
 
@@ -925,16 +927,24 @@ function main(JGO, axutil, p_options) {
   // Load Sgf button
   //-----------------------------------
   function set_load_sgf_handler() {
-    $('#sgf-file').on('change', function () {
+    $('#sgf-file').on('change', async function () {
       var input = $(this)
       var myfile = input.get(0).files[0]
-      var numFiles = input.get(0).files ? input.get(0).files.length : 1
-      var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
+      const sgf = await axutil.readFileAsText(myfile)
+      //const mainLine = sgf2list(sgf)
+      //const mainMoves = movesFrom(mainLine)
+      //debugger
+      // @@@ cont here
+      //var numFiles = input.get(0).files ? input.get(0).files.length : 1
+      //var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
+      // read contents myfile into a string
+      
       handle_variation('clear')
       // Call API to get the moves, then replay on the board
       axutil.upload_file('/sgf2list', myfile, (response) => {
         var res = response.result
         var moves = res.moves
+        debugger
         $('#lb_komi').html(tr('Komi') + ': ' + res.komi)
         clear_emoji()
         end_game()
@@ -1791,3 +1801,4 @@ function main(JGO, axutil, p_options) {
 
 } // main()
 
+main(JGO, axutil, { mobile: false })

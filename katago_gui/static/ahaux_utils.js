@@ -116,8 +116,20 @@ class AhauxUtils {
   popup(msg) {
     $('#alertbox_message').html(msg)
     $('#alertbox').modal('show')
-  }
+  } // popup()
 
+  // Usage: 
+  // var myfile = input.get(0).files[0] // File object
+  // const contents = await readFileAsText(file);
+  //--------------------------------------------------------
+  async readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = e => resolve(e.target.result)
+      reader.onerror = reject
+      reader.readAsText(file)
+    })
+  } // readFileAsText()
 
   //===============
   // Converters
