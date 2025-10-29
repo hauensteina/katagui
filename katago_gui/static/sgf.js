@@ -4,6 +4,8 @@
 // Returns a flat array of nodes along the main variation, preserving props.
 //
 
+'use strict';
+
 /** @typedef {{ [k: string]: string[] }} SGFProps */
 /** @typedef {{ props: SGFProps }} SGFNode */
 
@@ -21,21 +23,25 @@ function svg2sgf(tstr) {
   }
 } // svg2sgf(tstr)
 
-//---------------------------
-function getMove(node) { // pq -> Q3
-    const letters = 'ABCDEFGHJKLMNOPQRST'
-    var color; var coord;
+//--------------------------------------------
+function getMove(node) { // pq -> ['B', Q3]
+    let color
     if (node.props.B) color = 'B'
     else if (node.props.W) color = 'W' 
-    if (!color) return  { color, coord } 
-    if (node.props.B && node.props.B.length)  { color = 'B'; coord =  node.props.B[0] }
-    else if (node.props.W && node.props.W.length)  { color = 'W'; coord =  node.props.W[0] }
-    var col = coord[0].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
-    var row = 19 - (coord[1].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0))
-    col = letters[col]
-    var res = `${col}${row}`
-    return { color, coord }
+    if (!color) return  undefined 
+    let point
+    if (node.props.B && node.props.B.length)  { point =  node.props.B[0] }
+    else if (node.props.W && node.props.W.length)  { point =  node.props.W[0] }
+    return [ color, coordsFromPoint(point) ]
 } // getMove()
+
+//--------------------------------
+function coordsFromPoint(p) { // pq -> Q3
+    const letters = 'ABCDEFGHJKLMNOPQRST'
+    var col = p[0].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
+    var row = 19 - (p[1].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0))
+    return `${letters[col]}${row}`
+} // coordsFromPoint()
 
 //----------------------------------
 export function sgf2list(sgf) {
@@ -44,31 +50,101 @@ export function sgf2list(sgf) {
     var winner = ''
     if (RE.toLowerCase().startsWith('w')) winner = 'w'
     if (RE.length > 10) RE = ''
-    else if (RE.toLowerCase().startsWith('b')) winner = 'b' 
+    else if (RE.toLowerCase().startsWith('b')) winner = 'b'
     var DT = getSgfTag(sgf, 'DT')
     if (DT.length > 15) DT = ''
     var player_white = getSgfTag(sgf, 'PW')
     var player_black = getSgfTag(sgf, 'PB')
-    var komi = parseFloat( getSgfTag(sgf, 'KM') ) || 0.0
+    var komi = parseFloat(getSgfTag(sgf, 'KM')) || 0.0
 
     var moves = []
+    var handicap_setup_done = false
     const nodes = parseMainLine(sgf)
-    for (const n of nodes) {
-        p = '0.00'
-        score = '0.00'
-        var turn = 'b'
-        if (len(moves) % 2) turn = 'w'
-        var mv = getMove(n) // Q16
-        if (!mv || mv.length != 2) mv = 'pass'
-        var move = { 'mv':mv, 'p':p, 'score':score }
-        moves.append( move)
-                    /// @@@ cont here
-
-        debugger
-        var tt = 42
+    for (const [index, n] of nodes.entries()) {
+        // Deal with handicap stones in the root node. Also deals with kifucam exports.
+        if (index == 0 && (n.props.AB || n.props.AW)) {
+            addSetupStones(moves, n)
+            handicap_setup_done = true
+            continue
+        }
+        var p = '0.00'
+        var score = '0.00'
+        var turn = 'B'
+        if (moves.length % 2) turn = 'W'
+        let [color, mv] = getMove(n)['B', 'Q16']
+        if (color) {
+            if (color != turn) {
+                moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
+            }
+            if (!mv || mv.length != 2) mv = 'pass'
+            var move = { 'mv': mv, 'p': '0.00', 'score': '0.00' }
+            moves.push(move)
+        } else if (!handicap_setup_done && n.props.AB) {
+            // Deal with handicap stones as individual nodes
+            stones = []
+            addSetupStones(stones, n)
+            if (stones.length > 1) {
+                AhauxUtils.popup(tr('Error'), tr('Multiple handicap stones in one node are not supported.'))
+            }
+            if (moves) { // white pass before next handi stone
+                moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
+            }
+            moves.push(stones[0])
+        }
     } // for
-
+    const probs = moves.map(m => m.p)
+    const scores = moves.map(m => m.score)
+    moves = moves.map(m => m.mv)
+    const res = {
+        'moves':moves, 'probs':probs, 'scores':scores, 
+        'pb':player_black, 'pw':player_white, 
+        'winner':winner, 'komi':komi, 'RE':RE, 'DT':DT 
+    }
+    debugger
+    return res
 } // sgf2list()
+
+//-----------------------------------------
+function addSetupStones( moves, node) {
+    let bp = node.props.AB || []
+    let wp = node.props.AW || []
+    shuffle(bp)
+    shuffle(wp)
+    for (let i = 0; i < Math.max(bp.length, wp.length); i++) {
+        if (i < bp.length) {
+            moves.push( {'mv': coordsFromPoint(bp[i]),  'p': '0.00', 'score': '0.00'})
+        } else {
+            moves.push( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+        }
+        if (i < wp.length) {
+            moves.push( {'mv': coordsFromPoint(wp[i]),  'p': '0.00', 'score': '0.00'})
+        } else {
+            moves.push( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+        }
+    } // for
+    // Remove trailing passes from moves
+    while (moves.length) {
+        const last = moves[moves.length - 1]
+        if (last.mv === 'pass') { moves.pop() } else { break }
+    } // while
+} // addSetupStones()
+
+// Shuffle array in place. Fisher–Yates (Knuth) shuffle.
+//-----------------------------------------------------------
+function shuffle(array) {
+    let m = array.length;
+    let i = 0;
+
+    while (m > 0) {
+        // Pick a remaining element…
+        i = Math.floor(Math.random() * m);
+        m -= 1;
+
+        // And swap it with the current element.
+        [array[m], array[i]] = [array[i], array[m]];
+    }
+    return array;
+} // shuffle()
 
 //------------------------------------
 function getSgfTag(sgfstr, tag) {
@@ -126,7 +202,6 @@ function parseGameTreeMain(s, i) {
     }
     break
   }
-
   // game-tree*: multiple variations — follow only the FIRST one, skip the rest
   i = skipWS(s, i)
   if (s[i] === '(') {
@@ -171,27 +246,31 @@ function skipGameTree(s, i) {
 
 //------------------------------
 function parseNode(s, i) {
-  // node: one or more properties:  IDENT '[' value ']'  (value may repeat)
-  /** @type {SGFProps} */
-  const props = {}
-  while (i < s.length) {
-    i = skipWS(s, i)
-    const idStart = i
-    while (i < s.length && s[i] >= 'A' && s[i] <= 'Z') i++
-    if (i === idStart) break // no more properties
-    const ident = s.slice(idStart, i)
-    const values = []
-    i = skipWS(s, i)
-    if (s[i] !== '[') throw new Error(`Expected '[' after ${ident} at ${i}`)
-    while (s[i] === '[') {
-      const [val, j] = parseValue(s, i + 1)
-      values.push(val)
-      i = j
-      i = skipWS(s, i)
-    }
-    props[ident] = values
-  }
-  return [{ props }, i]
+    // node: one or more properties:  IDENT '[' value ']'  (value may repeat)
+    /** @type {SGFProps} */
+    const props = {}
+    while (i < s.length) {
+        i = skipWS(s, i)
+        const idStart = i
+        while (i < s.length && s[i] >= 'A' && s[i] <= 'Z') i++
+        if (i === idStart) break // no more properties
+        const ident = s.slice(idStart, i)
+        const values = []
+        i = skipWS(s, i)
+        if (s[i] !== '[') throw new Error(`Expected '[' after ${ident} at ${i}`)
+        while (s[i] === '[') {
+            const [val, j] = parseValue(s, i + 1)
+            values.push(val)
+            i = j
+            i = skipWS(s, i)
+        }
+        if (props[ident]) { // append to existing
+            props[ident] = props[ident].concat(values)
+        } else {
+            props[ident] = values
+        }
+    } // while
+    return [{ props }, i]
 } // parseNode()
 
 //---------------------------------

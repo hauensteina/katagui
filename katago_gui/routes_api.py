@@ -459,7 +459,7 @@ def sgf2list():
             if moves: moves.append( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
             moves.append( {'mv':move2coords( move), 'p':'0.00', 'score':'0.00' })
 
-    BP()
+    #BP()
     probs = [mp['p'] for mp in moves]
     scores = [mp['score'] for mp in moves]
     moves = [mp['mv'] for mp in moves]

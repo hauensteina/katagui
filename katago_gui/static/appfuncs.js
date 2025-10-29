@@ -1,3 +1,4 @@
+'use strict';
 
 // Globally visible app specific funcs
 

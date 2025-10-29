@@ -5,9 +5,10 @@
 * AHN Jan 2020
 */
 
+
 import { sgf2list, parseMainLine, movesFrom, rootProps } from './sgf.js'
 
-'use strict'
+'use strict';
 
 const HANDISTONES = ['', ''
   , ['D4', 'Q16']
@@ -19,8 +20,6 @@ const HANDISTONES = ['', ''
   , ['D4', 'Q16', 'Q4', 'D16', 'D10', 'Q10', 'K4', 'K16']
   , ['D4', 'Q16', 'Q4', 'D16', 'D10', 'Q10', 'K4', 'K16', 'K10']
 ]
-
-
 
 //=======================================
 export function main(JGO, axutil, p_options) {
@@ -929,11 +928,33 @@ export function main(JGO, axutil, p_options) {
   function set_load_sgf_handler() {
     $('#sgf-file').on('change', async function () {
       var input = $(this)
+      var fname = input.val().replace(/\\/g, '/').replace(/.*\//, '')
       var myfile = input.get(0).files[0]
       const sgf = await axutil.readFileAsText(myfile)
-      //const mainLine = sgf2list(sgf)
+      var game = sgf2list(sgf)
+      game.fname = fname
+      
+      var moves = game.moves
+      $('#lb_komi').html(tr('Komi') + ': ' + game.komi)
+      clear_emoji()
+      end_game()
+      grec = new GameRecord()
+      for (var move of moves) {
+        var move_prob = { 'mv': move, 'p': '0.00', 'score': '0.00', 'agent': '' }
+        grec.push(move_prob)
+      } // for
+      replay_moves(grec.pos())
+      show_movenum()
+      g_komi = game.komi
+      get_handicap()
+      show_game_info(game)
+      clear_status()
+      set_load_sgf_handler.loaded_game = game
+      $('#sgf-file').val('') // reset to make sure it triggers again
+
+
+      /*
       //const mainMoves = movesFrom(mainLine)
-      //debugger
       // @@@ cont here
       //var numFiles = input.get(0).files ? input.get(0).files.length : 1
       //var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
@@ -944,7 +965,7 @@ export function main(JGO, axutil, p_options) {
       axutil.upload_file('/sgf2list', myfile, (response) => {
         var res = response.result
         var moves = res.moves
-        debugger
+        //debugger
         $('#lb_komi').html(tr('Komi') + ': ' + res.komi)
         clear_emoji()
         end_game()
@@ -961,7 +982,7 @@ export function main(JGO, axutil, p_options) {
         clear_status()
         set_load_sgf_handler.loaded_game = res
         $('#sgf-file').val('') // reset to make sure it triggers again
-      })
+      }) */
     }) // $('sgf-file')
   } // set_load_sgf_handler()
 

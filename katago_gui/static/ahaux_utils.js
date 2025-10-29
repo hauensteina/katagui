@@ -3,7 +3,7 @@
  AHN, Apr 2019
  */
 
-'use strict'
+'use strict';
 
 const DDATE = ''
 const VERSION = '3.14.3'

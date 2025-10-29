@@ -5,7 +5,7 @@
  * AHN Aug 2020
  */
 
-'use strict'
+'use strict';
 
 //=====================================================
 function watch( JGO, axutil, game_hash, p_options) {
