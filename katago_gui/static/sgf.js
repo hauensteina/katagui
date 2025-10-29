@@ -28,7 +28,7 @@ function getMove(node) { // pq -> ['B', Q3]
     let color
     if (node.props.B) color = 'B'
     else if (node.props.W) color = 'W' 
-    if (!color) return  undefined 
+    if (!color) return  ['','']
     let point
     if (node.props.B && node.props.B.length)  { point =  node.props.B[0] }
     else if (node.props.W && node.props.W.length)  { point =  node.props.W[0] }
@@ -56,6 +56,7 @@ export function sgf2list(sgf) {
     var player_white = getSgfTag(sgf, 'PW')
     var player_black = getSgfTag(sgf, 'PB')
     var komi = parseFloat(getSgfTag(sgf, 'KM')) || 0.0
+    if (komi > 100) { komi = 2 * komi / 100.0 } // Fox anomaly 375 -> 7.5
 
     var moves = []
     var handicap_setup_done = false
@@ -71,12 +72,12 @@ export function sgf2list(sgf) {
         var score = '0.00'
         var turn = 'B'
         if (moves.length % 2) turn = 'W'
-        let [color, mv] = getMove(n)['B', 'Q16']
+        let [color, mv] = getMove(n) // ['B', 'Q16']
         if (color) {
             if (color != turn) {
                 moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
             }
-            if (!mv || mv.length != 2) mv = 'pass'
+            if (!mv || mv.length < 2) mv = 'pass'
             var move = { 'mv': mv, 'p': '0.00', 'score': '0.00' }
             moves.push(move)
         } else if (!handicap_setup_done && n.props.AB) {
@@ -91,7 +92,7 @@ export function sgf2list(sgf) {
             }
             moves.push(stones[0])
         }
-    } // for
+    } // for nodes
     const probs = moves.map(m => m.p)
     const scores = moves.map(m => m.score)
     moves = moves.map(m => m.mv)
