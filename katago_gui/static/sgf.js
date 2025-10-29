@@ -11,28 +11,28 @@
 
 //---------------------------
 function svg2sgf(tstr) {
-  // Katagui SVG export embeds SGF in the SVG as a comment.
-  const matches = tstr.match(/<katagui>(.*?)<\/katagui>/s);
-  if (matches) {
-    const jsonstr = matches[1];
-    const meta = JSON.parse(jsonstr);
-    const sgfstr = meta.sgf;
-    return sgfstr;
-  } else {
-    return tstr;
-  }
+    // Katagui SVG export embeds SGF in the SVG as a comment.
+    const matches = tstr.match(/<katagui>(.*?)<\/katagui>/s);
+    if (matches) {
+        const jsonstr = matches[1];
+        const meta = JSON.parse(jsonstr);
+        const sgfstr = meta.sgf;
+        return sgfstr;
+    } else {
+        return tstr;
+    }
 } // svg2sgf(tstr)
 
 //--------------------------------------------
 function getMove(node) { // pq -> ['B', Q3]
     let color
     if (node.props.B) color = 'B'
-    else if (node.props.W) color = 'W' 
-    if (!color) return  ['','']
+    else if (node.props.W) color = 'W'
+    if (!color) return ['', '']
     let point
-    if (node.props.B && node.props.B.length)  { point =  node.props.B[0] }
-    else if (node.props.W && node.props.W.length)  { point =  node.props.W[0] }
-    return [ color, coordsFromPoint(point) ]
+    if (node.props.B && node.props.B.length) { point = node.props.B[0] }
+    else if (node.props.W && node.props.W.length) { point = node.props.W[0] }
+    return [color, coordsFromPoint(point)]
 } // getMove()
 
 //--------------------------------
@@ -62,10 +62,9 @@ export function sgf2list(sgf) {
     var handicap_setup_done = false
     const nodes = parseMainLine(sgf)
     for (const [index, n] of nodes.entries()) {
-        // Deal with handicap stones in the root node. Also deals with kifucam exports.
-        if (index == 0 && (n.props.AB || n.props.AW)) {
+        if (n.props.AB || n.props.AW) {
+            //debugger
             addSetupStones(moves, n)
-            handicap_setup_done = true
             continue
         }
         var p = '0.00'
@@ -80,47 +79,48 @@ export function sgf2list(sgf) {
             if (!mv || mv.length < 2) mv = 'pass'
             var move = { 'mv': mv, 'p': '0.00', 'score': '0.00' }
             moves.push(move)
-        } else if (!handicap_setup_done && n.props.AB) {
-            // Deal with handicap stones as individual nodes
-            stones = []
-            addSetupStones(stones, n)
-            if (stones.length > 1) {
-                AhauxUtils.popup(tr('Error'), tr('Multiple handicap stones in one node are not supported.'))
-            }
-            if (moves) { // white pass before next handi stone
-                moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
-            }
-            moves.push(stones[0])
         }
+        // } else if (!handicap_setup_done && n.props.AB) {
+        //     // Deal with handicap stones as individual nodes
+        //     var stones = []
+        //     addSetupStones(stones, n)
+        //     if (stones.length > 1) {
+        //         axutil.popup('Multiple handicap stones in one node are not supported.')
+        //     }
+        //     if (moves) { // white pass before next handi stone
+        //         moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
+        //     }
+        //     moves.push(stones[0])
+        // }
     } // for nodes
     const probs = moves.map(m => m.p)
     const scores = moves.map(m => m.score)
     moves = moves.map(m => m.mv)
     const res = {
-        'moves':moves, 'probs':probs, 'scores':scores, 
-        'pb':player_black, 'pw':player_white, 
-        'winner':winner, 'komi':komi, 'RE':RE, 'DT':DT 
+        'moves': moves, 'probs': probs, 'scores': scores,
+        'pb': player_black, 'pw': player_white,
+        'winner': winner, 'komi': komi, 'RE': RE, 'DT': DT
     }
-    debugger
+    //debugger
     return res
 } // sgf2list()
 
 //-----------------------------------------
-function addSetupStones( moves, node) {
+function addSetupStones(moves, node) {
     let bp = node.props.AB || []
     let wp = node.props.AW || []
     shuffle(bp)
     shuffle(wp)
     for (let i = 0; i < Math.max(bp.length, wp.length); i++) {
         if (i < bp.length) {
-            moves.push( {'mv': coordsFromPoint(bp[i]),  'p': '0.00', 'score': '0.00'})
+            moves.push({ 'mv': coordsFromPoint(bp[i]), 'p': '0.00', 'score': '0.00' })
         } else {
-            moves.push( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+            moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
         }
         if (i < wp.length) {
-            moves.push( {'mv': coordsFromPoint(wp[i]),  'p': '0.00', 'score': '0.00'})
+            moves.push({ 'mv': coordsFromPoint(wp[i]), 'p': '0.00', 'score': '0.00' })
         } else {
-            moves.push( {'mv':'pass', 'p':'0.00', 'score':'0.00'})
+            moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
         }
     } // for
     // Remove trailing passes from moves
@@ -149,30 +149,30 @@ function shuffle(array) {
 
 //------------------------------------
 function getSgfTag(sgfstr, tag) {
-  const rexp = new RegExp(`.*${tag}\\[([^\\[]*)\\].*`, 's')
-  const res = sgfstr.replace(rexp, '$1')
-  if (res === sgfstr) return '' // tag not found
-  return res
+    const rexp = new RegExp(`.*${tag}\\[([^\\[]*)\\].*`, 's')
+    const res = sgfstr.replace(rexp, '$1')
+    if (res === sgfstr) return '' // tag not found
+    return res
 } // getSgfTag()
 
 //-----------------------------------------
 export function parseMainLine(sgf) {
-  const s = normalizeInput(sgf)
-  let i = 0
+    const s = normalizeInput(sgf)
+    let i = 0
 
-  // Skip to first game-tree
-  while (i < s.length && s[i] !== '(') i++
-  if (i >= s.length) return { nodes: [], collectionCount: 0 }
+    // Skip to first game-tree
+    while (i < s.length && s[i] !== '(') i++
+    if (i >= s.length) return { nodes: [], collectionCount: 0 }
 
-  let collectionCount = 0
-  let nodes = []
+    let collectionCount = 0
+    let nodes = []
 
-  // Parse only the first game-tree's main line
-  const [treeNodes, nextIdx] = parseGameTreeMain(s, i)
-  nodes = treeNodes
-  i = nextIdx
+    // Parse only the first game-tree's main line
+    const [treeNodes, nextIdx] = parseGameTreeMain(s, i)
+    nodes = treeNodes
+    i = nextIdx
 
-  return nodes
+    return nodes
 } // parseMainLine()
 
 // -----------------------
@@ -180,69 +180,69 @@ export function parseMainLine(sgf) {
 // -----------------------
 //-------------------------------
 function normalizeInput(s) {
-  // Strip unicode Byte Order Mark, unify line endings
-  if (s.charCodeAt(0) === 0xFEFF) s = s.slice(1)
-  return s.replace(/\r\n?|\f/g, '\n')
+    // Strip unicode Byte Order Mark, unify line endings
+    if (s.charCodeAt(0) === 0xFEFF) s = s.slice(1)
+    return s.replace(/\r\n?|\f/g, '\n')
 } // normalizeInput()
 
 //------------------------------------
 function parseGameTreeMain(s, i) {
-  // grammar: '(' sequence game-tree* ')'
-  if (s[i] !== '(') throw new Error(`Expected '(' at ${i}`)
-  i++
+    // grammar: '(' sequence game-tree* ')'
+    if (s[i] !== '(') throw new Error(`Expected '(' at ${i}`)
+    i++
 
-  let nodes = []
-  // sequence: ;node ;node ...
-  while (true) {
-    i = skipWS(s, i)
-    if (s[i] === ';') {
-      const [node, j] = parseNode(s, i + 1)
-      nodes.push(node)
-      i = j
-      continue
+    let nodes = []
+    // sequence: ;node ;node ...
+    while (true) {
+        i = skipWS(s, i)
+        if (s[i] === ';') {
+            const [node, j] = parseNode(s, i + 1)
+            nodes.push(node)
+            i = j
+            continue
+        }
+        break
     }
-    break
-  }
-  // game-tree*: multiple variations — follow only the FIRST one, skip the rest
-  i = skipWS(s, i)
-  if (s[i] === '(') {
-    // parse first child main line
-    const [childNodes, k] = parseGameTreeMain(s, i)
-    nodes = nodes.concat(childNodes)
-    i = k
-    // skip any additional sibling variations at this level to get to the closing paren
+    // game-tree*: multiple variations — follow only the FIRST one, skip the rest
     i = skipWS(s, i)
-    while (s[i] === '(') {
-      i = skipGameTree(s, i)
-      i = skipWS(s, i)
-    } // while
-  } // if
+    if (s[i] === '(') {
+        // parse first child main line
+        const [childNodes, k] = parseGameTreeMain(s, i)
+        nodes = nodes.concat(childNodes)
+        i = k
+        // skip any additional sibling variations at this level to get to the closing paren
+        i = skipWS(s, i)
+        while (s[i] === '(') {
+            i = skipGameTree(s, i)
+            i = skipWS(s, i)
+        } // while
+    } // if
 
-  if (s[i] !== ')') throw new Error(`Expected ')' at ${i}`)
-  return [nodes, i + 1]
+    if (s[i] !== ')') throw new Error(`Expected ')' at ${i}`)
+    return [nodes, i + 1]
 } // parseGameTreeMain()
 
 //---------------------------------
 function skipGameTree(s, i) {
-  // Skip a balanced game-tree starting at '(' without parsing its content
-  if (s[i] !== '(') throw new Error(`Expected '(' at ${i}`)
-  let depth = 0
-  while (i < s.length) {
-    const ch = s[i++]
-    if (ch === '(') depth++
-    else if (ch === ')') {
-      depth--
-      if (depth === 0) break
-    } else if (ch === '[') {
-      // Skip bracket content with escapes
-      while (i < s.length) {
-        if (s[i] === '\\') { i += 2; continue }
-        if (s[i] === ']') { i++; break }
-        i++
-      }
+    // Skip a balanced game-tree starting at '(' without parsing its content
+    if (s[i] !== '(') throw new Error(`Expected '(' at ${i}`)
+    let depth = 0
+    while (i < s.length) {
+        const ch = s[i++]
+        if (ch === '(') depth++
+        else if (ch === ')') {
+            depth--
+            if (depth === 0) break
+        } else if (ch === '[') {
+            // Skip bracket content with escapes
+            while (i < s.length) {
+                if (s[i] === '\\') { i += 2; continue }
+                if (s[i] === ']') { i++; break }
+                i++
+            }
+        }
     }
-  }
-  return i
+    return i
 } // skipGameTree()
 
 //------------------------------
@@ -276,64 +276,64 @@ function parseNode(s, i) {
 
 //---------------------------------
 function parseValue(s, i) {
-  // value content until matching ']' with SGF escapes
-  let out = ''
-  while (i < s.length) {
-    const ch = s[i]
-    if (ch === ']') return [out, i + 1]
-    if (ch === '\\') {
-      // Escape: include next char literally (including newline)
-      if (i + 1 < s.length) {
-        const next = s[i + 1]
-        // SGF line continuation: backslash followed by newline => remove both
-        if (next === '\n') { i += 2; continue }
-        out += next
-        i += 2
-        continue
-      } else {
+    // value content until matching ']' with SGF escapes
+    let out = ''
+    while (i < s.length) {
+        const ch = s[i]
+        if (ch === ']') return [out, i + 1]
+        if (ch === '\\') {
+            // Escape: include next char literally (including newline)
+            if (i + 1 < s.length) {
+                const next = s[i + 1]
+                // SGF line continuation: backslash followed by newline => remove both
+                if (next === '\n') { i += 2; continue }
+                out += next
+                i += 2
+                continue
+            } else {
+                i++
+                continue
+            }
+        }
+        out += ch
         i++
-        continue
-      }
     }
-    out += ch
-    i++
-  }
-  throw new Error('Unterminated value')
+    throw new Error('Unterminated value')
 } // parseValue()
 
 //--------------------------
 function skipWS(s, i) {
-  while (i < s.length) {
-    const c = s[i]
-    if (c === ' ' || c === '\t' || c === '\n' || c === '\r') i++
-    else break
-  }
-  return i
+    while (i < s.length) {
+        const c = s[i]
+        if (c === ' ' || c === '\t' || c === '\n' || c === '\r') i++
+        else break
+    }
+    return i
 } // skipWS()
 
 //------------------------------------------------
 function countSiblingTopLevelTrees(s, i) {
-  // Count additional '(' at top level after position i
-  let count = 0
-  let depth = 0
-  for (; i < s.length; i++) {
-    const ch = s[i]
-    if (ch === '(') {
-      if (depth === 0) count++
-      depth++
-    } else if (ch === ')') {
-      depth = Math.max(0, depth - 1)
-    } else if (ch === '[') {
-      // skip bracketed values
-      i++
-      while (i < s.length) {
-        if (s[i] === '\\') { i += 2; continue }
-        if (s[i] === ']') break
-        i++
-      }
+    // Count additional '(' at top level after position i
+    let count = 0
+    let depth = 0
+    for (; i < s.length; i++) {
+        const ch = s[i]
+        if (ch === '(') {
+            if (depth === 0) count++
+            depth++
+        } else if (ch === ')') {
+            depth = Math.max(0, depth - 1)
+        } else if (ch === '[') {
+            // skip bracketed values
+            i++
+            while (i < s.length) {
+                if (s[i] === '\\') { i += 2; continue }
+                if (s[i] === ']') break
+                i++
+            }
+        }
     }
-  }
-  return count
+    return count
 } // countSiblingTopLevelTrees()
 
 // -----------
@@ -341,17 +341,17 @@ function countSiblingTopLevelTrees(s, i) {
 // -----------
 //---------------------------------------
 export function movesFrom(nodes) {
-  const out = []
-  for (const n of nodes) {
-    if (n.props.B && n.props.B.length) out.push({ color: 'B', point: n.props.B[0] || null })
-    if (n.props.W && n.props.W.length) out.push({ color: 'W', point: n.props.W[0] || null })
-  }
-  return out
+    const out = []
+    for (const n of nodes) {
+        if (n.props.B && n.props.B.length) out.push({ color: 'B', point: n.props.B[0] || null })
+        if (n.props.W && n.props.W.length) out.push({ color: 'W', point: n.props.W[0] || null })
+    }
+    return out
 } // movesFrom()
 
 //--------------------------------------
 export function rootProps(nodes) {
-  return nodes.length ? nodes[0].props : {}
+    return nodes.length ? nodes[0].props : {}
 } // rootProps()
 
 

@@ -329,7 +329,7 @@ export function main(JGO, axutil, p_options) {
     p = 1 * p // convert to number
 
     if (g_komi == Math.floor(g_komi)) { // whole number komi
-      score = Math.round(self.score) // 2.1 -> 2.0,  2.9 -> 3.0
+      score = Math.round(score) // 2.1 -> 2.0,  2.9 -> 3.0
     } else { // x.5 komi
       score = Math.sign(score) * (Math.floor(Math.abs(score)) + 0.5) // 2.1 -> 2.5 2.9 -> 2.5
     }
@@ -933,7 +933,7 @@ export function main(JGO, axutil, p_options) {
       const sgf = await axutil.readFileAsText(myfile)
       var game = sgf2list(sgf)
       game.fname = fname
-      
+
       var moves = game.moves
       $('#lb_komi').html(tr('Komi') + ': ' + game.komi)
       clear_emoji()
