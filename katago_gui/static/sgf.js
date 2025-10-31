@@ -3,55 +3,12 @@
 // Parses only the **main line** (first variation) from an SGF collection.
 // Returns a flat array of nodes along the main variation, preserving props.
 //
+// AHN, Oct 2025
 
 'use strict';
 
 /** @typedef {{ [k: string]: string[] }} SGFProps */
 /** @typedef {{ props: SGFProps }} SGFNode */
-
-//---------------------------
-function svg2sgf(tstr) {
-    // Katagui SVG export embeds SGF in the SVG as a comment.
-    const matches = tstr.match(/<katagui>(.*?)<\/katagui>/s);
-    if (matches) {
-        const jsonstr = matches[1];
-        const meta = JSON.parse(jsonstr);
-        const sgfstr = meta.sgf;
-        return sgfstr;
-    } else {
-        return tstr;
-    }
-} // svg2sgf(tstr)
-
-//-----------------------------------------------------------------------------------------------
-function getMove(node) { // pq -> ['B|W', 'Q3']  tt -> ['B|W', 'pass'] '' -. -> ['B|W', 'pass'] 
-    let color
-    if (node.props.B) color = 'B'
-    else if (node.props.W) color = 'W'
-    if (!color) return ['', '']
-    let point
-    if (node.props.B && node.props.B.length) { point = node.props.B[0] }
-    else if (node.props.W && node.props.W.length) { point = node.props.W[0] }
-    if (point == 'tt' || point == '') {
-        return [color, 'pass']
-    }
-    return [color, coordsFromPoint(point)]
-} // getMove()
-
-//-------------------------------------------
-function coordsFromPoint(p) { // pq -> Q3
-    console.log(p)
-    try {
-        const letters = 'ABCDEFGHJKLMNOPQRST'
-        var col = p[0].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
-        var row = 19 - (p[1].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0))
-        return `${letters[col]}${row}`
-    }
-    catch (err) {
-        debugger
-        console.error('Exception in coordsFromPoint()', err)
-    }
-} // coordsFromPoint()
 
 //----------------------------------
 export function sgf2list(sgf) {
@@ -91,18 +48,6 @@ export function sgf2list(sgf) {
             var move = { 'mv': mv, 'p': '0.00', 'score': '0.00' }
             moves.push(move)
         }
-        // } else if (!handicap_setup_done && n.props.AB) {
-        //     // Deal with handicap stones as individual nodes
-        //     var stones = []
-        //     addSetupStones(stones, n)
-        //     if (stones.length > 1) {
-        //         axutil.popup('Multiple handicap stones in one node are not supported.')
-        //     }
-        //     if (moves) { // white pass before next handi stone
-        //         moves.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00' })
-        //     }
-        //     moves.push(stones[0])
-        // }
     } // for nodes
     const probs = moves.map(m => m.p)
     const scores = moves.map(m => m.score)
@@ -115,6 +60,43 @@ export function sgf2list(sgf) {
     //debugger
     return res
 } // sgf2list()
+
+//---------------------------
+function svg2sgf(tstr) {
+    // Katagui SVG export embeds SGF in the SVG as a comment.
+    const matches = tstr.match(/<katagui>(.*?)<\/katagui>/s);
+    if (matches) {
+        const jsonstr = matches[1];
+        const meta = JSON.parse(jsonstr);
+        const sgfstr = meta.sgf;
+        return sgfstr;
+    } else {
+        return tstr;
+    }
+} // svg2sgf(tstr)
+
+//-----------------------------------------------------------------------------------------------
+function getMove(node) { // pq -> ['B|W', 'Q3']  tt -> ['B|W', 'pass'] '' -. -> ['B|W', 'pass'] 
+    let color
+    if (node.props.B) color = 'B'
+    else if (node.props.W) color = 'W'
+    if (!color) return ['', '']
+    let point
+    if (node.props.B && node.props.B.length) { point = node.props.B[0] }
+    else if (node.props.W && node.props.W.length) { point = node.props.W[0] }
+    if (point == 'tt' || point == '') {
+        return [color, 'pass']
+    }
+    return [color, coordsFromPoint(point)]
+} // getMove()
+
+//-------------------------------------------
+function coordsFromPoint(p) { // pq -> Q3
+    const letters = 'ABCDEFGHJKLMNOPQRST'
+    var col = p[0].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
+    var row = 19 - (p[1].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0))
+    return `${letters[col]}${row}`
+} // coordsFromPoint()
 
 //-----------------------------------------
 function addSetupStones(moves, node) {
@@ -167,7 +149,7 @@ function getSgfTag(sgfstr, tag) {
 } // getSgfTag()
 
 //-----------------------------------------
-export function parseMainLine(sgf) {
+function parseMainLine(sgf) {
     const s = normalizeInput(sgf)
     let i = 0
 
@@ -270,7 +252,6 @@ function parseNode(s, i) {
         const values = []
         i = skipWS(s, i)
         if (s[i] !== '[') {
-            debugger
             throw new Error(`Expected '[' after ${ident} at ${i}`)
         }
         while (s[i] === '[') {
@@ -325,54 +306,6 @@ function skipWS(s, i) {
     return i
 } // skipWS()
 
-//------------------------------------------------
-function countSiblingTopLevelTrees(s, i) {
-    // Count additional '(' at top level after position i
-    let count = 0
-    let depth = 0
-    for (; i < s.length; i++) {
-        const ch = s[i]
-        if (ch === '(') {
-            if (depth === 0) count++
-            depth++
-        } else if (ch === ')') {
-            depth = Math.max(0, depth - 1)
-        } else if (ch === '[') {
-            // skip bracketed values
-            i++
-            while (i < s.length) {
-                if (s[i] === '\\') { i += 2; continue }
-                if (s[i] === ']') break
-                i++
-            }
-        }
-    }
-    return count
-} // countSiblingTopLevelTrees()
-
-// -----------
-// Helpers 
-// -----------
-//---------------------------------------
-export function movesFrom(nodes) {
-    const out = []
-    for (const n of nodes) {
-        if (n.props.B && n.props.B.length) out.push({ color: 'B', point: n.props.B[0] || null })
-        if (n.props.W && n.props.W.length) out.push({ color: 'W', point: n.props.W[0] || null })
-    }
-    return out
-} // movesFrom()
-
-//--------------------------------------
-export function rootProps(nodes) {
-    return nodes.length ? nodes[0].props : {}
-} // rootProps()
 
 
-// -----------------------
-// Tiny demo
-// -----------------------
-// const sgf = '(;FF[4]GM[1]SZ[19]PB[Lee]PW[Cho];B[pd];W[dd];B[qp](;W[dc])(;W[pp]))'
-// const nodes  = parseMainLine(sgf)
-// console.log(movesFrom(nodes)) 
 

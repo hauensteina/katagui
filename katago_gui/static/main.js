@@ -6,7 +6,7 @@
 */
 
 
-import { sgf2list, parseMainLine, movesFrom, rootProps } from './sgf.js'
+import { sgf2list } from './sgf.js'
 
 'use strict';
 
@@ -952,37 +952,6 @@ export function main(JGO, axutil, p_options) {
       set_load_sgf_handler.loaded_game = game
       $('#sgf-file').val('') // reset to make sure it triggers again
 
-
-      /*
-      //const mainMoves = movesFrom(mainLine)
-      // @@@ cont here
-      //var numFiles = input.get(0).files ? input.get(0).files.length : 1
-      //var label = input.val().replace(/\\/g, '/').replace(/.*\//, '')
-      // read contents myfile into a string
-      
-      handle_variation('clear')
-      // Call API to get the moves, then replay on the board
-      axutil.upload_file('/sgf2list', myfile, (response) => {
-        var res = response.result
-        var moves = res.moves
-        //debugger
-        $('#lb_komi').html(tr('Komi') + ': ' + res.komi)
-        clear_emoji()
-        end_game()
-        grec = new GameRecord()
-        for (var move of moves) {
-          var move_prob = { 'mv': move, 'p': '0.00', 'score': '0.00', 'agent': '' }
-          grec.push(move_prob)
-        }
-        replay_moves(grec.pos())
-        show_movenum()
-        g_komi = res.komi
-        get_handicap()
-        show_game_info(res)
-        clear_status()
-        set_load_sgf_handler.loaded_game = res
-        $('#sgf-file').val('') // reset to make sure it triggers again
-      }) */
     }) // $('sgf-file')
   } // set_load_sgf_handler()
 
