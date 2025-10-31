@@ -56,6 +56,7 @@ function coordsFromPoint(p) { // pq -> Q3
 //----------------------------------
 export function sgf2list(sgf) {
     sgf = svg2sgf(sgf)
+    sgf = sgf.replace('CoPyright', 'CP')
     var RE = getSgfTag(sgf, 'RE')
     var winner = ''
     if (RE.toLowerCase().startsWith('w')) winner = 'w'
@@ -268,7 +269,10 @@ function parseNode(s, i) {
         const ident = s.slice(idStart, i)
         const values = []
         i = skipWS(s, i)
-        if (s[i] !== '[') throw new Error(`Expected '[' after ${ident} at ${i}`)
+        if (s[i] !== '[') {
+            debugger
+            throw new Error(`Expected '[' after ${ident} at ${i}`)
+        }
         while (s[i] === '[') {
             const [val, j] = parseValue(s, i + 1)
             values.push(val)
