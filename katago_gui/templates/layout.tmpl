@@ -41,8 +41,11 @@
   <script type='text/javascript' src='static/ahaux_utils.js?rand={{ rrand() }}'></script>
   <script type='text/javascript'> const axutil = new AhauxUtils($, d3) </script>
 
-  <script type='text/javascript' src='static/appfuncs.js?rand={{ rrand() }}'></script>
-  <script type='text/javascript'> const appfuncs = new AppFuncs() </script>
+{#
+<script type="module">
+  import { AppFuncs } from './static/appfuncs.js?rand={{ rrand() }}'
+</script>
+#}
 
   <!-- The Go board -->
   <script type='text/javascript' src='static/jgoboard-latest.js'></script>

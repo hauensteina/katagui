@@ -5,10 +5,9 @@
 * AHN Jan 2020
 */
 
-
-import { sgf2list } from './sgf.js'
-
 'use strict';
+import { toggle_ai_buttons, initSettingSliders, moves2sgf, downloadSgf } from './appfuncs.js'
+import { sgf2list } from './sgf.js'
 
 const HANDISTONES = ['', ''
   , ['D4', 'Q16']
@@ -694,8 +693,8 @@ export function main(JGO, axutil, p_options) {
         meta = {}
         meta.komi = g_komi
       }
-      var sgf = appfuncs.moves2sgf( moves, probs,scores, meta)
-      appfuncs.downloadSgf('game.sgf', sgf)
+      var sgf = moves2sgf( moves, probs,scores, meta)
+      downloadSgf('game.sgf', sgf)
     })
 
     $('#btn_nnscore').click(() => {
@@ -747,7 +746,7 @@ export function main(JGO, axutil, p_options) {
     $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
 
     $('#lnk_settings').click(() => {
-      appfuncs.initSettingSliders()
+      initSettingSliders()
       $('#div_settings').css({ 'display': 'grid' })
     })
 
@@ -1672,7 +1671,7 @@ export function main(JGO, axutil, p_options) {
       $('#diagram_buttons').hide()
     }
 
-    appfuncs.toggle_ai_buttons()
+    toggle_ai_buttons()
 
     set_btn_handlers()
     set_dropdown_handlers()
@@ -1770,7 +1769,7 @@ export function main(JGO, axutil, p_options) {
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
       settings('disable_ai', !settings('disable_ai'))
-      appfuncs.toggle_ai_buttons()
+      toggle_ai_buttons()
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
       settings('diagrams', !settings('diagrams'))
