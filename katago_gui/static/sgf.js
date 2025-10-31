@@ -23,8 +23,8 @@ function svg2sgf(tstr) {
     }
 } // svg2sgf(tstr)
 
-//--------------------------------------------
-function getMove(node) { // pq -> ['B', 'Q3']  tt -> ['B', 'pass']
+//-----------------------------------------------------------------------------------------------
+function getMove(node) { // pq -> ['B|W', 'Q3']  tt -> ['B|W', 'pass'] '' -. -> ['B|W', 'pass'] 
     let color
     if (node.props.B) color = 'B'
     else if (node.props.W) color = 'W'
@@ -32,19 +32,25 @@ function getMove(node) { // pq -> ['B', 'Q3']  tt -> ['B', 'pass']
     let point
     if (node.props.B && node.props.B.length) { point = node.props.B[0] }
     else if (node.props.W && node.props.W.length) { point = node.props.W[0] }
-    if (point == 'tt') {
-        debugger
+    if (point == 'tt' || point == '') {
         return [color, 'pass']
     }
     return [color, coordsFromPoint(point)]
 } // getMove()
 
-//--------------------------------
+//-------------------------------------------
 function coordsFromPoint(p) { // pq -> Q3
-    const letters = 'ABCDEFGHJKLMNOPQRST'
-    var col = p[0].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
-    var row = 19 - (p[1].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0))
-    return `${letters[col]}${row}`
+    console.log(p)
+    try {
+        const letters = 'ABCDEFGHJKLMNOPQRST'
+        var col = p[0].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
+        var row = 19 - (p[1].toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0))
+        return `${letters[col]}${row}`
+    }
+    catch (err) {
+        debugger
+        console.error('Exception in coordsFromPoint()', err)
+    }
 } // coordsFromPoint()
 
 //----------------------------------
