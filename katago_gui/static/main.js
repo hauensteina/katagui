@@ -1,12 +1,11 @@
 
-
 /*
 * Main entry point for katago-gui
 * AHN Jan 2020
 */
 
 'use strict';
-import { toggle_ai_buttons, initSettingSliders, moves2sgf, downloadSgf } from './appfuncs.js'
+import * as af from './appfuncs.js'
 import { sgf2list } from './sgf.js'
 
 const HANDISTONES = ['', ''
@@ -21,25 +20,14 @@ const HANDISTONES = ['', ''
 ]
 
 //=======================================
-export function main(JGO, axutil, p_options) {
-  $ = axutil.$
-  const settings = axutil.settings
-
+function main(JGO, axutil) {
   const BOT = 'katago_gtp_bot'
   const BOARD_SIZE = 19
 
-  var g_jrecord = new JGO.Record(BOARD_SIZE)
-  var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
-  var g_ko = null // ko coordinate
-  var g_last_move = null // last move coordinate
-  var g_play_btn_buffer = false // buffer one play btn click
-  var g_best_btn_buffer = false // buffer one best btn click
-  var g_click_coord_buffer = null // buffer one board click
-  // prisoner count; elt 0 unused; prisoners[1] counts the white stones who are B's prisoners;
-  var g_prisoners = [0, 0, 0]
-
-  var g_komi = 6.5
-  var g_handi = 0
+  $ = axutil.$
+  const settings = axutil.settings
+  var g_play_btn_buffer = false
+  var g_best_btn_buffer = false
 
   //================
   // UI Callbacks
@@ -47,7 +35,7 @@ export function main(JGO, axutil, p_options) {
 
   //-----------------------------------
   function set_dropdown_handlers() {
-    $('#komi_menu').html(g_komi)
+    $('#komi_menu').html(af.g_komi)
     $('#komi_m505').click(function () { $('#komi_menu').html('-50.5') })
     $('#komi_m405').click(function () { $('#komi_menu').html('-40.5') })
     $('#komi_m305').click(function () { $('#komi_menu').html('-30.5') })
@@ -57,7 +45,7 @@ export function main(JGO, axutil, p_options) {
     $('#komi_65').click(function () { $('#komi_menu').html('6.5') })
     $('#komi_75').click(function () { $('#komi_menu').html('7.5') })
 
-    $('#handi_menu').html(g_handi)
+    $('#handi_menu').html(af.g_handi)
     $('#handi_0').click(function () { $('#handi_menu').html('0'); $('#komi_menu').html('6.5') })
     $('#handi_1').click(function () { $('#handi_menu').html('1'); $('#komi_menu').html('0.5') })
     $('#handi_2').click(function () { $('#handi_menu').html('2'); $('#komi_menu').html('0.5') })
@@ -72,19 +60,19 @@ export function main(JGO, axutil, p_options) {
     $('#game_start').click(function () { // New Game -> Go
       end_game()
       $('#donate_modal').html('')
-      g_handi = parseInt($('#handi_menu').html())
-      g_komi = parseFloat($('#komi_menu').html())
-      reset_game();
-      $('#lb_komi').html(tr('Komi') + ': ' + g_komi)
-      clear_emoji();
+      af.setHandi( parseInt($('#handi_menu').html()))
+      af.setKomi( parseFloat($('#komi_menu').html()))
+      reset_game()
+      $('#lb_komi').html(tr('Komi') + ': ' + af.g_komi)
+      af.clear_emoji()
       bot_active('on')
-      clear_status()
+      af.clear_status()
 
       // create new game in db
-      axutil.hit_endpoint_simple('/create_game', { 'handicap': g_handi, 'komi': g_komi },
+      axutil.hit_endpoint_simple('/create_game', { 'handicap': af.g_handi, 'komi': af.g_komi },
         (resp) => {
           settings('game_hash', resp.game_hash)
-          if (g_handi > 1) { botmove_if_active() }
+          if (af.g_handi > 1) { botmove_if_active() }
         })
     })
 
@@ -93,265 +81,119 @@ export function main(JGO, axutil, p_options) {
     })
   } // set_dropdown_handlers()
 
-  // BLACK or WHITE depending on grec.pos()
-  //------------------------------------------
-  function turn(idx_) {
-    var idx = idx_ || grec.pos()
-    if (idx % 2) {
-      return JGO.WHITE
-    }
-    return JGO.BLACK
-  } // turn()
-
+  
   //------------------------------------------
   function board_click_callback(coord) {
     selfplay('off')
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
-    if (score_position.active) { goto_move(grec.pos()); return }
+    if (score_position.active) { goto_move(af.grec.pos()); return }
 
     if ($('#btn_tgl_add_black').hasClass('btn-success')) return add_stone(JGO.BLACK, coord)
     if ($('#btn_tgl_add_white').hasClass('btn-success')) return add_stone(JGO.WHITE, coord)
-    if ($('#btn_tgl_number').hasClass('btn-success')) return add_mark(coord, 'number')
-    if ($('#btn_tgl_letter').hasClass('btn-success')) return add_mark(coord, 'letter')
-    if ($('#btn_tgl_x').hasClass('btn-success')) return add_mark(coord, 'X')
-    if ($('#btn_tgl_triangle').hasClass('btn-success')) return add_mark(coord, 'triangle')
-    if ($('#btn_tgl_circle').hasClass('btn-success')) return add_mark(coord, 'circle')
+    if ($('#btn_tgl_number').hasClass('btn-success')) return af.add_mark(coord, 'number')
+    if ($('#btn_tgl_letter').hasClass('btn-success')) return af.add_mark(coord, 'letter')
+    if ($('#btn_tgl_x').hasClass('btn-success')) return af.add_mark(coord, 'X')
+    if ($('#btn_tgl_triangle').hasClass('btn-success')) return af.add_mark(coord, 'triangle')
+    if ($('#btn_tgl_circle').hasClass('btn-success')) return af.add_mark(coord, 'circle')
 
-    var jboard = g_jrecord.jboard
+    var jboard = af.g_jrecord.jboard
     if ((jboard.getType(coord) == JGO.BLACK) || (jboard.getType(coord) == JGO.WHITE)) { return }
     if (axutil.hit_endpoint('waiting')) {
-      g_click_coord_buffer = coord
+      board_click_callback.g_click_coord_buffer = coord
       return
     }
     // clear hover away
-    hover()
+    af.hover()
 
     // Add the new move
     maybe_start_var()
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
     board_click_callback.illegal_move = false
-    goto_move(grec.len())
+    goto_move(af.grec.len())
     // Silently ignore illegal moves
     if (board_click_callback.illegal_move) {
-      grec.pop()
-      goto_move(grec.len())
+      af.grec.pop()
+      goto_move(af.grec.len())
       return
     }
     if (settings('disable_ai')) { return }
 
-    add_mark('redraw')
-    clear_emoji()
-    var greclen = grec.len()
+    af.add_mark('redraw')
+    af.clear_emoji()
+    var greclen = af.grec.len()
     const playing = true
-    var pos = grec.pos()
-    set_status(tr('KataGo is thinking ...'))
+    var pos = af.grec.pos()
+    af.set_status(tr('KataGo is thinking ...'))
     get_prob_genmove(
       (data) => {
-        if (pos != grec.pos()) return
-        grec.curmove().data = data
-        if (bot_active() && (greclen == grec.len())) { bot_move_callback(data) }
-        if (!bot_active() && settings('show_best_moves')) { show_best_moves(data) }
+        if (pos != af.grec.pos()) return
+        af.grec.curmove().data = data
+        if (bot_active() && (greclen == af.grec.len())) { bot_move_callback(data) }
+        if (!bot_active() && settings('show_best_moves')) { af.show_best_moves(data) }
       },
       settings('show_emoji'), playing)
   } // board_click_callback()
   board_click_callback.illegal_move = false
+  board_click_callback.g_click_coord_buffer = null
 
   //-----------------------------------
   function add_stone(color, coord) {
     if (coord.i < 0 || coord.i > 18) return // invalid coord
-    var jboard = g_jrecord.jboard
+    var jboard = af.g_jrecord.jboard
     maybe_start_var()
 
     // If the coord is already occupied, remove the stone by replacing it with a pass.
     if (jboard.getType(coord) == JGO.BLACK || jboard.getType(coord) == JGO.WHITE) {
-      var move = grec.move_at_coord(coord)
+      var move = af.grec.move_at_coord(coord)
       if (!move) { return }
       move.mv = 'pass'
-      grec.remove_pass_pairs()
-      replay_moves(grec.pos())
-      if (color == JGO.BLACK) grec.force_black_turn()
-      else if (color == JGO.WHITE) grec.force_white_turn()
+      af.grec.remove_pass_pairs()
+      af.replay_moves(af.grec.pos())
+      if (color == JGO.BLACK) af.grec.force_black_turn()
+      else if (color == JGO.WHITE) af.grec.force_white_turn()
       return
     }
 
-    if (color == JGO.BLACK) grec.force_black_turn()
-    else if (color == JGO.WHITE) grec.force_white_turn()
+    if (color == JGO.BLACK) af.grec.force_black_turn()
+    else if (color == JGO.WHITE) af.grec.force_white_turn()
 
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
     board_click_callback.illegal_move = false
-    goto_move(grec.len())
+    goto_move(af.grec.len())
     // Silently ignore illegal moves
     if (board_click_callback.illegal_move) {
-      grec.pop()
-      goto_move(grec.len())
+      af.grec.pop()
+      goto_move(af.grec.len())
       return
     }
     // Add a pass to get the right hover color
-    grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
-    goto_move(grec.len())
+    af.grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
+    goto_move(af.grec.len())
 
   } // add_stone()
 
-  // Put a mark on a stone or intersection. 
-  // Reset if coord == 'clear'.
-  // marktype is one of 'letter', 'number', 'triangle'.
-  //------------------------------------------------------
-  function add_mark(rotated_coord, marktype) {
-
-    function remove_mark(mark, orig_coord) {
-      add_mark.orig_coords[mark] = add_mark.orig_coords[mark].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
-    } // remove_mark()
-
-    function get_mark(orig_coord) {
-      var l_list = add_mark.orig_coords['letter'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
-      if (l_list.length < add_mark.orig_coords['letter'].length) { return 'letter' }
-      var n_list = add_mark.orig_coords['number'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
-      if (n_list.length < add_mark.orig_coords['number'].length) { return 'number' }
-      var t_list = add_mark.orig_coords['triangle'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
-      if (t_list.length < add_mark.orig_coords['triangle'].length) { return 'triangle' }
-      var o_list = add_mark.orig_coords['circle'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
-      if (o_list.length < add_mark.orig_coords['circle'].length) { return 'circle' }
-      var x_list = add_mark.orig_coords['X'].filter(c => (c.i !== orig_coord.i) || (c.j !== orig_coord.j))
-      if (x_list.length < add_mark.orig_coords['X'].length) { return 'X' }
-      return ''
-    } // get_mark()
-
-    function redraw_marks() {
-      var idx = 0
-      add_mark.orig_coords['number'].forEach(c => {
-        idx++; node.setMark(axutil.rot_coord(c), '' + idx)
-      })
-      var lidx = -1
-      add_mark.orig_coords['letter'].forEach(c => {
-        lidx++; node.setMark(axutil.rot_coord(c), letters[lidx])
-      })
-      add_mark.orig_coords['X'].forEach(c => {
-        node.setMark(axutil.rot_coord(c), 'X')
-      })
-      add_mark.orig_coords['triangle'].forEach(c => {
-        node.setMark(axutil.rot_coord(c), JGO.MARK.TRIANGLE)
-      })
-      add_mark.orig_coords['circle'].forEach(c => {
-        node.setMark(axutil.rot_coord(c), JGO.MARK.CIRCLE)
-      })
-    } // redraw_marks()
-
-    var letters = 'abcdefghijklmnopqrstuvwxyz'
-    var node = g_jrecord.createNode(true)
-    replay_moves(grec.pos()) // remove artifacts, preserve mark on last play
-
-    if (rotated_coord == 'clear') {
-      add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [], 'circle': [] }
-      redraw_marks()
-      return
-    }
-    else if (rotated_coord == 'redraw') {
-      redraw_marks()
-      return
-    }
-    else {
-      var orig_coord = axutil.invrot_coord(rotated_coord)
-      var mark = get_mark(orig_coord)
-      if (mark) { remove_mark(mark, orig_coord) }
-      else { add_mark.orig_coords[marktype].push(orig_coord) }
-      redraw_marks()
-      return
-    }
-  } // add_mark()
-  add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [], 'circle': [] }
 
   //-------------------------------
   function best_btn_callback() {
     selfplay('off')
-    set_status(tr('KataGo is thinking ...'))
+    af.set_status(tr('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move((data) => {
-      show_best_moves(data)
+      af.show_best_moves(data)
     })
   } // best_btn_callback()
   best_btn_callback.active = false
 
-  //----------------------------------
-  function show_best_moves(data) {
-    //if (!settings('show_best_moves')) { return }
-    if (settings('disable_ai')) { return }
-    if (data) { show_best_moves.data = data }
-    data = show_best_moves.data
-    if (!data) return
-    var botCoord = axutil.string2jcoord(data.bot_move)
-    var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
-    var node = g_jrecord.createNode(true)
-    replay_moves(grec.pos()) // remove artifacts, preserve mark on last play
-    var mmax = 0
-    // Mark candidates with letters if psv is close enough to max
-    var bardata = []
-    for (const [idx, m] of best.entries()) {
-      //if (!axutil.endsInDigit(m.move)) { continue } // skip non-moves
-      bardata.push([idx, m.psv])
-      if (mmax == 0) { mmax = m.psv }
-      if (!settings('show_best_ten') && m.psv < 0.05 * mmax) continue
-      var botCoord1 = axutil.string2jcoord(m.move)
-      if (botCoord1 != 'pass' && botCoord1 != 'resign') {
-        var letter = String.fromCharCode('A'.charCodeAt(0) + idx)
-        node.setMark(botCoord1, letter)
-      }
-    } // for
-    // restore the hover stone
-    if (hover.coord) {
-      g_jrecord.jboard.setType(hover.coord, turn() == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
-    }
-    var maxi = Math.max(...bardata.map(function (d) { return d[1] }))
-    //console.log(maxi)
-    var font = '10px sans-serif'
-    if (p_options.mobile) { font = '20px sans-serif' }
-    axutil.barchart('#status', bardata, 1.2 * maxi, font)
-    // Also show score and winning prob
-    var scorestr = get_scorestr(data.diagnostics.winprob, data.diagnostics.score)
-    $('#bestscore').html(scorestr)
-    $('#bestscore').css({ 'font': '10px sans-serif' })
-    if (p_options.mobile) { $('#bestscore').css({ 'font': '20px sans-serif' }) }
-  } // show_best_moves()
-  show_best_moves.data = {}
-
-  //------------------------------
-  function show_best_curmoves() {
-    if (!grec.curmove() || !grec.curmove().data) { return }
-    show_best_moves(grec.curmove().data)
-  } // show_best_curmoves()
-
-  // Make a string like 'P(B wins): 0.56  B+0.5'
-  //----------------------------------------------
-  function get_scorestr(p, score) {
-    p = 1 * p // convert to number
-
-    if (g_komi == Math.floor(g_komi)) { // whole number komi
-      score = Math.round(score) // 2.1 -> 2.0,  2.9 -> 3.0
-    } else { // x.5 komi
-      score = Math.sign(score) * (Math.floor(Math.abs(score)) + 0.5) // 2.1 -> 2.5 2.9 -> 2.5
-    }
-    var scorestr = '&nbsp;&nbsp;' + tr('B') + '+'
-    if (score < 0) {
-      scorestr = '&nbsp;&nbsp;' + tr('W') + '+'
-    }
-    scorestr += Math.abs(score)
-    var res = tr('P(B wins)') + ': ' + p.toFixed(2)
-    if (typeof (score) !== 'undefined') {
-      res += scorestr
-    }
-    if (p == 0 && score == 0) { res = '' }
-    return res
-  } // get_scorestr()
-
   // Black moves at the beginning are handicap
   //--------------------------------------------
   function get_handicap() {
-    g_handi = 0
+    af.setHandi(0)
     var handi = 0
-    //if (grec.setup_stone_flag) { return g_handi }
-    var rec = grec.prefix(20)
+    //if (af.grec.setup_stone_flag) { return g_handi }
+    var rec = af.grec.prefix(20)
     for (var i = 0; i < rec.length; i++) {
       if (i % 2) { // white
         if (rec[i].mv != 'pass') {
@@ -363,17 +205,17 @@ export function main(JGO, axutil, p_options) {
       }
     }
     if (handi > 1) {
-      g_handi = handi
+      af.setHandi(handi)
     }
-    return g_handi
+    return af.g_handi
   } // get_handicap()
 
   //-------------------------
   function setup_jgo() {
-    g_jsetup.setOptions({ stars: { points: 9 } })
+    af.g_jsetup.setOptions({ stars: { points: 9 } })
     // Add mouse event listeners for the board
     //------------------------------------------
-    g_jsetup.create('board',
+    af.g_jsetup.create('board',
       function (canvas) {
         //----------------------------
         canvas.addListener('click', function (coord, ev) { board_click_callback(coord) });
@@ -381,25 +223,25 @@ export function main(JGO, axutil, p_options) {
         //------------------------------
         canvas.addListener('mousemove',
           function (coord, ev) {
-            var jboard = g_jrecord.jboard
+            var jboard = af.g_jrecord.jboard
             if (coord.i == -1 || coord.j == -1)
               return
-            if (coord == hover.coord)
+            if (coord == af.hover.coord)
               return
 
-            hover(coord, turn())
+            af.hover(coord, af.turn())
             if (score_position.active) {
               draw_estimate(score_position.probs)
             }
             else if (best_btn_callback.active) {
-              show_best_moves()
+              af.show_best_moves()
             }
             else if (is_markup_active()) {
               // do nothing
             }
-            else if (grec.curmove() && grec.curmove().data) {
+            else if (af.grec.curmove() && af.grec.curmove().data) {
               if (settings('show_best_moves')) {
-                show_best_curmoves()
+                af.show_best_curmoves()
               }
             }
           }
@@ -408,19 +250,19 @@ export function main(JGO, axutil, p_options) {
         //----------------------------
         canvas.addListener('mouseout',
           function (ev) {
-            hover()
+            af.hover()
             if (score_position.active) {
               draw_estimate(score_position.probs)
             }
             else if (best_btn_callback.active) {
-              show_best_moves()
+              af.show_best_moves()
             }
             else if (is_markup_active()) {
               // do nothing
             }
-            else if (grec.curmove() && grec.curmove().data) {
+            else if (af.grec.curmove() && af.grec.curmove().data) {
               if (settings('show_best_moves')) {
-                show_best_curmoves()
+                af.show_best_curmoves()
               }
             }
           }
@@ -486,12 +328,12 @@ export function main(JGO, axutil, p_options) {
         wbtn.removeClass('btn-success')
         wbtn.css('background-color', '')
         maybe_start_var()
-        grec.force_black_turn()
-        replay_moves(grec.pos())
+        af.grec.force_black_turn()
+        af.replay_moves(af.grec.pos())
       } else {
         bbtn.removeClass('btn-success')
         bbtn.css('background-color', '')
-        grec.force_white_turn()
+        af.grec.force_white_turn()
       }
     }) // btn_add_black.click()
 
@@ -506,12 +348,12 @@ export function main(JGO, axutil, p_options) {
         bbtn.removeClass('btn-success')
         bbtn.css('background-color', '')
         maybe_start_var()
-        grec.force_white_turn()
-        replay_moves(grec.pos())
+        af.grec.force_white_turn()
+        af.replay_moves(af.grec.pos())
       } else {
         wbtn.removeClass('btn-success')
         wbtn.css('background-color', '')
-        grec.force_black_turn()
+        af.grec.force_black_turn()
       }
     }) // btn_add_white.click()
 
@@ -534,16 +376,16 @@ export function main(JGO, axutil, p_options) {
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
       }
-      replay_moves(grec.pos())
-      add_mark('redraw')
+      af.replay_moves(af.grec.pos())
+      af.add_mark('redraw')
     }) // btn_tgl_mark
 
     $('#btn_tgl_rot').click(() => {
       var btn = $('#btn_tgl_rot')
       var rot = (axutil.getRotation() + 1) % 8
       axutil.setRotation(rot)
-      replay_moves(grec.pos())
-      add_mark('redraw')
+      af.replay_moves(af.grec.pos())
+      af.add_mark('redraw')
       if (rot == 0) {
         btn.removeClass('btn-success')
         btn.css('background-color', '')
@@ -557,24 +399,24 @@ export function main(JGO, axutil, p_options) {
       var btn = $('#btn_tgl_swap_colors')
       if (show_move.swap_colors) {
         show_move.swap_colors = false
-        replay_moves(grec.pos())
-        add_mark('redraw')
+        af.replay_moves(af.grec.pos())
+        af.add_mark('redraw')
         btn.removeClass('btn-success')
         btn.css('background-color', '')
       } else {
         show_move.swap_colors = true
-        replay_moves(grec.pos())
-        add_mark('redraw')
+        af.replay_moves(af.grec.pos())
+        af.add_mark('redraw')
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
       }
     }) // btn_tgl_swap_colors
 
     $('#btn_export_diagram').click(() => {
-      let node = g_jrecord.getCurrentNode()
+      let node = af.g_jrecord.getCurrentNode()
       let marks = JSON.stringify(node.jboard.marks)
       let stones = JSON.stringify(node.jboard.stones)
-      var rec = axutil.moves_only(grec.all_moves())
+      var rec = axutil.moves_only(af.grec.all_moves())
       // kludge to manage passes
       for (var i = 0; i < rec.length; i++) {
         if (rec[i] == 'pass') { rec[i] = 'A0' }
@@ -583,7 +425,7 @@ export function main(JGO, axutil, p_options) {
       var meta = set_load_sgf_handler.loaded_game
       if (!meta) {
         meta = {}
-        meta.komi = g_komi
+        meta.komi = af.g_komi
       }
 
       let url = '/export_diagram?q=' + Math.random() +
@@ -612,7 +454,7 @@ export function main(JGO, axutil, p_options) {
     })
 
     $('#btn_clear').click(() => {
-      add_mark('clear')
+      af.add_mark('clear')
     })
 
     $('#img_bot, #descr_bot').click(() => {
@@ -638,12 +480,12 @@ export function main(JGO, axutil, p_options) {
       if ($('#btn_clear_var').hasClass('disabled')) { return }
       handle_variation('clear')
       if (settings('game_hash')) { // we are in an active game
-        grec.dbsave() // save and notify observers
+        af.grec.dbsave() // save and notify observers
       }
     })
 
     $('#btn_watch').click(() => {
-      if (p_options.mobile) {
+      if (axutil.isMobile()) {
         location.href = 'watch_select_game_mobile'
       } else {
         location.href = 'watch_select_game'
@@ -652,7 +494,7 @@ export function main(JGO, axutil, p_options) {
 
     $('#btn_play').click(() => {
       selfplay('off')
-      clear_emoji()
+      af.clear_emoji()
       //bot_active( 'on')
       //botmove_if_active()
       get_katago_move()
@@ -676,31 +518,29 @@ export function main(JGO, axutil, p_options) {
 
     $('#btn_save').click(() => {
       selfplay('off')
-      var moves = axutil.moves_only(grec.all_moves())
-      var probs = axutil.probs_only(grec.all_moves())
-      var scores = axutil.scores_only(grec.all_moves())
+      var moves = axutil.moves_only(af.grec.all_moves())
+      var probs = axutil.probs_only(af.grec.all_moves())
+      var scores = axutil.scores_only(af.grec.all_moves())
       for (var i = 0; i < probs.length; i++) { probs[i] = probs[i] ? probs[i].toFixed(2) : '0.00' }
       for (var i = 0; i < scores.length; i++) { scores[i] = scores[i] ? scores[i].toFixed(1) : '0.00' }
       // Kludge to manage passes
       for (var i = 0; i < moves.length; i++) {
         if (moves[i] == 'pass') { moves[i] = 'A0' }
       }
-      //var moves = rec.join('')
-      //probs = probs.join(',')
       if (moves.length == 0) { return }
       var meta = set_load_sgf_handler.loaded_game
       if (!meta) {
         meta = {}
-        meta.komi = g_komi
+        meta.komi = af.g_komi
       }
-      var sgf = moves2sgf( moves, probs,scores, meta)
-      downloadSgf('game.sgf', sgf)
+      var sgf = af.moves2sgf( moves, probs,scores, meta)
+      af.downloadSgf('game.sgf', sgf)
     })
 
     $('#btn_nnscore').click(() => {
       selfplay('off')
       if (score_position.active) {
-        goto_move(grec.pos())
+        goto_move(af.grec.pos())
         return
       }
       score_position()
@@ -713,40 +553,36 @@ export function main(JGO, axutil, p_options) {
 
     $('#btn_pass').click(() => {
       selfplay('off')
-      if (score_position.active) { goto_move(grec.pos()); return }
+      if (score_position.active) { goto_move(af.grec.pos()); return }
       maybe_start_var()
-      grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
-      goto_move(grec.len())
+      af.grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
+      goto_move(af.grec.len())
       botmove_if_active()
     })
 
     $('#btn_undo').click(() => {
       selfplay('off')
       axutil.hit_endpoint('cancel')
-      var at_end = (grec.pos() == grec.len())
-      //if (grec.pos() > 2 && grec.curmove().agent.indexOf('kata') >= 0 && grec.prevmove().agent == 'human') {
-      //  goto_move( grec.pos() - 2 )
-      //} else {
-      goto_move(grec.pos() - 1)
-      //}
+      var at_end = (af.grec.pos() == af.grec.len())
+      goto_move(af.grec.pos() - 1)
       if (at_end) {
-        grec.truncate()
+        af.grec.truncate()
         if (settings('game_hash')) { // we are in an active game
-          grec.dbsave() // save and notify observers
+          af.grec.dbsave() // save and notify observers
         }
       }
-      show_movenum()
+      af.show_movenum()
     })
 
     $('#btn_prev').click(btn_prev)
     $('#btn_next').click(btn_next)
-    $('#btn_back10').click(() => { selfplay('off'); goto_move(grec.pos() - 10); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
-    $('#btn_fwd10').click(() => { selfplay('off'); goto_move(grec.pos() + 10); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
-    $('#btn_first').click(() => { selfplay('off'); goto_move(0); clear_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
-    $('#btn_last').click(() => { selfplay('off'); goto_move(grec.len()); update_emoji(); bot_active('off'); clear_status(); add_mark('redraw') })
+    $('#btn_back10').click(() => { selfplay('off'); goto_move(af.grec.pos() - 10); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
+    $('#btn_fwd10').click(() => { selfplay('off'); goto_move(af.grec.pos() + 10); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
+    $('#btn_first').click(() => { selfplay('off'); goto_move(0); af.clear_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
+    $('#btn_last').click(() => { selfplay('off'); goto_move(af.grec.len()); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
 
     $('#lnk_settings').click(() => {
-      initSettingSliders()
+      af.initSettingSliders()
       $('#div_settings').css({ 'display': 'grid' })
     })
 
@@ -846,7 +682,7 @@ export function main(JGO, axutil, p_options) {
     }
 
     // Game over
-    if (grec.curmove() && grec.curmove().mv == 'pass') {
+    if (af.grec.curmove() && af.grec.curmove().mv == 'pass') {
       axutil.popup('Selfplay game over.')
       selfplay('off')
       return
@@ -861,7 +697,7 @@ export function main(JGO, axutil, p_options) {
     if (!cb_selfplay.saved_data) {
       console.log('cb_selfplay(): init saved data')
       axutil.hit_endpoint(ep + BOT,
-        { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
+        { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(af.grec.board_moves()), 'config': { 'komi': af.g_komi }, 'selfplay': 1 },
         (data) => {
           cb_selfplay.saved_data = data
           selfplay.ready = true
@@ -873,20 +709,20 @@ export function main(JGO, axutil, p_options) {
 
     // Show the saved move
     maybe_start_var()
-    grec.push({ 'mv': cb_selfplay.saved_data.bot_move, 'p': 0, 'score': 0, 'agent': 'kata20' })
-    replay_moves(grec.pos())
+    af.grec.push({ 'mv': cb_selfplay.saved_data.bot_move, 'p': 0, 'score': 0, 'agent': 'kata20' })
+    af.replay_moves(af.grec.pos())
     const playing = true
     get_prob_callback(cb_selfplay.saved_data.diagnostics.winprob, cb_selfplay.saved_data.diagnostics.score, settings('show_emoji'), playing)
 
     // Get next move and save it. Show best ten.
     axutil.hit_endpoint(ep + BOT,
-      { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi }, 'selfplay': 1 },
+      { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(af.grec.board_moves()), 'config': { 'komi': af.g_komi }, 'selfplay': 1 },
       (data) => {
         selfplay.ready = true
         cb_selfplay.saved_data = data
-        grec.curmove().data = data
+        af.grec.curmove().data = data
         if (!selfplay('ison')) return
-        if (settings('show_best_moves') && interval > 1000) { show_best_moves(cb_selfplay.saved_data) }
+        if (settings('show_best_moves') && interval > 1000) { af.show_best_moves(cb_selfplay.saved_data) }
         start_selfplay_timer(interval)
       }) // hit_endpoint()
   } // cb_selfplay()
@@ -896,27 +732,27 @@ export function main(JGO, axutil, p_options) {
   //---------------------------------------------------------------
   function replay_loaded_game(interval) {
     if (!selfplay('ison')) return;
-    grec.step()
-    if (grec.curmove() && grec.curmove().p === '0.00') { // No cached winprob, get it from katago
+    af.grec.step()
+    if (af.grec.curmove() && af.grec.curmove().p === '0.00') { // No cached winprob, get it from katago
       console.log('getting prob')
       get_prob_genmove((data) => {
         selfplay.ready = true
-        grec.curmove().data = data
-        goto_move(grec.pos())
-        update_emoji()
-        if (settings('show_best_moves')) { show_best_curmoves() }
+        af.grec.curmove().data = data
+        goto_move(af.grec.pos())
+        af.update_emoji()
+        if (settings('show_best_moves')) { af.show_best_curmoves() }
         start_selfplay_timer(interval)
       })
     }
     else { // Cached winprob
       console.log('using cached prob')
       selfplay.ready = true
-      goto_move(grec.pos())
-      update_emoji()
-      if (settings('show_best_moves')) { show_best_curmoves() }
+      goto_move(af.grec.pos())
+      af.update_emoji()
+      if (settings('show_best_moves')) { af.show_best_curmoves() }
       start_selfplay_timer(interval)
     }
-    if (grec.pos() >= grec.len()) {
+    if (af.grec.pos() >= af.grec.len()) {
       axutil.popup('Game replay complete.')
       selfplay('off')
     }
@@ -935,19 +771,19 @@ export function main(JGO, axutil, p_options) {
 
       var moves = game.moves
       $('#lb_komi').html(tr('Komi') + ': ' + game.komi)
-      clear_emoji()
+      af.clear_emoji()
       end_game()
-      grec = new GameRecord()
+      af.newGrec()
       for (var move of moves) {
         var move_prob = { 'mv': move, 'p': '0.00', 'score': '0.00', 'agent': '' }
-        grec.push(move_prob)
+        af.grec.push(move_prob)
       } // for
-      replay_moves(grec.pos())
-      show_movenum()
-      g_komi = game.komi
+      af.replay_moves(af.grec.pos())
+      af.show_movenum()
+      af.setKomi(game.komi)
       get_handicap()
       show_game_info(game)
-      clear_status()
+      af.clear_status()
       set_load_sgf_handler.loaded_game = game
       $('#sgf-file').val('') // reset to make sure it triggers again
 
@@ -970,50 +806,50 @@ export function main(JGO, axutil, p_options) {
   //-------------------------
   function btn_prev() {
     selfplay('off');
-    if (!grec.len()) return
-    goto_move(grec.pos() - 1); update_emoji(); bot_active('off')
-    add_mark('redraw')
+    if (!af.grec.len()) return
+    goto_move(af.grec.pos() - 1); af.update_emoji(); bot_active('off')
+    af.add_mark('redraw')
 
-    if (grec.curmove() && grec.curmove().data) {
-      if (settings('show_best_moves')) { show_best_curmoves() }
+    if (af.grec.curmove() && af.grec.curmove().data) {
+      if (settings('show_best_moves')) { af.show_best_curmoves() }
     }
   } // btn_prev()
 
   //-------------------------
   function btn_next() {
     selfplay('off');
-    if (!grec.len()) return
+    if (!af.grec.len()) return
     if (btn_next.waiting) {
       btn_next.buffered = true;
       console.log('btn_next buffered');  // wait for the previous call to finish
       return
     }
     console.log('btn_next()')
-    goto_move(grec.pos() + 1)
-    add_mark('redraw')
+    goto_move(af.grec.pos() + 1)
+    af.add_mark('redraw')
     // Do not analyze handicap stones
-    if (grec.pos() < 20 && grec.len() > grec.pos() && grec.nextmove().mv == 'pass') {
-      goto_move(grec.pos() + 1)
+    if (af.grec.pos() < 20 && af.grec.len() > af.grec.pos() && af.grec.nextmove().mv == 'pass') {
+      goto_move(af.grec.pos() + 1)
       return
     }
     if (settings('disable_ai')) { return }
 
-    if (grec.curmove() && grec.curmove().data) {
-      if (settings('show_best_moves')) { show_best_curmoves() }
+    if (af.grec.curmove() && af.grec.curmove().data) {
+      if (settings('show_best_moves')) { af.show_best_curmoves() }
     }
     else {
       btn_next.waiting = true
       console.log('btn_next waiting')
-      set_status(tr('KataGo is thinking ...'))
-      var pos = grec.pos()
+      af.set_status(tr('KataGo is thinking ...'))
+      var pos = af.grec.pos()
       get_prob_genmove((data) => {
         btn_next.waiting = false
         console.log('btn_next waiting cleared')
-        if (pos != grec.pos()) return
-        grec.curmove().data = data
-        update_emoji()
+        if (pos != af.grec.pos()) return
+        af.grec.curmove().data = data
+        af.update_emoji()
         if (settings('show_best_moves')) {
-          show_best_moves(data)
+          af.show_best_moves(data)
         }
         bot_active('off')
         if (btn_next.buffered) {
@@ -1024,7 +860,7 @@ export function main(JGO, axutil, p_options) {
       })
       return
     } // else
-    update_emoji()
+    af.update_emoji()
     bot_active('off')
   } // btn_next()
   btn_next.waiting = false
@@ -1047,14 +883,14 @@ export function main(JGO, axutil, p_options) {
 
   //-----------------------------
   function get_katago_move() {
-    set_status(tr('KataGo is thinking ...'))
-    var greclen = grec.len()
+    af.set_status(tr('KataGo is thinking ...'))
+    var greclen = af.grec.len()
     axutil.hit_endpoint(fast_or_strong().ep + BOT, {
-      'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()),
-      'config': { 'komi': g_komi }
+      'board_size': BOARD_SIZE, 'moves': axutil.moves_only(af.grec.board_moves()),
+      'config': { 'komi': af.g_komi }
     },
       (data) => {
-        if (greclen == grec.len()) { // user did not click in the meantime
+        if (greclen == af.grec.len()) { // user did not click in the meantime
           // if (settings('play_a')) {
           //   data.bot_move = data.diagnostics.best_ten[0].move
           // }
@@ -1076,36 +912,36 @@ export function main(JGO, axutil, p_options) {
   // Do things after the bot came back with move and estimate
   //------------------------------------------------------------
   function bot_move_callback(data) {
-    hover() // The board thinks the hover stone is actually there. Clear it.
+    af.hover() // The board thinks the hover stone is actually there. Clear it.
     var botprob = data.diagnostics.winprob; var botcol = 'Black'
-    if (turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
+    if (af.turn() == JGO.WHITE) { botprob = 1.0 - botprob; botcol = 'White' }
 
     if (data.bot_move == 'pass') {
       alert(tr('KataGo passes. Click on the Score button.'))
-      clear_status()
+      af.clear_status()
     }
     else if (data.bot_move == 'resign') {
       alert(tr('KataGo resigns.'))
-      set_status(tr('KataGo resigns.'))
+      af.set_status(tr('KataGo resigns.'))
       return
     }
-    else if ((var_button_state() == 'off') && (grec.pos() > 150) && ( // do not resign in variation or too early
-      (g_handi < 3 && botprob < 0.01) ||
-      (g_handi < 2 && botprob < 0.02) ||
+    else if ((var_button_state() == 'off') && (af.grec.pos() > 150) && ( // do not resign in variation or too early
+      (af.g_handi < 3 && botprob < 0.01) ||
+      (af.g_handi < 2 && botprob < 0.02) ||
       (botprob < 0.001))
       && (data.diagnostics.score > 10.0) // Do not resign unless B has a 10 point lead
     ) {
       alert(tr('KataGo resigns. You beat KataGo!'))
-      set_status(tr('KataGo resigns.'))
+      af.set_status(tr('KataGo resigns.'))
       return
     }
     else {
       maybe_start_var()
     }
-    grec.push({ 'mv': data.bot_move, 'p': 0.0, 'score': 0.0, 'agent': fast_or_strong().name })
-    replay_moves(grec.pos())
-    show_movenum()
-    add_mark('redraw')
+    af.grec.push({ 'mv': data.bot_move, 'p': 0.0, 'score': 0.0, 'agent': fast_or_strong().name })
+    af.replay_moves(af.grec.pos())
+    af.show_movenum()
+    af.add_mark('redraw')
     const show_emoji = false
     const playing = true
     get_prob_callback(data.diagnostics.winprob, data.diagnostics.score, show_emoji, playing)
@@ -1134,73 +970,25 @@ export function main(JGO, axutil, p_options) {
   // Moves
   //========
 
-  // Show a move on the board. 
-  // player == 1 or 2 meaning black or white
-  //--------------------------------------------
-  function show_move(player, coord) {
-    if (coord == 'pass' || coord == 'resign') {
-      g_ko = false
-      return
-    }
-    if (show_move.swap_colors) {
-      if (player == 1) { player = 2 }
-      else { player = 1 }
-    }
-    var play = g_jrecord.jboard.playMove(coord, player, g_ko)
-    if (play.success) {
-      var node = g_jrecord.createNode(true)
-      node.info.captures[player] += play.captures.length // tally captures
-      g_prisoners[player] = node.info.captures[player]
-      node.setType(coord, player) // play stone
-      node.setType(play.captures, JGO.CLEAR) // clear opponent's stones
+  
 
-      if (g_last_move) {
-        node.setMark(g_last_move, JGO.MARK.NONE) // clear previous mark
-      }
-      if (g_ko) {
-        node.setMark(g_ko, JGO.MARK.NONE) // clear previous ko mark
-      }
-      if (show_move.mark_last_move) {
-        node.setMark(coord, JGO.MARK.CIRCLE) // mark move
-      }
-      g_last_move = coord
-
-      if (play.ko)
-        node.setMark(play.ko, JGO.MARK.CIRCLE) // mark ko, too
-      g_ko = play.ko
-    } else {
-      board_click_callback.illegal_move = true
-    }
-  } // show_move()
-  show_move.mark_last_move = true
-  show_move.swap_colors = false
-
-  //------------------------
-  function goto_first_move() {
-    g_ko = false
-    g_last_move = false
-    grec.seek(0)
-    g_jrecord.jboard.clear()
-    g_jrecord.root = g_jrecord.current = null
-    show_movenum()
-  } // goto_first_move()
 
   //-----------------------
   function reset_game() {
     handle_variation('clear')
     set_load_sgf_handler.loaded_game = null
     show_game_info() // clear
-    grec = new GameRecord()
-    goto_first_move()
-    if (g_handi < 2) { return }
-    var hstones = HANDISTONES[g_handi]
+    af.newGrec()
+    af.goto_first_move()
+    if (af.g_handi < 2) { return }
+    var hstones = HANDISTONES[af.g_handi]
     for (const [idx, s] of hstones.entries()) {
       if (idx > 0) {
-        grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': '' })
+        af.grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': '' })
       }
-      grec.push({ 'mv': s, 'p': 0, 'score': 0, 'agent': '' })
+      af.grec.push({ 'mv': s, 'p': 0, 'score': 0, 'agent': '' })
     }
-    goto_move(grec.len())
+    goto_move(af.grec.len())
   } // reset_game()
 
   // The active game has ended.
@@ -1209,49 +997,21 @@ export function main(JGO, axutil, p_options) {
     settings('game_hash', '')
   } // end_game()
 
-  // Replay n moves from empty board.
-  //------------------------------------
-  function replay_moves(n) {
-    goto_first_move()
-    for (const [idx, move_prob] of grec.prefix(n).entries()) {
-      var move_string = move_prob.mv
-      var coord = axutil.string2jcoord(move_string)
-      show_move(turn(idx), coord)
-    }
-    grec.seek(n)
-    show_movenum()
-  } // replay_moves()
-
-  //--------------------------------
-  function replay_all_moves() {
-    replay_moves(grec.pos())
-  } // replay_all_moves()
 
   // Replay and show game up to move n
   //-------------------------------------
   function goto_move(n) {
     if (n == 0) { end_game() }
-    n = Math.max(n, 2 * g_handi - 1)
+    n = Math.max(n, 2 * af.g_handi - 1)
     score_position.active = false
     best_btn_callback.active = false
-    var totmoves = grec.len()
+    var totmoves = af.grec.len()
     if (n > totmoves) { n = totmoves }
-    if (n < 1) { goto_first_move(); clear_emoji(); return }
-    replay_moves(n)
-    show_movenum()
-    show_prob()
+    if (n < 1) { af.goto_first_move(); af.clear_emoji(); return }
+    af.replay_moves(n)
+    af.show_movenum()
+    af.show_prob()
   } // goto_move()
-
-  //----------------------------
-  function show_movenum() {
-    //if (!grec.len()) { return }
-    var totmoves = grec.len()
-    var n = grec.pos()
-    var html = `${n} / ${totmoves}<br>`
-    html += tr('B') + `:${g_prisoners[1]} `
-    html += tr('W') + `:${g_prisoners[2]} `
-    $('#btn_movenum').html(html)
-  } // show_movenum()
 
   //======================
   // Variation handling
@@ -1261,22 +1021,22 @@ export function main(JGO, axutil, p_options) {
   //--------------------------------------------------------
   function handle_variation(action) {
     if (action == 'save') { // Save record and start a variation
-      grec.enter_var()
+      af.grec.enter_var()
       var_button_state('on')
     }
     else if (action == 'clear') { // Restore game record and forget the variation
-      grec.exit_var()
-      goto_move(grec.pos())
-      update_emoji(); bot_active('off')
+      af.grec.exit_var()
+      goto_move(af.grec.pos())
+      af.update_emoji(); bot_active('off')
       var_button_state('off')
-      clear_status()
+      af.clear_status()
     }
   } // handle_variation()
 
   // Start a variation if we're not at the end
   //---------------------------------------------
   function maybe_start_var() {
-    if (grec.len() && grec.pos() < grec.len()) {
+    if (af.grec.len() && af.grec.pos() < af.grec.len()) {
       handle_variation('save')
     }
   } // maybe_start_var()
@@ -1313,8 +1073,8 @@ export function main(JGO, axutil, p_options) {
   function save_state() {
     localStorage.setItem('fast_or_strong', fast_or_strong().val)
     //if (var_button_state() == 'off') { // don't save if in variation
-    localStorage.setItem('game_record', grec.dumps())
-    localStorage.setItem('komi', JSON.stringify(g_komi))
+    localStorage.setItem('game_record', af.grec.dumps())
+    localStorage.setItem('komi', JSON.stringify(af.g_komi))
     localStorage.setItem('bot_active', bot_active())
     localStorage.setItem('loaded_game', JSON.stringify(set_load_sgf_handler.loaded_game))
     //}
@@ -1335,14 +1095,14 @@ export function main(JGO, axutil, p_options) {
     if (localStorage.getItem('game_record') === 'null') { return }
     set_load_sgf_handler.loaded_game = JSON.parse(localStorage.getItem('loaded_game'))
     show_game_info(set_load_sgf_handler.loaded_game)
-    grec.loads(localStorage.getItem('game_record'))
-    if (grec.var_active()) {
+    af.grec.loads(localStorage.getItem('game_record'))
+    if (af.grec.var_active()) {
       var_button_state('on')
     }
-    g_komi = JSON.parse(localStorage.getItem('komi'))
+    af.setKomi(JSON.parse(localStorage.getItem('komi')))
     if (localStorage.getItem('bot_active') == 'false') { bot_active('off') } else { bot_active('on') }
-    $('#lb_komi').html(tr('Komi') + ': ' + g_komi)
-    goto_move(grec.pos())
+    $('#lb_komi').html(tr('Komi') + ': ' + af.g_komi)
+    goto_move(af.grec.pos())
   } // load_state()
 
   //======================
@@ -1352,9 +1112,9 @@ export function main(JGO, axutil, p_options) {
   // Get current winning probability from genmove
   //-------------------------------------------------------------
   function get_prob_genmove(completion, update_emo, playing) {
-    //set_status(tr('Counting ...'))
+    //af.set_status(tr('Counting ...'))
     axutil.hit_endpoint(fast_or_strong().ep + BOT,
-      { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi } },
+      { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(af.grec.board_moves()), 'config': { 'komi': af.g_komi } },
       (data) => {
         get_prob_callback(data.diagnostics.winprob, data.diagnostics.score, update_emo, playing)
         if (completion) { completion(data) }
@@ -1364,19 +1124,19 @@ export function main(JGO, axutil, p_options) {
   // Continue after prob and score came back from the server
   //-------------------------------------------------------------------
   function get_prob_callback(winprob, score, update_emo, playing) {
-    if (grec.pos()) {
+    if (af.grec.pos()) {
       var p = Math.round(parseFloat(winprob) * 100) / 100
       var s = Math.round(parseFloat(score) * 100) / 100
-      grec.update(p, s)
+      af.grec.update(p, s)
       if (settings('game_hash')) { // we are in an active game
-        //console.log( 'saving ' + grec.pos() )
-        grec.dbsave() // save and notify observers
+        //console.log( 'saving ' + af.grec.pos() )
+        af.grec.dbsave() // save and notify observers
       }
     }
-    show_prob(update_emo, playing)
-    if (g_click_coord_buffer) { // user clicked while waiting, do it now
-      board_click_callback(g_click_coord_buffer)
-      g_click_coord_buffer = null
+    af.show_prob(update_emo, playing)
+    if (board_click_callback.g_click_coord_buffer) { // user clicked while waiting, do it now
+      board_click_callback(board_click_callback.g_click_coord_buffer)
+      board_click_callback.g_click_coord_buffer = null
     }
     else if (g_play_btn_buffer) { // Buffered play button click
       botmove_if_active()
@@ -1391,70 +1151,15 @@ export function main(JGO, axutil, p_options) {
   // Get the best move
   //----------------------------------------------------------
   function get_best_move(completion, update_emo, playing) {
-    set_status(tr('KataGo is thinking ...'))
+    af.set_status(tr('KataGo is thinking ...'))
     axutil.hit_endpoint(fast_or_strong().ep + BOT,
-      { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()), 'config': { 'komi': g_komi } },
+      { 'board_size': BOARD_SIZE, 'moves': axutil.moves_only(af.grec.board_moves()), 'config': { 'komi': af.g_komi } },
       (data) => {
         if (completion) { completion(data) }
       })
   } // get_best_move()
 
-  //------------------------------------------
-  function show_prob(update_emo, playing) {
-    if (!settings('show_prob')) { clear_status(); return }
-    var cur = grec.curmove()
-    if (cur) {
-      var p = cur.p
-      var score = cur.score
-      // 0.8 -> 1.0; 1.3 -> 1.5 etc
-      score = Math.trunc(Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
-      if (playing && !settings('show_prob')) {
-        clear_status()
-      } else {
-        var scorestr = get_scorestr(p, score)
-        set_status(scorestr)
-      }
-      // Show emoji
-      if (update_emo) { update_emoji() }
-    } else {
-      clear_status()
-    }
-  } // show_prob()
 
-  //--------------------------------
-  function update_emoji() {
-    if (settings('disable_ai')) { clear_emoji(); return }
-    if (!settings('show_emoji')) { clear_emoji(); return }
-    var delta_p = grec.delta_prob()
-    if (delta_p == null) {
-      clear_emoji();
-      return
-    }
-    set_emoji(delta_p)
-  } // update_emoji()
-   
-
-  //------------------------------
-  function clear_emoji() {
-    $('#emo').html('&nbsp;')
-  } // clear_emoji() 
-
-  //---------------------------------
-  function set_emoji(delta_prob) {
-    const MOVE_EMOJI = ['😍', '😐', '😓', '😡']
-    var emo = MOVE_EMOJI[3]
-
-    // Get sad or angry if we lose winning probability
-    const PROB_BINS = [0.03, 0.06, 0.1]
-    var prob_idx
-    for (prob_idx = 0; prob_idx < PROB_BINS.length; prob_idx++) {
-      if (delta_prob < PROB_BINS[prob_idx]) break;
-    }
-
-    // Choose whichever is angrier
-    emo = MOVE_EMOJI[prob_idx]
-    $('#emo').html(emo)
-  } // set_emoji()
 
   //==========
   // Scoring
@@ -1463,11 +1168,11 @@ export function main(JGO, axutil, p_options) {
   // Score the current position with katago.
   //-------------------------------------------
   function score_position() {
-    set_status('Scoring...')
+    af.set_status('Scoring...')
     axutil.hit_endpoint('/score/' + BOT,
       {
-        'board_size': BOARD_SIZE, 'moves': axutil.moves_only(grec.board_moves()),
-        'config': { 'komi': g_komi }, 'tt': Math.random()
+        'board_size': BOARD_SIZE, 'moves': axutil.moves_only(af.grec.board_moves()),
+        'config': { 'komi': af.g_komi }, 'tt': Math.random()
       },
       (data) => {
         score_position.active = true
@@ -1483,7 +1188,7 @@ export function main(JGO, axutil, p_options) {
   // Draw black and white squares with alpha representing certainty
   //------------------------------------------------------------------
   function draw_estimate(probs) {
-    var node = g_jrecord.createNode(true)
+    var node = af.g_jrecord.createNode(true)
     for (const [idx, prob] of probs.entries()) {
       var row = BOARD_SIZE - Math.trunc(idx / BOARD_SIZE)
       var col = (idx % BOARD_SIZE) + 1
@@ -1504,51 +1209,6 @@ export function main(JGO, axutil, p_options) {
   // Misc
   //=======
 
-  //----------------------------
-  function clear_status() {
-    $('#status').html('')
-    $('#bestscore').html('')
-    $('#emo').html('')
-  }
-
-  //----------------------------
-  function set_status(x) {
-    if (settings('disable_ai')) { clear_status(); return }
-    if (x.indexOf('NaN') >= 0) { clear_status(); return }
-    $('#status').html(x)
-    $('#bestscore').html('')
-  }
-
-  // Show a translucent hover stone
-  //---------------------------------
-  function hover(coord, col, opts) {
-    opts = opts || {}
-    if (!opts.force) {
-      if (p_options.mobile && col) { return }
-    }
-    var hcol = col ? col : turn()
-    var jboard = g_jrecord.jboard
-    if (jboard.getType(coord) == JGO.WHITE || jboard.getType(coord) == JGO.BLACK) { return }
-    if (coord) {
-      if (hover.coord) {
-        jboard.setType(hover.coord, JGO.CLEAR)
-      }
-      jboard.setType(coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
-      hover.coord = coord
-      if (col) {
-        replay_moves(grec.pos()) // remove artifacts
-        add_mark('redraw')
-        jboard.setType(coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
-      }
-    }
-    else if (hover.coord) {
-      jboard.setType(hover.coord, JGO.CLEAR)
-      hover.coord = null
-      replay_moves(grec.pos()) // remove artifacts
-      add_mark('redraw')
-    }
-  } // hover()
-  hover.coord = null
 
   // Get or set guest, fast, strong mode
   //---------------------------------------
@@ -1643,27 +1303,28 @@ export function main(JGO, axutil, p_options) {
     return 0
   } // fast_or_strong()
 
-  // Translation function for Jinja templates
-  function tr(text) { if (serverData) { return serverData.translate(text) } return text }
+  // This never worked and no complaints. Now it's a dummy.
+  function tr(text) { return text }
 
-  // Save game record once a second
-  function once_per_sec() {
+  // Occasionally save game record 
+  //-----------------------------------
+  function periodicSave() {
     save_state()
-    clearTimeout(once_per_sec.timer)
-    once_per_sec.timer = setTimeout(once_per_sec, 5000)
-  }
-  once_per_sec.timer = null
+    clearTimeout(periodicSave.timer)
+    periodicSave.timer = setTimeout(periodicSave, 5000)
+  } // periodicSave()
+  periodicSave.timer = null
 
   // Global vars
-  var grec // The game record
-  var serverData // Translation table and user info (e.g. their language)
+  // var grec // The game record
+  //var serverData // Translation table and user info (e.g. their language)
 
   onRefresh()
 
   // Things that happen on page load and refresh
   //-----------------------------------------------
   function onRefresh() {
-    grec = new GameRecord()
+    af.newGrec()
     settings()
     if (settings('diagrams')) {
       $('#diagram_buttons').show()
@@ -1671,7 +1332,7 @@ export function main(JGO, axutil, p_options) {
       $('#diagram_buttons').hide()
     }
 
-    toggle_ai_buttons()
+    af.toggle_ai_buttons()
 
     set_btn_handlers()
     set_dropdown_handlers()
@@ -1683,18 +1344,17 @@ export function main(JGO, axutil, p_options) {
     //    document.onkeydown = check_key
     document.addEventListener('keydown', check_key)
 
-    if (p_options.mobile) {
+    if (axutil.isMobile()) {
       window.onpagehide = save_state
     }
     else {
       window.onbeforeunload = save_state
     }
 
-    var serverData = new ServerData(axutil, () => {
-      load_state()
-      get_handicap()
-      once_per_sec()
-    })
+    load_state()
+    get_handicap()
+    periodicSave()
+
     if (!settings('logged_in')) {
       axutil.disable_button('btn_tgl_selfplay')
     }
@@ -1702,10 +1362,10 @@ export function main(JGO, axutil, p_options) {
 
   //------------------------
   function goto_next_bad_move(p_thresh) {
-    grec.seek_next_bad_move(p_thresh)
-    goto_move(grec.pos())
-    update_emoji()
-    if (settings('show_best_moves')) { show_best_curmoves() }
+    af.grec.seek_next_bad_move(p_thresh)
+    goto_move(af.grec.pos())
+    af.update_emoji()
+    if (settings('show_best_moves')) { af.show_best_curmoves() }
   } // goto_next_bad_move()
 
   // Key actions
@@ -1740,20 +1400,20 @@ export function main(JGO, axutil, p_options) {
     // Shortcuts for the settings
     else if (e.ctrlKey && e.key == 'e') { // e for emoji
       settings('show_emoji', !settings('show_emoji'))
-      update_emoji()
+      af.update_emoji()
     } // emoji
     else if (e.ctrlKey && e.key == 'p') { // p for probability
       settings('show_prob', !settings('show_prob'))
-      show_prob()
+      af.show_prob()
     } // probability
     else if (e.ctrlKey && e.key == 'b') { // b for best moves
       settings('show_best_moves', !settings('show_best_moves'))
       if (settings('show_best_moves')) {
-        show_best_curmoves()
+        af.show_best_curmoves()
       } else {
         //settings('show_best_ten', false)
-        //show_best_curmoves()
-        replay_all_moves()
+        //af.show_best_curmoves()
+        af.replay_all_moves()
         //$('#status').html('')
         //$('#bestscore').html('')
       }
@@ -1765,11 +1425,11 @@ export function main(JGO, axutil, p_options) {
       } else {
         $('#status').html('')
       }
-      show_best_curmoves()
+      af.show_best_curmoves()
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
       settings('disable_ai', !settings('disable_ai'))
-      toggle_ai_buttons()
+      af.toggle_ai_buttons()
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
       settings('diagrams', !settings('diagrams'))
@@ -1782,12 +1442,6 @@ export function main(JGO, axutil, p_options) {
 
   } // check_key()
 
-  // Expose some nested functions
-  main.update_emoji = update_emoji
-  main.show_prob = show_prob
-  main.show_best_curmoves = show_best_curmoves
-  main.replay_all_moves = replay_all_moves 
-
 } // main()
 
-main(JGO, axutil, { mobile: false })
+main(JGO, axutil)

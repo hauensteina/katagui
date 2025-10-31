@@ -6,7 +6,7 @@
 'use strict';
 
 const DDATE = ''
-const VERSION = '3.15'
+const VERSION = '3.15.1'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -706,33 +706,3 @@ class GameRecord {
   } // from_dict()
 } // class GameRecord
 
-// Get translation table and user data from the server.
-// Cache and provide access methods.
-//--------------------------------------------------------
-class ServerData {
-  constructor(axutil, completion) {
-    this.transtable = {}
-    this.userdata = {}
-    axutil.hit_endpoint_simple('/get_user_data', {},
-      (userdata) => {
-        this.userdata = userdata
-        axutil.hit_endpoint_simple('/get_translation_table', {}, (ttable) => {
-          this.transtable = ttable
-          completion()
-        })
-      })
-  }
-  translate(text) {
-    try {
-      var lang = this.userdata['lang']
-      if (!lang) { lang = 'eng' }
-      var tab = this.transtable[lang]
-      var res = tab[text]
-      if (!res) { return text }
-      return res
-    }
-    catch (err) {
-      return text
-    }
-  }
-} // class ServerData
