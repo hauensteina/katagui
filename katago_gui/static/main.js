@@ -771,6 +771,7 @@ function main(JGO, axutil) {
 
       var moves = game.moves
       $('#lb_komi').html(tr('Komi') + ': ' + game.komi)
+      handle_variation('clear')
       af.clear_emoji()
       end_game()
       af.newGrec()
@@ -1360,9 +1361,9 @@ function main(JGO, axutil) {
     }
   } // onRefresh()
 
-  //------------------------
-  function goto_next_bad_move(p_thresh) {
-    af.grec.seek_next_bad_move(p_thresh)
+  //-----------------------------------------
+  function goto_next_bad_move(thresh) {
+    af.grec.seek_next_bad_move(thresh)
     goto_move(af.grec.pos())
     af.update_emoji()
     if (settings('show_best_moves')) { af.show_best_curmoves() }
@@ -1393,8 +1394,7 @@ function main(JGO, axutil) {
     }
     // Goto next really bad move ctrl-s
     else if (e.ctrlKey && e.key == 's') {
-      //goto_next_bad_move(0.1)
-      goto_next_bad_move(0.06)
+      goto_next_bad_move(4.0)
     } // bad move
 
     // Shortcuts for the settings

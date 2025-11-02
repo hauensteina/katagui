@@ -6,7 +6,7 @@
 'use strict';
 
 const DDATE = ''
-const VERSION = '3.15.2'
+const VERSION = '3.15.3'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -577,14 +577,53 @@ class GameRecord {
     return delta
   } // delta_prob()
 
+  //--------------------
+  // Combine point loss and probability loss via log-odds.
+  // A value of S > 3 could be considered a blunder.
+  move_badness() {
+    function logit(p) {
+      // clamp to avoid infinities
+      const pc = Math.min(0.999999, Math.max(0.000001, p));
+      return Math.log(pc / (1 - pc));
+    } // logit()
+
+    if (!this.curmove() || !this.prevmove()) { return null }
+    var cur = this.curmove()
+    var prev = this.prevmove()
+    if (cur.mv == 'pass' || prev.mv == 'pass') {
+      return null
+    }
+    var p = cur.p
+    var pp = prev.p
+    if (p === '0.00' || pp === '0.00') {
+      return null // no prob, no delta
+    }
+    var s = cur.score
+    var ps = prev.score
+    if (s === '0.00' || ps === '0.00') {
+      return null
+    }
+    if ((this.pos() - 1) % 2) { // we are white
+      p = 1.0 - p; pp = 1.0 - pp // flip probabilities
+      s = -1 * cur.score; ps = -1 * prev.score // flip
+    }
+    const PL = Math.max(0, ps - s) // points lost
+    const dL = logit(p) - logit(pp) // log-odds change
+    const LL = Math.max(0, -dL)
+    const EQP = LL / 0.12 // ~points from log-odds
+    const w = 1.0
+    const S = PL + w * EQP
+    return S
+  } // move_badness()
+
   //------------------------------
-  seek_next_bad_move(p_thresh) {
+  seek_next_bad_move(thresh) {
     var oldpos = this.pos()
     var found = false
     for (var i = oldpos + 1; i <= this.len(); i++) {
       this.seek(i)
-      var delta_p = this.delta_prob()
-      if (delta_p >= p_thresh) {
+      var badness = this.move_badness()
+      if (badness >= thresh) {
         return
       }
     } // for

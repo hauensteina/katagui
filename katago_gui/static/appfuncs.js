@@ -72,12 +72,18 @@ export function show_prob(update_emo, playing) {
 export function update_emoji() {
     if (axutil.settings('disable_ai')) { clear_emoji(); return }
     if (!axutil.settings('show_emoji')) { clear_emoji(); return }
-    var delta_p = grec.delta_prob()
-    if (delta_p == null) {
-        clear_emoji();
+    // var delta_p = grec.delta_prob()
+    // if (delta_p == null) {
+    //     clear_emoji();
+    //     return
+    // }
+    // set_emoji(delta_p)
+    var badness = grec. move_badness()
+    if (badness == null) {
+        clear_emoji()
         return
     }
-    set_emoji(delta_p)
+    set_emoji(badness)
 } // update_emoji()
 
 //------------------------------
@@ -86,19 +92,17 @@ export function clear_emoji() {
 } // clear_emoji() 
 
 //---------------------------------
-export function set_emoji(delta_prob) {
+export function set_emoji(badness) {
     const MOVE_EMOJI = ['😍', '😐', '😓', '😡']
     var emo = MOVE_EMOJI[3]
 
     // Get sad or angry if we lose winning probability
-    const PROB_BINS = [0.03, 0.06, 0.1]
-    var prob_idx
-    for (prob_idx = 0; prob_idx < PROB_BINS.length; prob_idx++) {
-        if (delta_prob < PROB_BINS[prob_idx]) break;
+    const POINT_BINS = [2.0, 4.0, 8.0]
+    var idx
+    for (idx = 0; idx < POINT_BINS.length; idx++) {
+        if (badness < POINT_BINS[idx]) break;
     }
-
-    // Choose whichever is angrier
-    emo = MOVE_EMOJI[prob_idx]
+    emo = MOVE_EMOJI[idx]
     $('#emo').html(emo)
 } // set_emoji()
 
