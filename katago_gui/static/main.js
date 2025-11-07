@@ -1333,7 +1333,7 @@ function main(JGO, axutil) {
       $('#diagram_buttons').hide()
     }
 
-    af.toggle_ai_buttons()
+    af.toggle_ai_buttons({})
 
     set_btn_handlers()
     set_dropdown_handlers()
@@ -1429,7 +1429,7 @@ function main(JGO, axutil) {
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
       settings('disable_ai', !settings('disable_ai'))
-      af.toggle_ai_buttons()
+      af.toggle_ai_buttons({})
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
       settings('diagrams', !settings('diagrams'))

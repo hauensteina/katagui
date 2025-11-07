@@ -205,8 +205,8 @@ export function hover(coord, col, opts) {
 } // hover()
 hover.coord = null
 
-//---------------------------------------
-export function toggle_ai_buttons() {
+//--------------------------------------------------------------
+export function toggle_ai_buttons({ opt_auto = true } ) {
     // Disable/Enable some buttons if AI is disabled or not
     var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
     if (axutil.settings('disable_ai')) {
@@ -219,7 +219,9 @@ export function toggle_ai_buttons() {
         $('#emo').html('&nbsp;')
     } else {
         // enable opt_auto checkbox
-        $('#opt_auto').prop('checked', true)
+        if (opt_auto) {
+            $('#opt_auto').prop('checked', true)
+        }
         $('#opt_auto').prop('disabled', false)
         // enable ai buttons
         ai_buttons.forEach(btn => axutil.enable_button(btn))
@@ -280,7 +282,7 @@ export function initSettingSliders() {
             replay_all_moves()
         }
 
-        toggle_ai_buttons()
+        toggle_ai_buttons( { opt_auto: null } )
         update_emoji()
         show_prob()
 
