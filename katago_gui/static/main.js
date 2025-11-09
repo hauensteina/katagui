@@ -366,11 +366,11 @@ function main(JGO, axutil) {
     $('#btn_tgl_mark').click(() => {
       var btn = $('#btn_tgl_mark')
       if (btn.hasClass('btn-success')) {
-        show_move.mark_last_move = false
+        af.mark_last_move( false )
         btn.removeClass('btn-success')
         btn.css('background-color', '')
       } else {
-        show_move.mark_last_move = true
+        af.mark_last_move( true )
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
       }
@@ -395,14 +395,14 @@ function main(JGO, axutil) {
 
     $('#btn_tgl_swap_colors').click(() => {
       var btn = $('#btn_tgl_swap_colors')
-      if (show_move.swap_colors) {
-        show_move.swap_colors = false
+      if (af.show_move.swap_colors) {
+        af.swap_colors(false)
         af.replay_moves(af.grec.pos())
         af.add_mark('redraw')
         btn.removeClass('btn-success')
         btn.css('background-color', '')
       } else {
-        show_move.swap_colors = true
+        af.swap_colors(true)
         af.replay_moves(af.grec.pos())
         af.add_mark('redraw')
         btn.addClass('btn-success')
@@ -1381,7 +1381,11 @@ function main(JGO, axutil) {
     }
     // Ctrl-down toggles mark-last-move
     else if (e.ctrlKey && e.key == 'ArrowDown') {
-      show_move.mark_last_move = !show_move.mark_last_move
+      if (af.show_move.mark_last_move) {
+        af.mark_last_move(false)
+      } else {
+        af.mark_last_move(true)
+      }
     }
     // space toggles selfplay
     else if (!e.ctrlKey && e.key == ' ') { // space bar

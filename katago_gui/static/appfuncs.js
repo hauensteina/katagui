@@ -516,6 +516,16 @@ export function show_move(player, coord) {
 show_move.mark_last_move = true
 show_move.swap_colors = false
 
+//----------------------------------------
+export function mark_last_move(flag) {
+    show_move.mark_last_move = flag
+} // mark_last_move()
+
+//-----------------------------------
+export function swap_colors(flag) {
+    show_move.swap_colors = flag
+} // swap_colors()
+
 //-------------------------------------
 export function goto_first_move() {
     g_ko = false
