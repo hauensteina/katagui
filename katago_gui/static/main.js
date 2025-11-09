@@ -172,9 +172,7 @@ function main(JGO, axutil) {
     // Add a pass to get the right hover color
     af.grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
     goto_move(af.grec.len())
-
   } // add_stone()
-
 
   //-------------------------------
   function best_btn_callback() {
@@ -971,9 +969,6 @@ function main(JGO, axutil) {
   // Moves
   //========
 
-  
-
-
   //-----------------------
   function reset_game() {
     handle_variation('clear')
@@ -1392,6 +1387,11 @@ function main(JGO, axutil) {
     else if (!e.ctrlKey && e.key == ' ') { // space bar
       selfplay('toggle')
     }
+    // Clear the board
+    else if (e.ctrlKey && e.key == 'c') {
+      af.setHandi(0)
+      reset_game()
+    } // clear board
     // Goto next really bad move ctrl-s
     else if (e.ctrlKey && e.key == 's') {
       goto_next_bad_move(4.0)
