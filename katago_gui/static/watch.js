@@ -670,7 +670,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
   } // show_prob()
 
-  const HAPPY_POINT_LOSS_MAX = 2.0
+  //const HAPPY_POINT_LOSS_MAX = 2.0
   //--------------------------
   function update_emoji() {
     var cur = grec.curmove()
@@ -691,10 +691,11 @@ function watch( JGO, axutil, game_hash, p_options) {
       }
       var delta_p = pp - p
       var delta_score = pscore - score
-      if (p < 0.05 && delta_p < 0.06) { set_emoji() } // empty
-      else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
-      else if (pp == 0) { set_emoji() } // empty
-      else { set_emoji( delta_p, delta_score) }
+      // if (p < 0.05 && delta_p < 0.06) { set_emoji() } // empty
+      // else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
+      // else if (pp == 0) { set_emoji() } // empty
+      // else { set_emoji( delta_p, delta_score) }
+      set_emoji( delta_p, delta_score) 
     }
     else {
       set_emoji()
