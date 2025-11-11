@@ -600,7 +600,10 @@ class GameRecord {
     }
     var s = cur.score
     var ps = prev.score
-    if (s === '0.00' || ps === '0.00') {
+    if (s == 0 || ps == 0) { 
+      return null
+    }
+    if (!s || !ps) { 
       return null
     }
     if ((this.pos() - 1) % 2) { // we are white
