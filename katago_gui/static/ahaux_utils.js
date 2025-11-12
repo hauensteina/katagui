@@ -697,7 +697,7 @@ class GameRecord {
       if (this.record.length > 0 && this.record[this.record.length - 1].mv == 'pass') {
         this.pop() // remove last pass
       } else if (this.record.length > 0) {
-        this.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
+        this.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00', 'agent': 'human' })
       }
     }
   } // force_black_turn()

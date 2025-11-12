@@ -160,7 +160,7 @@ function main(JGO, axutil) {
     else if (color == JGO.WHITE) af.grec.force_white_turn()
 
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    af.grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': mstr, 'p': '0.00', 'score': '0.00', 'agent': 'human' })
     board_click_callback.illegal_move = false
     goto_move(af.grec.len())
     // Silently ignore illegal moves
@@ -170,7 +170,7 @@ function main(JGO, axutil) {
       return
     }
     // Add a pass to get the right hover color
-    af.grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00', 'agent': 'human' })
     goto_move(af.grec.len())
   } // add_stone()
 
