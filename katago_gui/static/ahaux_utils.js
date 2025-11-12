@@ -600,12 +600,12 @@ class GameRecord {
     }
     var s = cur.score
     var ps = prev.score
-    if (s == 0 || ps == 0) { 
-      return null
-    }
-    if (!s || !ps) { 
-      return null
-    }
+    //if (s == 0 || ps == 0) { 
+    //  return null
+    //}
+    //if (!s || !ps) { 
+    //  return null
+    //}
     if ((this.pos() - 1) % 2) { // we are white
       p = 1.0 - p; pp = 1.0 - pp // flip probabilities
       s = -1 * cur.score; ps = -1 * prev.score // flip
