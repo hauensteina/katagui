@@ -65,6 +65,13 @@
 
 </head>
 
+<style>
+  .flag {
+    display: none;
+    vertical-align: middle;
+  }
+</style>
+
 <body style='left:0; margin:0; padding:0;user-select:none;'>
   {% if not home %}
   <table class='center' style='width:100%'>
@@ -160,6 +167,7 @@
           } else {
             $('.flag').width('25px')
           }
+          $('.flag').css('display','inline-block')
           $('.font-l').each(function (index) { this.style.fontSize = lfont })
           $('.font-m').each(function (index) { this.style.fontSize = mfont })
           $('.font-s').each(function (index) { this.style.fontSize = sfont })
