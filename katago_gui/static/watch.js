@@ -58,7 +58,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     var mstr = axutil.jcoord2string( coord)
     grec.push( {'mv':mstr, 'p':0.0, 'score':0, 'agent':'human'})
     goto_move( grec.len())
-    set_emoji()
+    clear_emoji()
     const show_emoji = true
     get_prob_genmove( (data)=>{}, show_emoji)
   } // board_click_callback()
@@ -266,7 +266,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     $('#btn_next').click( btn_next)
     $('#btn_back10').click( () => { toggle_live_button( 'off'); goto_move( grec.pos() - 10); update_emoji() })
     $('#btn_fwd10').click( () => { toggle_live_button( 'off'); goto_move( grec.pos() + 10); update_emoji() })
-    $('#btn_first').click( () => { toggle_live_button( 'off'); goto_move(0); set_emoji(); clear_status() })
+    $('#btn_first').click( () => { toggle_live_button( 'off'); goto_move(0); clear_emoji(); clear_status() })
     $('#btn_last').click( () => { toggle_live_button( 'off'); goto_move( grec.len()); update_emoji() })
 
     // Prevent zoom on double tap
@@ -522,7 +522,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     score_position.active = false
     best_btn_callback.active = false
     var totmoves = grec.len()
-    if (n < 1) { goto_first_move(); set_emoji(); return }
+    if (n < 1) { goto_first_move(); clear_emoji(); return }
     if (n > totmoves) { n = totmoves }
     replay_moves( n)
     show_prob()
@@ -657,7 +657,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       // 0.8 -> 1.0; 1.3 -> 1.5 etc
       score = Math.trunc( Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
       if (p == 0 && score == 0) {
-        set_emoji(); clear_status()
+        clear_emoji(); clear_status()
         return
       }
       var scorestr = get_scorestr(p,score)
@@ -670,64 +670,34 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
   } // show_prob()
 
-  //const HAPPY_POINT_LOSS_MAX = 2.0
   //--------------------------
   function update_emoji() {
-    var cur = grec.curmove()
-    var prev = grec.prevmove()
-    if (!cur) { return }
-    var p = cur.p
-    var score = cur.score
-    if (p == 0) { set_emoji(); return }
-    if (prev) {
-      if (cur.mv == 'pass') {  set_emoji(); return }
-      if (prev.mv == 'pass') {  set_emoji(); return }
-      if (prev.p == 0) {  set_emoji(); return }
-      var pp = prev.p
-      var pscore = prev.score
-      if ((grec.pos() - 1) % 2) { // we are white
-        p = 1.0 - p; pp = 1.0 - pp
-        score *= -1; pscore *= -1
-      }
-      var delta_p = pp - p
-      var delta_score = pscore - score
-      // if (p < 0.05 && delta_p < 0.06) { set_emoji() } // empty
-      // else if (p > 0.95 && delta_score < HAPPY_POINT_LOSS_MAX) { set_emoji(0.0, 0) } // happy
-      // else if (pp == 0) { set_emoji() } // empty
-      // else { set_emoji( delta_p, delta_score) }
-      set_emoji( delta_p, delta_score) 
-    }
-    else {
-      set_emoji()
-    }
-  } // update_emoji()
-
-  //-----------------------------------------------
-  function set_emoji( delta_prob, delta_score) {
-    var emo_id = '#emo'
-    if (typeof delta_prob == 'undefined') {
-      $(emo_id).html( '&nbsp;')
+    var badness = grec.move_badness()
+    if (badness == null) {
+      clear_emoji()
       return
     }
-    const MOVE_EMOJI = ['😍','😐','😓','😡']
+    set_emoji(badness)
+  } // update_emoji()
+
+  //------------------------------
+  function clear_emoji() {
+    $('#emo').html('&nbsp;')
+  } // clear_emoji() 
+
+  //---------------------------------
+  function set_emoji(badness) {
+    const MOVE_EMOJI = ['😍', '😐', '😓', '😡']
     var emo = MOVE_EMOJI[3]
 
-    // Get angry if we lose winning probability
-    const PROB_BINS = [0.03, 0.06, 0.1]
-    var prob_idx
-    for (prob_idx=0; prob_idx < PROB_BINS.length; prob_idx++) {
-      if (delta_prob < PROB_BINS[prob_idx]) break;
+    // Get sad or angry if we lose winning probability
+    const POINT_BINS = [2.0, 4.0, 8.0]
+    var idx
+    for (idx = 0; idx < POINT_BINS.length; idx++) {
+      if (badness < POINT_BINS[idx]) break;
     }
-    // Get angry if we lose points
-    const SCORE_BINS = [HAPPY_POINT_LOSS_MAX, 4, 8]
-    var score_idx
-    for (score_idx=0; score_idx < SCORE_BINS.length; score_idx++) {
-      if (delta_score < SCORE_BINS[score_idx]) break;
-    }
-
-    // Choose whichever is angrier
-    emo = MOVE_EMOJI[ Math.max( prob_idx, score_idx)]
-    $(emo_id).html( emo)
+    emo = MOVE_EMOJI[idx]
+    $('#emo').html(emo)
   } // set_emoji()
 
   //==========
