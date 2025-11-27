@@ -625,13 +625,15 @@ function main(JGO, axutil) {
   function selfplay(action) {
     if (action == 'on') {
       cb_selfplay.saved_data = null
-      $('#btn_tgl_selfplay').css('background-color', 'rgb(40, 167, 69)')
+      //$('#btn_tgl_selfplay').css('color', 'black')
+      $('#btn_tgl_selfplay').css('background-color', '#2c9d45')
       fast_or_strong('fast')
       selfplay.ready = true
       return $('#btn_tgl_selfplay').addClass('btn-success')
     }
     else if (action == 'off') {
       clearTimeout(selfplay.timer)
+      //$('#btn_tgl_selfplay').css('color', 'black') // @@@
       $('#btn_tgl_selfplay').css('background-color', '')
       return $('#btn_tgl_selfplay').removeClass('btn-success')
     }
@@ -641,6 +643,7 @@ function main(JGO, axutil) {
 
     // action == 'toggle'
     if (selfplay('ison')) {
+      //$('#btn_tgl_selfplay').css('background-color', '#c0d0c0')
       return selfplay('off')
     }
     selfplay('on')
@@ -1056,12 +1059,13 @@ function main(JGO, axutil) {
       $('#btn_clear_var').removeClass('disabled')
       $('#btn_clear_var').addClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '')
+      $('#btn_clear_var').css('background-color', '#2c9d45')
     }
     else {
       $('#btn_clear_var').addClass('disabled')
       $('#btn_clear_var').removeClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
+      $('#btn_clear_var').css('background-color', '#c0d0c0')
     }
     return 0
   } // var_button_state()
