@@ -12,7 +12,8 @@ JGO.BOARD.large = {
   },
 
   // Margins around the board, both on normal edges and clipped ones
-  margin: {normal: 40, clipped: 40},
+  //margin: {normal: 40, clipped: 40},
+  margin: {normal: 0, clipped: 0},
 
   // Shadow color, blur and offset
   boardShadow: {color: '#ffe0a8', blur: 30, offX: 5, offY: 5},
@@ -31,7 +32,9 @@ JGO.BOARD.large = {
   stars: {radius: 4},
 
   // Coordinate color and font
-  coordinates: {color: '#808080', font: 'normal 18px sanf-serif'},
+  //coordinates: {color: '#808080', font: 'normal 18px sanf-serif'},
+  coordinates: {top:false, bottom:false, left:false, right:false},
+
 
   // Stone radius  and alpha for semi-transparent stones
   stone: {radius: 22, dimAlpha:0.6},

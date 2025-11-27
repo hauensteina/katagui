@@ -16,6 +16,13 @@
   if (axutil.isDesktop()) { document.location.href = '/index' }
 </script>
 <style>
+  .btn {
+    /*background-color: #c0d0c0;*/
+    background-color: #d0e0d0;
+    border-color:#13751a;
+    border-width:1;
+  }
+
   /* Disable hover color change on buttons */
   .btn:hover {
     background-color: #CCCCCC;
@@ -274,8 +281,11 @@
     <!-- More Nav Buttons -->
     <div>
       <label id='btn_first' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('First')}}</label>
+      &nbsp;
       <label id='btn_back10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Back 10')}}</label>
+      &nbsp;
       <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Fwd 10')}}</label>
+      &nbsp;
       <label id='btn_last' class='btn btn-outline-dark' style='font-size:22pt'>{{tr('Last')}}</label>
     </div>
 
