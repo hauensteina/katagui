@@ -380,7 +380,7 @@ function watch( JGO, axutil, game_hash, p_options) {
     else if (action == 'off') {
       $btn.removeClass('ahaux_on')
       $btn.css('background-color', '')
-      $btn.css('color', 'black')
+      $btn.css('color', '')
       $btn.html( tr('Live'))
     }
     else if (action == 'toggle') {
@@ -589,12 +589,13 @@ function watch( JGO, axutil, game_hash, p_options) {
       $('#btn_clear_var').removeClass('disabled')
       $('#btn_clear_var').addClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '')
+      $('#btn_clear_var').css('background-color', '#2c9d45')
     }
     else {
       $('#btn_clear_var').addClass('disabled')
       $('#btn_clear_var').removeClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
+      $('#btn_clear_var').css('background-color', '#c0d0c0')
     }
     return 0
   } // var_button_state()
