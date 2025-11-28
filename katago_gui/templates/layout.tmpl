@@ -38,14 +38,14 @@
   <script src='https://d3js.org/d3.v5.min.js'></script>
 
   <!-- Our own stuff -->
-  <script type='text/javascript' src='static/ahaux_utils.js?rand={{ rrand() }}'></script>
+  <script type='text/javascript' src='static/ahaux_utils.js'></script>
   <script type='text/javascript'> const axutil = new AhauxUtils($, d3) </script>
 
   <!-- The Go board -->
   <script type='text/javascript' src='static/jgoboard-latest.js'></script>
 
   <!-- Main entry point -->
-  <script type='module' src='static/main.js?rand={{ rrand() }}'></script>
+  <script type='module' src='static/main.js'></script>
 
   <!-- Bootstrap CSS -->
   <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
@@ -64,6 +64,13 @@
   </script>
 
 </head>
+
+<style>
+  .flag {
+    display: none;
+    vertical-align: middle;
+  }
+</style>
 
 <body style='left:0; margin:0; padding:0;user-select:none;'>
   {% if not home %}
@@ -160,6 +167,7 @@
           } else {
             $('.flag').width('25px')
           }
+          $('.flag').css('display','inline-block')
           $('.font-l').each(function (index) { this.style.fontSize = lfont })
           $('.font-m').each(function (index) { this.style.fontSize = mfont })
           $('.font-s').each(function (index) { this.style.fontSize = sfont })

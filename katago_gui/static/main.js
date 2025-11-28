@@ -160,7 +160,7 @@ function main(JGO, axutil) {
     else if (color == JGO.WHITE) af.grec.force_white_turn()
 
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    af.grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': mstr, 'p': '0.00', 'score': '0.00', 'agent': 'human' })
     board_click_callback.illegal_move = false
     goto_move(af.grec.len())
     // Silently ignore illegal moves
@@ -170,11 +170,9 @@ function main(JGO, axutil) {
       return
     }
     // Add a pass to get the right hover color
-    af.grec.push({ 'mv': 'pass', 'p': 0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00', 'agent': 'human' })
     goto_move(af.grec.len())
-
   } // add_stone()
-
 
   //-------------------------------
   function best_btn_callback() {
@@ -368,11 +366,11 @@ function main(JGO, axutil) {
     $('#btn_tgl_mark').click(() => {
       var btn = $('#btn_tgl_mark')
       if (btn.hasClass('btn-success')) {
-        show_move.mark_last_move = false
+        af.mark_last_move( false )
         btn.removeClass('btn-success')
         btn.css('background-color', '')
       } else {
-        show_move.mark_last_move = true
+        af.mark_last_move( true )
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
       }
@@ -397,14 +395,14 @@ function main(JGO, axutil) {
 
     $('#btn_tgl_swap_colors').click(() => {
       var btn = $('#btn_tgl_swap_colors')
-      if (show_move.swap_colors) {
-        show_move.swap_colors = false
+      if (af.show_move.swap_colors) {
+        af.swap_colors(false)
         af.replay_moves(af.grec.pos())
         af.add_mark('redraw')
         btn.removeClass('btn-success')
         btn.css('background-color', '')
       } else {
-        show_move.swap_colors = true
+        af.swap_colors(true)
         af.replay_moves(af.grec.pos())
         af.add_mark('redraw')
         btn.addClass('btn-success')
@@ -974,9 +972,6 @@ function main(JGO, axutil) {
   // Moves
   //========
 
-  
-
-
   //-----------------------
   function reset_game() {
     handle_variation('clear')
@@ -1388,12 +1383,21 @@ function main(JGO, axutil) {
     }
     // Ctrl-down toggles mark-last-move
     else if (e.ctrlKey && e.key == 'ArrowDown') {
-      show_move.mark_last_move = !show_move.mark_last_move
+      if (af.show_move.mark_last_move) {
+        af.mark_last_move(false)
+      } else {
+        af.mark_last_move(true)
+      }
     }
     // space toggles selfplay
     else if (!e.ctrlKey && e.key == ' ') { // space bar
       selfplay('toggle')
     }
+    // Clear the board
+    else if (e.ctrlKey && e.key == 'c') {
+      af.setHandi(0)
+      reset_game()
+    } // clear board
     // Goto next really bad move ctrl-s
     else if (e.ctrlKey && e.key == 's') {
       goto_next_bad_move(4.0)
