@@ -1164,8 +1164,6 @@ function main(JGO, axutil) {
       })
   } // get_best_move()
 
-
-
   //==========
   // Scoring
   //==========
