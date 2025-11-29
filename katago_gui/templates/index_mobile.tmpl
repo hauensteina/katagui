@@ -25,7 +25,7 @@
 
   /* Disable hover color change on buttons */
   .btn:hover {
-    background-color: #CCCCCC;
+    background-color: #d0e0d0;
     color: #343A40;
   }
 
@@ -334,7 +334,7 @@
           <tr>
             <td>
               <div class='dropdown'>
-                <button style='font-size:30pt' class='btn btn-secondary btn-lg dropdown-toggle' type='button'
+                <button style='font-size:30pt' class='btn btn-outline-dark btn-lg dropdown-toggle' type='button'
                   id='handi_menu' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                   {{tr('Handicap')}}
                 </button>
@@ -354,7 +354,7 @@
             <td>&nbsp;&nbsp;</td>
             <td>
               <div class='dropdown'>
-                <button style='font-size:30pt' class='btn btn-secondary btn-lg dropdown-toggle' type='button'
+                <button style='font-size:30pt' class='btn btn-outline-dark btn-lg dropdown-toggle' type='button'
                   id='komi_menu' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                   {{tr('Komi')}}
                 </button>
@@ -380,12 +380,6 @@
                 <label id='btn_tgl_guest' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Guest')}}</label>
               </td>
             </tr>
-            <!-- <tr align='center' height='90px'>
-              <td>
-                <label id='btn_tgl_fast' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Fast (20
-                  blocks)')}}</label>
-              </td>
-            </tr> -->
             <tr align='center' height='90px'>
               <td>
                 <label id='btn_tgl_strong' class='btn btn-outline-dark' style='font-size:24pt;'>{{tr('Pro')}}</label>
@@ -399,7 +393,7 @@
       </div>
       <div class='modal-footer'>
         <!-- <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> -->
-        <button style='font-size:30pt' id='game_start' type='button' class='btn btn-primary'
+        <button style='font-size:30pt' id='game_start' type='button' class='btn btn-outline-dark'
           data-dismiss='modal'>Go!</button>
       </div>
     </div>
@@ -417,7 +411,7 @@
         <span id='alertbox_message'> </span>
       </div>
       <div class='modal-footer'>
-        <button style='font-size:24pt' type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
+        <button style='font-size:24pt' type='button' class='btn btn-outline-dark' data-dismiss='modal'>Ok</button>
       </div>
     </div>
   </div>
