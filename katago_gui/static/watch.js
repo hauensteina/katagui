@@ -278,6 +278,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       if (e.target.className.includes('btn-file')) { return }
       if (e.target.className.includes('touch-allow')) { return }
       if (e.target.className.includes('btn-primary')) { return }
+      if (e.target.className.includes('btn-outline-dark')) { return }
       if (e.target.className.includes('close')) { return }
       if (e.target.className.includes('dropdown')) { return }
       if (e.target.className.includes('slider round')) { return }
@@ -295,7 +296,7 @@ function watch( JGO, axutil, game_hash, p_options) {
       if (e.target.id.indexOf('_tgl_') <= 0) {
         $(e.target).css( 'background-color', '#040404')
         setTimeout( ()=>{
-          $(e.target).css( 'background-color', '#CCCCCC')
+          $(e.target).css( 'background-color', '')
         } , 100)
       }
     })

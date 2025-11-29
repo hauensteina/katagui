@@ -1061,7 +1061,7 @@ function main(JGO, axutil) {
       $('#btn_clear_var').addClass('disabled')
       $('#btn_clear_var').removeClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '#c0d0c0')
+      $('#btn_clear_var').css('background-color', '')
     }
     return 0
   } // var_button_state()
