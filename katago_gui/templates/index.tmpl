@@ -20,8 +20,8 @@
 
   .btn {
     background-color: #c0d0c0;
-    border-color:#13751a;
-    border-width:1;
+    border-color: #13751a;
+    border-width: 1;
   }
 
   /* The switch - the box around the slider */
@@ -100,33 +100,12 @@
 
 {% block content %}
 <br>
-  {% include 'settings_overlay.tmpl' %}
+{% include 'settings_overlay.tmpl' %}
 <table class='center'>
   <tr>
     <td width='500px'> <!--left-->
       <div id='left_div' class='container'>
         <br>
-        <!-- <table class='center'>
-               <tr><td id='donating'>
-               {{ donation_blurb(mobile=false) }}
-               </td></tr>
-               <tr><td align='center'>
-               <br>
-               <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-               <input type="hidden" name="cmd" value="_s-xclick" />
-               <input type="hidden" name="hosted_button_id" value="T322ZZH9TKMMN" />
-               <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
-               title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-               <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-               </form>
-               </td></tr>
-               </table> -->
-        <!-- <table class='center'>
-               <tr><td colspan='2' style='font-weight:bold'>{{tr('Top Three Donors')}}</td></tr>
-               <tr><td align='left'>Satoshi Banya</td> <td align='right'> &nbsp; 130 </td>  </tr>
-               <tr><td align='left'>Devin Fraze</td> <td align='right'> &nbsp; 120 </td>  </tr>
-               <tr><td align='left'>Larry Russ</td> <td align='right'> &nbsp; 111 </td>  </tr>
-               </table> -->
         <div class='center'>
           <!-- KataGui will be down for maintenance on Mo Dec 13 and Tu Dec 14, 2021  -->
           Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> .
@@ -140,6 +119,9 @@
             <label id='btn_new' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
               style='font-size:11pt'>
               {{ tr('New Game') }}
+            </label>
+            &nbsp;
+            <label id='btn_settings' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Settings')}}</label>
             </label>
             {% if True or current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
             &nbsp;
@@ -247,25 +229,25 @@
     </td>
     <td style='vertical-align:top' width='300px'> <!--right-->
       <div class='container'>
-        <div class='row' style='font-size:20pt;height:0px'> <!-- Change to move logo down -->
+        <div class='row' style='font-size:20pt;height:80px'> <!-- Change to move right side down -->
           <div class='col-12'>
             &nbsp;
           </div>
         </div>
         <div class='row'>
-          <div class='col-5'>
-            <img id='img_bot' src='static/kata.png' style='height:120px'>
+          <div class='col-5' style='margin-left:auto; margin-right:auto;'>
+            <img id='img_bot' src='static/kata.png' style='height:60px'>
           </div>
-          <div class='col-6' style='font-size:11pt'>
+        </div>
+        <div class='row'>
+          <div class='col-5' style='font-size:11pt; margin-left:auto; margin-right:auto;'>
             <div id='descr_bot'>
-              KataGo 20 blocks<br>2020-05-30
+              KataGo 20 blocks
             </div>
-            <br>
-            <a id='lnk_settings' class='glink' href='#' style='font-size:12pt;text-align:right;'>{{tr('Settings')}}</a>
           </div>
         </div>
         <!-- Space on top of buttons -->
-        <div class='row' style='font-size:20pt;height:50px'>
+        <div class='row' style='font-size:20pt;height:20px'>
           <div class='col-12'>
             &nbsp;
           </div>
@@ -340,12 +322,12 @@
         <div class='row justify-content-center'>
           <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
             Line')}}</label>
-          </div>
-        </div> <!--right container-->
-      </td> <!--right-->
-    </tr>
-  </table>
-  
+        </div>
+      </div> <!--right container-->
+    </td> <!--right-->
+  </tr>
+</table>
+
 
 <!-- Modal dialog to pick komi and handicap -->
 <div class='modal fade' id='handiModal' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel'
@@ -368,8 +350,8 @@
           <tr>
             <td>
               <div class='dropdown'>
-                <button class='btn btn-outline-dark dropdown-toggle' type='button' id='handi_menu' data-toggle='dropdown'
-                  aria-haspopup='true' aria-expanded='false'>
+                <button class='btn btn-outline-dark dropdown-toggle' type='button' id='handi_menu'
+                  data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                   {{tr('Handicap')}}
                 </button>
                 <div class='dropdown-menu' aria-labelledby='handi_menu'>

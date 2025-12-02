@@ -579,7 +579,7 @@ function main(JGO, axutil) {
     $('#btn_first').click(() => { selfplay('off'); goto_move(0); af.clear_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(af.grec.len()); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
 
-    $('#lnk_settings').click(() => {
+    $('#btn_settings').click(() => {
       af.initSettingSliders()
       $('#div_settings').css({ 'display': 'grid' })
     })
@@ -1251,7 +1251,7 @@ function main(JGO, axutil) {
     }
     else if (val == 'strong') {
       if (settings('logged_in')) {
-        $('#descr_bot').html(`KataGo Pro 1000<br>${DDATE}`)
+        $('#descr_bot').html(`KataGo Pro 1000`)
         $('#btn_tgl_strong').addClass('active')
         //$('#btn_tgl_fast').removeClass('active')
         $('#btn_tgl_guest').removeClass('active')
@@ -1291,7 +1291,7 @@ function main(JGO, axutil) {
       return ONE10
     }
     else { // val == guest
-      $('#descr_bot').html(`KataGo 10b &nbsp; 256<br>${DDATE}`)
+      $('#descr_bot').html(`KataGo 10b 256`)
       $('#btn_tgl_guest').addClass('active')
       //$('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
