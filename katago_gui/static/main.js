@@ -289,7 +289,7 @@ function main(JGO, axutil) {
     //   show_move.mark_last_move = !show_move.mark_last_move
     // })
 
-    function deativate_mark_toggles() {
+    function deactivate_mark_toggles() {
       $('#btn_tgl_number').removeClass('btn-success')
       $('#btn_tgl_number').css('background-color', '')
       $('#btn_tgl_letter').removeClass('btn-success')
@@ -300,15 +300,19 @@ function main(JGO, axutil) {
       $('#btn_tgl_triangle').css('background-color', '')
       $('#btn_tgl_circle').removeClass('btn-success')
       $('#btn_tgl_circle').css('background-color', '')
-    } // deativate_mark_toggles()
+    } // deactivate_mark_toggles()
 
     function activate_mark_toggle(btn) {
       var wasoff = 1
       if (btn.hasClass('btn-success')) wasoff = 0
-      deativate_mark_toggles()
+      deactivate_mark_toggles()
       if (wasoff) {
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
+        $('#btn_tgl_add_black').removeClass('btn-success')
+        $('#btn_tgl_add_black').css('background-color', '')
+        $('#btn_tgl_add_white').removeClass('btn-success')
+        $('#btn_tgl_add_white').css('background-color', '')
       }
     } // activate_mark_toggle()
 
@@ -322,6 +326,7 @@ function main(JGO, axutil) {
       var wasoff = 1
       if (bbtn.hasClass('btn-success')) wasoff = 0
       if (wasoff) {
+        deactivate_mark_toggles()
         bbtn.addClass('btn-success')
         bbtn.css('background-color', 'green')
         wbtn.removeClass('btn-success')
@@ -342,6 +347,7 @@ function main(JGO, axutil) {
       var wasoff = 1
       if (wbtn.hasClass('btn-success')) wasoff = 0
       if (wasoff) {
+        deactivate_mark_toggles()
         wbtn.addClass('btn-success')
         wbtn.css('background-color', 'green')
         bbtn.removeClass('btn-success')
@@ -363,21 +369,6 @@ function main(JGO, axutil) {
     $('#btn_tgl_letter').click(() => {
       activate_mark_toggle($('#btn_tgl_letter'))
     })
-
-    $('#btn_tgl_mark').click(() => {
-      var btn = $('#btn_tgl_mark')
-      if (btn.hasClass('btn-success')) {
-        af.mark_last_move( false )
-        btn.removeClass('btn-success')
-        btn.css('background-color', '')
-      } else {
-        af.mark_last_move( true )
-        btn.addClass('btn-success')
-        btn.css('background-color', 'green')
-      }
-      af.replay_moves(af.grec.pos())
-      af.add_mark('redraw')
-    }) // btn_tgl_mark
 
     $('#btn_tgl_rot').click(() => {
       var btn = $('#btn_tgl_rot')
@@ -1341,7 +1332,6 @@ function main(JGO, axutil) {
     reset_game()
     setup_jgo()
     selfplay('off')
-    $('#btn_tgl_mark').click()
 
     //    document.onkeydown = check_key
     document.addEventListener('keydown', check_key)
