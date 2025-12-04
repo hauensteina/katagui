@@ -1052,16 +1052,18 @@ function main(JGO, axutil) {
       }
     }
     if (state == 'on') {
-      $('#btn_clear_var').removeClass('disabled')
+      //$('#btn_clear_var').removeClass('disabled')
       $('#btn_clear_var').addClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
       $('#btn_clear_var').css('background-color', '#2c9d45')
+      axutil.enable_button('btn_clear_var')
     }
     else {
-      $('#btn_clear_var').addClass('disabled')
+      //$('#btn_clear_var').addClass('disabled')
       $('#btn_clear_var').removeClass('btn-success')
       $('#btn_clear_var').css('color', 'black')
       $('#btn_clear_var').css('background-color', '')
+      axutil.disable_button('btn_clear_var')
     }
     return 0
   } // var_button_state()
