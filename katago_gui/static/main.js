@@ -210,10 +210,11 @@ function main(JGO, axutil) {
 
   //-------------------------
   function setup_jgo() {
-    af.g_jsetup.setOptions({ stars: { points: 9 } })
+    var jsetup = new JGO.Setup(af.g_jrecord.jboard, JGO.BOARD.largeWalnut)
+    jsetup.setOptions({ stars: { points: 9 } })
     // Add mouse event listeners for the board
     //------------------------------------------
-    af.g_jsetup.create('board',
+    jsetup.create('board',
       function (canvas) {
         //----------------------------
         canvas.addListener('click', function (coord, ev) { board_click_callback(coord) });
@@ -1452,5 +1453,4 @@ function main(JGO, axutil) {
   } // check_key()
 
 } // main()
-
 main(JGO, axutil)

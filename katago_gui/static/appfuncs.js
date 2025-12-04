@@ -7,7 +7,6 @@
 
 export var grec // The game record
 export var g_jrecord = new JGO.Record(BOARD_SIZE)
-export var g_jsetup = new JGO.Setup(g_jrecord.jboard, JGO.BOARD.largeWalnut)
 export var g_ko = null // ko coordinate
 export var g_last_move = null // last move coordinate
 // prisoner count; elt 0 unused; prisoners[1] counts the white stones who are B's prisoners;

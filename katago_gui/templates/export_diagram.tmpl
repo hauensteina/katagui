@@ -63,17 +63,17 @@
   #btn_export {
     font-size: 24px;
     font-family: Arial, sans-serif;
-    background-color: #cccccc;
+    background-color: #d0e0d0;
+    border-color:#13751a;
     color: black;
     margin: 0 auto;
-    border-color: black;
     border-width: 1px;
     border-style: solid;
     border-radius: 5px;
   }
 
   #btn_export:hover {
-    background-color: #666666;
+    background-color:  #343A40;
     color: white
   }
 </style>
@@ -142,8 +142,7 @@
 <!-- Export button -->
 {% if is_mobile() %}
 <div class='xred-border'>
-  <button id=btn_export onclick='exportDiagramSVG()' style='font-size:24px;font-family:Arial, sans-serif;background-color:#cccccc;color:black;padding:0 2vw;margin:0;
-    border-color:black;border-width:1px;border-style:solid;border-radius: 1vw;'>Export</button>
+  <button id=btn_export onclick='exportDiagramSVG()' style='font-size:24px;font-family:Arial, sans-serif;padding:0 2vw;margin:0;'>Export</button>
 </div>
 {% else %}
 <div

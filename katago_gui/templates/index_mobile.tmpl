@@ -427,11 +427,20 @@
 {% endblock content %}
 
 {% block js %}
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-139708851-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', 'UA-139708851-3');
+</script>
+
 <!-- Entry Point -->
 <script type='text/javascript' src='static/large/board.js'></script>
-<!-- <script type='text/javascript'>
-  $(function () {
-    main(JGO, axutil, { mobile: true })
-  })  </script> -->
+<!-- Main entry point -->
+<script type='module' src='static/main.js'></script>
+
 {% endblock js %}
 
