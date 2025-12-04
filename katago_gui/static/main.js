@@ -1436,7 +1436,7 @@ function main(JGO, axutil) {
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
       settings('disable_ai', !settings('disable_ai'))
-      af.toggle_ai_buttons({})
+      af.toggle_ai_buttons({opt_auto:false})
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
       settings('diagrams', !settings('diagrams'))
