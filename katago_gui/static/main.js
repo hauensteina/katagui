@@ -279,7 +279,29 @@ function main(JGO, axutil) {
       || $('#btn_tgl_circle').hasClass('btn-success')
   } // is_markup_active()
 
-  // Set button callbacks
+  //----------------------------------------
+  function deactivate_mark_toggles() {
+    $('#btn_tgl_number').removeClass('btn-success')
+    $('#btn_tgl_number').css('background-color', '')
+    $('#btn_tgl_letter').removeClass('btn-success')
+    $('#btn_tgl_letter').css('background-color', '')
+    $('#btn_tgl_x').removeClass('btn-success')
+    $('#btn_tgl_x').css('background-color', '')
+    $('#btn_tgl_triangle').removeClass('btn-success')
+    $('#btn_tgl_triangle').css('background-color', '')
+    $('#btn_tgl_circle').removeClass('btn-success')
+    $('#btn_tgl_circle').css('background-color', '')
+  } // deactivate_mark_toggles()
+
+  //------------------------------------------------
+  function deactivate_add_black_add_white() {
+    $('#btn_tgl_add_black').removeClass('btn-success')
+    $('#btn_tgl_add_black').css('background-color', '')
+    $('#btn_tgl_add_white').removeClass('btn-success')
+    $('#btn_tgl_add_white').css('background-color', '')
+  } // deactivate_add_black_add_white()
+
+    // Set button callbacks
   //------------------------------
   function set_btn_handlers() {
     set_load_sgf_handler()
@@ -289,18 +311,6 @@ function main(JGO, axutil) {
     //   show_move.mark_last_move = !show_move.mark_last_move
     // })
 
-    function deactivate_mark_toggles() {
-      $('#btn_tgl_number').removeClass('btn-success')
-      $('#btn_tgl_number').css('background-color', '')
-      $('#btn_tgl_letter').removeClass('btn-success')
-      $('#btn_tgl_letter').css('background-color', '')
-      $('#btn_tgl_x').removeClass('btn-success')
-      $('#btn_tgl_x').css('background-color', '')
-      $('#btn_tgl_triangle').removeClass('btn-success')
-      $('#btn_tgl_triangle').css('background-color', '')
-      $('#btn_tgl_circle').removeClass('btn-success')
-      $('#btn_tgl_circle').css('background-color', '')
-    } // deactivate_mark_toggles()
 
     function activate_mark_toggle(btn) {
       var wasoff = 1
@@ -309,10 +319,7 @@ function main(JGO, axutil) {
       if (wasoff) {
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
-        $('#btn_tgl_add_black').removeClass('btn-success')
-        $('#btn_tgl_add_black').css('background-color', '')
-        $('#btn_tgl_add_white').removeClass('btn-success')
-        $('#btn_tgl_add_white').css('background-color', '')
+        deactivate_add_black_add_white()
       }
     } // activate_mark_toggle()
 
@@ -773,6 +780,9 @@ function main(JGO, axutil) {
         var move_prob = { 'mv': move, 'p': '0.00', 'score': '0.00', 'agent': '' }
         af.grec.push(move_prob)
       } // for
+      af.add_mark('clear')
+      deactivate_mark_toggles()
+      deactivate_add_black_add_white()
       af.replay_moves(af.grec.pos())
       af.show_movenum()
       af.setKomi(game.komi)
