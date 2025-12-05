@@ -1052,6 +1052,7 @@ function main(JGO, axutil) {
       $('#btn_clear_var').removeClass('btn-success btn-on')
       deactivate_add_black_add_white()
       deactivate_mark_toggles()
+      af.add_mark('clear')
       axutil.disable_button('btn_clear_var')
     }
     return 0
