@@ -60,8 +60,8 @@ function main(JGO, axutil) {
     $('#game_start').click(function () { // New Game -> Go
       end_game()
       $('#donate_modal').html('')
-      af.setHandi( parseInt($('#handi_menu').html()))
-      af.setKomi( parseFloat($('#komi_menu').html()))
+      af.setHandi(parseInt($('#handi_menu').html()))
+      af.setKomi(parseFloat($('#komi_menu').html()))
       reset_game()
       $('#lb_komi').html(tr('Komi') + ': ' + af.g_komi)
       af.clear_emoji()
@@ -81,7 +81,7 @@ function main(JGO, axutil) {
     })
   } // set_dropdown_handlers()
 
-  
+
   //------------------------------------------
   function board_click_callback(coord) {
     selfplay('off')
@@ -301,7 +301,7 @@ function main(JGO, axutil) {
     $('#btn_tgl_add_white').css('background-color', '')
   } // deactivate_add_black_add_white()
 
-    // Set button callbacks
+  // Set button callbacks
   //------------------------------
   function set_btn_handlers() {
     set_load_sgf_handler()
@@ -452,6 +452,7 @@ function main(JGO, axutil) {
 
     $('#btn_clear').click(() => {
       af.add_mark('clear')
+      deactivate_mark_toggles()
     })
 
     $('#img_bot, #descr_bot').click(() => {
@@ -530,7 +531,7 @@ function main(JGO, axutil) {
         meta = {}
         meta.komi = af.g_komi
       }
-      var sgf = af.moves2sgf( moves, probs,scores, meta)
+      var sgf = af.moves2sgf(moves, probs, scores, meta)
       af.downloadSgf('game.sgf', sgf)
     })
 
@@ -1043,32 +1044,24 @@ function main(JGO, axutil) {
     }
   } // maybe_start_var()
 
-  //-------------------------------------------
-  function var_button_state(state) {
-    if (!state) {
-      if ($('#btn_clear_var').hasClass('disabled')) {
-        return 'off'
-      }
-      else {
-        return 'on'
-      }
-    }
-    if (state == 'on') {
-      //$('#btn_clear_var').removeClass('disabled')
-      $('#btn_clear_var').addClass('btn-success')
-      $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '#2c9d45')
-      axutil.enable_button('btn_clear_var')
-    }
-    else {
-      //$('#btn_clear_var').addClass('disabled')
-      $('#btn_clear_var').removeClass('btn-success')
-      $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '')
-      axutil.disable_button('btn_clear_var')
-    }
-    return 0
-  } // var_button_state()
+//---------------------------------------
+function var_button_state(state) {
+  if (!state) {
+    return $('#btn_clear_var').hasClass('btn-on') ? 'on' : 'off'
+  }
+
+  if (state === 'on') {
+    $('#btn_clear_var')
+      .addClass('btn-success btn-on');
+    axutil.enable_button('btn_clear_var');
+  } else {
+    $('#btn_clear_var')
+      .removeClass('btn-success btn-on');
+    axutil.disable_button('btn_clear_var');
+  }
+  return 0;
+} // var_button_state()
+
 
   //===============================
   // Saving and restoring state
@@ -1439,7 +1432,7 @@ function main(JGO, axutil) {
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
       settings('disable_ai', !settings('disable_ai'))
-      af.toggle_ai_buttons({opt_auto:false})
+      af.toggle_ai_buttons({ opt_auto: false })
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
       settings('diagrams', !settings('diagrams'))

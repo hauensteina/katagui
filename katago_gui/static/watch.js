@@ -576,31 +576,23 @@ function watch( JGO, axutil, game_hash, p_options) {
     }
   } // maybe_start_var()
 
-  //-------------------------------------------
-  function var_button_state( state) {
-    if (!state) {
-      if ($('#btn_clear_var').hasClass('disabled')) {
-        return 'off'
-      }
-      else {
-        return 'on'
-      }
-    }
-    if (state == 'on') {
-      $('#btn_clear_var').removeClass('disabled')
-      $('#btn_clear_var').addClass('btn-success')
-      $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '#2c9d45')
-    }
-    else {
-      $('#btn_clear_var').addClass('disabled')
-      $('#btn_clear_var').removeClass('btn-success')
-      $('#btn_clear_var').css('color', 'black')
-      $('#btn_clear_var').css('background-color', '#c0d0c0')
-    }
-    return 0
-  } // var_button_state()
+//---------------------------------------
+function var_button_state(state) {
+  if (!state) {
+    return $('#btn_clear_var').hasClass('btn-on') ? 'on' : 'off'
+  }
 
+  if (state === 'on') {
+    $('#btn_clear_var')
+      .addClass('btn-success btn-on');
+    axutil.enable_button('btn_clear_var');
+  } else {
+    $('#btn_clear_var')
+      .removeClass('btn-success btn-on');
+    axutil.disable_button('btn_clear_var');
+  }
+  return 0;
+} // var_button_state()
 
   //======================
   // Winning probability
