@@ -571,7 +571,7 @@ function main(JGO, axutil) {
     $('#btn_next').click(btn_next)
     $('#btn_back10').click(() => { selfplay('off'); goto_move(af.grec.pos() - 10); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
     $('#btn_fwd10').click(() => { selfplay('off'); goto_move(af.grec.pos() + 10); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
-    $('#btn_first').click(() => { selfplay('off'); goto_move(0); af.clear_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
+    $('#btn_first').click(() => { selfplay('off'); goto_move(0); af.clear_emoji(); bot_active('off'); af.clear_status(); af.add_mark('clear') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(af.grec.len()); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
 
     $('#btn_settings').click(() => {
