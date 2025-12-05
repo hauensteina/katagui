@@ -307,11 +307,6 @@ function main(JGO, axutil) {
     set_load_sgf_handler()
     var_button_state('off')
 
-    // $('#username').click( () => {
-    //   show_move.mark_last_move = !show_move.mark_last_move
-    // })
-
-
     function activate_mark_toggle(btn) {
       var wasoff = 1
       if (btn.hasClass('btn-success')) wasoff = 0
@@ -1044,23 +1039,23 @@ function main(JGO, axutil) {
     }
   } // maybe_start_var()
 
-//---------------------------------------
-function var_button_state(state) {
-  if (!state) {
-    return $('#btn_clear_var').hasClass('btn-on') ? 'on' : 'off'
-  }
+  //---------------------------------------
+  function var_button_state(state) {
+    if (!state) {
+      return $('#btn_clear_var').hasClass('btn-on') ? 'on' : 'off'
+    }
 
-  if (state === 'on') {
-    $('#btn_clear_var')
-      .addClass('btn-success btn-on');
-    axutil.enable_button('btn_clear_var');
-  } else {
-    $('#btn_clear_var')
-      .removeClass('btn-success btn-on');
-    axutil.disable_button('btn_clear_var');
-  }
-  return 0;
-} // var_button_state()
+    if (state === 'on') {
+      $('#btn_clear_var').addClass('btn-success btn-on');
+      axutil.enable_button('btn_clear_var')
+    } else {
+      $('#btn_clear_var').removeClass('btn-success btn-on')
+      deactivate_add_black_add_white()
+      deactivate_mark_toggles()
+      axutil.disable_button('btn_clear_var')
+    }
+    return 0
+  } // var_button_state()
 
 
   //===============================
