@@ -26,6 +26,7 @@ JGO.BOARD.large = {
 
   // Grid color and size, line widths
   grid: {color: '#202020', x: 45, y: 45, smooth: 0.0,
+  //grid: {color: '#202020', x: 50, y: 50, smooth: 0.0,
     borderWidth: 1.5, lineWidth: 1.2},
 
   // Star point radius

@@ -526,6 +526,7 @@
     if(typeof elem === 'string')
       elem = document.getElementById(elem);
 
+    //debugger;
     var canvas = document.createElement('canvas'), i, j;
 
     var padLeft = opt.edge.left ? opt.padding.normal : opt.padding.clipped,
@@ -1577,7 +1578,6 @@
       var jcanvas = new Canvas(elemId, options, images);
 
       jcanvas.draw(this.board, 0, 0, this.board.width-1, this.board.height-1);
-
       // Track and group later changes with Notifier
       this.notifier.addCanvas(jcanvas);
 
