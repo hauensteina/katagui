@@ -59,7 +59,7 @@
   debug
 </div>
 {% endif %}
-<div class='center' style='display:grid; grid-template-columns:12rem 30rem 15rem; gap:1rem;width:fit-content;padding-left:1rem;padding-right:1rem;'>
+<div class='center' style='display:grid; grid-template-columns:12rem 30rem 18rem; gap:1rem;width:fit-content;padding-left:1rem;padding-right:1rem;'>
 
   <!-- left (chat) -->
   <!-- ----------- -->
@@ -99,64 +99,47 @@
 
   <!--- right (remote control) -->
   <!-- ----------------------- -->
-  <div class='container xred-border'> 
-    <div class='row' style='height:3px'>
-      <div class='col-12'>
-        &nbsp;
+  <div class='xblue-border' style='display:grid; grid-template-rows:auto auto auto auto auto auto auto auto 1fr; gap:0rem;'>
+    <div class='xred-border'>
+      <img id='img_bot' src='static/kata.png' style='height:60px'>
+      <div id='descr_bot'>
+        KataGo 20 blocks<br>2020-05-30
       </div>
     </div>
-    <div class='row'>
-      <div class='col-12'>
-        <img id='img_bot' src='static/kata.png' style='height:120px'>
-      </div>
+    <!-- Buttons -->
+    <div style='padding-top:1rem;'>
+    {% if live == '1' %}
+      <label id='btn_tgl_live' class='btn btn-outline-dark ahaux_on' style='font-size:1rem;'>{{tr('Live')}}</label>
+    {% endif %}
     </div>
     <div>
-      <div class='col-12' style='font-size:10pt'>
-        <div id='descr_bot'>
-          KataGo 20 blocks<br>2020-05-30
-        </div>
-      </div>
+      <label id='btn_best' class='btn btn-outline-dark' style='font-size:1rem;'>{{tr('Best')}}</label>&nbsp;
+      <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:1rem;'>{{tr('Score')}}</label>
     </div>
-    <!-- Space on top of buttons -->
-    <br>
-    <div class='row justify-content-center'>
-      {% if live == '1' %}
-      <label id='btn_tgl_live' class='btn btn-outline-dark ahaux_on' style='font-size:11pt;'>{{tr('Live')}}</label>
-      {% endif %}
-    </div>
-    <div class='row' style='font-size:5pt'> &nbsp; </div>
-    <div class='row justify-content-center'>
-      <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>&nbsp;
-      <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>
-    </div>
-    <div class='row' style='font-size:5pt'> &nbsp; </div>
-    <div class='row justify-content-center'>
-      <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back
+    <div style='padding-top:1rem;'>
+      <label id='btn_back10' class='btn btn-outline-dark' style='font-size:0.75rem;white-space:nowrap'>{{tr('Back
         10')}}</label>&nbsp;
       <label id='btn_prev' class='btn btn-outline-dark'
-        style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
+        style='font-size:0.75rem;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
       <label id='btn_next' class='btn btn-outline-dark'
-        style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
-      <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd
+        style='font-size:0.75rem;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
+      <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:0.75rem;white-space:nowrap'>{{tr('Fwd
         10')}}</label>
     </div>
-    <div class='row justify-content-center'>
-      <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
-      <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
+    <div>
+      <label id='btn_first' class='btn btn-outline-dark' style='font-size:0.75rem;'>{{tr('First')}}</label>&nbsp;
+      <label id='btn_last' class='btn btn-outline-dark' style='font-size:0.75rem;'>{{tr('Last')}}</label>
     </div>
-    <div class='row' style='font-size:5pt'> &nbsp; </div>
-    <div class='row justify-content-center'>
-      <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
+    <div style='padding-top:1rem;'>
+      <label id='btn_save' class='btn btn-outline-dark' style='font-size:1rem;'>{{tr('Save Sgf')}}</label>&nbsp;
     </div>
-    <div class='row' style='font-size:5pt'>
-      &nbsp;
-    </div>
-    <div class='row justify-content-center'>
-      <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
+    <div style='padding-top:1rem;'>
+      <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:1rem;'>{{tr('Back to Main
         Line')}}</label>
     </div>
+    <div>&nbsp;</div>
   </div> <!-- right -->
-</div>
+  </div>
 
 <!-- General purpose modal popup (alert box) -->
 <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
