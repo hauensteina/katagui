@@ -125,40 +125,6 @@ function watch( JGO, axutil, game_hash, p_options) {
     return res
   } // get_scorestr()
 
-  //---------------------------
-  function resize_board() {
-    if (p_options.mobile) { return }
-    var dimsleft = $('#tdleft')[0].getBoundingClientRect()
-    var dimsright = $('#tdright')[0].getBoundingClientRect()
-    var bwidth = $(window).width() - dimsleft.width - dimsright.width
-    var bheight = $(window).height() * 0.8
-    var scale = Math.min( bwidth, bheight) / 550
-    if (scale < 0.7) scale = 0.7
-    var tstr = 'scale(' + scale + ')'
-    $('#board').css({
-      'transform-origin':'center center',
-      'transform': tstr
-    })
-
-    var dimsb = $('#board')[0].getBoundingClientRect()
-    var dimstd = $('#tdboard')[0].getBoundingClientRect()
-    var dimsinfo = $('#game_info')[0].getBoundingClientRect()
-    var dx = dimstd.left - dimsb.left + 10
-    var dy = dimstd.top - dimsb.top + dimsinfo.height
-    tstr = 'translate(' + dx + 'px,' + dy + 'px) ' + 'scale(' + scale + ')'
-    $('#board').css({
-      'transform-origin':'center center',
-      'transform': tstr
-    })
-    dimsb = $('#board')[0].getBoundingClientRect()
-    $('#chat_output').css( 'height', dimsb.height)
-    $('#divinfo').css( 'top', dimsb.bottom) // bottom line
-    $('#divinfo').css( 'width', dimsb.width)
-    $('#game_info').css( 'width', dimsb.width + 30) // top line
-    $('#divinfo').css( 'left', dimsb.left + 10)
-
-  } // resize_board()
-
   //-------------------------
   function setup_jgo() {
     g_jsetup.setOptions({stars: {points:9}})
@@ -193,9 +159,6 @@ function watch( JGO, axutil, game_hash, p_options) {
                                             }
                                           }
                                         ) // mouseout
-                      resize_board();
-                      setTimeout( resize_board, 2000) // why, oh why do I need this?
-                      window.onresize = resize_board
                     }) // create board
   } // setup_jgo()
 

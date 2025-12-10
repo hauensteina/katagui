@@ -1,33 +1,33 @@
 {% extends 'layout_watch.tmpl' %}
 
 {% block pre %}
-  <script type='text/javascript'>
-   /* Filename: templates/watch.tmpl
-    * Author: AHN
-    * Creation Date: Aug, 2020
-    * A board to watch other peoples' games
-    */
-  </script>
+<script type='text/javascript'>
+  /* Filename: templates/watch.tmpl
+   * Author: AHN
+   * Creation Date: Aug, 2020
+   * A board to watch other peoples' games
+   */
+</script>
 {% endblock pre %}
 
 {% block css %}
-  <style>
+<style>
   .btn {
     background-color: #c0d0c0;
-    border-width:1;
-    border-color:#13751a;
+    border-width: 1;
+    border-color: #13751a;
   }
 
-   /* Scrollable div */
-   div.scroll {
-     background-color: white;
-     /* width: 600px; */
-     /* height: 150px; */
-     overflow-x: hidden;
-     overflow-y: auto;
-     text-align: center;
-     padding: 20px;
-   }
+  /* Scrollable div */
+  div.scroll {
+    background-color: white;
+    /* width: 600px; */
+    /* height: 150px; */
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: center;
+    padding: 20px;
+  }
 
   /* On state */
   #btn_clear_var.btn-on {
@@ -37,172 +37,151 @@
 
   /* Hover while on */
   #btn_clear_var.btn-on:hover {
-    background-color: #2e3338;  
-    color:white;
+    background-color: #2e3338;
+    color: white;
   }
 
-  </style>
+  .boardwrapper {
+    width: 100%;
+  }
+
+  .boardwrapper canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+</style>
 {% endblock css %}
 
 {% block content %}
-  {% if 0 and current_user.data['username'].strip().lower() in ['acm','ahn'] %}
-    <div id='debug' style='font-size:10pt'>
-      debug
+{% if 0 and current_user.data['username'].strip().lower() in ['acm','ahn'] %}
+<div id='debug' style='font-size:10pt'>
+  debug
+</div>
+{% endif %}
+<div class='center' style='display:grid; grid-template-columns:12rem 30rem 15rem; gap:1rem;width:fit-content;padding-left:1rem;padding-right:1rem;'>
+
+  <!-- left (chat) -->
+  <!-- ----------- -->
+  <div style='display:grid; grid-template-rows:30rem 2rem; gap:1rem; margin-top:1.5rem;'>
+    <!-- Chat output -->
+    <div id='chat_output' class='scroll'
+      style='font-size:11pt;background-color:white;text-align:left;border:1px solid green'>
     </div>
-  {% endif %}
+    <!-- Chat input -->
+    <form id='chat_input_form'>
+      <input id='chat_input_text' type='text' placeholder="{{tr('Type here')}}"
+        style='font-size:11pt;background-color:white;width:100%;padding-left:20px' autofocus />
+      <input type="submit" style="display:none" /> <!-- submit on enter -->
+    </form>
+  </div>
 
-  <!-- look at watch.js:resize_board() for layout and scaling -->
-  <table id='tab_outer' style='table-layout:fixed' class=''>
-    <tr id='tabrow' class='' style='vertical-align:top;'>
-      <!-- left -->
-      <td id='tdleft' class='' style='padding:0 10px 0 10px; width:300px'>
-        <table class='' width='100%'>
-          <tr>
-            <td class=''>
-              <!-- Chat output -->
-              <br>
-              <div id='chat_output' class='scroll'
-                   style='font-size:11pt;background-color:white;text-align:left;border:1px solid green'>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td style ='padding-top:10px'>
-              <!-- Chat input -->
-              <form id='chat_input_form'>
-                <input id='chat_input_text' type='text' placeholder="{{tr('Type here')}}"
-                       style='font-size:11pt;background-color:white;width:100%;padding-left:20px' autofocus />
-                <input type="submit" style="display:none"/> <!-- submit on enter -->
-              </form>
-            </td>
-          </tr>
-        </table>
-        <br>
-      </td>
-      <!-- middle (board) -->
-      <td id='tdboard' class='' style='padding:0 0 0 0; width:1px'>
-        <div>
-          <div id='game_info' class='center' style='font-size:9pt;display:absolute;' > </div>
-        </div>
-        <div id='board'  style='display:inline-block;padding:0 0 0 0'>
-        </div>
-        <!-- Text under board -->
-        <div id='divinfo' style='position:absolute'>
-          <table class='center' width='100%'>
-            <tr>
-              <td align='center' width='30%'>
-                <table width='100%'>
-                  <tr><td class='nomarg' align='center' style='height:15px'></td></tr>
-                  <tr><td id='movenum' class='nomarg' align='center' style='font-size:10pt;height:60px' width='30%'>&nbsp;</td></tr>
-                </table>
-              </td>
-              <td align='center' width='40%'>
-                <table width='100%'>
-                  <tr><td id='bestscore' class='nomarg' align='center' style='height:15px'></td></tr>
-                  <tr><td id='status' class='nomarg' align='center' style='font-size:10pt;height:60px' width='30%'>&nbsp;</td></tr>
-                </table>
-              </td>
-              <td align='center' width='30%'> 
-                <table width='100%'>
-                  <tr><td class='nomarg' align='center' style='height:15px'></td></tr>
-                  <tr><td id='emo' class='nomarg' align='center' style='font-size:25pt;height:60px' width='30%'>&nbsp;</td></tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-          <!-- <table class='center' width='100%'>
-               <tr>
-               <td id='movenum' align='center' style='font-size:10pt' width='30%'> &nbsp;</td>
-               <td id='status' align='center'
-               style='font-size:13pt;border:0px solid #00ff00;height:80px'
-               width='40%';> &nbsp;</td>
-               <td id='emo' align='center' style='font-size:25pt' width='30%' height='60px'> &nbsp;</td>
-               </tr>
-               </table> -->
-        </div>
-      </td>
-      <!-- <td class='red-border'>xxxxxxx</td> -->
-      <!-- right (remote control-->
-      <td id='tdright' class='' style='width:300px;padding:0 0 0 0'>
-        <div class='container' > <!-- top margin -->
-          <div class='row' style='height:3px'>
-            <div class='col-12'>
-              &nbsp;
-            </div>
-          </div>
-          <div class='row'>
-            <div class='col-12'>
-              <img id='img_bot' src='static/kata.png' style='height:120px'>
-            </div>
-          </div>
-          <div>
-            <div class='col-12' style='font-size:10pt'>
-              <div id='descr_bot'>
-                KataGo 20 blocks<br>2020-05-30
-              </div>
-            </div>
-          </div>
-          <!-- Space on top of buttons -->
-          <br>
-          <div class='row justify-content-center'>
-            {% if live == '1' %}
-              <label id='btn_tgl_live' class='btn btn-outline-dark ahaux_on' style='font-size:11pt;'>{{tr('Live')}}</label>
-            {% endif %}
-          </div>
-          <div class='row' style='font-size:5pt'> &nbsp; </div>
-          <div class='row justify-content-center'>
-            <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>&nbsp;
-            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>
-          </div>
-          <div class='row' style='font-size:5pt'> &nbsp; </div>
-          <div class='row justify-content-center'>
-            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back 10')}}</label>&nbsp;
-            <label id='btn_prev' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
-            <label id='btn_next' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
-            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd 10')}}</label>
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
-            <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
-          </div>
-          <div class='row' style='font-size:5pt'> &nbsp; </div>
-          <div class='row justify-content-center'>
-            <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
-          </div>
-          <div class='row' style='font-size:5pt'>
-            &nbsp;
-          </div>
-          <div class='row justify-content-center'>
-            <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main Line')}}</label>
-          </div>
-        </div>                  <!--right container-->
-      </td>
-  </table>
-
-  <!-- General purpose modal popup (alert box) -->
-  <div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
-    <div class='modal-dialog' role='document'>
-      <div class='modal-content'>
-        <div class='modal-header'>
-          <h5 id='alertbox_title' class='modal-title'>&nbsp;</h5>
-        </div>
-        <div class='modal-body'>
-          <span id='alertbox_message'> </span>
-        </div>
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
-        </div>
+  <!-- middle (the board) -->
+  <!-- ------------------ -->
+  <div style='display:grid; grid-template-rows:1rem 30rem 6rem; gap:0.5rem;'>
+    <div id='game_info' style='font-size:0.75rem;'> </div>
+    <div id='board' class='xred-border boardwrapper'>
+    </div>
+    <!-- Text under board -->
+    <div style='display:grid; grid-template-columns:1fr 1fr 1fr' class='xred-border'>
+      <div id='movenum' style='font-size:0.75rem;'>
+      </div>
+  
+      <div style='display:grid; grid-template-rows:1rem 4rem;'>
+        <div id='bestscore' style='font-size:0.75rem;'></div>
+        <div class=xred-border id='status' style='font-size:0.75rem;'></div>
+      </div>
+  
+      <div>
       </div>
     </div>
   </div>
+
+  <!--- right (remote control) -->
+  <!-- ----------------------- -->
+  <div class='container xred-border'> 
+    <div class='row' style='height:3px'>
+      <div class='col-12'>
+        &nbsp;
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-12'>
+        <img id='img_bot' src='static/kata.png' style='height:120px'>
+      </div>
+    </div>
+    <div>
+      <div class='col-12' style='font-size:10pt'>
+        <div id='descr_bot'>
+          KataGo 20 blocks<br>2020-05-30
+        </div>
+      </div>
+    </div>
+    <!-- Space on top of buttons -->
+    <br>
+    <div class='row justify-content-center'>
+      {% if live == '1' %}
+      <label id='btn_tgl_live' class='btn btn-outline-dark ahaux_on' style='font-size:11pt;'>{{tr('Live')}}</label>
+      {% endif %}
+    </div>
+    <div class='row' style='font-size:5pt'> &nbsp; </div>
+    <div class='row justify-content-center'>
+      <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>&nbsp;
+      <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>
+    </div>
+    <div class='row' style='font-size:5pt'> &nbsp; </div>
+    <div class='row justify-content-center'>
+      <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back
+        10')}}</label>&nbsp;
+      <label id='btn_prev' class='btn btn-outline-dark'
+        style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
+      <label id='btn_next' class='btn btn-outline-dark'
+        style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
+      <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd
+        10')}}</label>
+    </div>
+    <div class='row justify-content-center'>
+      <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
+      <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
+    </div>
+    <div class='row' style='font-size:5pt'> &nbsp; </div>
+    <div class='row justify-content-center'>
+      <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
+    </div>
+    <div class='row' style='font-size:5pt'>
+      &nbsp;
+    </div>
+    <div class='row justify-content-center'>
+      <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
+        Line')}}</label>
+    </div>
+  </div> <!-- right -->
+</div>
+
+<!-- General purpose modal popup (alert box) -->
+<div class='modal fade' id='alertbox' tabindex='-1' role='dialog' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 id='alertbox_title' class='modal-title'>&nbsp;</h5>
+      </div>
+      <div class='modal-body'>
+        <span id='alertbox_message'> </span>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block js %}
-  <!-- Entry Point -->
-  <script type='text/javascript' src='static/small/board.js'></script>
-  <script type='text/javascript'>
-   $(function () {
-     watch( JGO, axutil, '{{ game_hash }}', {mobile:false, live:{{ live }} } )
+<!-- Entry Point -->
+<script type='text/javascript' src='static/large/board.js'></script>
+<script type='text/javascript'>
+  $(function () {
+    watch(JGO, axutil, '{{ game_hash }}', { mobile: false, live: {{ live }} })
    })
-  </script>
+</script>
 {% endblock js %}
