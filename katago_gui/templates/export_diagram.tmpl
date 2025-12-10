@@ -27,7 +27,7 @@
     --CONTROL-SIZE2: calc((2 * var(--CONTROL-SIZE) + var(--BUTTON-GAP)));
     --TBHEIGHT: calc(1.5 * var(--CONTROL-SIZE));
     --LRWIDTH: calc(1.5 * var(--CONTROL-SIZE));
-    --LMARG: 100px;
+    /* --LMARG: 100px; */
     --TOTWIDTH: calc(var(--LRWIDTH + var(--BOARDSIZE) + var(--LRWIDTH)));
   }
 
@@ -86,8 +86,9 @@
 <div {% if is_mobile() %}
   style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:center;'
   {% else %}
-  style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:left;margin-left:var(--LMARG);'
+  style='display:grid;grid-template-columns:1fr var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH) 1fr;grid-column-gap:0;'
   {% endif %} class='xblue-border'>
+  <div>&nbsp;</div>
   <!-- left control -->
   <div class=xblue-border style='display:grid;align-items:center;justify-content:center;'>
     <div class='ahx-tworows xred-border'
@@ -135,6 +136,7 @@
         style='display:grid;align-items:center;border-right: 6px solid #000;'>&#x2192;</button>
     </div>
   </div> <!-- right pane -->
+  <div>&nbsp;</div>
 
 </div> <!-- board with controls along edges -->
 
@@ -146,9 +148,15 @@
 </div>
 {% else %}
 <div
-  style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:left;margin-left:var(--LMARG);'>
+  style='display:grid;grid-template-columns:1fr var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH) 1fr;grid-column-gap:0;'>
   <div></div>
-  <button id=btn_export style='padding:0 10px;' onclick='exportDiagramSVG()'>Export</button>
+  <div></div>
+  <div>
+    <button id=btn_export style='padding:0 10px;' onclick='exportDiagramSVG()'>Export</button>
+    &nbsp;
+    <button id=btn_export style='padding:0 10px;' onclick='history.back()'>Back</button>
+  </div>
+  <div></div>
   <div></div>
 </div>
 {% endif %}
@@ -258,6 +266,7 @@
       e.preventDefault()
     })
   }) //$(function ()
+
 
   //--------------------------------
   function exportDiagramPNG() {
