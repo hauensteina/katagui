@@ -104,253 +104,256 @@
 
   /* Hover while on */
   #btn_clear_var.btn-on:hover {
-    background-color: #2e3338;  
-    color:white;
+    background-color: #2e3338;
+    color: white;
   }
 
   .boardwrapper {
-  width: 100%;
+    width: 100%;
   }
 
- .boardwrapper canvas {
-   width: 100%;
-   height: 100%;
-   object-fit: cover;   
- }
-
+  .boardwrapper canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 </style>
 {% endblock css %}
 
 {% block content %}
 <br>
 {% include 'settings_overlay.tmpl' %}
-<table style='margin-left:3rem;min-width:800px;'>
-  <tr>
-    <td width='500px'> <!--left-->
-      <div id='left_div' class='container'>
-        <br>
-        <div class='center'>
-          <!-- KataGui will be down for maintenance on Mo Dec 13 and Tu Dec 14, 2021  -->
-          Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> .
-          <!-- Upgraded to KataGo v1.9.1 <br>
+<div style='padding-left:3rem;padding-right:3rem;'>
+  <table style='margin-left:auto;margin-right:auto;min-width:800px;'>
+    <tr>
+      <td width='500px'> <!--left-->
+        <div id='left_div' class='container'>
+          <br>
+          <div class='center'>
+            <!-- KataGui will be down for maintenance on Mo Dec 13 and Tu Dec 14, 2021  -->
+            Looking for a club to play in person? Find one at <a href='https://baduk.club'>baduk.club</a> .
+            <!-- Upgraded to KataGo v1.9.1 <br>
                  The 40b net is now kata1-b40c256-s9435250176-d2296927197, which is a recent community net. <br> -->
-        </div>
-
-        <br>
-        <div class='row'>
-          <div class='col-12 text-center'>
-            <label id='btn_new' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-              style='font-size:11pt'>
-              {{ tr('New Game') }}
-            </label>
-            &nbsp;
-            <label id='btn_settings' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Settings')}}</label>
-            </label>
-            {% if True or current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
-            &nbsp;
-            <label id='btn_watch' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Watch')}}</label>
-            {% endif %}
           </div>
-        </div>
-        <div class='row'>
-          <div id='game_info' class='col-12 text-center' style='font-size:9pt'> </div>
-        </div>
-        <div class='row'>
-          <div id='fname' class='col-12 text-center' style='font-size:9pt'> </div>
-        </div>
-        <div class='row'>
-          <div class='col-12'>
-            <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
-          </div>
-        </div>
 
-        <!-- Diagram editing buttons -->
-        <div id='diagram_buttons' class='row justify-content-center'>
-          <!-- Add stones -->
-          <label id='btn_tgl_add_black' class='btn btn-outline-dark touch-allow'
-            style='font-size:8pt;white-space:nowrap'>⚫</label>&nbsp;
-
-          <label id='btn_tgl_add_white' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>⚪</label>&nbsp;&nbsp;&nbsp;
-
-          <!-- Letters and numbers -->
-          <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
-            style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
-
-          <label id='btn_tgl_letter' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>a</label>&nbsp;&nbsp;&nbsp;
-
-          <!-- Markers -->
-          <label id='btn_tgl_x' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>X</label>&nbsp;
-
-          <label id='btn_tgl_circle' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>O</label>&nbsp;
-
-          <label id='btn_tgl_triangle' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>△</label>&nbsp;&nbsp;&nbsp;
-
-          <!-- Clear markers -->
-          <label id='btn_clear' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>&nbsp;</label>&nbsp;&nbsp;&nbsp;
-
-          <!-- Rotate -->
-          <label id='btn_tgl_rot' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>R</label>&nbsp;
-
-          <!-- Swap colors -->
-          <label id='btn_tgl_swap_colors' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>C</label>&nbsp;&nbsp;&nbsp;
-
-          <!-- Export diagram -->
-          <label id='btn_export_diagram' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
-        </div>
-
-        <div class='row'>
-          <!-- <div id='board' class='col-12 text-center'> </div> -->
-          <div id='board' class='boardwrapper'> </div>
-        </div>
-        <div class='row justify-content-center'>
-          <table class='center' width='100%'>
-            <tr>
-              <td align='center' width='30%'>
-                <table width='100%'>
-                  <tr>
-                    <td class='nomarg' align='center' style='height:15px'></td>
-                  </tr>
-                  <tr>
-                    <td id='btn_movenum' class='nomarg' align='center'
-                      style='font-size:9pt;height:60px;user-select:none;' width='30%'>&nbsp;
-                    </td>
-                  </tr>
-                </table>
-              </td>
-              <td align='center' width='40%'>
-                <table width='100%'>
-                  <tr>
-                    <td id='bestscore' class='nomarg' align='center' style='height:15px'></td>
-                  </tr>
-                  <tr>
-                    <td id='status' class='nomarg' align='center' style='font-size:9pt;height:60px' width='30%'>&nbsp;
-                    </td>
-                  </tr>
-                </table>
-              </td>
-              <td align='center' width='30%'>
-                <table width='100%'>
-                  <tr>
-                    <td class='nomarg' align='center' style='height:15px'></td>
-                  </tr>
-                  <tr>
-                    <td id='emo' class='nomarg' align='center' style='font-size:25pt;height:60px' width='30%'>&nbsp;
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </td>
-    <td style='vertical-align:top' width='300px'> <!--right-->
-      <div class='container'>
-        <div class='row' style='font-size:20pt;height:80px'> <!-- Change to move right side down -->
-          <div class='col-12'>
-            &nbsp;
-          </div>
-        </div>
-        <div class='row'>
-          <div class='col-5' style='margin-left:auto; margin-right:auto;'>
-            <img id='img_bot' src='static/kata.png' style='height:60px'>
-          </div>
-        </div>
-        <div class='row'>
-          <div class='col-5' style='font-size:11pt; margin-left:auto; margin-right:auto;'>
-            <div id='descr_bot'>
-              KataGo 20 blocks
+          <br>
+          <div class='row'>
+            <div class='col-12 text-center'>
+              <label id='btn_new' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
+                style='font-size:11pt'>
+                {{ tr('New Game') }}
+              </label>
+              &nbsp;
+              <label id='btn_settings' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Settings')}}</label>
+              </label>
+              {% if True or current_user.data['username'].strip().lower() in ['acm','ahn','mikie'] %}
+              &nbsp;
+              <label id='btn_watch' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Watch')}}</label>
+              {% endif %}
             </div>
           </div>
-        </div>
-        <!-- Space on top of buttons -->
-        <div class='row' style='font-size:20pt;height:20px'>
-          <div class='col-12'>
-            &nbsp;
+          <div class='row'>
+            <div id='game_info' class='col-12 text-center' style='font-size:9pt'> </div>
+          </div>
+          <div class='row'>
+            <div id='fname' class='col-12 text-center' style='font-size:9pt'> </div>
+          </div>
+          <div class='row'>
+            <div class='col-12'>
+              <span id='lb_komi' style='font-size:9pt'>&nbsp;</span>
+            </div>
+          </div>
+
+          <!-- Diagram editing buttons -->
+          <div id='diagram_buttons' class='row justify-content-center'>
+            <!-- Add stones -->
+            <label id='btn_tgl_add_black' class='btn btn-outline-dark touch-allow'
+              style='font-size:8pt;white-space:nowrap'>⚫</label>&nbsp;
+
+            <label id='btn_tgl_add_white' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>⚪</label>&nbsp;&nbsp;&nbsp;
+
+            <!-- Letters and numbers -->
+            <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
+              style='font-size:8pt;white-space:nowrap'>1</label>&nbsp;
+
+            <label id='btn_tgl_letter' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>a</label>&nbsp;&nbsp;&nbsp;
+
+            <!-- Markers -->
+            <label id='btn_tgl_x' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>X</label>&nbsp;
+
+            <label id='btn_tgl_circle' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>O</label>&nbsp;
+
+            <label id='btn_tgl_triangle' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>△</label>&nbsp;&nbsp;&nbsp;
+
+            <!-- Clear markers -->
+            <label id='btn_clear' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>&nbsp;</label>&nbsp;&nbsp;&nbsp;
+
+            <!-- Rotate -->
+            <label id='btn_tgl_rot' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>R</label>&nbsp;
+
+            <!-- Swap colors -->
+            <label id='btn_tgl_swap_colors' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>C</label>&nbsp;&nbsp;&nbsp;
+
+            <!-- Export diagram -->
+            <label id='btn_export_diagram' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>E</label>&nbsp;
+          </div>
+
+          <div class='row'>
+            <!-- <div id='board' class='col-12 text-center'> </div> -->
+            <div id='board' class='boardwrapper'> </div>
+          </div>
+          <div class='row justify-content-center'>
+            <table class='center' width='100%'>
+              <tr>
+                <td align='center' width='30%'>
+                  <table width='100%'>
+                    <tr>
+                      <td class='nomarg' align='center' style='height:15px'></td>
+                    </tr>
+                    <tr>
+                      <td id='btn_movenum' class='nomarg' align='center'
+                        style='font-size:9pt;height:60px;user-select:none;' width='30%'>&nbsp;
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td align='center' width='40%'>
+                  <table width='100%'>
+                    <tr>
+                      <td id='bestscore' class='nomarg' align='center' style='height:15px'></td>
+                    </tr>
+                    <tr>
+                      <td id='status' class='nomarg' align='center' style='font-size:9pt;height:60px' width='30%'>&nbsp;
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td align='center' width='30%'>
+                  <table width='100%'>
+                    <tr>
+                      <td class='nomarg' align='center' style='height:15px'></td>
+                    </tr>
+                    <tr>
+                      <td id='emo' class='nomarg' align='center' style='font-size:25pt;height:60px' width='30%'>&nbsp;
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
           </div>
         </div>
-        <div class='row justify-content-center'>
-          <!-- <div class='col-12'> -->
-          <table style='padding:0px'>
-            <tr>
-              <td style='margin:0'>
-                <label class='switch'>
-                  <input id='opt_auto' type='checkbox'>
-                  <span class='slider round'></span>
-                </label>
-              </td>
-              <td style='margin:0'>&nbsp;</td>
-            </tr>
-            <tr style='transform:translate(0,-6px)'>
-              <td style='padding:0;margin:0'>
-                <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>{{ tr('Play') }}</label>&nbsp;
-              </td>
-              <td style='padding:0;margin:0'>
-                <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>
-              </td>
-            </tr>
-          </table>
-          <!-- </div> -->
-        </div>
-        <div class='row justify-content-center'>
-          <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Undo')}}</label>&nbsp;
-          <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>&nbsp;
-          <label id='btn_bot' class='btn btn-outline-dark' style='font-size:11pt'>Kata 10b</label>
-        </div>
-        <div class='row' style='font-size:5pt'>
-          &nbsp;
-        </div>
-        <!-- Navigation buttons -->
-        <div class='row justify-content-center'>
-          <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back
-            10')}}</label>&nbsp;
-          <label id='btn_prev' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
-          <label id='btn_next' class='btn btn-outline-dark'
-            style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
-          <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd
-            10')}}</label>
-        </div>
-        <div class='row justify-content-center'>
-          <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
-          <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
-        </div>
-        <div class='row justify-content-center'>
-          <label id='btn_pass' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Pass')}}</label>&nbsp;
-          <!-- selfplay -->
-          <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Self Play')}}</label>
-        </div>
-        <div class='row' style='font-size:5pt'>
-          &nbsp;
-        </div>
-        <div class='row justify-content-center'>
-          <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
-          <form method='post' enctype='multipart/form-data'>
-            <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
-              {{tr('Load Sgf')}} <input type='file' id='sgf-file' style='display:none'>
-            </label>
-          </form>
-        </div>
-        <!-- <div class='row justify-content-center'>
+      </td>
+      <td style='vertical-align:top' width='300px'> <!--right-->
+        <div class='container'>
+          <div class='row' style='font-size:20pt;height:80px'> <!-- Change to move right side down -->
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-5' style='margin-left:auto; margin-right:auto;'>
+              <img id='img_bot' src='static/kata.png' style='height:60px'>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='col-5' style='font-size:11pt; margin-left:auto; margin-right:auto;'>
+              <div id='descr_bot'>
+                KataGo 20 blocks
+              </div>
+            </div>
+          </div>
+          <!-- Space on top of buttons -->
+          <div class='row' style='font-size:20pt;height:20px'>
+            <div class='col-12'>
+              &nbsp;
+            </div>
+          </div>
+          <div class='row justify-content-center'>
+            <!-- <div class='col-12'> -->
+            <table style='padding:0px'>
+              <tr>
+                <td style='margin:0'>
+                  <label class='switch'>
+                    <input id='opt_auto' type='checkbox'>
+                    <span class='slider round'></span>
+                  </label>
+                </td>
+                <td style='margin:0'>&nbsp;</td>
+              </tr>
+              <tr style='transform:translate(0,-6px)'>
+                <td style='padding:0;margin:0'>
+                  <label id='btn_play' class='btn btn-outline-dark' style='font-size:11pt;'>{{ tr('Play')
+                    }}</label>&nbsp;
+                </td>
+                <td style='padding:0;margin:0'>
+                  <label id='btn_best' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Best')}}</label>
+                </td>
+              </tr>
+            </table>
+            <!-- </div> -->
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_undo' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Undo')}}</label>&nbsp;
+            <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Score')}}</label>&nbsp;
+            <label id='btn_bot' class='btn btn-outline-dark' style='font-size:11pt'>Kata 10b</label>
+          </div>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <!-- Navigation buttons -->
+          <div class='row justify-content-center'>
+            <label id='btn_back10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Back
+              10')}}</label>&nbsp;
+            <label id='btn_prev' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>{{tr('Prev')}}</label>&nbsp;
+            <label id='btn_next' class='btn btn-outline-dark'
+              style='font-size:8pt;white-space:nowrap'>{{tr('Next')}}</label>&nbsp;
+            <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:8pt;white-space:nowrap'>{{tr('Fwd
+              10')}}</label>
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_first' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('First')}}</label>&nbsp;
+            <label id='btn_last' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Last')}}</label>
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_pass' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Pass')}}</label>&nbsp;
+            <!-- selfplay -->
+            <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:8pt;'>{{tr('Self Play')}}</label>
+          </div>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_save' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Save Sgf')}}</label>&nbsp;
+            <form method='post' enctype='multipart/form-data'>
+              <label class='btn btn-outline-dark btn-file' style='font-size:11pt;'>
+                {{tr('Load Sgf')}} <input type='file' id='sgf-file' style='display:none'>
+              </label>
+            </form>
+          </div>
+          <!-- <div class='row justify-content-center'>
         </div> -->
-        <div class='row' style='font-size:5pt'>
-          &nbsp;
-        </div>
-        <div class='row justify-content-center'>
-          <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
-            Line')}}</label>
-        </div>
-      </div> <!--right container-->
-    </td> <!--right-->
-  </tr>
-</table>
+          <div class='row' style='font-size:5pt'>
+            &nbsp;
+          </div>
+          <div class='row justify-content-center'>
+            <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:11pt;'>{{tr('Back to Main
+              Line')}}</label>
+          </div>
+        </div> <!--right container-->
+      </td> <!--right-->
+    </tr>
+  </table>
+</div>
 
 
 <!-- Modal dialog to pick komi and handicap -->
