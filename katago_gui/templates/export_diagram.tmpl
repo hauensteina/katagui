@@ -84,7 +84,7 @@
 <br>
 <!-- board with controls along edges -->
 <div {% if is_mobile() %}
-  style='display:grid;grid-template-columns:var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH);grid-column-gap:0;justify-content:center;'
+  style='display:grid;grid-template-columns:1fr var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH) 1fr;grid-column-gap:0;justify-content:center;'
   {% else %}
   style='display:grid;grid-template-columns:1fr var(--LRWIDTH) var(--BOARDSIZE) var(--LRWIDTH) 1fr;grid-column-gap:0;'
   {% endif %} class='xblue-border'>
