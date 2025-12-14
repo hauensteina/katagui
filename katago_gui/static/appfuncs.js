@@ -447,7 +447,7 @@ export function get_scorestr(p, score) {
 } // get_scorestr()
 
 // Replay n moves from empty board.
-//----------------------------------------
+//-----------------------------------------------------
 export function replay_moves(n) {
     goto_first_move()
     for (const [idx, move_prob] of grec.prefix(n).entries()) {
@@ -474,6 +474,17 @@ export function turn(idx_) {
     return JGO.BLACK
 } // turn()
 
+//------------------------------------
+function is_diagram_mode_active() {
+    return $('#btn_tgl_number').hasClass('btn-success')
+      || $('#btn_tgl_letter').hasClass('btn-success')
+      || $('#btn_tgl_x').hasClass('btn-success')
+      || $('#btn_tgl_triangle').hasClass('btn-success')
+      || $('#btn_tgl_circle').hasClass('btn-success')
+      || $('#btn_tgl_add_black').hasClass('btn-success')
+      || $('#btn_tgl_add_white').hasClass('btn-success')
+  } // is_diagram_mode_active()
+
 // Show a move on the board. 
 // player == 1 or 2 meaning black or white
 //--------------------------------------------
@@ -492,7 +503,11 @@ export function show_move(player, coord) {
         node.info.captures[player] += play.captures.length // tally captures
         g_prisoners[player] = node.info.captures[player]
         node.setType(coord, player) // play stone
-        node.setType(play.captures, JGO.CLEAR) // clear opponent's stones
+
+        // In diagram mode, we leave captures on the board
+        if (!is_diagram_mode_active()) {
+            node.setType(play.captures, JGO.CLEAR) 
+        }
 
         if (g_last_move) {
             node.setMark(g_last_move, JGO.MARK.NONE) // clear previous mark
@@ -509,7 +524,7 @@ export function show_move(player, coord) {
             node.setMark(play.ko, JGO.MARK.CIRCLE) // mark ko, too
         g_ko = play.ko
     } else {
-        board_click_callback.illegal_move = true
+        //board_click_callback.illegal_move = true
     }
 } // show_move()
 show_move.mark_last_move = true

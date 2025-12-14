@@ -110,14 +110,14 @@ function main(JGO, axutil) {
     maybe_start_var()
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
     af.grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
-    board_click_callback.illegal_move = false
+    //board_click_callback.illegal_move = false
     goto_move(af.grec.len())
     // Silently ignore illegal moves
-    if (board_click_callback.illegal_move) {
-      af.grec.pop()
-      goto_move(af.grec.len())
-      return
-    }
+    //if (board_click_callback.illegal_move) {
+    //  af.grec.pop()
+    //  goto_move(af.grec.len())
+    //  return
+    //}
     if (settings('disable_ai')) { return }
 
     af.add_mark('redraw')
@@ -135,9 +135,10 @@ function main(JGO, axutil) {
       },
       settings('show_emoji'), playing)
   } // board_click_callback()
-  board_click_callback.illegal_move = false
+  //board_click_callback.illegal_move = false
   board_click_callback.g_click_coord_buffer = null
 
+  // Add a stone in diagram mode
   //-----------------------------------
   function add_stone(color, coord) {
     if (coord.i < 0 || coord.i > 18) return // invalid coord
@@ -161,17 +162,18 @@ function main(JGO, axutil) {
 
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
     af.grec.push({ 'mv': mstr, 'p': '0.00', 'score': '0.00', 'agent': 'human' })
-    board_click_callback.illegal_move = false
-    goto_move(af.grec.len())
+    //board_click_callback.illegal_move = false
+    //goto_move(af.grec.len())
     // Silently ignore illegal moves
-    if (board_click_callback.illegal_move) {
-      af.grec.pop()
-      goto_move(af.grec.len())
-      return
-    }
+    // if (board_click_callback.illegal_move) {
+    //   af.grec.pop()
+    //   goto_move(af.grec.len())
+    //   return
+    // }
     // Add a pass to get the right hover color
     af.grec.push({ 'mv': 'pass', 'p': '0.00', 'score': '0.00', 'agent': 'human' })
-    goto_move(af.grec.len())
+    //goto_move(af.grec.len())
+    af.replay_moves(af.grec.pos())
   } // add_stone()
 
   //-------------------------------
@@ -315,7 +317,8 @@ function main(JGO, axutil) {
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
         deactivate_add_black_add_white()
-      }
+      } 
+      af.replay_all_moves()
     } // activate_mark_toggle()
 
     $('#btn_movenum').click(() => {
@@ -335,11 +338,12 @@ function main(JGO, axutil) {
         wbtn.css('background-color', '')
         maybe_start_var()
         af.grec.force_black_turn()
-        af.replay_moves(af.grec.pos())
+        af.replay_all_moves()
       } else {
         bbtn.removeClass('btn-success')
         bbtn.css('background-color', '')
         af.grec.force_white_turn()
+        af.replay_all_moves()
       }
     }) // btn_add_black.click()
 
@@ -356,11 +360,12 @@ function main(JGO, axutil) {
         bbtn.css('background-color', '')
         maybe_start_var()
         af.grec.force_white_turn()
-        af.replay_moves(af.grec.pos())
+        af.replay_all_moves()
       } else {
         wbtn.removeClass('btn-success')
         wbtn.css('background-color', '')
         af.grec.force_black_turn()
+        af.replay_all_moves()
       }
     }) // btn_add_white.click()
 
