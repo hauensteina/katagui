@@ -8,12 +8,12 @@ JGO.BOARD.large = {
     black: 'static/large/black43.png',
     white: 'static/large/white43.png',
     shadow:'static/large/shadow.png',
-    board: 'static/large/shinkaya.jpg'
+    //board: 'static/large/shinkaya.jpg'
   },
 
   // Margins around the board, both on normal edges and clipped ones
   //margin: {normal: 40, clipped: 40},
-  margin: {normal: 0, clipped: 0},
+  margin: {normal: 0, clipped: 0, color: '#c8a873'},
 
   // Shadow color, blur and offset
   boardShadow: {color: '#ffe0a8', blur: 30, offX: 5, offY: 5},
@@ -49,7 +49,7 @@ JGO.BOARD.large = {
 };
 
 JGO.BOARD.largeWalnut = JGO.util.extend(JGO.util.extend({}, JGO.BOARD.large), {
-  textures: {board: 'static/large/mono.jpg', shadow: 'static/large/shadow_dark43.png'},
+  textures: { /* board: 'static/large/mono.jpg', */ shadow: 'static/large/shadow_dark43.png' },
   boardShadow: {color: '#e2baa0'},
   grid: {color: '#101010', borderWidth: 1.8, lineWidth: 1.5}
 });

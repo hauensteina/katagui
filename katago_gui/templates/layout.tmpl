@@ -143,18 +143,17 @@
         </table>
         <script>
           $('#version').html(VERSION)
-          var lfont = '20pt'
-          var mfont = '12pt'
-          var sfont = '9pt'
+          var lfont = '1.5rem'
+          var mfont = '1.2rem'
+          var sfont = '0.8rem'
           if (axutil.isMobile()) {
-            lfont = '35pt'
-            mfont = '30pt'
-            sfont = '20pt'
+            lfont = '3rem'
+            mfont = '2.5rem'
+            sfont = '2rem'
             $('#homelogo').width('300px')
-            //$('.flag').height('60px')
-            $('.flag').width('6vw')
+            $('.flag').width('4rem')
           } else {
-            $('.flag').width('25px')
+            $('.flag').width('2rem')
           }
           $('.flag').css('display','inline-block')
           $('.font-l').each(function (index) { this.style.fontSize = lfont })
