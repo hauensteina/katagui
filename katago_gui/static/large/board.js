@@ -13,7 +13,7 @@ JGO.BOARD.large = {
 
   // Margins around the board, both on normal edges and clipped ones
   //margin: {normal: 40, clipped: 40},
-  margin: {normal: 0, clipped: 0, color: '#c8a873'},
+  margin: {normal: 0, clipped: 0, color: '#cba45e'},
 
   // Shadow color, blur and offset
   boardShadow: {color: '#ffe0a8', blur: 30, offX: 5, offY: 5},
