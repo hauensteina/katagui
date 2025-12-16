@@ -3,9 +3,7 @@
 {% block css %}
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <style>
-  {
-    % if is_mobile() %
-  }
+  {% if is_mobile() %}
 
   :root {
     --BOARDSIZE: 55vw;
@@ -16,12 +14,10 @@
     --LRWIDTH: 22vw;
   }
 
-    {
-    % else %
-  }
+    {% else %}
 
   :root {
-    --BOARDSIZE: 300px;
+    --BOARDSIZE: 500px;
     --BUTTON-GAP: 10px;
     --CONTROL-SIZE: 50px;
     --CONTROL-SIZE2: calc((2 * var(--CONTROL-SIZE) + var(--BUTTON-GAP)));
@@ -31,9 +27,7 @@
     --TOTWIDTH: calc(var(--LRWIDTH + var(--BOARDSIZE) + var(--LRWIDTH)));
   }
 
-    {
-    % endif %
-  }
+    {% endif %}
 
   .ahx-twocols {
     display: grid;
@@ -638,6 +632,27 @@
     }
   } // drawGoBoardSVG()
 
+  //---------------------------------------------
+  function setupCanvas(canvas) {
+    const ctx = canvas.getContext("2d");
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect(); // CSS size
+
+    // Set the *real* pixel size
+    canvas.width  = Math.round(rect.width  * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+
+    // Keep the CSS size the same
+    canvas.style.width  = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+
+    // Map drawing units to CSS pixels
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    return ctx;
+  } // setupCanvas()
+
 
   // Function to draw the board position and hilight a specified area.
   // Used both for screen and export.
@@ -658,7 +673,7 @@
     // Handicap points (hoshis) for a 19x19 board
     const hoshis = [{ x: 3, y: 3 }, { x: 3, y: 9 }, { x: 3, y: 15 }, { x: 9, y: 3 }, { x: 9, y: 9 }, { x: 9, y: 15 }, { x: 15, y: 3 }, { x: 15, y: 9 }, { x: 15, y: 15 }]
 
-    const ctx = canvas.getContext('2d')
+    const ctx = setupCanvas(canvas)
     const markFont1 = fittingFont(tileSize * 0.3, 1)
     const markFont2 = fittingFont(tileSize * 0.6, 2)
     const letterFont = fittingFont(tileSize * 0.4, 1)
