@@ -378,16 +378,18 @@ export function downloadSgf(filename, sgf, mime = "text/plain") {
 //-----------------------------------------------------
 export function show_best_curmoves() {
     if (!grec.curmove() || !grec.curmove().data) { return }
-    show_best_moves(grec.curmove().data, g_jrecord)
+    //if (is_diagram_mode_active()) return
+    show_best_moves(grec.curmove().data)
 } // show_best_curmoves()
 
-//---------------------------------------------------
-export function show_best_moves(data) {
+//------------------------------------------------------------
+export function show_best_moves(data, best_btn_flag=false) {
     //if (!settings('show_best_moves')) { return }
     if (axutil.settings('disable_ai')) { return }
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
     if (!data) return
+    if (is_diagram_mode_active() && !best_btn_flag) return
     var botCoord = axutil.string2jcoord(data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
     var node = g_jrecord.createNode(true)

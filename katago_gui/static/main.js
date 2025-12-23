@@ -182,7 +182,8 @@ function main(JGO, axutil) {
     af.set_status(tr('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move((data) => {
-      af.show_best_moves(data)
+      var best_btn_flag=true
+      af.show_best_moves(data, best_btn_flag)
     })
   } // best_btn_callback()
   best_btn_callback.active = false
