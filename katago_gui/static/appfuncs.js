@@ -521,7 +521,7 @@ export function show_move(player, coord) {
 
         // In diagram mode, we leave captures on the board
         if (!is_diagram_mode_active()) {
-            node.setType(play.captures, JGO.CLEAR) 
+            node.setType(play.captures, JGO.CLEAR)
         }
 
         if (g_last_move) {
@@ -538,8 +538,11 @@ export function show_move(player, coord) {
         if (play.ko)
             node.setMark(play.ko, JGO.MARK.CIRCLE) // mark ko, too
         g_ko = play.ko
-    } else {
-        //board_click_callback.illegal_move = true
+    } else { // Error, like ko or existing stone or suicide.
+        var node = g_jrecord.createNode(true)
+        if (is_diagram_mode_active()) { // In diagram mode, play the stone anyway.
+            node.setType(coord, player) // play stone anyway
+        }
     }
 } // show_move()
 show_move.mark_last_move = true

@@ -460,7 +460,6 @@
     var oppType = (stone == C.BLACK ? C.WHITE : C.BLACK),
       captures = [], adjacent, captured = {};
 
-
     if(this.getType(coord) != C.CLEAR)
       return { success: false,
         errorMsg: 'Cannot play on existing stone!' };
@@ -501,7 +500,7 @@
       return { success: true, captures: captures, ko: captures[0].copy() };
 
     return { success: true, captures: captures, ko: false };
-  };
+  }; // playMove()
 
   module.exports = Board;
 
