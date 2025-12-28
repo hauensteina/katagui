@@ -162,6 +162,15 @@ export function add_mark(rotated_coord, marktype) {
         redraw_marks()
         return
     }
+    else if (rotated_coord == 'isempty') {
+        // Check if there are any marks on the board
+        for (const marktype in add_mark.orig_coords) {
+            if (add_mark.orig_coords[marktype].length > 0) {
+                return false
+            }
+        }
+        return true
+    }
     else {
         var orig_coord = axutil.invrot_coord(rotated_coord)
         var mark = get_mark(orig_coord)
@@ -386,10 +395,14 @@ export function show_best_curmoves() {
 export function show_best_moves(data, best_btn_flag=false) {
     //if (!settings('show_best_moves')) { return }
     if (axutil.settings('disable_ai')) { return }
+    if (!add_mark('isempty') && !best_btn_flag) { // if there are marks, show marks instead of best moves
+        add_mark('redraw')
+        return
+    }
     if (data) { show_best_moves.data = data }
     data = show_best_moves.data
     if (!data) return
-    if (is_diagram_mode_active() && !best_btn_flag) return
+    //if (is_diagram_mode_active() && !best_btn_flag) return
     var botCoord = axutil.string2jcoord(data.bot_move)
     var best = data.diagnostics.best_ten // candidate moves sorted descending by psv
     var node = g_jrecord.createNode(true)
