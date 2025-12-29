@@ -221,6 +221,7 @@ export function toggle_ai_buttons({ opt_auto = true } ) {
         // disable opt_auto checkbox
         $('#opt_auto').prop('checked', false)
         $('#opt_auto').prop('disabled', true)
+        $('#btn_play').css('border-color', '#343A40')
         // disable ai buttons
         ai_buttons.forEach(btn => axutil.disable_button(btn))
         $('#emo').html('&nbsp;')
@@ -228,6 +229,7 @@ export function toggle_ai_buttons({ opt_auto = true } ) {
         // enable opt_auto checkbox
         if (opt_auto) {
             $('#opt_auto').prop('checked', true)
+            $('#btn_play').css('border-color', '#FF0000')
         }
         $('#opt_auto').prop('disabled', false)
         // enable ai buttons

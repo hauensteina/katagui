@@ -320,6 +320,7 @@ function main(JGO, axutil) {
         deactivate_add_black_add_white()
       } 
       af.replay_all_moves()
+      af.add_mark('redraw')
     } // activate_mark_toggle()
 
     $('#btn_movenum').click(() => {
