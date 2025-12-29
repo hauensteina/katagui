@@ -960,6 +960,7 @@ function main(JGO, axutil) {
       return $('#opt_auto').prop('checked')
     }
     if (on_or_off == 'on') {
+      if (axutil.settings('disable_ai')) { return }
       $('#opt_auto').prop('checked', true)
       $('#btn_play').css('border-width', '1px')
       $('#btn_play').css('border-color', '#FF0000')

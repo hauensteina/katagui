@@ -219,7 +219,6 @@ export function toggle_ai_buttons({ opt_auto = true } ) {
     var ai_buttons = ['btn_best', 'btn_nnscore', 'btn_bot', 'btn_play', 'btn_tgl_selfplay']
     if (axutil.settings('disable_ai')) {
         // disable opt_auto checkbox
-
         $('#opt_auto').prop('checked', false)
         $('#opt_auto').prop('disabled', true)
         // disable ai buttons
