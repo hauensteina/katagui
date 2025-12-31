@@ -463,12 +463,7 @@ function main(JGO, axutil) {
     })
 
     $('#btn_tgl_guest').click(() => {
-      $('#donate_modal').html('\&nbsp;')
       fast_or_strong('guest')
-    })
-
-    $('#btn_tgl_fast').click(() => {
-      fast_or_strong('fast')
     })
 
     $('#btn_tgl_strong').click(() => {
@@ -1228,8 +1223,6 @@ function main(JGO, axutil) {
         } else {
           return fast_or_strong('strong')
         }
-      } else if ($('#btn_tgl_fast').hasClass('active')) {
-        return fast_or_strong('fast')
       } else {
         if ($('#username').html().trim() == 'acm') {
           return fast_or_strong('marfa_strong')
@@ -1244,17 +1237,15 @@ function main(JGO, axutil) {
         return fast_or_strong('guest')
       } else if ($('#btn_tgl_strong').hasClass('active')) {
         return fast_or_strong('guest')
-        //} else if ($('#btn_tgl_fast').hasClass('active')) {
-        //  return fast_or_strong('strong')
       } else { // guest goes to strong
         return fast_or_strong('strong')
       }
     }
     else if (val == 'strong') {
       if (settings('logged_in')) {
+        if ($('#username').html().trim() == 'acm') { return fast_or_strong('marfa_xstrong') }
         $('#descr_bot').html(`KataGo Pro 1000`)
         $('#btn_tgl_strong').addClass('active')
-        //$('#btn_tgl_fast').removeClass('active')
         $('#btn_tgl_guest').removeClass('active')
         $('#btn_bot').html('Kata Pro')
         axutil.set_attr('#img_bot', 'src', 'static/kata-red.png')
@@ -1268,8 +1259,8 @@ function main(JGO, axutil) {
     }
     else if (val == 'marfa_strong') {
       $('#descr_bot').html(`MarfaX<br>${DDATE}`)
-      $('#btn_tgl_fast').addClass('active')
-      //$('#btn_tgl_strong').removeClass('active')
+      $('#btn_tgl_strong').removeClass('active')
+      $('#btn_tgl_guest').addClass('active')
       $('#btn_bot').html('MarfaX')
       axutil.set_attr('#img_bot', 'src', 'static/kata-gray.png')
       return MARFA_STRONG
@@ -1285,16 +1276,15 @@ function main(JGO, axutil) {
     else if (val == 'one10') {
       $('#descr_bot').html(`KataGo 10b &nbsp; 16<br>${DDATE}`)
       $('#btn_tgl_guest').addClass('active')
-      //$('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
       $('#btn_bot').html('Kata 10b')
       axutil.set_attr('#img_bot', 'src', 'static/kata-gray.png')
       return ONE10
     }
     else { // val == guest
+      if ($('#username').html().trim() == 'acm') { return fast_or_strong('marfa_strong') }
       $('#descr_bot').html(`KataGo 10b 256`)
       $('#btn_tgl_guest').addClass('active')
-      //$('#btn_tgl_fast').removeClass('active')
       $('#btn_tgl_strong').removeClass('active')
       $('#btn_bot').html('Kata 10b')
       axutil.set_attr('#img_bot', 'src', 'static/kata-gray.png')
