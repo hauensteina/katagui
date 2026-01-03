@@ -284,9 +284,7 @@
     &nbsp;
     <label id='btn_bot' class='btn btn-outline-dark' style='font-size:1.5rem;'>Kata 10b</label>
     &nbsp;
-    <label class='btn btn-outline-dark btn-file' style='font-size:1.5rem;;'>
-      {{tr('Load Sgf')}} <input type='file' id='sgf-file' style='display:none'>
-    </label>
+    <label id='btn_settings1' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Settings')}}</label>
   </div>
 
   <!-- More Nav Buttons -->
@@ -308,12 +306,17 @@
     <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:1.5rem;;'>{{tr('Self Play')}}</label>
   </div>
 
-  <!-- Save Button -->
+  <!-- Save and load buttons -->
   <div>
     <table class='center'>
       <tr>
         <td>
           <label id='btn_save' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Save Sgf')}}</label>
+        </td>
+        <td> &nbsp;
+            <label class='btn btn-outline-dark btn-file' style='font-size:1.5rem;'>
+            {{tr('Load Sgf')}} <input type='file' id='sgf-file' style='display:none;'>
+            </label>
         </td>
       </tr>
     </table>

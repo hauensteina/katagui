@@ -581,6 +581,11 @@ function main(JGO, axutil) {
       $('#div_settings').css({ 'display': 'grid' })
     })
 
+    $('#btn_settings1').click(() => {
+      af.initSettingSliders()
+      $('#div_settings').css({ 'display': 'grid' })
+    })
+
     // Prevent zoom on double tap
     $('*').on('touchend', (e) => {
       // Exceptions
