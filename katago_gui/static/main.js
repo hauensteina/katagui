@@ -559,7 +559,7 @@ function main(JGO, axutil) {
       selfplay('off')
       axutil.hit_endpoint('cancel')
       var at_end = (af.grec.pos() == af.grec.len())
-      goto_move(af.grec.pos() - 1)
+      goto_move(af.grec.pos() - 1); af.update_emoji(); bot_active('off')
       if (at_end) {
         af.grec.truncate()
         if (settings('game_hash')) { // we are in an active game
