@@ -8,6 +8,7 @@ body {
     text-align: center;
     margin-top: 5rem;
     user-select:none;
+    -webkit-user-select: none;
 }
 .center {
     margin-left:auto;
