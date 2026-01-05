@@ -815,6 +815,7 @@ function main(JGO, axutil) {
   function btn_prev() {
     selfplay('off');
     if (!af.grec.len()) return
+    if (axutil.hit_endpoint('waiting')) return // this prevents p and score being written to the wrong move
     goto_move(af.grec.pos() - 1); af.update_emoji(); bot_active('off')
     af.add_mark('redraw')
 
