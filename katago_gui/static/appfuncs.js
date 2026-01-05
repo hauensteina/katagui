@@ -51,7 +51,9 @@ export function show_prob(update_emo, playing) {
     var cur = grec.curmove()
     if (cur) {
         var p = cur.p
+        if (cur.data.diagnostics) { p = cur.data.diagnostics.winprob } // sometimes cur.p is out of date
         var score = cur.score
+        if (cur.data.diagnostics) { s = cur.data.diagnostics.score } // sometimes cur.score is out of date
         // 0.8 -> 1.0; 1.3 -> 1.5 etc
         score = Math.trunc(Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
         if (playing && !axutil.settings('show_prob')) {
