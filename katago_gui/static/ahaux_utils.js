@@ -594,16 +594,16 @@ class GameRecord {
       return null
     }
     var p = cur.p
-    if (cur.data.diagnostics) { p = cur.data.diagnostics.winprob } // sometimes cur.p is out of date
+    //if (cur.data.diagnostics) { p = cur.data.diagnostics.winprob } // sometimes cur.p is out of date @@@
     var pp = prev.p
-    if (prev.data.diagnostics) { pp = prev.data.diagnostics.winprob }
+    //if (prev.data.diagnostics) { pp = prev.data.diagnostics.winprob }
     if (p === '0.00' || pp === '0.00') {
       return null // no prob, no delta
     }
     var s = cur.score
-    if (cur.data.diagnostics) { s = cur.data.diagnostics.score } // sometimes cur.score is out of date
+    //if (cur.data.diagnostics) { s = cur.data.diagnostics.score } // sometimes cur.score is out of date @@@
     var ps = prev.score
-    if (prev.data.diagnostics) { ps = prev.data.diagnostics.score }
+    //if (prev.data.diagnostics) { ps = prev.data.diagnostics.score }
     //if (s == 0 || ps == 0) { 
     //  return null
     //}
