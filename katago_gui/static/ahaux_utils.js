@@ -6,7 +6,7 @@
 'use strict';
 
 const DDATE = ''
-const VERSION = '3.17.10'
+const VERSION = '3.17.11'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -583,8 +583,8 @@ class GameRecord {
   move_badness() {
     function logit(p) {
       // clamp to avoid infinities
-      const pc = Math.min(0.999999, Math.max(0.000001, p));
-      return Math.log(pc / (1 - pc));
+      const pc = Math.min(0.999999, Math.max(0.000001, p))
+      return Math.log(pc / (1 - pc))
     } // logit()
 
     if (!this.curmove() || !this.prevmove()) { return null }
@@ -594,12 +594,16 @@ class GameRecord {
       return null
     }
     var p = cur.p
+    if (cur.diagnostics) { p = cur.diagnostics.winprob } // sometimes cur.p is out of date
     var pp = prev.p
+    if (prev.diagnostics) { pp = prev.diagnostics.winprob }
     if (p === '0.00' || pp === '0.00') {
       return null // no prob, no delta
     }
     var s = cur.score
+    if (cur.diagnostics) { s = cur.diagnostics.score } // sometimes cur.score is out of date
     var ps = prev.score
+    if (prev.diagnostics) { ps = prev.diagnostics.score }
     //if (s == 0 || ps == 0) { 
     //  return null
     //}
@@ -608,7 +612,7 @@ class GameRecord {
     //}
     if ((this.pos() - 1) % 2) { // we are white
       p = 1.0 - p; pp = 1.0 - pp // flip probabilities
-      s = -1 * cur.score; ps = -1 * prev.score // flip
+      s = -1 * s; ps = -1 * ps // flip
     }
     const PL = Math.max(0, ps - s) // points lost
     const dL = logit(p) - logit(pp) // log-odds change
