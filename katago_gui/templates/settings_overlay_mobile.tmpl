@@ -60,10 +60,8 @@
     .switch {
         position: relative;
         display: inline-block;
-        /*    width: 60px;
-        height: 34px; */
-        width: 112px;
-        height: 64px;
+        width: 8.2rem;
+        height: 4.2rem;
         touch-action: manipulation;
     }
 
@@ -95,43 +93,27 @@
     .slider:before {
         position: absolute;
         content: "";
-        /*        height: 30px;
-        width: 30px; */
-        height: 56px;
-        width: 56px;
-        left: 2px;
-        bottom: 2px;
+        height: 4rem;
+        width: 4rem;
+        left: 0.1rem;
+        bottom: 0.1rem;
         background-color: white;
-        /*    -webkit-transition: .1s;
-        transition: .1s; */
     }
 
     input:checked+.slider {
         background-color: #2196F3;
     }
 
-    input:focus+.slider {
-        box-shadow: 0 0 1px #2196F3;
-    }
-
     input:checked+.slider:before {
-        /*        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px); */
-        -webkit-transform: translateX(50px);
-        -ms-transform: translateX(50px);
-        transform: translateX(50px);
+        -webkit-transform: translateX(4rem);
+        -ms-transform: translateX(4rem);
+        transform: translateX(4rem);
     }
 
     /* Rounded sliders */
     .slider.round {
-        /*border-radius: 17px; */
-        border-radius: 31px;
+        border-radius: 2rem;
     }
-
-    /*    .slider.round:before {
-        border-radius: 50%;
-    }*/
 </style>
 
 
