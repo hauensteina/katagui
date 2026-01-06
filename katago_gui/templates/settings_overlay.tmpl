@@ -5,12 +5,9 @@
         text-align: center;
         background-color: #e0e0e0;
         color: #1a1a1a;
-        border: 2px solid green;
-        border-radius: 12px;
-        padding: 24px 28px;
-        /*max-width: 1000px; */
-        /*margin: 2rem auto;*/
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        border: 0.1rem solid green;
+        border-radius: 0.5rem;
+        padding: 1rem 1rem;
     }
 
     #div_settings td {
@@ -25,17 +22,16 @@
     .switch {
         position: relative;
         display: inline-block;
-        /* width: 60px;
-        height: 34px; */
-        width: 40px;
-        height: 20px;
+        width: 2.2rem;
+        height: 1.2rem;
         vertical-align: middle;
         margin-top: 0;
     }
 
+    /*
     #div_settings .switch {
         transform: translateY(4px);
-    }
+    } */
 
     /* Hide default HTML checkbox */
     .switch input {
@@ -61,12 +57,10 @@
     .slider:before {
         position: absolute;
         content: "";
-        /* height: 26px;
-        width: 26px; */
-        height: 18px;
-        width: 18px;
-        left: 2px;
-        bottom: 1px;
+        height: 1rem;
+        width: 1rem;
+        left: 0.1rem;
+        bottom: 0.1rem;
         background-color: white;
         -webkit-transition: .1s;
         transition: .1s;
@@ -76,26 +70,19 @@
         background-color: #2196F3;
     }
 
-    input:focus+.slider {
-        box-shadow: 0 0 1px #2196F3;
-    }
-
     input:checked+.slider:before {
-        /* -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px); */
-        -webkit-transform: translateX(18px);
-        -ms-transform: translateX(18px);
-        transform: translateX(18px);
+        -webkit-transform: translateX(1rem);
+        -ms-transform: translateX(1rem);
+        transform: translateX(1rem);
     }
 
     /* Rounded sliders */
     .slider.round {
-        border-radius: 17px;
+        border-radius: 0.5rem;
     }
 
     .slider.round:before {
-        border-radius: 50%;
+        border-radius: 0.5rem;
     }
 </style>
 
@@ -103,115 +90,103 @@
 <!-- HTML -->
 <div id="div_settings" class="ahx-overlay" style="display:none;">
     <table style='margin:auto auto;'>
-        <tr style='height:50px'>
+        <tr>
             <td colspan='2' align='left'>
                 {{tr('Self Play Speed:')}}
             </td>
         </tr>
-        <tr style='height:50px'>
-            <td colspan='2'>
+        <tr>
+            <td colspan='2' style='padding-top:0.5rem;'>
                 <table>
                     <tr>
-                        <td style=' padding-bottom:10px;'>
+                        <td style=' padding-bottom:0.6rem;'>
                             <label id='btn_tgl_selfplay_fast' class='btn btn-outline-dark'
-                                style='font-size:12pt;'>{{tr('Fast')}}</label>
+                                style='font-size:1rem;'>{{tr('Fast')}}</label>
                         </td>
-                        <td style='padding-left:25px; padding-bottom:10px;'>
+                        <td style='padding-left:1rem; padding-bottom:0.6rem;'>
                             <label id='btn_tgl_selfplay_normal' class='btn btn-outline-dark'
-                                style='font-size:12pt;'>{{tr('Medium')}}</label>
+                                style='font-size:1rem;'>{{tr('Medium')}}</label>
                         </td>
-                        <td style='padding-left:25px; padding-bottom:10px;'>
+                        <td style='padding-left:1rem; padding-bottom:0.6rem;'>
                             <label id='btn_tgl_selfplay_slow' class='btn btn-outline-dark'
-                                style='font-size:12pt;'>{{tr('Slow')}}</label>
+                                style='font-size:1rem;'>{{tr('Slow')}}</label>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
-        <tr style='height:50px'>
+        <tr>
             <td>
                 <label class='switch'>
                     <input id='opt_show_emoji' type='checkbox'>
                     <span class='slider round'></span>
                 </label>
             </td>
-            <td style='text-align:left;font-size:12pt'>
+            <td style='text-align:left;font-size:1rem;'>
                 &nbsp; {{tr('Show emoji')}} ( Ctrl-e )
             </td>
         </tr>
-        <tr style='height:50px'>
+        <tr>
             <td>
                 <label class='switch'>
                     <input id='opt_show_prob' type='checkbox'>
                     <span class='slider round'></span>
                 </label>
             </td>
-            <td style='text-align:left;font-size:12pt'>
+            <td style='text-align:left;font-size:1rem'>
                 &nbsp; {{tr('Show probability')}} ( Ctrl-p )
             </td>
         </tr>
-        <tr style='height:50px'>
+        <tr>
             <td>
                 <label class='switch'>
                     <input id='opt_show_best_moves' type='checkbox'>
                     <span class='slider round'></span>
                 </label>
             </td>
-            <td style='text-align:left;font-size:12pt'>
+            <td style='text-align:left;font-size:1rem'>
                 &nbsp; {{tr('Show best moves')}} ( Ctrl-b )
             </td>
         </tr>
-        <tr style='height:50px'>
+        <tr>
             <td>
                 <label class='switch'>
                     <input id='opt_show_best_ten' type='checkbox'>
                     <span class='slider round'></span>
                 </label>
             </td>
-            <td style='text-align:left;font-size:12pt'>
+            <td style='text-align:left;font-size:1rem'>
                 &nbsp; {{tr('Show best 10 (A-J)')}} ( Ctrl-t )
             </td>
         </tr>
 
-        <!-- <tr style='height:50px'>
-        <td>
-          <label class='switch'>
-            <input id='opt_play_a' type='checkbox'>
-            <span class='slider round'></span>
-          </label>
-        </td>
-        <td style='text-align:left;font-size:12pt'>
-          &nbsp; {{tr('KataGo always plays at A')}}
-        </td>
-      </tr> -->
-
-        <tr style='height:50px'>
+        <tr>
             <td>
                 <label class='switch'>
                     <input id='opt_disable_ai' type='checkbox'>
                     <span class='slider round'></span>
                 </label>
             </td>
-            <td style='text-align:left;font-size:12pt'>
+            <td style='text-align:left;font-size:1rem'>
                 &nbsp; {{tr('Disable AI')}} ( Ctrl-a )
             </td>
         </tr>
 
-        <tr style='height:50px'>
+        <tr>
             <td>
                 <label class='switch'>
                     <input id='opt_diagrams' type='checkbox'>
                     <span class='slider round'></span>
                 </label>
             </td>
-            <td style='text-align:left;font-size:12pt'>
+            <td style='text-align:left;font-size:1rem'>
                 &nbsp; {{tr('Enable Diagrams')}} ( Ctrl-d )
             </td>
         </tr>
         <tr>
-            <td colspan='2' align='center'>
+            <td colspan='2' align='center' style='padding-top:0.5rem;'>
                 <label id='btn_settings_done' class='btn btn-outline-dark'
-                    style='font-size:15pt;margin-top:10px;'>{{tr('Save')}}</label>
+                    style='font-size:1rem;margin-top:1rem;'>{{tr('Save')}}</label>
             </td>
         </tr>
     </table>

@@ -14,15 +14,10 @@
         text-align: center;
         background-color: #e0e0e0;
         color: #1a1a1a;
-        border: 2px solid green;
-        border-radius: 12px;
-        padding: 24px 50px;
-        margin: 2rem auto;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        max-height: 80dvh;
-        /*overflow-y: auto;*/
-        place-items: center;
-        overflow: hidden;
+        border: 0.1rem solid green;
+        border-radius: 0.5rem;
+        padding: 1rem 1rem;
+        margin: 2rem auto; 
     }
 
     /* Stupid bootstrap makes my button gray */
@@ -72,10 +67,10 @@
         height: 0;
     }
 
+    /*
     #div_settings .switch {
-        /*transform: translateY(4px);*/
         margin-top: 4px;
-    }
+    } */
 
     /* The slider */
     .slider {
@@ -225,7 +220,7 @@
             </tr>
 
             <tr>
-                <td colspan='2' align='center' style='padding-top:1rem;'>
+                <td colspan='2' align='center' style='padding-top:1rem;padding-bottom:1rem;'>
                     <button id="btn_settings_done" type="button" class="btn btn-outline-dark" style="font-size:2rem;">
                         {{tr('Save')}}
                     </button>
