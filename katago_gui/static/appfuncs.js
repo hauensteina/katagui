@@ -270,35 +270,9 @@ export function initSettingSliders() {
         $('#btn_tgl_selfplay_fast').addClass('active')
         settings.selfplay_speed = 'fast'
     })
-
     // Save
     $('#btn_settings_done').click(() => {
-        settings.show_emoji = $('#opt_show_emoji').prop('checked')
-        settings.show_prob = $('#opt_show_prob').prop('checked')
-        settings.show_best_moves = $('#opt_show_best_moves').prop('checked')
-        settings.show_best_ten = $('#opt_show_best_ten').prop('checked')
-        settings.disable_ai = $('#opt_disable_ai').prop('checked')
-        settings.diagrams = $('#opt_diagrams').prop('checked')
-        localStorage.setItem('settings', JSON.stringify(settings))
-
-        if (axutil.settings('diagrams')) {
-            $('#diagram_buttons').show()
-        } else {
-            $('#diagram_buttons').hide()
-        }
-
-        if (axutil.settings('show_best_moves')) {
-            show_best_curmoves()
-        } else {
-            replay_all_moves()
-        }
-
-        toggle_ai_buttons( { opt_auto: null } )
-        update_emoji()
-        show_prob()
-
         $('#div_settings').css({ 'display': 'none' })
-
     }) // click
     return self
 } // initSettingSliders()

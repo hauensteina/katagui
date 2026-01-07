@@ -603,6 +603,8 @@ function main(JGO, axutil) {
     $('#btn_first').click(() => { selfplay('off'); goto_move(0); af.clear_emoji(); bot_active('off'); af.clear_status(); af.add_mark('clear') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(af.grec.len()); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
 
+    // Show settings popup
+    //--------------------------
     $('#btn_settings').click(() => {
       af.initSettingSliders()
       $('#div_settings').css({ 'display': 'grid' })
@@ -612,6 +614,47 @@ function main(JGO, axutil) {
       af.initSettingSliders()
       $('#div_settings').css({ 'display': 'grid' })
     })
+
+    // settings slider checkboxes
+    //-------------------------------
+    $('#opt_show_emoji').on('change', function () {
+      settings('show_emoji', !settings('show_emoji'))
+      af.update_emoji()
+    })
+    $('#opt_show_prob').on('change', function () {
+      settings('show_prob', !settings('show_prob'))
+      af.show_prob()
+    })
+    $('#opt_show_best_moves').on('change', function () {
+      settings('show_best_moves', !settings('show_best_moves'))
+      if (settings('show_best_moves')) {
+        af.show_best_curmoves()
+      } else {
+        af.replay_all_moves()
+      }
+    })
+    $('#opt_show_best_ten').on('change', function () {
+      settings('show_best_ten', !settings('show_best_ten'))
+      if (settings('show_best_ten')) {
+        settings('show_best_moves', true)
+      } else {
+        $('#status').html('')
+      }
+      af.show_best_curmoves()
+    })    
+    $('#opt_disable_ai').on('change', function () {
+      settings('disable_ai', !settings('disable_ai'))
+      af.toggle_ai_buttons({ opt_auto: false })
+    })    
+    $('#opt_diagrams').on('change', function () {
+      settings('diagrams', !settings('diagrams'))
+      if (settings('diagrams')) {
+        $('#diagram_buttons').show()
+      } else {
+        $('#diagram_buttons').hide()
+      }
+    })    
+
 
     // Prevent zoom on double tap
     $('*').on('touchend', (e) => {
@@ -1441,11 +1484,7 @@ function main(JGO, axutil) {
       if (settings('show_best_moves')) {
         af.show_best_curmoves()
       } else {
-        //settings('show_best_ten', false)
-        //af.show_best_curmoves()
         af.replay_all_moves()
-        //$('#status').html('')
-        //$('#bestscore').html('')
       }
     } // best moves
     else if (e.ctrlKey && e.key == 't') { // t for ten best moves
