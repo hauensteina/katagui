@@ -242,7 +242,7 @@ function main(JGO, axutil) {
           const t = e.touches[0]
           var coord = canvas.getCoordinate(t.clientX, t.clientY)
           console.log(`touchmove ${coord.i} ${coord.j}`)
-          coord.j -= 2
+          coord.j -= 3
           mouseMoveHandler(coord)
           moveCoord = coord
         }, { passive: true });
