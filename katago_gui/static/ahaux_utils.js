@@ -6,7 +6,7 @@
 'use strict';
 
 const DDATE = ''
-const VERSION = '3.17.12'
+const VERSION = '3.17.13'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -57,8 +57,14 @@ class AhauxUtils {
   // Check if a string ends in a digit
   //---------------------------------------------------
   endsInDigit(str) {
-    return /\d$/.test(str);
+    return /\d$/.test(str)
   } // endsInDigit()
+
+  // shiftChar('c',-2) -> 'a'
+  //-----------------------------
+  shiftChar(ch, offset) {
+    return String.fromCharCode(ch.charCodeAt(0) + offset)
+  } // shiftChar()
 
   // Store and retrieve global client-side settings
   //--------------------------------------------------------

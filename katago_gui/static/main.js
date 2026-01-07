@@ -239,9 +239,10 @@ function main(JGO, axutil) {
 
         //---------------------------------------------------------
         canvas.ctx.canvas.addEventListener("touchmove", (e) => {
-          console.log('touchmove')
           const t = e.touches[0]
           var coord = canvas.getCoordinate(t.clientX, t.clientY)
+          console.log(`touchmove ${coord.i} ${coord.j}`)
+          coord.j -= 2
           mouseMoveHandler(coord)
           moveCoord = coord
         }, { passive: true });
