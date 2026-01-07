@@ -182,7 +182,7 @@ function main(JGO, axutil) {
     af.set_status(tr('KataGo is thinking ...'))
     best_btn_callback.active = true
     get_best_move((data) => {
-      var best_btn_flag=true
+      var best_btn_flag = true
       af.show_best_moves(data, best_btn_flag)
     })
   } // best_btn_callback()
@@ -213,6 +213,7 @@ function main(JGO, axutil) {
 
   //-------------------------
   function setup_jgo() {
+    var moveCoord = ''
     var jsetup = new JGO.Setup(af.g_jrecord.jboard, JGO.BOARD.largeWalnut)
     jsetup.setOptions({ stars: { points: 9 } })
     // Add mouse event listeners for the board
@@ -220,34 +221,63 @@ function main(JGO, axutil) {
     jsetup.create('board',
       function (canvas) {
         //----------------------------
-        canvas.addListener('click', function (coord, ev) { board_click_callback(coord) });
+        canvas.addListener('click',
+          function (coord, ev) {
+            if (axutil.isMobile()) return
+            console.log('board_click')
+            board_click_callback(coord)
+          })
 
-        //------------------------------
+        //-------------------------------
         canvas.addListener('mousemove',
           function (coord, ev) {
-            var jboard = af.g_jrecord.jboard
-            if (coord.i == -1 || coord.j == -1)
-              return
-            if (coord == af.hover.coord)
-              return
-
-            af.hover(coord, af.turn())
-            if (score_position.active) {
-              draw_estimate(score_position.probs)
-            }
-            else if (best_btn_callback.active) {
-              af.show_best_moves()
-            }
-            else if (is_markup_active()) {
-              // do nothing
-            }
-            else if (af.grec.curmove() && af.grec.curmove().data) {
-              if (settings('show_best_moves')) {
-                af.show_best_curmoves()
-              }
-            }
+            if (axutil.isMobile()) return
+            console.log('mousemove')
+            mouseMoveHandler(coord)
           }
         ) // mousemove
+
+        //---------------------------------------------------------
+        canvas.ctx.canvas.addEventListener("touchmove", (e) => {
+          console.log('touchmove')
+          const t = e.touches[0]
+          var coord = canvas.getCoordinate(t.clientX, t.clientY)
+          mouseMoveHandler(coord)
+          moveCoord = coord
+        }, { passive: true });
+
+        //---------------------------------------------------------
+        canvas.ctx.canvas.addEventListener("touchend", (e) => {
+          if (!moveCoord) return
+          console.log(`touchend ${moveCoord}`)
+          var coord = moveCoord
+          moveCoord = ''
+          board_click_callback(coord)
+        }, { passive: true });
+
+        //-------------------------------------
+        function mouseMoveHandler(coord) {
+          if (coord.i == -1 || coord.j == -1)
+            return
+          if (coord == af.hover.coord)
+            return
+
+          af.hover(coord, af.turn(), {force:true})
+          if (score_position.active) {
+            draw_estimate(score_position.probs)
+          }
+          else if (best_btn_callback.active) {
+            af.show_best_moves()
+          }
+          else if (is_markup_active()) {
+            // do nothing
+          }
+          else if (af.grec.curmove() && af.grec.curmove().data) {
+            if (settings('show_best_moves')) {
+              af.show_best_curmoves()
+            }
+          }
+        } // mouseMoveHandler()
 
         //----------------------------
         canvas.addListener('mouseout',
@@ -318,7 +348,7 @@ function main(JGO, axutil) {
         btn.addClass('btn-success')
         btn.css('background-color', 'green')
         deactivate_add_black_add_white()
-      } 
+      }
       af.replay_all_moves()
       af.add_mark('redraw')
     } // activate_mark_toggle()
