@@ -1406,7 +1406,6 @@ function main(JGO, axutil) {
     setup_jgo()
     selfplay('off')
 
-    //    document.onkeydown = check_key
     document.addEventListener('keydown', check_key)
 
     if (axutil.isMobile()) {
@@ -1419,6 +1418,7 @@ function main(JGO, axutil) {
     load_state()
     get_handicap()
     periodicSave()
+    af.update_emoji()
 
     if (!settings('logged_in')) {
       axutil.disable_button('btn_tgl_selfplay')
