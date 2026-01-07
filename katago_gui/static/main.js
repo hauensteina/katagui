@@ -353,10 +353,6 @@ function main(JGO, axutil) {
       af.add_mark('redraw')
     } // activate_mark_toggle()
 
-    $('#btn_movenum').click(() => {
-      goto_next_bad_move(0.1)
-    })
-
     $('#btn_tgl_add_black').click(() => {
       var bbtn = $('#btn_tgl_add_black')
       var wbtn = $('#btn_tgl_add_white')

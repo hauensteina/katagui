@@ -579,7 +579,7 @@ export function show_movenum() {
     var html = `${n} / ${totmoves}<br>`
     html += 'B' + `:${g_prisoners[1]} `
     html += 'W' + `:${g_prisoners[2]} `
-    $('#btn_movenum').html(html)
+    $('#lb_movenum').html(html)
 } // show_movenum()
 
 
