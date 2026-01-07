@@ -960,6 +960,7 @@ function main(JGO, axutil) {
   // Bot Interaction
   //===================
 
+  // If get_continuations == true, generate another move to find best continuations. 
   //-----------------------------
   function get_katago_move() {
     af.set_status(tr('KataGo is thinking ...'))
@@ -1017,7 +1018,7 @@ function main(JGO, axutil) {
     else {
       maybe_start_var()
     }
-    af.grec.push({ 'mv': data.bot_move, 'p': 0.0, 'score': 0.0, 'agent': fast_or_strong().name })
+    af.grec.push({ 'mv': data.bot_move, 'p': '0.00', 'score': '0.00', 'agent': fast_or_strong().name })
     af.replay_moves(af.grec.pos())
     af.show_movenum()
     af.add_mark('redraw')
