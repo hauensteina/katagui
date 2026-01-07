@@ -109,7 +109,7 @@ function main(JGO, axutil) {
     // Add the new move
     maybe_start_var()
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
-    af.grec.push({ 'mv': mstr, 'p': 0.0, 'score': 0, 'agent': 'human' })
+    af.grec.push({ 'mv': mstr, 'p': '0.00', 'score': 0, 'agent': 'human' })
     //board_click_callback.illegal_move = false
     goto_move(af.grec.len())
     // Silently ignore illegal moves
@@ -680,8 +680,8 @@ function main(JGO, axutil) {
     if (!selfplay.ready) return
     selfplay.ready = false
 
-    // Replaying existing game
-    if (set_load_sgf_handler.loaded_game && var_button_state() == 'off') {
+    // Replaying existing game. Check whether there is a next move
+    if (af.grec.pos() < af.grec.len()) {
       replay_loaded_game(interval); return;
     }
 
