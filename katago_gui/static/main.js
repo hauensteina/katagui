@@ -1472,41 +1472,22 @@ function main(JGO, axutil) {
 
     // Shortcuts for the settings
     else if (e.ctrlKey && e.key == 'e') { // e for emoji
-      settings('show_emoji', !settings('show_emoji'))
-      af.update_emoji()
+      $('#opt_show_emoji').prop('checked', !$('#opt_show_emoji').is(':checked')).trigger('change');
     } // emoji
     else if (e.ctrlKey && e.key == 'p') { // p for probability
-      settings('show_prob', !settings('show_prob'))
-      af.show_prob()
+      $('#opt_show_prob').prop('checked', !$('#opt_show_prob').is(':checked')).trigger('change');
     } // probability
     else if (e.ctrlKey && e.key == 'b') { // b for best moves
-      settings('show_best_moves', !settings('show_best_moves'))
-      if (settings('show_best_moves')) {
-        af.show_best_curmoves()
-      } else {
-        af.replay_all_moves()
-      }
+      $('#opt_show_best_moves').prop('checked', !$('#opt_show_best_moves').is(':checked')).trigger('change');
     } // best moves
     else if (e.ctrlKey && e.key == 't') { // t for ten best moves
-      settings('show_best_ten', !settings('show_best_ten'))
-      if (settings('show_best_ten')) {
-        settings('show_best_moves', true)
-      } else {
-        $('#status').html('')
-      }
-      af.show_best_curmoves()
+      $('#opt_show_best_ten').prop('checked', !$('#opt_show_best_ten').is(':checked')).trigger('change');
     } // ten best moves
     else if (e.ctrlKey && e.key == 'a') { // a for toggle ai
-      settings('disable_ai', !settings('disable_ai'))
-      af.toggle_ai_buttons({ opt_auto: false })
+      $('#opt_disable_ai').prop('checked', !$('#opt_disable_ai').is(':checked')).trigger('change');
     } // disable ai
     else if (e.ctrlKey && e.key == 'd') { // d for diagrams
-      settings('diagrams', !settings('diagrams'))
-      if (settings('diagrams')) {
-        $('#diagram_buttons').show()
-      } else {
-        $('#diagram_buttons').hide()
-      }
+      $('#opt_diagrams').prop('checked', !$('#opt_diagrams').is(':checked')).trigger('change');
     } // diagrams
 
   } // check_key()
