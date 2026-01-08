@@ -254,27 +254,6 @@ export function initSettingSliders() {
     if ('selfplay_speed' in settings) { sp_id = '#btn_tgl_selfplay_' + settings.selfplay_speed }
     $(sp_id).addClass('active')
 
-    // Self Play Speed
-    $('#btn_tgl_selfplay_slow').click(() => {
-        $('[id^=btn_tgl_selfplay]').removeClass('active')
-        $('#btn_tgl_selfplay_slow').addClass('active')
-        settings.selfplay_speed = 'slow'
-    })
-    $('#btn_tgl_selfplay_normal').click(() => {
-        $('[id^=btn_tgl_selfplay]').removeClass('active')
-        $('#btn_tgl_selfplay_normal').addClass('active')
-        settings.selfplay_speed = 'normal'
-    })
-    $('#btn_tgl_selfplay_fast').click(() => {
-        $('[id^=btn_tgl_selfplay]').removeClass('active')
-        $('#btn_tgl_selfplay_fast').addClass('active')
-        settings.selfplay_speed = 'fast'
-    })
-    // Save
-    $('#btn_settings_done').click(() => {
-        $('#div_settings').css({ 'display': 'none' })
-    }) // click
-    return self
 } // initSettingSliders()
 
 /**

@@ -615,6 +615,24 @@ function main(JGO, axutil) {
       $('#div_settings').css({ 'display': 'grid' })
     })
 
+    // Self play speed radio buttons
+    //-------------------------------------
+    $('#btn_tgl_selfplay_slow').click(() => {
+        $('[id^=btn_tgl_selfplay]').removeClass('active')
+        $('#btn_tgl_selfplay_slow').addClass('active')
+        settings( 'selfplay_speed', 'slow')
+    })
+    $('#btn_tgl_selfplay_normal').click(() => {
+        $('[id^=btn_tgl_selfplay]').removeClass('active')
+        $('#btn_tgl_selfplay_normal').addClass('active')
+        settings( 'selfplay_speed', 'normal')
+    })
+    $('#btn_tgl_selfplay_fast').click(() => {
+        $('[id^=btn_tgl_selfplay]').removeClass('active')
+        $('#btn_tgl_selfplay_fast').addClass('active')
+        settings( 'selfplay_speed', 'fast')
+    })
+
     // settings slider checkboxes
     //-------------------------------
     $('#opt_show_emoji').on('change', function () {
@@ -654,6 +672,10 @@ function main(JGO, axutil) {
         $('#diagram_buttons').hide()
       }
     })    
+    // Settings save button
+    $('#btn_settings_done').click(() => {
+        $('#div_settings').css({ 'display': 'none' })
+    }) // click
 
 
     // Prevent zoom on double tap
