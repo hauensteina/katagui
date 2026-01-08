@@ -939,7 +939,8 @@ function main(JGO, axutil) {
       if (settings('show_best_moves')) { af.show_best_curmoves() }
     }
     else {
-      btn_next.waiting = true
+      btn_next.waiting = true 
+      setTimeout( () => { btn_next.waiting=false }, 5000) // Make sure this doesn't hang forever
       console.log('btn_next waiting')
       af.set_status(tr('KataGo is thinking ...'))
       var pos = af.grec.pos()
