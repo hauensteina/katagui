@@ -603,16 +603,24 @@ function main(JGO, axutil) {
     $('#btn_first').click(() => { selfplay('off'); goto_move(0); af.clear_emoji(); bot_active('off'); af.clear_status(); af.add_mark('clear') })
     $('#btn_last').click(() => { selfplay('off'); goto_move(af.grec.len()); af.update_emoji(); bot_active('off'); af.clear_status(); af.add_mark('redraw') })
 
+    //------------------------------------
+    function toggle_settings_window() {
+      af.initSettingSliders()
+      if ($('#div_settings').css('display') == 'grid') {
+        $('#div_settings').css({ 'display': 'none' })
+      } else {
+        $('#div_settings').css({ 'display': 'grid' })
+      }
+    } // toggle_settings_window()
+
     // Show settings popup
     //--------------------------
     $('#btn_settings').click(() => {
-      af.initSettingSliders()
-      $('#div_settings').css({ 'display': 'grid' })
+      toggle_settings_window()
     })
 
     $('#btn_settings1').click(() => {
-      af.initSettingSliders()
-      $('#div_settings').css({ 'display': 'grid' })
+      toggle_settings_window()
     })
 
     // Self play speed radio buttons
