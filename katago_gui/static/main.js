@@ -253,7 +253,7 @@ function main(JGO, axutil) {
           console.log(`touchend ${moveCoord}`)
           var coord = moveCoord
           moveCoord = ''
-          board_click_callback(coord)
+          board_click_callback(af.hover.coord)
         }, { passive: true });
 
         //-------------------------------------
