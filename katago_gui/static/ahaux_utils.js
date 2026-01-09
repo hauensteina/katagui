@@ -6,7 +6,7 @@
 'use strict';
 
 const DDATE = ''
-const VERSION = '3.17.14'
+const VERSION = '3.18.1'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -601,22 +601,12 @@ class GameRecord {
       return null
     }
     var p = cur.p
-    //if (cur.data.diagnostics) { p = cur.data.diagnostics.winprob } // sometimes cur.p is out of date @@@
     var pp = prev.p
-    //if (prev.data.diagnostics) { pp = prev.data.diagnostics.winprob }
     if (p === '0.00' || pp === '0.00') {
       return null // no prob, no delta
     }
     var s = cur.score
-    //if (cur.data.diagnostics) { s = cur.data.diagnostics.score } // sometimes cur.score is out of date @@@
     var ps = prev.score
-    //if (prev.data.diagnostics) { ps = prev.data.diagnostics.score }
-    //if (s == 0 || ps == 0) { 
-    //  return null
-    //}
-    //if (!s || !ps) { 
-    //  return null
-    //}
     if ((this.pos() - 1) % 2) { // we are white
       p = 1.0 - p; pp = 1.0 - pp // flip probabilities
       s = -1 * s; ps = -1 * ps // flip

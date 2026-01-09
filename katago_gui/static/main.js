@@ -81,7 +81,6 @@ function main(JGO, axutil) {
     })
   } // set_dropdown_handlers()
 
-
   //------------------------------------------
   function board_click_callback(coord) {
     selfplay('off')
@@ -110,14 +109,7 @@ function main(JGO, axutil) {
     maybe_start_var()
     var mstr = axutil.jcoord2string(coord) // This rotates the move if necessary
     af.grec.push({ 'mv': mstr, 'p': '0.00', 'score': 0, 'agent': 'human' })
-    //board_click_callback.illegal_move = false
     goto_move(af.grec.len())
-    // Silently ignore illegal moves
-    //if (board_click_callback.illegal_move) {
-    //  af.grec.pop()
-    //  goto_move(af.grec.len())
-    //  return
-    //}
     if (settings('disable_ai')) { return }
 
     af.add_mark('redraw')
@@ -135,7 +127,6 @@ function main(JGO, axutil) {
       },
       settings('show_emoji'), playing)
   } // board_click_callback()
-  //board_click_callback.illegal_move = false
   board_click_callback.g_click_coord_buffer = null
 
   // Add a stone in diagram mode
@@ -254,6 +245,8 @@ function main(JGO, axutil) {
           var coord = moveCoord
           moveCoord = ''
           board_click_callback(af.hover.coord)
+          af.hover()
+          af.show_best_curmoves()
         }, { passive: true });
 
         //-------------------------------------
@@ -263,7 +256,7 @@ function main(JGO, axutil) {
           if (coord == af.hover.coord)
             return
 
-          af.hover(coord, af.turn(), {force:true})
+          af.hover(coord, af.turn(), {force:true}) //@@@
           if (score_position.active) {
             draw_estimate(score_position.probs)
           }
@@ -734,7 +727,6 @@ function main(JGO, axutil) {
     }
     else if (action == 'off') {
       clearTimeout(selfplay.timer)
-      //$('#btn_tgl_selfplay').css('color', 'black') // @@@
       $('#btn_tgl_selfplay').css('background-color', '')
       return $('#btn_tgl_selfplay').removeClass('btn-success')
     }

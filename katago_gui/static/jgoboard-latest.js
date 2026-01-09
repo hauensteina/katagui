@@ -994,6 +994,8 @@
     CIRCLE: '0',
     /** Cross */
     CROSS: '*',
+    /** Red plus */
+    RED_PLUS: 'r',
     /** Black territory */
     BLACK_TERRITORY: '-',
     /** White territory */
@@ -2123,6 +2125,18 @@
         ctx.moveTo(ox - this.markX / 2, oy - this.markY / 2);
         ctx.lineTo(ox + this.markX / 2, oy + this.markY / 2);
         ctx.stroke();
+        break;
+
+        case C.MARK.RED_PLUS:
+        ctx.beginPath();
+        ctx.moveTo(ox - this.markX / 2, oy);
+        ctx.lineTo(ox + this.markX / 2, oy);
+        ctx.moveTo(ox, oy - this.markY / 2);
+        ctx.lineTo(ox, oy + this.markY / 2);
+        var style = ctx.strokeStyle
+        ctx.strokeStyle = 'red'; 
+        ctx.stroke();
+        ctx.strokeStyle = style;
         break;
 
       case C.MARK.TRIANGLE:

@@ -51,9 +51,7 @@ export function show_prob(update_emo, playing) {
     var cur = grec.curmove()
     if (cur) {
         var p = cur.p
-        //if (cur.data.diagnostics) { p = cur.data.diagnostics.winprob } // sometimes cur.p is out of date @@@
         var score = cur.score
-        //if (cur.data.diagnostics) { score = cur.data.diagnostics.score } // sometimes cur.score is out of date @@@
         // 0.8 -> 1.0; 1.3 -> 1.5 etc
         score = Math.trunc(Math.abs(score) * 2 + 0.5) * Math.sign(score) / 2.0
         if (playing && !axutil.settings('show_prob')) {
@@ -184,6 +182,12 @@ export function add_mark(rotated_coord, marktype) {
 } // add_mark()
 add_mark.orig_coords = { 'letter': [], 'number': [], 'X': [], 'triangle': [], 'circle': [] }
 
+//-----------------------------------
+export function has_stone(coord) {
+    var t = g_jrecord.jboard.getType(coord)
+    return (t == JGO.BLACK || t == JGO.WHITE)
+} // has_stone()
+
 // Show a translucent hover stone
 //--------------------------------------------
 export function hover(coord, col, opts) {
@@ -193,20 +197,16 @@ export function hover(coord, col, opts) {
     }
     var hcol = col ? col : turn()
     var jboard = g_jrecord.jboard
-    if (jboard.getType(coord) == JGO.WHITE || jboard.getType(coord) == JGO.BLACK) { return }
-    if (coord) {
+    if (coord) { /// draw hover stone
         if (hover.coord) {
             jboard.setType(hover.coord, JGO.CLEAR)
         }
-        jboard.setType(coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
         hover.coord = coord
-        if (col) {
-            replay_moves(grec.pos()) // remove artifacts
-            add_mark('redraw')
-            jboard.setType(coord, hcol == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
-        }
+        replay_moves(grec.pos()) // remove artifacts
+        add_mark('redraw')
+        restore_hover()
     }
-    else if (hover.coord) {
+    else if (hover.coord) { // hover() removes old hover stone
         jboard.setType(hover.coord, JGO.CLEAR)
         hover.coord = null
         replay_moves(grec.pos()) // remove artifacts
@@ -214,6 +214,15 @@ export function hover(coord, col, opts) {
     }
 } // hover()
 hover.coord = null
+
+//---------------------------------------------
+function restore_hover() {
+    if (has_stone(hover.coord)) {
+        g_jrecord.jboard.setMark(hover.coord, JGO.MARK.RED_PLUS)
+    } else {
+        g_jrecord.jboard.setType(hover.coord, turn() == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
+    }
+} // restore_hover()
 
 //--------------------------------------------------------------
 export function toggle_ai_buttons({ opt_auto = true } ) {
@@ -377,10 +386,7 @@ export function show_best_moves(data, best_btn_flag=false) {
             node.setMark(botCoord1, letter)
         }
     } // for
-    // restore the hover stone
-    if (hover.coord) {
-        g_jrecord.jboard.setType(hover.coord, turn() == JGO.WHITE ? JGO.DIM_WHITE : JGO.DIM_BLACK)
-    }
+    restore_hover()
     var maxi = Math.max(...bardata.map(function (d) { return d[1] }))
     //console.log(maxi)
     var font = '10px sans-serif'
