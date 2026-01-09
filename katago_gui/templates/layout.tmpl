@@ -62,7 +62,7 @@
 </style>
 
 <body style='left:0; margin:0; padding:0;user-select:none;'>
-  {% if not home %}
+  {% if not home %} <!-- about page etc -->
   <table class='center' style='width:100%'>
     <!-- Page Header -->
     <tr style='background-color:green'>
@@ -74,7 +74,7 @@
     </tr>
     <tr>
       <td colspan='2'>
-        {% else %}
+  {% else %} <!-- home page -->
         <table class='center' style='width:100%'>
           <!-- Page Header -->
           <tr style='background-color:green'>
@@ -135,7 +135,7 @@
           </tr>
           <tr>
             <td colspan='4'>
-              {% endif %}
+   {% endif %} <!-- home page -->
               {% block content %}
               {% endblock content %}
             </td>
@@ -155,7 +155,7 @@
           } else {
             $('.flag').width('2rem')
           }
-          $('.flag').css('display','inline-block')
+          $('.flag').css('display', 'inline-block')
           $('.font-l').each(function (index) { this.style.fontSize = lfont })
           $('.font-m').each(function (index) { this.style.fontSize = mfont })
           $('.font-s').each(function (index) { this.style.fontSize = sfont })
