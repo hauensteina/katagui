@@ -13,9 +13,16 @@
 
 {% block css %}
 <script type="text/javascript">
-  if (axutil.isDesktop()) { document.location.href = '/index' }
+  if (!axutil.isMobile()) { document.location.href = '/index' }
 </script>
 <style>
+  :root {
+  --font-button: 25px;
+  --font-small: 22px;
+  --font-large: 22px;
+  --font-settings: 30px;
+}
+
   .btn {
     background-color: #d0e0d0;
     border-color: #13751a;
@@ -132,94 +139,84 @@
     <br>
   </div>
 
-  <div class='container-fluid'>
+  <div class='container-fluid' style='margin-bottom:1rem;'>
     <div class='row'>
       <div class='col-2'>
         <img id='img_bot' src='static/kata.png' style='height:100px' class='touch-allow'>
-        <div id='descr_bot' style='font-size:1rem' class='touch-allow'>
+        <div id='descr_bot' style='font-size:16px;' class='touch-allow'>
           KataGo 20 blocks<br>2020-05-30
         </div>
-        <br>
       </div>
-      <div class='col-8' style='font-size:30pt;margin:auto'>
-        <label id='btn_new' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal'
-          style='font-size:1.5rem;'>
-          {{tr('New Game')}}
-        </label> &nbsp;
-        <label id='btn_settings' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Settings')}}</label>
-        </label>
-        &nbsp;
-        <label id='btn_watch' class='btn btn-outline-dark' style='font-size:1.5rem;'>
-          {{tr('Watch')}}
-        </label>
+      <div class='col-8' style='margin:auto;'>
+        <label id='btn_new' class='btn btn-outline-dark' data-toggle='modal' data-target='#handiModal' style='font-size:var(--font-button);margin-right:10px;'>{{tr('New Game')}}</label> 
+        <label id='btn_settings' class='btn btn-outline-dark' style='font-size:var(--font-button);margin-right:10px;'>{{tr('Settings')}}</label>
+        <label id='btn_watch' class='btn btn-outline-dark' style='font-size:var(--font-button);'> {{tr('Watch')}} </label>
       </div>
       <div class='col-2' style='font-size:24pt;margin:auto'> &nbsp; </div>
     </div>
   </div>
 
-  <div id='game_info' style='font-size:18pt;text-align:center'> &nbsp; </div>
-  <div id='fname' style='font-size:18pt;text-align:center'> &nbsp; </div>
-  <div id='lb_komi' style='font-size:18pt;text-align:center'> &nbsp; </div>
+  <div id='game_info' style='font-size:var(--font-small);text-align:center'> </div>
+  <div id='fname' style='font-size:var(--font-small);text-align:center'> </div>
+  <div id='lb_komi' style='font-size:var(--font-small);text-align:center'> </div>
 
   <!-- Diagram editing buttons -->
-  <div id='diagram_buttons' class='xred-border'>
-    <table class='center'>
-      <tr>
+  <div id='diagram_buttons' class='xred-border' style='margin-top:10px;'>
         <!-- Add stones -->
-        <td> <label id='btn_tgl_add_black' class='btn btn-outline-dark touch-allow'
-            style='font-size:20pt;margin-left:0rem;padding:0.7rem 1.5rem;'>⚫</label>
-        </td>
+    <div style='display:grid;margin-left:auto;margin-right:auto;grid-column-gap:1fr;grid-template-columns:1fr auto auto 1fr;'>
+        <div> </div>
+        <div> 
+          <label id='btn_tgl_add_black' class='btn btn-outline-dark touch-allow' style='font-size:var(--font-button);margin-left:0rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>⚫</label>
+        </div>
+        <div> 
+          <label id='btn_tgl_add_white' class='btn btn-outline-dark' style='font-size:var(--font-button);margin-left:1rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>⚪</label>
+        </div>
+        <div> </div>
+    </div>
 
-        <td> <label id='btn_tgl_add_white' class='btn btn-outline-dark'
-            style='font-size:20pt;margin-left:1rem;padding:0.7rem 1.5rem;'>⚪</label>
-        </td>
-      </tr>
-    </table>
-    <table class='center'>
-      <tr>
-        <!-- Letters and numbers -->
-        <td> <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow'
-            style='font-size:22pt;margin-left:0rem;padding:0.7rem 1.5rem;'>1</label>
-        </td>
-
-        <td> <label id='btn_tgl_letter' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>a</label>
-        </td>
+    <div style='display:grid;margin-left:auto;margin-right:auto;grid-column-gap:1fr;grid-template-columns:1fr auto auto auto auto auto auto auto auto auto 1fr;'>
+      <div> </div>
+      <!-- Letters and numbers -->
+        <div> 
+          <label id='btn_tgl_number' class='btn btn-outline-dark touch-allow' style='margin-left:0rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>1</label>
+        </div>
+        <div> 
+          <label id='btn_tgl_letter' class='btn btn-outline-dark' style='margin-left:1rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>a</label>
+        </div>
 
         <!-- Markers -->
-        <td> <label id='btn_tgl_x' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>X</label>
-        </td>
-
-        <td> <label id='btn_tgl_circle' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>O</label>
-        </td>
-
-        <td> <label id='btn_tgl_triangle' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>△</label>
-        </td>
+        <div> 
+          <label id='btn_tgl_x' class='btn btn-outline-dark' style='margin-left:2rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>X</label>
+        </div>
+        <div> 
+          <label id='btn_tgl_circle' class='btn btn-outline-dark' style='margin-left:1rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>O</label>
+        </div>
+        <div> 
+          <label id='btn_tgl_triangle' class='btn btn-outline-dark' style='margin-left:1rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>△</label>
+        </div>
 
         <!-- Clear markers -->
-        <td> <label id='btn_clear' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>&nbsp;</label>
-        </td>
+        <div> 
+          <label id='btn_clear' class='btn btn-outline-dark' style='margin-left:2rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>&nbsp;</label>
+        </div>
 
         <!-- Rotate -->
-        <td> <label id='btn_tgl_rot' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>R</label>
-        </td>
+        <div> 
+          <label id='btn_tgl_rot' class='btn btn-outline-dark' style='margin-left:2rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>R</label>
+        </div>
 
         <!-- Swap colors -->
-        <td> <label id='btn_tgl_swap_colors' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:1rem;padding:0.7rem 1.5rem;'>C</label>
-        </td>
+        <div> 
+          <label id='btn_tgl_swap_colors' class='btn btn-outline-dark' style='margin-left:1rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>C</label>
+        </div>
 
         <!-- Export diagram -->
-        <td> <label id='btn_export_diagram' class='btn btn-outline-dark'
-            style='font-size:22pt;margin-left:2rem;padding:0.7rem 1.5rem;'>E</label>
-        </td>
-      </tr>
-    </table>
+        <div> 
+          <label id='btn_export_diagram' class='btn btn-outline-dark' style='margin-left:2rem;padding:0.7rem 1.5rem;font-size:var(--font-button);'>E</label>
+        </div>
+
+      <div> </div>
+      </div>    
   </div>
 
   <div id=board class='boardwrapper'></div>
@@ -227,19 +224,19 @@
   <!-- Status and Emoji -->
   <div>
     <div style='display:grid; grid-template-columns: 1fr 1fr 1fr;'>
-      <div id='lb_movenum' style='font-size:18pt;margin-top:auto;margin-bottom:auto;'> &nbsp; </div>
+      <div id='lb_movenum' style='font-size:var(--font-large);margin-top:auto;margin-bottom:auto;'> &nbsp; </div>
       <div>
         <table width='100%'>
           <tr>
             <td id='bestscore' class='nomarg' align='center' style='height:30px'></td>
           </tr>
           <tr>
-            <td id='status' class='nomarg' align='center' style='font-size:18pt;height:100px;vertical-align:top'
+            <td id='status' class='nomarg' align='center' style='font-size:var(--font-large);height:100px;vertical-align:top'
               width='30%'>yy</td>
           </tr>
         </table>
       </div>
-      <div id='emo' style='font-size:40pt' height='40px'> &nbsp; </div>
+      <div id='emo' style='font-size:55px'> &nbsp; </div>
     </div>
   </div>
 
@@ -255,23 +252,23 @@
           &nbsp;
         </td>
         <td>
-          <label id='btn_play' class='btn btn-outline-dark' style='font-size:2rem;'>{{tr('Play')}}</label>
+          <label id='btn_play' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Play')}}</label>
           &nbsp;&nbsp;
         </td>
         <td>
-          <label id='btn_undo' class='btn btn-outline-dark' style='font-size:2rem;'>{{tr('Undo')}}</label>
+          <label id='btn_undo' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Undo')}}</label>
           &nbsp;&nbsp;
         </td>
         <td>
-          <label id='btn_best' class='btn btn-outline-dark' style='font-size:2rem;'>{{tr('Best')}}</label>
+          <label id='btn_best' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Best')}}</label>
           &nbsp;&nbsp;
         </td>
         <td>
-          <label id='btn_prev' class='btn btn-outline-dark' style='font-size:2rem;'>{{tr('Prev')}}</label>
+          <label id='btn_prev' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Prev')}}</label>
           &nbsp;&nbsp;
         </td>
         <td>
-          <label id='btn_next' class='btn btn-outline-dark' style='font-size:2rem;'>{{tr('Next')}}</label>
+          <label id='btn_next' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Next')}}</label>
         </td>
       </tr>
     </table>
@@ -279,32 +276,32 @@
 
   <!-- Nav Buttons -->
   <div>
-    <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Back to Main Line')}}</label>
+    <label id='btn_clear_var' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Back to Main Line')}}</label>
     &nbsp;
-    <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Score')}}</label>
+    <label id='btn_nnscore' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Score')}}</label>
     &nbsp;
-    <label id='btn_bot' class='btn btn-outline-dark' style='font-size:1.5rem;'>Kata 10b</label>
+    <label id='btn_bot' class='btn btn-outline-dark' style='font-size:var(--font-button);'>Kata 10b</label>
     &nbsp;
-    <label id='btn_settings1' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Settings')}}</label>
+    <label id='btn_settings1' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Settings')}}</label>
   </div>
 
   <!-- More Nav Buttons -->
   <div>
-    <label id='btn_first' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('First')}}</label>
+    <label id='btn_first' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('First')}}</label>
     &nbsp;
-    <label id='btn_back10' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Back 10')}}</label>
+    <label id='btn_back10' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Back 10')}}</label>
     &nbsp;
-    <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Fwd 10')}}</label>
+    <label id='btn_fwd10' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Fwd 10')}}</label>
     &nbsp;
-    <label id='btn_last' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Last')}}</label>
+    <label id='btn_last' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Last')}}</label>
   </div>
 
 
   <!-- Pass and Selfplay -->
   <div>
-    <label id='btn_pass' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Pass')}}</label>
+    <label id='btn_pass' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Pass')}}</label>
     &nbsp;
-    <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:1.5rem;;'>{{tr('Self Play')}}</label>
+    <label id='btn_tgl_selfplay' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Self Play')}}</label>
   </div>
 
   <!-- Save and load buttons -->
@@ -312,10 +309,10 @@
     <table class='center'>
       <tr>
         <td>
-          <label id='btn_save' class='btn btn-outline-dark' style='font-size:1.5rem;'>{{tr('Save Sgf')}}</label>
+          <label id='btn_save' class='btn btn-outline-dark' style='font-size:var(--font-button);'>{{tr('Save Sgf')}}</label>
         </td>
         <td> &nbsp;
-            <label class='btn btn-outline-dark btn-file' style='font-size:1.5rem;'>
+            <label class='btn btn-outline-dark btn-file' style='font-size:var(--font-button);'>
             {{tr('Load Sgf')}} <input type='file' id='sgf-file' style='display:none;'>
             </label>
         </td>

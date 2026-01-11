@@ -6,7 +6,7 @@
 'use strict';
 
 const DDATE = ''
-const VERSION = '3.18.1'
+const VERSION = '3.18.2'
 
 const COLNAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 const BOARD_SIZE = 19
@@ -98,10 +98,9 @@ class AhauxUtils {
     }
   } // set_attr()
 
-  isMobile() { return typeof window.orientation !== 'undefined' }
-  isDesktop() { return typeof window.orientation == 'undefined' }
-  //isMobile() { return window.innerHeight / window.innerWidth > 1.2 }
-  //isDesktop() { return window.innerHeight / window.innerWidth <= 1.2 }
+  isMobile() { return window.matchMedia('(max-width: 1024px)').matches }
+
+  //isMobile() { return typeof window.orientation !== 'undefined' }
 
   // Enable / disable a label used as a bootstrap button
   //--------------------------------------------------------
