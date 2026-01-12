@@ -84,6 +84,7 @@ function main(JGO, axutil) {
   //------------------------------------------
   function board_click_callback(coord) {
     selfplay('off')
+    if (!coord) { return }
     if (coord.i < 0 || coord.i > 18) { return }
     if (coord.j < 0 || coord.j > 18) { return }
     if (score_position.active) { goto_move(af.grec.pos()); return }
@@ -251,8 +252,6 @@ function main(JGO, axutil) {
 
         //-------------------------------------
         function mouseMoveHandler(coord) {
-          if (coord.i == -1 || coord.j == -1)
-            return
           if (coord == af.hover.coord)
             return
 

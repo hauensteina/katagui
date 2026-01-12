@@ -191,12 +191,19 @@ export function has_stone(coord) {
 // Show a translucent hover stone
 //--------------------------------------------
 export function hover(coord, col, opts) {
+    var jboard = g_jrecord.jboard
+    if (coord && (coord.i < 0 || coord.j < 0 || coord.i > 18 || coord.j > 18)) {
+        if (hover.coord) {
+            jboard.setType(hover.coord, JGO.CLEAR)
+            hover.coord = null
+        }
+        return
+    } // if
     opts = opts || {}
     if (!opts.force) {
         if (axutil.isMobile() && col) { return }
     }
     var hcol = col ? col : turn()
-    var jboard = g_jrecord.jboard
     if (coord) { /// draw hover stone
         if (hover.coord) {
             jboard.setType(hover.coord, JGO.CLEAR)
