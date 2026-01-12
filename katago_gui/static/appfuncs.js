@@ -531,6 +531,7 @@ export function swap_colors(flag) {
 export function goto_first_move() {
     g_ko = false
     g_last_move = false
+    g_prisoners = [0, 0, 0]
     grec.seek(0)
     g_jrecord.jboard.clear()
     g_jrecord.root = g_jrecord.current = null
