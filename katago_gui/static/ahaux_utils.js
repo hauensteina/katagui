@@ -98,9 +98,34 @@ class AhauxUtils {
     }
   } // set_attr()
 
-  isMobile() { return window.matchMedia('(max-width: 1024px)').matches }
+  //isMobile() { return window.matchMedia('(max-width: 1024px)').matches }
 
   //isMobile() { return typeof window.orientation !== 'undefined' }
+
+  //------------------
+  isMobile() {
+
+    // 1. Old reiable method
+    if (typeof window.orientation !== 'undefined') { return true; }
+
+    // Fallback to User Agent string sniffing
+    const ua = navigator.userAgent;
+    if (/Mobi|Android|iPhone|iPad|iPod/i.test(ua)) {
+      return true;
+    }
+
+    // Check modern UserAgentData API
+    if (navigator.userAgentData) {
+      return navigator.userAgentData.mobile ? true : false;
+    }
+
+    // Last resort: Check screen size & touch points
+    if (window.innerWidth <= 800 && navigator.maxTouchPoints > 0) {
+      return true;
+    }
+
+    return false;
+  } // isMobile()
 
   // Enable / disable a label used as a bootstrap button
   //--------------------------------------------------------
