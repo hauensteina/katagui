@@ -1,8 +1,26 @@
-{% extends 'layout.tmpl' %}
+{# extends 'layout.tmpl' #}
+<!DOCTYPE HTML>
+<html>
+  <body>
+    <div style='font-size:0.5rem;'>Hello World!</div>
+  </body>
+</html>
 
 
-{% block content %}
-  <br>
-  {{ msg }}
-  <br>
-{% endblock content %}
+<script>
+
+  // get screen width
+var screenWidth = screen.width
+
+// Get the root HTML element
+const rootHtmlElement = document.documentElement
+
+var rem = screenWidth / 50.0
+
+// Set the base font size
+rootHtmlElement.style.fontSize = `${rem}px`
+
+debugger
+var tt=42
+
+</script>
